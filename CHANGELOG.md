@@ -1,3 +1,13 @@
+# 1.2.0
+
+*   **1.14's player poses** for the backports to use: a swimming player is 0.6 blocks tall with their eyes
+    at 0.4, a player with no room to stand crawls flat until there is room, and other players see both.
+    Swimmers and crawlers are drawn lying along the swim, armor included, and the camera eases down to the
+    new eye height instead of jumping. Nothing changes until a backport that swims is installed.
+*   A small coremod of the library's own gives these the hooks 1.12.2 lacks. Each of its five patches does
+    exactly what vanilla does unless a backport's swimming is on, and steps aside, keeping vanilla's
+    behavior, when another mod has rewritten the same code.
+
 # 1.1.0
 
 *   **Requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.

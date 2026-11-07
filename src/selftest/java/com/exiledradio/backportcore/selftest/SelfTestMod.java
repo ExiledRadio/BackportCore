@@ -24,6 +24,7 @@ public final class SelfTestMod {
 
     public SelfTestMod() {
         MinecraftForge.EVENT_BUS.register(this);
+        PoseTests.register();
     }
 
     @SubscribeEvent

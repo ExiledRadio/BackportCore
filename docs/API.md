@@ -1,7 +1,7 @@
 # Backport Core API
 
 For the backports that depend on this library. Everything is plain static Java; no events to post, and
-the one interface to implement is `Waterloggable`. Package root: `com.exiledradio.backportcore`.
+the interfaces to implement are `Waterloggable` and, for player poses, `PoseRules` and `PlayerMovement`. Package root: `com.exiledradio.backportcore`.
 
 ## Depending on it
 
@@ -22,7 +22,7 @@ Then `mkdir deps` in the backport, add its folder name to `dependents` in this r
 and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
 
 ```java
-dependencies = "required-after:backportcore@[1.1.0,)"
+dependencies = "required-after:backportcore@[1.2.0,)"
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
@@ -298,6 +298,43 @@ loads no chunk it does not need. This is Update Aquatic's dolphin-stream `Struct
 
 Not here yet: jigsaw assembly (pools and expansion) and a nether floor sampler. Templates already read the
 jigsaw blocks.
+
+## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
+
+1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server
+and on the player's own client, at the end of each player tick. Nothing happens until a backport registers
+rules; with none on, players are vanilla 1.12.2's. With a mod installed that resizes players or adds
+swimming of its own (by mod id), the engine stands down; with one that draws players its own way, only the
+drawing does.
+
+| Pose | Box | Eyes | Set by |
+| --- | --- | --- | --- |
+| `STANDING` | 0.6 x 1.8 | 1.62 | vanilla |
+| `SNEAKING` | 0.6 x 1.65 | 1.54 | vanilla (1.12.2's sneak box; also where a crawler gets up to with room to sneak only) |
+| `SWIMMING` | 0.6 x 0.6 | 0.4 (sneaking too) | the engine: swimming, or crawling (the swimming pose out of water) |
+| `SPIN_ATTACK` | 0.6 x 0.6 | 0.4 | the engine: a Riptide spin |
+| `FALL_FLYING`, `SLEEPING` | vanilla's | vanilla's | vanilla |
+
+*   `Poses.register(PoseRules)` (pre-init): `enabled()` (read every tick, so a live switch works);
+    `tick(player)` first, once a tick per simulated player; `isSwimming(player)`, `isSpinAttacking(player)`;
+    `crawls()` - a player with no room to stand or sneak drops into the swimming pose and stays down until
+    there is room. Several backports' rules are OR-ed.
+*   `Poses.get(player)`, `Poses.isCrawling(player)` (swimming pose out of water), `Poses.swimAmount(player,
+    partial)` (client: 1.14's swim animation, 0 to 1), `Poses.fits(player, pose)`, `Poses.box(player, pose)`,
+    `Poses.active()`, `Poses.standsDown()`.
+*   `Poses.registerMovement(PlayerMovement)` (pre-init): reached from inside vanilla's movement by patches
+    P1 and P2 (`docs/PATCHES.md`), players only, while the rules are on. `beforeTravel` (start of
+    `travel`), `waterSlowDown` (vanilla 0.8), `waterGravity` (vanilla 0.02), and `beforeClientMove` (client,
+    after vanilla's sprint checks, before the player moves; the argument is the client player, cast it in a
+    client-side class). Defaults are vanilla's; several are chained.
+*   Sync: the server sends a player's pose to everyone tracking them when it changes, and to anyone who
+    starts tracking them (Backport Core's channel `backportcore`, one 5-byte packet). The player's own client
+    works its pose out itself.
+*   Drawing (client, patches P3-P5): the swim stroke on every biped model drawn for a player (armor
+    included), the body laid along the look in water and flat when crawling, the camera easing to the eye
+    height. `PoseClient.addModelHook(PlayerModelHook)` adds a backport's own player arm pose, applied after
+    vanilla's angles and before the stroke (where 1.14's `BipedModel` sets arm poses), for the player model
+    and its armor; `PoseClient.modelHooksWork()` says whether it runs.
 
 ## Helpers
 

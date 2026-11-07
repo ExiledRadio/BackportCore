@@ -78,8 +78,27 @@ dependencies {
 	deobfCompile 'curse.maven:fluidlogged-api-485654:8445863'
 }
 
-// Every other mod is reached by name and reflection, behind a Loader.isModLoaded check. No coremod
-// or Mixin of our own.
+// Every other mod is reached by name and reflection, behind a Loader.isModLoaded check. No Mixin.
+
+// The library's own coremod (package asm; every patch in docs/PATCHES.md). The release jar and the dev
+// jar name it in their manifests: the dev jar is what puts the library on a backport's runServer and
+// runClient classpath, where FG2's GradleStart finds coremods by their manifest. This repository's own
+// run tasks name it with fml.coreMods.load.
+def coremod = 'com.exiledradio.backportcore.asm.BackportCorePlugin'
+def coremodManifest = {
+	attributes 'FMLCorePlugin': coremod,
+			'FMLCorePluginContainsFMLMod': 'true'
+}
+jar {
+	manifest coremodManifest
+}
+
+// The run tasks always run (a dev server is how the library is tested). Never cleanRunServer to force
+// one: it deletes eclipse/.
+[runServer, runClient].each { task ->
+	task.systemProperty 'fml.coreMods.load', coremod
+	task.outputs.upToDateWhen { false }
+}
 
 // Headless self-tests: `gradlew runServer -Pselftest` compiles src/selftest in (FG2's runServer runs
 // from the jar, so the tests have to be in it). A normal build never contains them.
@@ -101,6 +120,7 @@ if (project.hasProperty('selftest')) {
 task devJar(type: Jar) {
 	classifier = 'dev'
 	from sourceSets.main.output
+	manifest coremodManifest
 }
 
 task sourcesJar(type: Jar) {
