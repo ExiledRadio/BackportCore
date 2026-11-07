@@ -26,7 +26,8 @@ public final class ConfigImport {
 
     /** Old file name (no extension), category, key - and what to do with the value. */
     private static final Moved[] MOVED = {
-            new Moved("villagerbackport", "textures", "modernTextures") {
+            // @Config puts every category under "general".
+            new Moved("villagerbackport", "general.textures", "modernTextures") {
                 @Override
                 void apply(Property property) {
                     CoreConfig.textures.modernTextures = property.getBoolean(CoreConfig.textures.modernTextures);
