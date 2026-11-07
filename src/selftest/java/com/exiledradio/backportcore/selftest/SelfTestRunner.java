@@ -69,6 +69,7 @@ public final class SelfTestRunner {
         StructureTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();
+        NetherTests.schedule();
     }
 
     @SubscribeEvent

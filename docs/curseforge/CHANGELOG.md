@@ -1,3 +1,14 @@
+# 1.2.0
+
+What Nether Update Backport needs for its structures: jigsaw assembly, nether floors, and seed parity for bastions and fortresses.
+
+*   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the same seed, a bastion is laid out piece for piece as in 1.16.5.
+*   **Seed parity for nether structures**: with Nether Update Backport, bastions and nether fortresses share 1.16's slots, so a seed puts a bastion or a fortress in the same chunks as vanilla 1.16.5. Fortresses already in a world stay where they are.
+*   **Nether floors**: structures can be planned on the nether's floors, lava sea and caves included, before the chunks exist.
+*   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure processors of today's files.
+*   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
+*   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
+
 # 1.1.0
 
 What Update Aquatic Backport needs: waterlogging, today's structure files, structures on the sea floor, and swimming and crawling poses.

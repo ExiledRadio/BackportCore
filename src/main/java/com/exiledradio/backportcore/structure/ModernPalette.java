@@ -84,6 +84,7 @@ public final class ModernPalette {
     private static final List<String> SOURCES = new ArrayList<String>(Collections.singletonList("villagerbackport"));
     private static final Map<String, String> FALLBACKS = new HashMap<String, String>();
     private static final Map<String, String> LOOT_TABLES = new HashMap<String, String>();
+    private static final Map<String, String> ENTITIES = new HashMap<String, String>();
     private static final Set<String> REPORTED = Collections.synchronizedSet(new HashSet<String>());
 
     static {
@@ -151,6 +152,21 @@ public final class ModernPalette {
      */
     public static synchronized void lootTable(String from, ResourceLocation to) {
         LOOT_TABLES.put(full(from), to.toString());
+    }
+
+    /**
+     * Gives an entity of a structure file a 1.12.2 id: {@code minecraft:piglin} in a bastion's mob piece
+     * spawns as {@code to}. Since 1.2.0. Entities 1.12.2 has under the same id need nothing; others
+     * with no id here are left out, as 1.12.2 leaves out any entity it does not know.
+     */
+    public static synchronized void entity(String from, ResourceLocation to) {
+        ENTITIES.put(full(from), to.toString());
+    }
+
+    /** @return the entity id to spawn for an id a structure file gives. Since 1.2.0. */
+    public static synchronized String entity(String fromFile) {
+        String mapped = ENTITIES.get(full(fromFile));
+        return mapped == null ? fromFile : mapped;
     }
 
     /** @return the loot table to use for a name a structure file gives */

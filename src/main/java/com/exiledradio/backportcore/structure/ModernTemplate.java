@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -138,7 +139,7 @@ public final class ModernTemplate {
         public final String name;
         public final String target;
         public final String pool;
-        /** "rollable" or "aligned" (1.16+); "rollable" for older files. */
+        /** "rollable" or "aligned" (1.16+); for older files, "aligned" facing sideways, else "rollable", as today's game reads them. */
         public final String joint;
         /** The block the jigsaw becomes, as today's game writes a state. */
         public final String finalState;
@@ -248,7 +249,11 @@ public final class ModernTemplate {
         }
         NBTTagCompound n = nbt == null ? new NBTTagCompound() : nbt;
         String name = n.hasKey("name") ? n.getString("name") : n.getString("attachement_type");
-        String joint = n.hasKey("joint") ? n.getString("joint") : "rollable";
+        // Today's JigsawBlock.canAttach: a missing or unknown joint is aligned for a side-facing jigsaw.
+        String joint = n.getString("joint");
+        if (!"rollable".equals(joint) && !"aligned".equals(joint)) {
+            joint = front.getAxis().isHorizontal() ? "aligned" : "rollable";
+        }
         String finalState = n.hasKey("final_state") ? n.getString("final_state") : "minecraft:air";
         return new Jigsaw(pos, front, top, name, n.getString("target"), n.getString("pool"), joint, finalState);
     }
@@ -371,6 +376,17 @@ public final class ModernTemplate {
         return null;
     }
 
+    /**
+     * Every block of the file in one palette, before any processor: its position in the template and
+     * the block. Jigsaw blocks, structure blocks and structure voids are not among them. Since 1.2.0.
+     */
+    public void forEachBlock(int palette, java.util.function.BiConsumer<BlockPos, TemplateBlock> action) {
+        int p = Math.min(Math.max(palette, 0), palettes() - 1);
+        for (Entry entry : this.blocks) {
+            action.accept(entry.pos, block(entry, p));
+        }
+    }
+
     // ---- geometry: today's StructureTemplate.transform
 
     /** @return where a template position ends up, relative to the origin */
@@ -471,22 +487,32 @@ public final class ModernTemplate {
         try {
             for (Entry entry : this.blocks) {
                 BlockPos pos = worldPos(origin, entry.pos, placement);
-                if (clip != null && !clip.isVecInside(pos)) {
+                // Gravity moves a block up or down only: the column decides first, so no other chunk is read.
+                if (clip != null && (pos.getX() < clip.minX || pos.getX() > clip.maxX || pos.getZ() < clip.minZ || pos.getZ() > clip.maxZ)) {
                     continue;
                 }
-                if (place(world, pos, block(entry, palette), placement)) {
+                BlockPos at = onSurface(pos, entry.pos, placement);
+                if (clip != null && !clip.isVecInside(at)) {
+                    continue;
+                }
+                if (place(world, pos, at, block(entry, palette), placement)) {
                     placed++;
                 }
             }
             for (Jigsaw jigsaw : this.jigsaws) {
                 BlockPos pos = worldPos(origin, jigsaw.pos, placement);
-                if (clip != null && !clip.isVecInside(pos)) {
+                // Gravity moves a block up or down only: the column decides first, so no other chunk is read.
+                if (clip != null && (pos.getX() < clip.minX || pos.getX() > clip.maxX || pos.getZ() < clip.minZ || pos.getZ() > clip.maxZ)) {
+                    continue;
+                }
+                BlockPos at = onSurface(pos, jigsaw.pos, placement);
+                if (clip != null && !clip.isVecInside(at)) {
                     continue;
                 }
                 Map<String, String> p = new LinkedHashMap<String, String>();
                 String n = ModernPalette.full(Flattening.parse(jigsaw.finalState.trim(), p));
                 ModernPalette.Resolved r = ModernPalette.resolve(n, p, Integer.MAX_VALUE);
-                if (place(world, pos, new TemplateBlock(n, p, r.state, r.tile, r.water), placement)) {
+                if (place(world, pos, at, new TemplateBlock(n, p, r.state, r.tile, r.water), placement)) {
                     placed++;
                 }
             }
@@ -519,17 +545,29 @@ public final class ModernTemplate {
         return new TemplateBlock(name, new LinkedHashMap<String, String>(props), r.state, tile, r.water);
     }
 
-    private boolean place(World world, BlockPos pos, TemplateBlock block, TemplatePlacement placement) {
+    /** Today's gravity processor, where the placement follows the ground: the block's height above it. */
+    private static BlockPos onSurface(BlockPos pos, BlockPos local, TemplatePlacement placement) {
+        if (placement.surface == null) {
+            return pos;
+        }
+        return new BlockPos(pos.getX(), placement.surface.applyAsInt(pos.getX(), pos.getZ()) + placement.surfaceOffset + local.getY(), pos.getZ());
+    }
+
+    /**
+     * @param from where the block lands before any gravity: what the processors see, as today's do
+     * @param pos where it goes
+     */
+    private boolean place(World world, BlockPos from, BlockPos pos, TemplateBlock block, TemplatePlacement placement) {
         if (placement.ignoreAir && "minecraft:air".equals(block.name())) {
             return false;
         }
-        Random random = new Random(positionSeed(pos) ^ placement.seed);
+        Random random = new Random(positionSeed(from) ^ placement.seed);
         if (placement.integrity < 1.0F && random.nextFloat() > placement.integrity) {
             return false;
         }
         TemplateBlock b = block;
         for (TemplateProcessor processor : placement.processors) {
-            b = processor.process(world, pos, b, random);
+            b = processor.process(world, from, b, random);
             if (b == null) {
                 return false;
             }
@@ -615,6 +653,9 @@ public final class ModernTemplate {
             nbt.setInteger("TileZ", blockPos.getZ());
         }
         fixItems(nbt);
+        if (nbt.hasKey("id", Constants.NBT.TAG_STRING)) {
+            nbt.setString("id", ModernPalette.entity(nbt.getString("id")));
+        }
         Entity entity;
         try {
             entity = EntityList.createEntityFromNBT(nbt, world);
@@ -628,6 +669,11 @@ public final class ModernTemplate {
         float yaw = entity.getMirroredYaw(placement.mirror);
         yaw = yaw + (entity.rotationYaw - entity.getRotatedYaw(placement.rotation));
         entity.setLocationAndAngles(pos.x, pos.y, pos.z, yaw, entity.rotationPitch);
+        if (placement.finalizeEntities && entity instanceof EntityLiving) {
+            ((EntityLiving) entity).onInitialSpawn(world.getDifficultyForLocation(new BlockPos(entity)), null);
+            // onInitialSpawn may turn the mob; the structure's facing wins, as today's game keeps it.
+            entity.setLocationAndAngles(pos.x, pos.y, pos.z, yaw, entity.rotationPitch);
+        }
         world.spawnEntity(entity);
     }
 
