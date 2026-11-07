@@ -33,10 +33,12 @@ import java.util.Map;
 public final class FlatTerrain implements ColumnTerrain {
 
     private final int height;
+    private final int floor;
     private final boolean wet;
 
-    private FlatTerrain(int height, boolean wet) {
+    private FlatTerrain(int height, int floor, boolean wet) {
         this.height = height;
+        this.floor = floor;
         this.wet = wet;
     }
 
@@ -59,7 +61,12 @@ public final class FlatTerrain implements ColumnTerrain {
                 if (state != null && state.getMaterial() != Material.AIR
                         && (!state.getMaterial().isReplaceable() || state.getMaterial().isLiquid())) {
                     BackportCore.LOGGER.info("Planning 1.14 structures on a superflat world's ground, at y {}.", y + 1);
-                    return new FlatTerrain(y + 1, state.getMaterial().isLiquid());
+                    int floor = y;
+                    while (floor >= 0 && layers[floor] != null && (layers[floor].getMaterial().isLiquid()
+                            || layers[floor].getMaterial() == Material.AIR)) {
+                        floor--;
+                    }
+                    return new FlatTerrain(y + 1, floor + 1, state.getMaterial().isLiquid());
                 }
             }
             return null;
@@ -77,6 +84,11 @@ public final class FlatTerrain implements ColumnTerrain {
     @Override
     public boolean wet(int x, int z) {
         return this.wet;
+    }
+
+    @Override
+    public int floor(int x, int z) {
+        return this.floor;
     }
 
     /** @return the superflat generator's village generator, or null if it has none */

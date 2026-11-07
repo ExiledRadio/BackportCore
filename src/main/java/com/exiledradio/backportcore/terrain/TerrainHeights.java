@@ -79,6 +79,7 @@ public final class TerrainHeights {
         if (sampler != null) {
             sampler.heights.clear();
             sampler.columns.clear();
+            sampler.floors.clear();
             return sampler;
         }
         if (UNSUPPORTED.containsKey(world) || !(world instanceof WorldServer)) {
@@ -191,6 +192,9 @@ public final class TerrainHeights {
         return column(x, z) & HEIGHT_MASK;
     }
 
+    /** Single-column floors, for {@link #external}. */
+    private final Map<Long, Integer> floors = new HashMap<Long, Integer>();
+
     /** @return true if the column's surface is water, as far as the generator can say */
     public boolean isWater(int x, int z) {
         if (this.external != null) {
@@ -199,9 +203,51 @@ public final class TerrainHeights {
         return (column(x, z) & WET) != 0;
     }
 
-    /** Set on a sampled column whose top block is water. Heights here are 0-256, well below it. */
-    private static final int WET = 1 << 16;
-    private static final int HEIGHT_MASK = WET - 1;
+    /**
+     * 1.14's {@code OCEAN_FLOOR_WG}: one above the highest block of the bare terrain that is not
+     * water - the sea bed under an ocean, the ground anywhere dry. Shipwrecks, ocean ruins and ruined
+     * portals stand on it. Generators that cannot see under their water answer {@link #height}.
+     */
+    public int floor(int x, int z) {
+        if (this.external != null) {
+            long key = ((long) x << 32) ^ (z & 0xFFFFFFFFL);
+            Integer known = this.floors.get(key);
+            if (known == null) {
+                known = this.external.floor(x, z);
+                this.floors.put(key, known);
+            }
+            return known;
+        }
+        return (column(x, z) >> FLOOR_SHIFT) & HEIGHT_MASK;
+    }
+
+    /**
+     * Packs a sampled column: surface height in the low bits, {@link #WET}, the floor height above it.
+     * Heights here are 0-256.
+     */
+    static int pack(int height, int floor, boolean wet) {
+        return height | (wet ? WET : 0) | floor << FLOOR_SHIFT;
+    }
+
+    /** Reads a column of a primer the way {@link #pack} stores it: the surface, then the floor under any water. */
+    static int packColumn(ChunkPrimer primer, int x, int z) {
+        int y = 255;
+        while (y > 0 && primer.getBlockState(x, y, z).getMaterial() == Material.AIR) {
+            y--;
+        }
+        boolean wet = primer.getBlockState(x, y, z).getMaterial().isLiquid();
+        int floor = y;
+        while (floor > 0 && (primer.getBlockState(x, floor, z).getMaterial().isLiquid()
+                || primer.getBlockState(x, floor, z).getMaterial() == Material.AIR)) {
+            floor--;
+        }
+        return pack(y + 1, floor + 1, wet);
+    }
+
+    /** Set on a sampled column whose top block is water. */
+    static final int WET = 1 << 16;
+    static final int HEIGHT_MASK = WET - 1;
+    static final int FLOOR_SHIFT = 17;
 
     private int externalHeight(int x, int z) {
         // Their surface scans cost far more than vanilla's, and a layout asks about only a few
@@ -254,12 +300,7 @@ public final class TerrainHeights {
         int[] out = new int[256];
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                int y = 255;
-                while (y > 0 && primer.getBlockState(x, y, z).getMaterial() == Material.AIR) {
-                    y--;
-                }
-                boolean wet = primer.getBlockState(x, y, z).getMaterial().isLiquid();
-                out[z << 4 | x] = (y + 1) | (wet ? WET : 0);
+                out[z << 4 | x] = packColumn(primer, x, z);
             }
         }
         return out;

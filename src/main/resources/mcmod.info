@@ -11,6 +11,7 @@
     "credits": "${mod_credits}",
     "logoFile": "",
     "screenshots": [],
-    "dependencies": []
+    "requiredMods": ["fluidlogged_api"],
+    "dependencies": ["fluidlogged_api"]
   }
 ]

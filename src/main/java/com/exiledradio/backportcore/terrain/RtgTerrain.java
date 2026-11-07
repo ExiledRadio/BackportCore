@@ -87,6 +87,17 @@ public final class RtgTerrain implements ColumnTerrain {
         }
     }
 
+    /** The sea bed: RTG's water only ever lies on its landscape. */
+    @Override
+    public int floor(int x, int z) {
+        try {
+            return ground(x, z) + 1;
+        } catch (Exception e) {
+            BackportCore.LOGGER.warn("Reading Realistic Terrain Generation's landscape failed at {}, {}.", x, z, e);
+            return this.seaLevel;
+        }
+    }
+
     @Override
     public boolean wet(int x, int z) {
         try {

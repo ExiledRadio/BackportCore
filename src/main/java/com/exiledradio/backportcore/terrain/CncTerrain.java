@@ -122,6 +122,46 @@ public final class CncTerrain implements ColumnTerrain {
         }
     }
 
+    /** The highest block that is neither air nor liquid, plus one: 1.14's ocean floor. */
+    @Override
+    public int floor(int x, int z) {
+        try {
+            long key = ((long) (x >> 4) << 32) ^ ((z >> 4) & 0xFFFFFFFFL);
+            if (key != this.lastKey) {
+                this.lastColumn = this.column.invoke(this.columns, x >> 4, z >> 4);
+                this.lastKey = key;
+            }
+            int lx = x & 15;
+            int lz = z & 15;
+            for (int y = this.top; y >= this.bottom; y--) {
+                int id = (int) this.materialId.invoke(this.lastColumn, lx, y, lz);
+                if (isGround(id) && !isLiquid(id)) {
+                    return y + 1;
+                }
+            }
+            return this.bottom;
+        } catch (Throwable e) {
+            BackportCore.LOGGER.warn("Reading Caves Not Cliffs' terrain failed at {}, {}.", x, z, e);
+            return 64;
+        }
+    }
+
+    /** Material id to "is it a liquid", filled in as ids turn up. 0 unknown, 1 no, 2 yes. */
+    private byte[] liquid = new byte[64];
+
+    private boolean isLiquid(int id) throws Throwable {
+        if (id >= this.liquid.length) {
+            byte[] bigger = new byte[Math.max(id + 1, this.liquid.length * 2)];
+            System.arraycopy(this.liquid, 0, bigger, 0, this.liquid.length);
+            this.liquid = bigger;
+        }
+        if (this.liquid[id] == 0) {
+            IBlockState state = (IBlockState) this.stateFor.invoke(this.blockStates, id);
+            this.liquid[id] = (byte) (state != null && state.getMaterial().isLiquid() ? 2 : 1);
+        }
+        return this.liquid[id] == 2;
+    }
+
     /** Anything but air counts, water included, as in 1.14. */
     private boolean isGround(int id) throws Throwable {
         if (id >= this.solid.length) {

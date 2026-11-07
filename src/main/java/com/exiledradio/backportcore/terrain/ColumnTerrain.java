@@ -13,4 +13,13 @@ public interface ColumnTerrain {
     default boolean wet(int x, int z) {
         return false;
     }
+
+    /**
+     * 1.14's {@code OCEAN_FLOOR_WG}: one above the top block of the bare terrain that is not water.
+     * The same as {@link #height} on dry land; generators that cannot see under their water answer
+     * {@link #height}.
+     */
+    default int floor(int x, int z) {
+        return height(x, z);
+    }
 }

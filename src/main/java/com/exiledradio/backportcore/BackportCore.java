@@ -29,16 +29,21 @@ import org.apache.logging.log4j.Logger;
  * <li>{@code trade.TradeRegistry} - villager and wandering trader trades other mods add.</li>
  * <li>{@code terrain} - where the ground will be, before a chunk exists, on vanilla, superflat and
  * modded terrain: for laying out structures ahead of generation.</li>
+ * <li>{@code structure} - today's structure files read into 1.12.2 blocks, structures scattered the
+ * way today's game scatters them, and finding the nearest of a kind.</li>
+ * <li>{@code waterlog} - 1.13's waterlogging for the family's blocks, through Fluidlogged API.</li>
  * </ul>
  *
- * <p>No coremod or Mixin, and nothing here requires another mod: every other mod is reached by name,
- * behind a {@code Loader.isModLoaded} check.
+ * <p>No coremod or Mixin of its own. The one mod it requires is Fluidlogged API; every other mod is
+ * reached by name, behind a {@code Loader.isModLoaded} check.
  */
 @Mod(
         modid = BackportCore.MOD_ID,
         name = BackportCore.MOD_NAME,
         version = BackportCore.VERSION,
         acceptedMinecraftVersions = "[1.12.2]",
+        // Waterlogging is Fluidlogged API's, on both sides (see waterlog/). Required, never bundled.
+        dependencies = "required-after:fluidlogged_api@[3.3.3,)",
         // Nothing of its own goes over the network: a client without it can join a server that has it.
         acceptableRemoteVersions = "*"
 )

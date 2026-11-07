@@ -1,7 +1,7 @@
 # Backport Core API
 
-For the backports that depend on this library. Everything is plain static Java; no events to post, no
-interfaces to register through Forge. Package root: `com.exiledradio.backportcore`.
+For the backports that depend on this library. Everything is plain static Java; no events to post, and
+the one interface to implement is `Waterloggable`. Package root: `com.exiledradio.backportcore`.
 
 ## Depending on it
 
@@ -22,10 +22,27 @@ Then `mkdir deps` in the backport, add its folder name to `dependents` in this r
 and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
 
 ```java
-dependencies = "required-after:backportcore@[1.0.0,)"
+dependencies = "required-after:backportcore@[1.1.0,)"
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
+
+**Fluidlogged API** (3.3.3, CurseForge 485654) is Backport Core's one required dependency, for
+waterlogging. Players install it beside Backport Core, on client and server; it is never bundled or
+shaded (its license allows depending on it, not redistributing it). The dev jar does not carry it, so
+every backport adds it to its own build, both to compile against `Waterloggable` and so that `runServer`
+can load Core at all:
+
+```gradle
+repositories {
+    maven { url 'https://cursemaven.com' }
+}
+dependencies {
+    deobfCompile 'curse.maven:fluidlogged-api-485654:8445863'   // 3.3.3; needs stable_39 mappings
+}
+```
+
+Keep `required-after:backportcore`; it brings Fluidlogged API with it.
 
 Call the registration methods below from your mod's **pre-init** unless a section says otherwise.
 
@@ -116,10 +133,171 @@ int y = heights.height(x, z);                              // one above the top 
 boolean wet = heights.isWater(x, z);
 ```
 
+```java
+int bed = heights.floor(x, z);   // 1.14's OCEAN_FLOOR_WG: one above the sea bed; the ground where it is dry
+```
+
 Handles vanilla (and subclasses that keep vanilla noise), superflat, OTG, Biomes O' Plenty, RTG, Caves Not
-Cliffs and Farmer's Future Delight. Call `forWorld` once per structure start on the server thread: it drops
+Cliffs and Farmer's Future Delight. `floor` reads the same terrain as `height`, so it is as exact (Farmer's
+Future Delight's surface-estimate fallback is the one approximation). Call `forWorld` once per structure start on the server thread: it drops
 the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
+
+## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
+
+1.13's waterlogging for the family's blocks, through Fluidlogged API. A block that today's game makes
+waterloggable implements `Waterloggable` (it extends Fluidlogged API's `IFluidloggable`) and answers up to
+three questions. It never overrides the `IFluidloggable` methods and has no `waterlogged` property.
+
+```java
+public class BlockLantern extends Block implements Waterloggable {
+    // all three optional:
+    public Need waterNeed(IBlockState state) { return Need.OPTIONAL; }  // REQUIRED: kelp, seagrass, bubble columns
+    public boolean canHoldWater(IBlockState state, IBlockAccess world, BlockPos pos) { return true; }  // false: a double slab
+    public void onWaterChanged(World world, BlockPos pos, IBlockState state, boolean hasWater) { }    // coral dies, a campfire goes out
+}
+```
+
+- Water only. A `REQUIRED` block that is drained is removed, with no drop. `onWaterChanged` runs after the
+  water came or went (not when flowing water only changes level): buckets, flow, commands, the helpers below.
+- These answers win over the player's `allowDefaults` setting. A server's Fluidlogged API config files and
+  other mods' `FluidloggableEvent` handlers win over them.
+- `shouldFluidRender` is client-only in Fluidlogged API: an override needs `@SideOnly(Side.CLIENT)`.
+
+```java
+Waterlogging.hasWater(world, pos);                     // a water block, or water kept beside a block
+Waterlogging.hasWaterSource(world, pos);               // the same, still source water
+Waterlogging.canHoldWater(state, world, pos);          // asks Fluidlogged API, its configs included
+Waterlogging.setWater(world, pos, true, 3);            // add a source to the block there (false: remove its water)
+Waterlogging.placeKeepingWater(world, pos, state, 2);  // generation: kelp into the sea, a reef over seagrass
+Waterlogging.placeWithWater(world, pos, state, 2);     // with a source, whatever was there
+Waterlogging.placeDry(world, pos, state, 2);           // no water, whatever was there (Fluidlogged API's flag 32)
+Waterlogging.setWater(primer, x, y, z, true);          // terrain generation, in a ChunkPrimer
+Waterlogging.migrateStoredProperty(block, WATERLOGGED); // a released block's own property, moved once per chunk
+```
+
+- Block flag 1 makes added water live, as a bucket's is (it flows into open space beside it at once).
+  Without it the water stays still until something next to it changes, as generated water does.
+- A plain `world.setBlockState` of a block that can hold water into a water source keeps the water too;
+  Fluidlogged API does that for any such block.
+- A block that shipped its own `waterlogged` property keeps the property and its meta bit while old worlds
+  may hold it, stops setting it, and calls `migrateStoredProperty` in init. Each chunk is checked once,
+  when it loads, and records that in its data (`backportcore:waterlogChecked`).
+- Vanilla blocks get waterlogging from Fluidlogged API itself; with its defaults, vanilla slabs and stairs
+  both hold water.
+
+## Structures (`structure.*`)
+
+Today's structure files, placed in 1.12.2, and structures scattered the way today's game scatters them.
+
+### Templates (`ModernTemplate`, `TemplatePlacement`, `TemplateProcessor`)
+
+```java
+ModernTemplate t = ModernTemplate.load(new ResourceLocation("yourmod", "shipwreck/rightsideup_full"));
+// assets/yourmod/structures/shipwreck/rightsideup_full.nbt (or structure/): Mojang's file, unchanged
+TemplatePlacement p = TemplatePlacement.of(Rotation.CLOCKWISE_90, Mirror.NONE)
+        .pivot(new BlockPos(4, 0, 15))   // today's center offset
+        .integrity(0.9F).seed(seed)       // per world position: chunk by chunk gives the same as all at once
+        .ignoreAir(true)                  // today's AIR_AND_STRUCTURE_BLOCK
+        .keepWater(true)                  // the default: a block that can hold the sea there keeps it
+        .palette(2)                       // shipwrecks have one per wood; -1 picks from origin and seed
+        .processor(TemplateProcessors.replace("minecraft:stone_bricks", 0.3F, "minecraft:cracked_stone_bricks"))
+        .clip(chunkBox);                  // the chunk being populated; never loads a neighbor
+int placed = t.place(world, origin, p);
+StructureBoundingBox box = t.boundingBox(origin, p);
+BlockPos inWorld = ModernTemplate.worldPos(origin, localPos, p);
+t.dataMarkers();       // data-mode structure blocks: pos (in the template), metadata ("chest", "map_chest")
+t.jigsaws();           // pos, front, top, name, target, pool, joint, finalState: for jigsaw assembly
+t.unresolvedBlocks();  // block names nothing provides; worth a test
+```
+
+- Reads every format since 1.13: `palette` or `palettes`, `Name`/`Properties` or 26.1's `id`/`properties`,
+  any `DataVersion` (1.12.2's own files too). A block renamed since the file was saved is renamed first.
+- Structure blocks are never placed (data markers are listed instead), structure voids are skipped, and
+  jigsaw blocks become their final state. Tile entity data loads into the block, turned and mirrored with
+  it; entities spawn turned with the structure. `waterlogged=true` places a water source with the block.
+- A block that pops off for want of support in the next chunk (a wall torch) is written in anyway, and no
+  item drops while a template places.
+- A `TemplateProcessor` sees a `TemplateBlock`: today's name and properties (`is("minecraft:stone_bricks")`,
+  `props()`), the 1.12.2 `state()`, `tile()` and `water()`. It returns the block, a changed copy
+  (`withState`, `withWater`, `withTile`, `replacedBy("minecraft:mossy_stone_bricks")`), or null to leave the
+  world as it is there.
+
+### Palette (`ModernPalette`)
+
+Where a structure file's block comes from, first match wins: a mapping registered here; the block's owner
+(`BlockOwnership`); a family mod listed as a source that has a block of the same path; 1.12.2's own block
+(Minecraft's Flattening table read backwards, `assets/backportcore/structure/flattening.txt`, built by
+`tools/flattening/extract.py`, plus the blocks 1.13 split out of tile entities: bed and banner colors, skull
+types, flower pot contents, note block notes); then a stand-in. Register in pre-init or init:
+
+```java
+ModernPalette.source("yourmod");                               // yourmod:kelp serves minecraft:kelp
+ModernPalette.map("minecraft:conduit", props -> conduit.getDefaultState());
+ModernPalette.map("minecraft:sea_pickle", () -> seaPickle);    // properties carried across by name
+ModernPalette.fallback("minecraft:tuff_bricks", "minecraft:stone_bricks");
+ModernPalette.lootTable("minecraft:chests/shipwreck_supply", new ResourceLocation("yourmod", "chests/shipwreck_supply"));
+ModernPalette.Resolved r = ModernPalette.resolve("minecraft:oak_stairs[facing=east]");  // r.state, r.tile, r.water
+```
+
+Names are today's (`dirt_path`, `short_grass`, `oak_sign`, `smooth_stone_slab`, `iron_chain`), so a mapping
+for `minecraft:stone_slab` means 1.14's plain stone slab. `villagerbackport` is listed as a source already.
+Built-in stand-ins: non-oak wood trapdoors, buttons and pressure plates become oak's, stripped logs and wood
+plain ones, blue ice packed ice, 1.14's plain stone slab the smooth one, cave and void air plain air, and
+kelp, seagrass and bubble columns plain water (still counted wet).
+
+### Pieces and scattered structures (`TemplatePiece`, `ScatteredPlacement`, `ScatteredStructure`)
+
+```java
+public class ShipwreckPiece extends TemplatePiece {
+    public ShipwreckPiece() { }   // for loading
+    ShipwreckPiece(ResourceLocation template, BlockPos origin, Rotation rotation, Random random) {
+        super(template, origin, rotation, Mirror.NONE, new BlockPos(4, 0, 15), random);
+    }
+    @Override protected TemplatePlacement placement() { return super.placement().ignoreAir(true); }
+    @Override protected void handleDataMarker(String metadata, BlockPos pos, World world, Random random,
+                                              StructureBoundingBox chunk) {
+        // pos is in the world and inside chunk: give the chest below its loot table
+    }
+    // writeExtra / readExtra for settings of your own
+}
+
+public class MapGenShipwreck extends ScatteredStructure {
+    public MapGenShipwreck() { super("YM_Shipwreck", new ScatteredPlacement(24, 4, 165745295)); }
+    @Override protected boolean canStartAt(World world, int chunkX, int chunkZ) { /* the biome; never load chunks */ }
+    @Override protected StructureStart getStructureStart(int chunkX, int chunkZ) { /* lay out on TerrainHeights */ }
+}
+
+// init:
+MapGenStructureIO.registerStructure(ShipwreckStart.class, "YM_Shipwreck");
+MapGenStructureIO.registerStructureComponent(ShipwreckPiece.class, "YM_ShipwreckPiece");
+ScatteredStructure.register(Structures.SHIPWRECK, world -> wanted(world) ? new MapGenShipwreck() : null);
+```
+
+- `ScatteredStructure.register` has Core lay the structure out and build it from the populate step in
+  every world the factory gives an instance for, touching no chunk generator (so it works on modded
+  terrain too), and registers the kind's locator. A start may reach at most 8 chunks from its own chunk.
+- `TemplatePiece` keeps the palette chosen at layout, so every chunk builds with the same wood;
+  `setOrigin` moves it once the layout knows the ground.
+- `ScatteredStructure.of(world, kind)`, `isInside(world, kind, pos)` and `startsAt` are for spawn rules and
+  tests. `ScatteredPlacement` alone is today's `RandomSpreadStructurePlacement` (`candidate`,
+  `isCandidate`, `nearest`; linear or triangular).
+
+### Finding structures (`Structures`)
+
+```java
+Structures.register(Structures.OCEAN_RUIN, (world, from, radiusChunks) -> ...);   // once per kind, in init
+BlockPos p = Structures.nearest(world, Structures.SHIPWRECK, from, 50);           // null: none, or nobody finds it
+BlockPos q = Structures.nearestOf(world, from, 50, Structures.OCEAN_RUIN, Structures.SHIPWRECK);
+```
+
+Kinds are today's structure names in lower case; there are constants for the family's (shipwreck,
+ocean_ruin, buried_treasure, ruined_portal, bastion_remnant, nether_fossil, ancient_city, trail_ruins,
+trial_chambers, village, pillager_outpost). A locator runs on the server thread, generates nothing and
+loads no chunk it does not need. This is Update Aquatic's dolphin-stream `StructureLocator` API, unchanged.
+
+Not here yet: jigsaw assembly (pools and expansion) and a nether floor sampler. Templates already read the
+jigsaw blocks.
 
 ## Helpers
 
