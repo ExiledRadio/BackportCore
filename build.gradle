@@ -136,7 +136,7 @@ artifacts {
 // After any change here: `gradlew build copyToDependents`. Each backport that lists this library
 // compiles against the dev jar in its deps/ folder. Only workspaces that already have a deps/ folder
 // get one, so this never creates folders in a repository that does not use the library.
-def dependents = ['RLCraftVillagerTrading', 'RLCraftVillagerTrading-core-extraction', 'UpdateAquaticBackport']
+def dependents = ['RLCraftVillagerTrading', 'RLCraftVillagerTrading-core-extraction', 'UpdateAquaticBackport', 'NetherUpdateBackport']
 
 task copyToDependents(dependsOn: 'devJar') {
 	doLast {

@@ -40,6 +40,7 @@ public final class SelfTestMod {
     public void init(FMLInitializationEvent event) {
         Waterlogging.migrateStoredProperty(TestBlocks.legacy, TestBlocks.Legacy.WATERLOGGED);
         StructureTests.init();
+        NetherTests.init();
     }
 
     @Mod.EventHandler

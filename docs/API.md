@@ -22,7 +22,7 @@ Then `mkdir deps` in the backport, add its folder name to `dependents` in this r
 and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
 
 ```java
-dependencies = "required-after:backportcore@[1.1.0,)"
+dependencies = "required-after:backportcore@[1.1.0,)"   // [1.2.0,) for jigsaw, nether heights or seed parity
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
@@ -143,6 +143,28 @@ Future Delight's surface-estimate fallback is the one approximation). Call `forW
 the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
+### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.2.0)
+
+```java
+NetherHeights heights = NetherHeights.forWorld(world);   // columns as they will generate (caves included)
+int floor = heights.floor(x, z, 32, 120);   // lowest open block standing on a solid one: NONE, or UNKNOWN
+int[] all = heights.floors(x, z, 0, 127);   // every floor, lowest first
+int bed = heights.floor(x, z);              // ocean-floor variant: one above the top solid block, water and lava ignored
+int top = heights.height(x, z);             // WORLD_SURFACE_WG: one above the top block that is not air
+heights.isSolid(x, y, z); heights.isLiquid(x, y, z); heights.isAir(x, y, z);
+NetherHeights base = NetherHeights.baseForWorld(world);  // 1.16's getBaseColumn: bare noise, no caves or surface
+```
+
+- In the nether, a copy of the world's own `ChunkGeneratorHell` (or a subclass with its constructor) builds the
+  chunk off to the side, so a column matches the generated chunk block for block until population adds glowstone,
+  fire, lava falls and fortresses. "Open" means air, fire or plants; lava is neither a floor nor air.
+- In the overworld, `floor(x, z)` and `height(x, z)` are `TerrainHeights`' (every terrain it reads); the column
+  queries use a copy of the vanilla overworld generator.
+- With any other generator, columns are read from loaded chunks only. A column of a chunk that is not loaded is
+  `UNKNOWN` (`predicts()` is false): lay such a structure out at a fixed height, as 1.16's bastions are (y 33).
+- Use `baseForWorld` where 1.16 measures its base column (ruined portals' `findSuitableY` corner test), for parity.
+  As with `TerrainHeights`, call it once per structure start on the server thread: it drops the last layout's columns.
+
 ## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
 
 1.13's waterlogging for the family's blocks, through Fluidlogged API. A block that today's game makes
@@ -209,7 +231,13 @@ BlockPos inWorld = ModernTemplate.worldPos(origin, localPos, p);
 t.dataMarkers();       // data-mode structure blocks: pos (in the template), metadata ("chest", "map_chest")
 t.jigsaws();           // pos, front, top, name, target, pool, joint, finalState: for jigsaw assembly
 t.unresolvedBlocks();  // block names nothing provides; worth a test
+t.forEachBlock(0, (local, block) -> { });   // every block of one palette, before processors (1.2.0)
 ```
+
+1.2.0 adds two settings to `TemplatePlacement`: `finalizeEntities(true)` gives mobs their `onInitialSpawn`, as
+jigsaw pieces do, and `followTerrain(surface, offset)` is today's gravity processor. A jigsaw block whose file has
+no `joint` is now read as today's game reads it: `aligned` facing sideways, `rollable` facing up or down. 1.1.0
+read every such block as `rollable`.
 
 - Reads every format since 1.13: `palette` or `palettes`, `Name`/`Properties` or 26.1's `id`/`properties`,
   any `DataVersion` (1.12.2's own files too). A block renamed since the file was saved is renamed first.
@@ -237,6 +265,7 @@ ModernPalette.map("minecraft:conduit", props -> conduit.getDefaultState());
 ModernPalette.map("minecraft:sea_pickle", () -> seaPickle);    // properties carried across by name
 ModernPalette.fallback("minecraft:tuff_bricks", "minecraft:stone_bricks");
 ModernPalette.lootTable("minecraft:chests/shipwreck_supply", new ResourceLocation("yourmod", "chests/shipwreck_supply"));
+ModernPalette.entity("minecraft:piglin", new ResourceLocation("yourmod", "piglin"));   // 1.2.0: entities of the files
 ModernPalette.Resolved r = ModernPalette.resolve("minecraft:oak_stairs[facing=east]");  // r.state, r.tile, r.water
 ```
 
@@ -296,8 +325,76 @@ ocean_ruin, buried_treasure, ruined_portal, bastion_remnant, nether_fossil, anci
 trial_chambers, village, pillager_outpost). A locator runs on the server thread, generates nothing and
 loads no chunk it does not need. This is Update Aquatic's dolphin-stream `StructureLocator` API, unchanged.
 
-Not here yet: jigsaw assembly (pools and expansion) and a nether floor sampler. Templates already read the
-jigsaw blocks.
+### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.2.0)
+
+1.16.5's jigsaw assembly (`JigsawPlacement.addPieces`), read from Mojang's own files. Given the same random, it lays
+out what 1.16.5 does, piece for piece: the self-test compares 24 whole bastions with 1.16.5's own code.
+
+```java
+JigsawPools.source("yourmod");   // pre-init: minecraft:... files are read from yourmod's assets
+// assets/yourmod/worldgen/template_pool/bastion/starts.json        Mojang's pool files, unchanged
+// assets/yourmod/worldgen/processor_list/bastion_generic_degradation.json
+// assets/yourmod/structures/bastion/units/air_base.nbt              the templates
+
+public static final class BastionStart extends StructureStart {
+    public BastionStart() { }
+    BastionStart(World world, int chunkX, int chunkZ) {
+        super(chunkX, chunkZ);
+        // BastionFeature: start y 33, depth 6. 1.16's start random gives 1.16's layout for the seed.
+        this.components.addAll(Jigsaw.assemble(world, new ResourceLocation("minecraft", "bastion/starts"), 6,
+                new BlockPos(chunkX << 4, 33, chunkZ << 4), StructureRandoms.start(world.getSeed(), chunkX, chunkZ)));
+        updateBoundingBox();
+    }
+}
+// villages and outposts: Jigsaw.of(pool).maxDepth(6).expansionHack(true).projectStartToHeightmap(true).assemble(...)
+```
+
+- **Assembly** follows 1.16.5 draw for draw. It picks the start rotation and element, puts the start piece's floor
+  one below the origin, and bounds everything in a cube 80 blocks out from the start piece's middle. Each jigsaw,
+  in shuffled order, tries its pool's elements and then the fallback pool's (only the fallback's at the last
+  depth), each in shuffled rotations. A child joins if `canAttach` holds (front, top unless `rollable`, target and
+  name) and it fits the free space: the cube minus every piece, or the parent's own box for a piece that joins
+  from inside it. The expansion hack is there too. Assembly loads and generates nothing.
+- **Pools**: `name`, `fallback` and weighted `elements`. Element types are `single_pool_element`,
+  `legacy_single_pool_element` (air left out), `list_pool_element`, `feature_pool_element` and
+  `empty_pool_element`. 1.12.2 has none of today's configured features, so a feature element is placed by
+  `JigsawPools.feature("minecraft:oak", placer)`. Projections are `rigid` and `terrain_matching`. `processors` may
+  be a list's id, the `{"processors": [...]}` object, or the bare array. `minecraft:empty` (pool and processor
+  list) is built in.
+- **Pieces** (`JigsawPiece`, which Core registers as `BCJigsaw`) save their element as its JSON and place chunk by
+  chunk, with the chunk as the clip. They add 1.16's jigsaw-piece processors in 1.16's order and give mobs their
+  first-spawn setup. For data markers, subclass it, with a `Jigsaw.PieceFactory` and a `MapGenStructureIO` name
+  of your own.
+- **Processors** (`ModernProcessors`): `rule` (all six of 1.16's block tests, `linear_pos` and
+  `axis_aligned_linear_pos`; location tests compare with the 1.12.2 block in the world), `block_ignore`,
+  `block_rot`, `gravity`, `block_age`, `blackstone_replace`, `lava_submerged_block`, `jigsaw_replacement` and
+  `nop`. Each draws from its own position random, as 1.16's do. `ModernProcessors.blockAge(0.5F)`,
+  `blackstoneReplace()`, `lavaSubmerged()` and `blockRot(f)` build the ruined portals' processors in code.
+  `ModernProcessors.tag("minecraft:doors", names...)` adds to a `tag_match` tag.
+- **Block names** are today's: a 1.16 file's `minecraft:chain` is read as `minecraft:iron_chain` (26.x renamed it).
+
+### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.2.0)
+
+```java
+Random r = StructureRandoms.start(seed, chunkX, chunkZ);   // 1.16's setLargeFeatureSeed: every StructureStart's random
+VanillaPlacements.V1_16_5.RUINED_PORTAL;                     // 1.16.5's spacing, separation and salt, per structure
+
+NetherStructureSlots.install(NetherStructureSlots.VANILLA_1_16_5);   // pre-init: bastions take fortress slots
+NetherStructureSlots.Slot s = NetherStructureSlots.startAt(world, chunkX, chunkZ); // NONE, FORTRESS or BASTION
+NetherStructureSlots.roll(seed, chunkX, chunkZ);             // the same without the biome check: pure arithmetic
+```
+
+- 1.16.5's rule uses one grid for both structures (spacing 27, separation 4, salt 30084232). At a region's
+  candidate chunk, the same random draws `nextInt(5)`: under 2 is a fortress, 2 or more a bastion. The biome at
+  block `(x * 16 + 8, z * 16 + 8)` must then list the structure. Every nether biome lists fortresses; all but the
+  basalt deltas list bastions. `install` takes a `BiomeRule` for biomes that answer otherwise.
+- `install` swaps the nether's fortress generator, through `InitMapGenEvent` (no patch), for vanilla's, started by
+  this rule and laid out with 1.16's start random. A fortress is decided whole when it is laid out, so none
+  half-generates beside a bastion. Saved fortresses stay, and `/locate Fortress` and blaze spawns follow the new
+  rule. If another mod already replaced the fortress generator, it is left alone (`fortressRuleActive()` is false).
+- Your bastion is a `ScatteredStructure` on `VanillaPlacements.V1_16_5.BASTION_REMNANT` whose `canStartAt` is
+  `startAt(...) == Slot.BASTION`. `fortressStartsAt` and `savedFortress` read the fortress side.
+- None of this loads or generates chunks, so a seed tool can ask about any chunk.
 
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 

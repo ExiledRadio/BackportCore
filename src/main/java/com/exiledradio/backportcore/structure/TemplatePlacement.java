@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.IntBinaryOperator;
 
 /**
  * How a {@link ModernTemplate} goes into the world: today's {@code StructurePlaceSettings}, in
@@ -30,6 +31,10 @@ public final class TemplatePlacement {
     boolean ignoreAir;
     boolean keepWater = true;
     boolean entities = true;
+    boolean finalizeEntities;
+    @Nullable
+    IntBinaryOperator surface;
+    int surfaceOffset;
     int palette = -1;
     int flags = 2;
     final List<TemplateProcessor> processors = new ArrayList<TemplateProcessor>();
@@ -99,6 +104,28 @@ public final class TemplatePlacement {
     }
 
     /**
+     * Gives each spawned mob its first-spawn setup ({@code onInitialSpawn}: equipment and the like), as
+     * today's jigsaw pieces do ({@code setFinalizeEntities}). Off by default. Since 1.2.0.
+     */
+    public TemplatePlacement finalizeEntities(boolean finalizeEntities) {
+        this.finalizeEntities = finalizeEntities;
+        return this;
+    }
+
+    /**
+     * Today's gravity processor (a {@code terrain_matching} jigsaw piece): each block goes to the ground
+     * height at its column plus {@code offset} plus its own height in the file. Processors still see the
+     * position before the move, as today's do. Null to turn it off (the default). Since 1.2.0.
+     *
+     * @param surface the ground height at a column (x, z), as 1.16's {@code WORLD_SURFACE_WG}
+     */
+    public TemplatePlacement followTerrain(@Nullable IntBinaryOperator surface, int offset) {
+        this.surface = surface;
+        this.surfaceOffset = offset;
+        return this;
+    }
+
+    /**
      * Which of a multi-palette file's palettes to build with (shipwrecks have one per wood). -1, the
      * default, picks one from the origin and {@link #seed}, as today's game picks one at random.
      */
@@ -160,6 +187,9 @@ public final class TemplatePlacement {
         out.ignoreAir = this.ignoreAir;
         out.keepWater = this.keepWater;
         out.entities = this.entities;
+        out.finalizeEntities = this.finalizeEntities;
+        out.surface = this.surface;
+        out.surfaceOffset = this.surfaceOffset;
         out.palette = this.palette;
         out.flags = this.flags;
         out.processors.addAll(this.processors);
