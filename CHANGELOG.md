@@ -9,6 +9,8 @@
     neighbors, and wall torches stay up at chunk edges.
 *   Structures can be planned on the sea floor as well as the surface, on every terrain Backport Core
     already reads.
+*   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch. Block and item names use Minecraft's own translations.
+*   The texture switch now shows its name, "1.14 Textures", in the config screen instead of `modernTextures`.
 
 # 1.0.0
 
@@ -22,6 +24,3 @@ First release: the code and textures the update backports share, in one library.
 *   Planning structures on vanilla, superflat, Open Terrain Generator, Biomes O' Plenty, Realistic Terrain
     Generation and 1.18-height terrain.
 *   Registries other mods can add villager and wandering trader trades and smithing upgrades to.
-*   In eighteen languages, config screen included: English, Spanish (Spain and Latin America, including
-    Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional
-    Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch.

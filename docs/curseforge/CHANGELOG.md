@@ -8,6 +8,8 @@ What Update Aquatic Backport needs: waterlogging, today's structure files, and s
 *   **Today's structure files**, Mojang's own, read into 1.12.2 blocks for the backports' structures: shipwrecks, ocean ruins and later ones. Structures are placed chunk by chunk without loading their neighbors, and wall torches stay up at chunk edges.
 *   **Structures on the sea floor**: they can be planned on the sea floor as well as the surface, on every terrain Backport Core already reads.
 *   **An icon** in the mod list.
+*   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch. Block and item names use Minecraft's own translations.
+*   The texture switch now shows its name, "1.14 Textures", in the config screen instead of `modernTextures`.
 
 # 1.0.0
 
@@ -18,4 +20,3 @@ First release: the code and textures the update backports share, in one library.
 *   **Hiding duplicates** when two mods add the same block: one of each pair keeps its recipe and creative tab.
 *   **Planning structures** on vanilla, superflat, Open Terrain Generator, Biomes O' Plenty, Realistic Terrain Generation and 1.18-height terrain.
 *   **Registries** other mods can add villager and wandering trader trades and smithing upgrades to.
-*   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch.
