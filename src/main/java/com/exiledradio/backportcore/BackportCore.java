@@ -1,0 +1,93 @@
+package com.exiledradio.backportcore;
+
+import com.exiledradio.backportcore.config.ConfigImport;
+import com.exiledradio.backportcore.duplicate.DuplicateBlocks;
+import com.exiledradio.backportcore.migrate.FutureMcCommand;
+
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLConstructionEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * Backport Core - the code and assets the update backports share.
+ *
+ * <p>It adds no blocks, items or entities. What it holds (see {@code docs/API.md}):
+ * <ul>
+ * <li>{@code client.ModernTextures} - 1.14's Texture Update for vanilla, and the switch back to
+ * 1.12.2's look ({@code textures.modernTextures}).</li>
+ * <li>{@code duplicate.DuplicateBlocks} - hiding one half of each block pair two mods both add.</li>
+ * <li>{@code migrate} - turning another mod's blocks and items into the backports' own, in a world
+ * that still has that mod or one it has been taken out of. Each backport adds its own pairs.</li>
+ * <li>{@code ownership.BlockOwnership} - which backport owns each shared block.</li>
+ * <li>{@code smithing.SmithingUpgrades} - the netherite-style upgrades a smithing table reads.</li>
+ * <li>{@code trade.TradeRegistry} - villager and wandering trader trades other mods add.</li>
+ * <li>{@code terrain} - where the ground will be, before a chunk exists, on vanilla, superflat and
+ * modded terrain: for laying out structures ahead of generation.</li>
+ * </ul>
+ *
+ * <p>No coremod or Mixin, and nothing here requires another mod: every other mod is reached by name,
+ * behind a {@code Loader.isModLoaded} check.
+ */
+@Mod(
+        modid = BackportCore.MOD_ID,
+        name = BackportCore.MOD_NAME,
+        version = BackportCore.VERSION,
+        acceptedMinecraftVersions = "[1.12.2]",
+        // Nothing of its own goes over the network: a client without it can join a server that has it.
+        acceptableRemoteVersions = "*"
+)
+public final class BackportCore {
+
+    public static final String MOD_ID = "backportcore";
+    public static final String MOD_NAME = "Backport Core";
+    public static final String VERSION = "@VERSION@";
+
+    public static final Logger LOGGER = LogManager.getLogger(MOD_NAME);
+
+    /**
+     * FML builds this before it reads this mod's config for the first time, which is the one moment
+     * an older mod's setting can become this one's default (see {@link ConfigImport}).
+     */
+    public BackportCore() {
+        ConfigImport.importOnce();
+    }
+
+    /**
+     * The texture packs go in before FML's one resource load ahead of pre-init - see ModernTextures.
+     * The call names no client type, so a dedicated server never loads that class.
+     */
+    @Mod.EventHandler
+    public void construct(FMLConstructionEvent event) {
+        if (event.getSide().isClient()) {
+            com.exiledradio.backportcore.client.ModernTextures.install();
+        }
+    }
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(new CoreConfig.EventHandler());
+    }
+
+    /** Every mod's blocks are registered and none has been listed anywhere yet. */
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent event) {
+        DuplicateBlocks.hideFromCreative();
+    }
+
+    /** Recipes another mod added after the recipe registry event. */
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        DuplicateBlocks.removeLateRecipes();
+    }
+
+    @Mod.EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new FutureMcCommand());
+    }
+}

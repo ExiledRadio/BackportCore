@@ -1,0 +1,143 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "https://maven.minecraftforge.net/"
+        }
+        maven {
+            name = "github"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle2:[2.3-1.0.0-SNAPSHOT,)'
+    }
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = mod_version
+group = mod_group
+archivesBaseName = mod_archives_name
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+minecraft {
+	// Single-sourced from gradle.properties - see the ceiling note on forge_version there.
+	version = "${mc_version}-${forge_version}"
+    mappings = "stable_39"
+	runDir = "eclipse"
+
+	replace '@VERSION@', project.version
+	replaceIn 'BackportCore.java'
+}
+
+processResources {
+	// Gradle does not treat `expand` values as task inputs, so without declaring them here the task
+	// stays UP-TO-DATE across a version bump and the jar ships an mcmod.info claiming the old version.
+	inputs.property 'version', project.version
+	inputs.property 'mod_id', mod_id
+	inputs.property 'mod_name', mod_name
+	inputs.property 'mod_author', mod_author
+	inputs.property 'mod_description', mod_description
+	inputs.property 'mod_credits', mod_credits
+	inputs.property 'mod_url', mod_url
+	inputs.property 'mc_version', mc_version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version,
+		'mod_id': mod_id,
+		'mod_name': mod_name,
+		'mod_author': mod_author,
+		'mod_description': mod_description,
+		'mod_credits': mod_credits,
+		'mod_url': mod_url,
+		'mc_version': mc_version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+// No third-party dependencies, and no coremod or Mixin: every other mod is reached by name and
+// reflection, behind a Loader.isModLoaded check.
+
+// The MCP-named jar the backports compile against (plain `compile`, never deobfCompile from a
+// flatDir: FG2 would then compile against the SRG-named jar). It is also what puts this library on
+// a dependent's runClient/runServer classpath, where FML finds it as a mod.
+task devJar(type: Jar) {
+	classifier = 'dev'
+	from sourceSets.main.output
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives devJar
+	archives sourcesJar
+}
+
+// After any change here: `gradlew build copyToDependents`. Each backport that lists this library
+// compiles against the dev jar in its deps/ folder. Only workspaces that already have a deps/ folder
+// get one, so this never creates folders in a repository that does not use the library.
+def dependents = ['RLCraftVillagerTrading', 'RLCraftVillagerTrading-core-extraction', 'UpdateAquaticBackport']
+
+task copyToDependents(dependsOn: 'devJar') {
+	doLast {
+		dependents.each { name ->
+			def depsDir = file("../${name}/deps")
+			if (depsDir.isDirectory()) {
+				fileTree(depsDir).matching { include "${archivesBaseName}-*.jar" }.each { it.delete() }
+				copy {
+					from devJar.archivePath
+					into depsDir
+				}
+				logger.lifecycle("Copied ${devJar.archiveName} to ${depsDir}")
+			}
+		}
+	}
+}
+
+// Dev convenience: copies the built jar straight into a local test instance. Opt-in and
+// machine-local - set `deployDir` in ~/.gradle/gradle.properties, not here.
+def deployDir = project.findProperty('deployDir')
+
+task deployToInstance(type: Copy) {
+	onlyIf { deployDir && file(deployDir).isDirectory() }
+
+	// A version bump would otherwise leave the old jar beside the new one, and FML refuses to start
+	// with two mods declaring the same mod id.
+	doFirst {
+		if (deployDir && file(deployDir).isDirectory()) {
+			file(deployDir).listFiles()?.each { f ->
+				if (f.name ==~ /^${archivesBaseName}-[0-9].*\.jar$/ && !f.name.endsWith('-dev.jar')
+						&& !f.name.endsWith('-sources.jar')) {
+					logger.lifecycle("Removing previous build: ${f.name}")
+					f.delete()
+				}
+			}
+		}
+	}
+
+	from jar.archivePath
+	into deployDir ?: "$buildDir/deploy"
+	rename { "${archivesBaseName}-${project.version}.jar" }
+}
+
+deployToInstance.dependsOn reobfJar
+
+// reobfJar rewrites the jar in place, which Gradle cannot see, so it can decide there is nothing to
+// do and leave a jar with development names in it. That jar works in runClient and crashes a real
+// instance with NoSuchMethodError on the first Minecraft method it calls. Always run it - and after
+// any runClient/runServer, build again before copying the jar anywhere.
+reobfJar.outputs.upToDateWhen { false }
+build.finalizedBy deployToInstance
