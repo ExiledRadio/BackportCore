@@ -44,17 +44,18 @@ public final class SelfTestRunner {
         STEPS.add(new Scheduled(delay, name, step));
     }
 
-    static void check(String name, boolean ok, Object detail) {
+    static boolean check(String name, boolean ok, Object detail) {
         if (ok) {
             pass++;
             BackportCore.LOGGER.info("SELFTEST PASS {} ({})", name, detail);
         } else {
             fail(name, detail);
         }
+        return ok;
     }
 
-    static void check(String name, boolean ok) {
-        check(name, ok, "");
+    static boolean check(String name, boolean ok) {
+        return check(name, ok, "");
     }
 
     static void fail(String name, Object detail) {
@@ -66,6 +67,8 @@ public final class SelfTestRunner {
         STEPS.clear();
         WaterTests.schedule();
         StructureTests.schedule();
+        PatchTests.schedule();
+        PoseTests.schedule();
     }
 
     @SubscribeEvent
