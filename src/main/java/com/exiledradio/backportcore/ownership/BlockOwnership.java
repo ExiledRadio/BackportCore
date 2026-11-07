@@ -53,7 +53,11 @@ public final class BlockOwnership {
                 own(vp, wood + "_trapdoor", wood + "_button", wood + "_pressure_plate");
             }
         }
-        own(vp, "blue_ice", "sea_pickle");
+
+        // Update Aquatic Backport (1.13) - blocks only it needs. Blue ice and sea pickles moved here from
+        // Village & Pillage (2026-11-07): V&P's villages and wandering trader use them only when this mod is
+        // installed (blue ice otherwise falls back to packed ice).
+        own("updateaquaticbackport", "blue_ice", "sea_pickle");
     }
 
     private BlockOwnership() {

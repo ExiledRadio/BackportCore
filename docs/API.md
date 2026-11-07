@@ -97,10 +97,7 @@ BlockOwnership.declare("yourmod", "kelp", "dried_kelp_block"); // blocks you shi
 BlockOwnership.provides("yourmod", () -> config.blocksEnabled); // if yours can be switched off
 ```
 
-Village & Pillage's 1.13 blocks (stripped logs and wood, the five wood trapdoors, buttons and pressure plates,
-blue ice, sea pickles) are in the table already. Ask from your block registry event or later. Not done yet:
-the owner remapping another mod's copies when it is added to a world later (use `RegistryEvent.MissingMappings`
-plus the chunk conversion in `migrate.FutureMcRemoved` as the model).
+Village & Pillage's 1.13 blocks (stripped logs and wood, the five wood trapdoors, buttons and pressure plates) are in the table from the start. Blue ice and sea pickles belong to Update Aquatic (moved from Village & Pillage on 2026-11-07): only Update Aquatic registers them, and Village & Pillage uses them when it is installed. Ask from your block registry event or later. Not done yet: the owner remapping another mod's copies when it is added to a world later (use `RegistryEvent.MissingMappings` plus the chunk conversion in `migrate.FutureMcRemoved` as the model).
 
 ## Smithing upgrades (`smithing.SmithingUpgrades`)
 
