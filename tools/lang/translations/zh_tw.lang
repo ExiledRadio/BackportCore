@@ -1,0 +1,5 @@
+# 繁體中文（台灣） - our own text; vanilla names come from Mojang (tools/lang/build_langs.py)
+config.backportcore.textures=材質
+backportcore.general.textures.moderntextures=1.14 材質
+config.backportcore.textures.tooltip=1.14 對原版方塊、物品和生物的材質更新。
+backportcore.general.textures.moderntextures.tooltip=讓原版的方塊、物品和生物換上 1.14 材質更新給它們的材質，再加上 1.15 的附魔光效。停用則保留 1.12.2 的材質，而且對於 1.12.2 原本就有的東西，各移植模組自帶的版本也會恢復 1.12.2 的樣子（燕尾服貓、紅貓和暹羅貓）。\n\n僅限用戶端；伺服器會忽略這一項。你選擇的資源包，以及刻意修改原版材質的其他模組，仍然優先於這一項。無論如何設定，村民、馬和水都會保留 1.12.2 的材質：1.14 的材質與 1.12.2 的模型或顏色不搭。\n\n在遊戲中變更這一項會重新載入資源，效果與 F3+T 相同。
