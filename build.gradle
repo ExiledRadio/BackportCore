@@ -65,8 +65,35 @@ processResources {
     }
 }
 
-// No third-party dependencies, and no coremod or Mixin: every other mod is reached by name and
-// reflection, behind a Loader.isModLoaded check.
+repositories {
+	// CurseMaven serves CurseForge files by project and file id, so the version is pinned exactly.
+	maven { url 'https://cursemaven.com' }
+}
+
+dependencies {
+	// Fluidlogged API 3.3.3 (CurseForge 485654, file 8445863): the one required dependency. It gives
+	// every family block 1.13's waterlogging (see waterlog/). deobfCompile maps it to dev names, and
+	// FG2's GradleStart finds its coremod on the classpath, so runServer loads it. Its license allows
+	// depending on it, not bundling it: never shade or jar-in-jar it.
+	deobfCompile 'curse.maven:fluidlogged-api-485654:8445863'
+}
+
+// Every other mod is reached by name and reflection, behind a Loader.isModLoaded check. No coremod
+// or Mixin of our own.
+
+// Headless self-tests: `gradlew runServer -Pselftest` compiles src/selftest in (FG2's runServer runs
+// from the jar, so the tests have to be in it). A normal build never contains them.
+if (project.hasProperty('selftest')) {
+	sourceSets.main.java.srcDir 'src/selftest/java'
+	sourceSets.main.resources.srcDir 'src/selftest/resources'
+} else {
+	// Gradle's copy into build/resources keeps files a selftest run left there, so the jars leave
+	// them out by name as well.
+	tasks.matching { it.name in ['jar', 'devJar'] }.all {
+		exclude 'assets/backportcore_selftest/**', 'com/exiledradio/backportcore/selftest/**',
+				'com/exiledradio/backportcore/waterlog/MigrationAccess*'
+	}
+}
 
 // The MCP-named jar the backports compile against (plain `compile`, never deobfCompile from a
 // flatDir: FG2 would then compile against the SRG-named jar). It is also what puts this library on
@@ -108,8 +135,9 @@ task copyToDependents(dependsOn: 'devJar') {
 }
 
 // Dev convenience: copies the built jar straight into a local test instance. Opt-in and
-// machine-local - set `deployDir` in ~/.gradle/gradle.properties, not here.
-def deployDir = project.findProperty('deployDir')
+// machine-local - set `coreDeployDir` in ~/.gradle/gradle.properties, not here. Deliberately not the
+// workspace-wide `deployDir`, which points at another mod's instance.
+def deployDir = project.findProperty('coreDeployDir')
 
 task deployToInstance(type: Copy) {
 	onlyIf { deployDir && file(deployDir).isDirectory() }

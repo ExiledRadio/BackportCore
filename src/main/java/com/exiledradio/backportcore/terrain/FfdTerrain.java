@@ -76,6 +76,25 @@ public final class FfdTerrain implements ColumnTerrain {
         return this.exact || this.estimate != null;
     }
 
+    /** The terrain's own surface, under any water: one above it. */
+    @Override
+    public int floor(int x, int z) {
+        if (this.exact) {
+            try {
+                Object sample = this.terrainSample.invoke(this.generator, x >> 4, z >> 4);
+                return (Integer) this.surfaceY.invoke(sample, x & 15, z & 15, this.surfaceRules) + 1;
+            } catch (Exception e) {
+                this.exact = false;
+                BackportCore.LOGGER.warn("Reading Farmer's Future Delight's terrain failed; using its surface estimate.", e);
+            }
+        }
+        try {
+            return (Integer) this.estimate.invoke(this.generator, x, z) + 1;
+        } catch (Exception e) {
+            return 64;
+        }
+    }
+
     /** 1.14's {@code WORLD_SURFACE_WG}: one above the top block of the bare terrain, water included. */
     @Override
     public int height(int x, int z) {

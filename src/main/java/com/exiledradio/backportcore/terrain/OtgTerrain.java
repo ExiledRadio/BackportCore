@@ -2,7 +2,6 @@ package com.exiledradio.backportcore.terrain;
 
 import com.exiledradio.backportcore.BackportCore;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -104,17 +103,20 @@ public final class OtgTerrain implements ColumnTerrain {
         }
     }
 
-    /** Set on a column whose top block is water. OTG heights are 0-256, well below it. */
-    private static final int WET = 1 << 16;
 
     @Override
     public int height(int x, int z) {
-        return column(x, z) & (WET - 1);
+        return column(x, z) & TerrainHeights.HEIGHT_MASK;
+    }
+
+    @Override
+    public int floor(int x, int z) {
+        return (column(x, z) >> TerrainHeights.FLOOR_SHIFT) & TerrainHeights.HEIGHT_MASK;
     }
 
     @Override
     public boolean wet(int x, int z) {
-        return (column(x, z) & WET) != 0;
+        return (column(x, z) & TerrainHeights.WET) != 0;
     }
 
     private int column(int x, int z) {
@@ -139,17 +141,12 @@ public final class OtgTerrain implements ColumnTerrain {
             ChunkPrimer primer = (ChunkPrimer) this.primer.invoke(buffer);
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    int y = 255;
-                    while (y > 0 && primer.getBlockState(x, y, z).getMaterial() == Material.AIR) {
-                        y--;
-                    }
-                    boolean wet = primer.getBlockState(x, y, z).getMaterial().isLiquid();
-                    out[z << 4 | x] = (y + 1) | (wet ? WET : 0);
+                    out[z << 4 | x] = TerrainHeights.packColumn(primer, x, z);
                 }
             }
         } catch (Exception e) {
             BackportCore.LOGGER.warn("Reading Open Terrain Generator's terrain failed at chunk {}, {}.", chunkX, chunkZ, e);
-            java.util.Arrays.fill(out, 64);
+            java.util.Arrays.fill(out, TerrainHeights.pack(64, 64, false));
         }
         return out;
     }
