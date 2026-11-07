@@ -22,7 +22,7 @@ Then `mkdir deps` in the backport, add its folder name to `dependents` in this r
 and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
 
 ```java
-dependencies = "required-after:backportcore@[1.2.0,)"
+dependencies = "required-after:backportcore@[1.1.0,)"
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.

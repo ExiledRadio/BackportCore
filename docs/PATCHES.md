@@ -42,7 +42,7 @@ here and by the backports that use it.
 ## P1. Water travel
 
 *   **Class**: `net.minecraft.entity.EntityLivingBase`, method `travel(FFF)V` (`func_191986_a`).
-    **Transformer**: `asm/WaterTravelTransformer`. **Hooks**: `pose/MovementHooks`. **Since**: 1.2.0.
+    **Transformer**: `asm/WaterTravelTransformer`. **Hooks**: `pose/MovementHooks`. **Since**: 1.1.0.
 *   **Vanilla 1.14**: `PlayerEntity.travel` turns a swimming player's vertical motion toward the look before
     moving; `LivingEntity.travel` slows a sprinting entity in water by 0.9 instead of 0.8 and pulls down by
     1/16 of gravity (0.005, none while sprinting) instead of 0.02.
@@ -73,7 +73,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.client.entity.EntityPlayerSP`, method `onLivingUpdate()V` (`func_70636_d`).
     **Transformer**: `asm/PlayerSprintTransformer`. **Hook**: `pose/client/ClientHooks.beforeLivingUpdate`,
-    which calls each `PlayerMovement.beforeClientMove`. **Since**: 1.2.0.
+    which calls each `PlayerMovement.beforeClientMove`. **Since**: 1.1.0.
 *   **Vanilla 1.14**: `ClientPlayerEntity.livingTick` lets a sprint start in water with the eyes under, keeps
     a swim going on any forward input and through bumping a wall, ends it on leaving the water, never toggles
     creative flight mid-swim, and sinks a sneaking player in water.
@@ -97,7 +97,7 @@ here and by the backports that use it.
 *   **Class**: `net.minecraft.client.model.ModelBiped`, method
     `setRotationAngles(FFFFFFLnet/minecraft/entity/Entity;)V` (`func_78087_a`). **Transformer**:
     `asm/BipedAnglesTransformer`. **Hooks**: `pose/client/ClientHooks.beforeAngles`, `afterHead`,
-    `afterAngles`. **Since**: 1.2.0.
+    `afterAngles`. **Since**: 1.1.0.
 *   **Vanilla 1.14**: `BipedModel.setRotationAngles` blends the head toward -45 degrees and the arms and legs
     into the swim stroke by the swim animation, for the player model and the armor drawn on it alike, and
     draws the model crouched by pose, not by the sneak key.
@@ -124,7 +124,7 @@ here and by the backports that use it.
 *   **Class**: `net.minecraft.client.renderer.entity.RenderPlayer`, method
     `applyRotations(Lnet/minecraft/client/entity/AbstractClientPlayer;FFF)V` (`func_77043_a`, not its
     bridge). **Transformer**: `asm/PlayerRotationsTransformer`. **Hook**:
-    `pose/client/ClientHooks.applyRotations`. **Since**: 1.2.0.
+    `pose/client/ClientHooks.applyRotations`. **Since**: 1.1.0.
 *   **Vanilla 1.14**: `PlayerRenderer.applyRotations` turns the body by `-90 - pitch` in water (flat, -90, out
     of it, crawling), blended by the swim animation, and moves it so it lies where the box is; a sneaking
     player in the swimming pose is not lowered.
@@ -140,7 +140,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.client.renderer.EntityRenderer`, method `orientCamera(F)V` (`func_78467_g`).
     **Transformer**: `asm/CameraHeightTransformer`. **Hook**: `pose/client/ClientHooks.cameraEyeHeight`.
-    **Since**: 1.2.0.
+    **Since**: 1.1.0.
 *   **Vanilla 1.14**: `ActiveRenderInfo.interpolateHeight` moves the camera half way to the eye height each
     tick and draws between the last two heights, so starting a swim or a crawl lowers the view smoothly
     instead of snapping it 1.2 blocks.

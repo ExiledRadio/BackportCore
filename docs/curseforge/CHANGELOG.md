@@ -1,6 +1,6 @@
 # 1.1.0
 
-What Update Aquatic Backport needs: waterlogging, today's structure files, and structures on the sea floor.
+What Update Aquatic Backport needs: waterlogging, today's structure files, structures on the sea floor, and swimming and crawling poses.
 
 **Now requires Fluidlogged API 3.3.3 or newer**, installed beside Backport Core on the client and the server.
 
@@ -10,6 +10,8 @@ What Update Aquatic Backport needs: waterlogging, today's structure files, and s
 *   **An icon** in the mod list.
 *   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch. Block and item names use Minecraft's own translations.
 *   The texture switch now shows its name, "1.14 Textures", in the config screen instead of `modernTextures`.
+*   **1.14's player poses** for the backports to use: a swimming player is 0.6 blocks tall with their eyes at 0.4, a player with no room to stand crawls flat until there is room, and other players see both. Swimmers and crawlers are drawn lying along the swim, armor included, and the camera eases down to the new eye height instead of jumping. Nothing changes until a backport that swims is installed.
+*   A small coremod of the library's own gives these the hooks 1.12.2 lacks. Each of its five patches does exactly what vanilla does unless a backport's swimming is on, and steps aside, keeping vanilla's behavior, when another mod has rewritten the same code.
 
 # 1.0.0
 
