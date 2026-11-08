@@ -30,6 +30,9 @@ public abstract class PresentationOption {
     private GameVersion until;
     @Nullable
     private String after;
+    @Nullable
+    private String tooltipKey;
+    private final java.util.List<OptionScreen> alsoOn = new java.util.ArrayList<OptionScreen>();
     private boolean loaded;
 
     /**
@@ -96,6 +99,54 @@ public abstract class PresentationOption {
     public PresentationOption after(String entry) {
         this.after = entry;
         return this;
+    }
+
+    /**
+     * Its tooltip (1.16-pre1: every option of Video Settings and the screens like it shows one while hovered): a
+     * lang key, as vanilla's {@code "options.screenEffectScale.tooltip"}. Lines break at 200 pixels, as vanilla's.
+     */
+    public PresentationOption tooltip(String key) {
+        this.tooltipKey = key;
+        return this;
+    }
+
+    /** @return its tooltip's lang key, or null */
+    @Nullable
+    public final String tooltipKey() {
+        return this.tooltipKey;
+    }
+
+    /**
+     * Also shows it on another screen, as vanilla does for some (1.16.2's Distortion Effects and FOV Effects are
+     * on Video Settings and on Accessibility Settings). Both buttons change the one value. A screen that does not
+     * exist at the newest version resolves to its fallback, as {@link #screen()} does; the option never shows
+     * twice on one screen.
+     */
+    public PresentationOption alsoOn(OptionScreen... screens) {
+        for (OptionScreen s : screens) {
+            if (s != this.screen && !this.alsoOn.contains(s)) {
+                this.alsoOn.add(s);
+            }
+        }
+        return this;
+    }
+
+    /** @return the other screens it shows on (before {@link OptionScreen#resolve}) */
+    public final java.util.List<OptionScreen> alsoOn() {
+        return java.util.Collections.unmodifiableList(this.alsoOn);
+    }
+
+    /** @return true when, with {@code newest} the newest installed version, it shows on {@code target} */
+    public final boolean isOn(OptionScreen target, GameVersion newest) {
+        if (this.screen.resolve(newest) == target) {
+            return true;
+        }
+        for (OptionScreen s : this.alsoOn) {
+            if (s.resolve(newest) == target) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** @return true while the newest installed version shows it */

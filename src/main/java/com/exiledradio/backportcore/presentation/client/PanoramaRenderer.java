@@ -94,6 +94,49 @@ public final class PanoramaRenderer {
         frames++;
     }
 
+    /**
+     * Draws this frame's panorama (and the newest overlay) again over the finished screen, covering it by
+     * {@code cover} (0 to 1): the title screen's 1.13 fade-in. The clock does not advance.
+     */
+    static void redraw(GuiScreen menu, float cover) {
+        if (cover <= 0.0F) {
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        // drawCube's four jittered passes each blend a / (pass + 1); find the a whose total cover is the one asked.
+        float lo = 0.0F;
+        float hi = 1.0F;
+        for (int i = 0; i < 20; i++) {
+            float mid = (lo + hi) / 2.0F;
+            if (coverOf(mid) < cover) {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        GlStateManager.disableDepth();
+        drawCube(mc, faces(), MathHelper.sin(time * 0.001F) * 5.0F + 25.0F, -time * 0.1F, hi);
+        net.minecraft.util.ResourceLocation overlay = Presentation.panoramaOverlay();
+        if (overlay != null) {
+            mc.getTextureManager().bindTexture(overlay);
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, cover);
+            Gui.drawScaledCustomSizeModalRect(0, 0, 0.0F, 0.0F, 16, 128, menu.width, menu.height, 16.0F, 128.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+        GlStateManager.enableDepth();
+    }
+
+    /** @return how much of what is beneath four passes of alpha a / (pass + 1) cover */
+    static float coverOf(float a) {
+        float left = 1.0F;
+        for (int pass = 0; pass < 4; pass++) {
+            left *= 1.0F - a / (pass + 1);
+        }
+        return 1.0F - left;
+    }
+
     /** 1.13's {@code RenderSkyboxCube.render}, on 1.12.2's GL state manager. */
     static void drawCube(Minecraft mc, ResourceLocation[] faces, float pitch, float yaw, float alpha) {
         Tessellator tessellator = Tessellator.getInstance();

@@ -61,8 +61,32 @@ final class ClientPresentationTests {
     private ClientPresentationTests() {
     }
 
+    static int debugEdits;
+    static int musicAsks;
+    static int skyAsks;
+    static int cloudAsks;
+
     static void register() {
         MinecraftForge.EVENT_BUS.register(new ClientPresentationTests());
+        com.exiledradio.backportcore.presentation.client.DebugText.add("1.16", "selftest line", lines -> {
+            lines.left.add("selftest debug line");
+            debugEdits++;
+        });
+        com.exiledradio.backportcore.presentation.client.DebugText.add("1.14", "selftest older", lines -> lines.left.add("selftest older line"));
+        com.exiledradio.backportcore.presentation.client.GameMusic.add("1.16", "selftest music", s -> musicAsks++);
+        com.exiledradio.backportcore.presentation.client.FogPipeline.add("1.16", "selftest sky and clouds",
+                new com.exiledradio.backportcore.presentation.client.FogPipeline.Step() {
+                    @Override
+                    public void sky(com.exiledradio.backportcore.presentation.client.FogPipeline.Sky sky) {
+                        skyAsks++;
+                    }
+
+                    @Override
+                    public void clouds(com.exiledradio.backportcore.presentation.client.FogPipeline.Clouds clouds) {
+                        cloudAsks++;
+                        clouds.height += 64.0F;
+                    }
+                });
     }
 
     @SubscribeEvent
@@ -77,8 +101,10 @@ final class ClientPresentationTests {
                     if (mc.currentScreen instanceof GuiMainMenu && ++this.menuTicks >= 400) {
                         this.stage = 1;
                         titleScreen(mc);
+                        finishTitle(mc);
                         optionScreens(mc);
                         debugKeys(mc);
+                        multiplayerWarning(mc);
                         this.stage = 2;
                     }
                     break;
@@ -87,16 +113,35 @@ final class ClientPresentationTests {
                     loadWorld(mc);
                     break;
                 case 3:
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 40) {
+                    if (mc.world != null && mc.player != null && this.worldTicks == 5) {
+                        // Things that need a few frames: debug text, chat, sky and clouds.
+                        mc.gameSettings.showDebugInfo = true;
+                        mc.ingameGUI.getChatGUI().printChatMessage(new net.minecraft.util.text.TextComponentString("selftest chat line"));
+                        Presentation.CHAT_DELAY.set(1.0);
+                        net.minecraftforge.client.event.ClientChatReceivedEvent first = new net.minecraftforge.client.event.ClientChatReceivedEvent(
+                                net.minecraft.util.text.ChatType.CHAT, new net.minecraft.util.text.TextComponentString("delayed 1"));
+                        net.minecraftforge.client.event.ClientChatReceivedEvent second = new net.minecraftforge.client.event.ClientChatReceivedEvent(
+                                net.minecraft.util.text.ChatType.CHAT, new net.minecraft.util.text.TextComponentString("delayed 2"));
+                        MinecraftForge.EVENT_BUS.post(first);
+                        MinecraftForge.EVENT_BUS.post(second);
+                        check("client: Chat Delay passes the first line and holds the second", !first.isCanceled() && second.isCanceled()
+                                && com.exiledradio.backportcore.presentation.client.ChatRenderer.queued() == 1,
+                                first.isCanceled() + "/" + second.isCanceled() + " queued " + com.exiledradio.backportcore.presentation.client.ChatRenderer.queued());
+                    }
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60) {
+                        mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
+                        finishWorld(mc);
                         this.stage = 4;
-                        mc.world.sendQuittingDisconnectingPacket();
+                        // loadWorld(null) stops the integrated server itself; a quitting packet first can stop it before
+                        // loadWorld's shutdown task is queued, and that task then never runs (a hang).
                         mc.loadWorld(null);
                         mc.displayGuiScreen(new GuiMainMenu());
                     }
                     break;
                 case 4:
                     this.stage = 5;
+                    backups(mc);
                     BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
                     mc.shutdown();
                     break;
@@ -149,12 +194,29 @@ final class ClientPresentationTests {
         OptionsListScreen accessibility = OptionsListScreen.accessibility(options);
         mc.displayGuiScreen(accessibility);
         List<GuiButton> a = buttons(accessibility);
-        check("client: Accessibility holds narrator, subtitles, the backport option, chat opacity, Auto-Jump in that order",
-                a.size() == 6 && a.get(0).id == GameSettings.Options.NARRATOR.getOrdinal()
+        // 1.16: narrator, subtitles, the backport option (after subtitles), text background opacity, text background,
+        // chat opacity, line spacing, chat delay, Auto-Jump, then the option that is also on Video, then Done.
+        check("client: Accessibility in 1.16.5's order with the backport options placed by their anchors",
+                a.size() == 11 && a.get(0).id == GameSettings.Options.NARRATOR.getOrdinal()
                         && a.get(1).id == GameSettings.Options.SHOW_SUBTITLES.getOrdinal()
-                        && a.get(2) instanceof OptionWidgets.OptionButton
-                        && a.get(3).id == GameSettings.Options.CHAT_OPACITY.getOrdinal()
-                        && a.get(4).id == GameSettings.Options.AUTO_JUMP.getOrdinal() && a.get(5).id == 200, describe(a));
+                        && isOption(a.get(2), PresentationTests.accessibility)
+                        && isOption(a.get(3), Presentation.TEXT_BACKGROUND_OPACITY) && isOption(a.get(4), Presentation.TEXT_BACKGROUND)
+                        && a.get(5).id == GameSettings.Options.CHAT_OPACITY.getOrdinal()
+                        && isOption(a.get(6), Presentation.CHAT_LINE_SPACING) && isOption(a.get(7), Presentation.CHAT_DELAY)
+                        && a.get(8).id == GameSettings.Options.AUTO_JUMP.getOrdinal()
+                        && isOption(a.get(9), PresentationTests.tooltipped) && a.get(10).id == 200, describe(a));
+        check("client: no Accessibility Guide before 1.16.4 (Done is centered)", a.size() > 0
+                && a.get(a.size() - 1).x == accessibility.width / 2 - 100, describe(a));
+        GuiButton delay = a.size() > 7 ? a.get(7) : null;
+        check("client: Chat Delay reads \"Chat Delay: None\" at zero", delay != null && "Chat Delay: None".equals(delay.displayString),
+                delay == null ? "none" : delay.displayString);
+        GuiButton tip = a.size() > 9 ? a.get(9) : null;
+        PresentationTests.tooltipped.set(0.0);
+        if (tip instanceof OptionWidgets.OptionButton) {
+            ((OptionWidgets.OptionButton) tip).refresh();
+        }
+        check("client: a slider with a zero key reads OFF at zero", tip != null && tip.displayString.endsWith(": OFF"), tip == null ? "none" : tip.displayString);
+        PresentationTests.tooltipped.set(1.0);
         check("client: two columns 24 apart", a.size() >= 3 && a.get(1).x - a.get(0).x == 160 && a.get(2).y - a.get(0).y == 24);
         GuiButton option = a.size() > 2 ? a.get(2) : null;
         boolean before = PresentationTests.accessibility.get();
@@ -169,7 +231,27 @@ final class ClientPresentationTests {
         Field listField = ReflectionHelper.findField(GuiVideoSettings.class, "optionsRowList", "field_146501_h");
         Field rowsField = ReflectionHelper.findField(GuiOptionsRowList.class, "options", "field_148184_k");
         List<?> rows = (List<?>) rowsField.get(listField.get(video));
-        check("client: Video Settings gained a row for its two options", rows.size() == 9, rows.size());
+        // 16 vanilla entries, less Anaglyph (1.13) and VBOs (1.14), plus the dummy's two and the also-on-Video one.
+        check("client: Video Settings: 17 entries in 9 rows", rows.size() == 9, rows.size());
+        boolean anaglyph = false;
+        boolean vbo = false;
+        boolean numbered = false;
+        Field rowA = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonA", "field_148323_b");
+        Field rowB = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonB", "field_148324_c");
+        for (Object row : rows) {
+            for (Field f : new Field[] {rowA, rowB}) {
+                GuiButton b = (GuiButton) f.get(row);
+                if (b == null) {
+                    continue;
+                }
+                anaglyph |= b.id == GameSettings.Options.ANAGLYPH.getOrdinal() && !(b instanceof OptionWidgets.OptionButton);
+                vbo |= b.id == GameSettings.Options.USE_VBO.getOrdinal() && !(b instanceof OptionWidgets.OptionButton);
+                numbered |= b.getClass().getSimpleName().equals("GuiScaleButton");
+            }
+        }
+        check("client: Video Settings has no 3D Anaglyph and no Use VBOs, and 1.13's numbered GUI Scale", !anaglyph && !vbo && numbered,
+                "anaglyph " + anaglyph + " vbo " + vbo + " numbered " + numbered);
+        check("client: the removed entries' settings are fixed (anaglyph off, VBOs on)", !mc.gameSettings.anaglyph && mc.gameSettings.useVbo);
 
         ScreenChatOptions chat = new ScreenChatOptions(options, mc.gameSettings);
         mc.displayGuiScreen(chat);
@@ -181,8 +263,15 @@ final class ClientPresentationTests {
             }
         }
         GuiButton done = find(c, 200);
-        check("client: Chat Settings has the cycle in the right half of its last row, Done below it", cycle != null && done != null
-                && cycle.x == chat.width / 2 + 5 && done.y >= cycle.y + 24, cycle == null ? "none" : cycle.x + "," + cycle.y + " done " + done.y);
+        check("client: Chat Settings ends with the dummy cycle, Done below it", cycle != null && done != null
+                && isOption(cycle, PresentationTests.cycle) && done.y >= cycle.y + 24, cycle == null ? "none" : cycle.x + "," + cycle.y + " done " + done.y);
+        int coreOnChat = 0;
+        for (GuiButton b : c) {
+            if (isOption(b, Presentation.TEXT_BACKGROUND_OPACITY) || isOption(b, Presentation.CHAT_LINE_SPACING) || isOption(b, Presentation.CHAT_DELAY)) {
+                coreOnChat++;
+            }
+        }
+        check("client: Chat Settings has Text Background Opacity, Line Spacing and Chat Delay", coreOnChat == 3, coreOnChat);
 
         GuiControls controls = new GuiControls(options, mc.gameSettings);
         mc.displayGuiScreen(controls);
@@ -221,6 +310,160 @@ final class ClientPresentationTests {
 
     private static void inWorld(Minecraft mc) {
         check("client: F3+Q lists the key map in a world", PresentationHooks.processKeyF3(mc, 16));
+    }
+
+    private static boolean isOption(GuiButton b, com.exiledradio.backportcore.presentation.option.PresentationOption o) {
+        return b instanceof OptionWidgets.OptionButton && ((OptionWidgets.OptionButton) b).option() == o;
+    }
+
+    private static void finishTitle(Minecraft mc) throws Exception {
+        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16"}) {
+            check("client: " + p + " applied", "applied".equals(Asm.state(p)), Asm.state(p));
+        }
+        check("client: the vanilla asset pack is in", com.exiledradio.backportcore.presentation.client.VanillaAssetPack.isInstalled());
+        net.minecraft.client.resources.IResource logo = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/title/minecraft.png"));
+        check("client: minecraft:textures/gui/title/minecraft.png comes from Core's pack", "backportcore:vanilla_by_version".equals(logo.getResourcePackName()),
+                logo.getResourcePackName());
+        net.minecraft.client.resources.IResource widgets = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/widgets.png"));
+        check("client: an asset no version replaces is vanilla's", !"backportcore:vanilla_by_version".equals(widgets.getResourcePackName()), widgets.getResourcePackName());
+        check("client: vanilla text newest wins (1.16 over 1.14)", "sixteen".equals(net.minecraft.client.resources.I18n.format("selftest.reworded")),
+                net.minecraft.client.resources.I18n.format("selftest.reworded"));
+        check("client: a vanilla key only 1.14 rewords is 1.14's", "Quit Game (1.14 test)".equals(net.minecraft.client.resources.I18n.format("menu.quit")),
+                net.minecraft.client.resources.I18n.format("menu.quit"));
+        check("client: a vanilla key 1.16 rewords is 1.16's", "Options... (1.16 test)".equals(net.minecraft.client.resources.I18n.format("menu.options")));
+        check("client: and the server-side translation map agrees", "sixteen".equals(net.minecraft.util.text.translation.I18n.translateToLocal("selftest.reworded")));
+        check("client: the startup screen drew 1.16's revision at the end of loading",
+                com.exiledradio.backportcore.presentation.client.StartupScreen.frames > 0
+                        && com.exiledradio.backportcore.presentation.client.StartupScreen.lastDrawn == com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.STUDIOS_1_16,
+                com.exiledradio.backportcore.presentation.client.StartupScreen.frames + " " + com.exiledradio.backportcore.presentation.client.StartupScreen.lastDrawn);
+        check("client: and is gone after two seconds", !com.exiledradio.backportcore.presentation.client.StartupScreen.showing());
+        check("client: the first title screen faded in (1.13)", com.exiledradio.backportcore.presentation.client.TitleScreenExtras.fadeFrames > 0
+                && com.exiledradio.backportcore.presentation.client.TitleScreenExtras.fadeDone(), com.exiledradio.backportcore.presentation.client.TitleScreenExtras.fadeFrames);
+        List<GuiButton> tb = buttons(mc.currentScreen);
+        GuiButton icon = null;
+        for (GuiButton b : tb) {
+            if (b instanceof com.exiledradio.backportcore.presentation.client.TitleScreenExtras.IconButton) {
+                icon = b;
+            }
+        }
+        GuiButton language = find(tb, 5);
+        check("client: the title screen has 1.14's Accessibility button, mirroring Language", icon != null && language != null
+                && icon.y == language.y && icon.x == mc.currentScreen.width / 2 + 104, icon == null ? "none" : icon.x + "," + icon.y);
+        check("client: 1.15's white button text", PresentationHooks.buttonTextColor(14737632) == 0xFFFFFF && PresentationHooks.buttonTextColor(10526880) == 10526880);
+        check("client: Core's in-game music ticker is in place (a step is registered)", mc.getMusicTicker() instanceof com.exiledradio.backportcore.presentation.client.GameMusic.CoreTicker,
+                mc.getMusicTicker().getClass().getName());
+        check("client: the music step is asked every tick, even at the menu", musicAsks > 100, musicAsks);
+        check("client: the menu music still comes from the pool through Core's ticker", MenuMusicPlayer.lastPick != null);
+        List<String> tip = com.exiledradio.backportcore.presentation.client.OptionTooltips.lines("one\\ntwo");
+        check("client: a tooltip keeps its line breaks", tip.size() == 2 && "two".equals(tip.get(1)), tip);
+        check("client: the debug text runs oldest version first", com.exiledradio.backportcore.presentation.client.DebugText.steps()
+                .names(Presentation.newest()).equals(java.util.Arrays.asList("1.14 selftest older", "1.16 selftest line")),
+                com.exiledradio.backportcore.presentation.client.DebugText.steps().names(Presentation.newest()));
+    }
+
+    private static void multiplayerWarning(Minecraft mc) throws Exception {
+        GuiScreen menu = mc.currentScreen;
+        com.exiledradio.backportcore.presentation.option.OptionStore.put(com.exiledradio.backportcore.presentation.client.TitleScreenExtras.SKIP_WARNING, "false");
+        mc.displayGuiScreen(new net.minecraft.client.gui.GuiMultiplayer(menu));
+        check("client: Multiplayer from the title screen shows the warning first",
+                mc.currentScreen instanceof com.exiledradio.backportcore.presentation.client.MultiplayerWarningScreen, mc.currentScreen);
+        GuiScreen warning = mc.currentScreen;
+        List<GuiButton> wb = buttons(warning);
+        check("client: the warning has Proceed, Back and the check box", wb.size() == 3, describe(wb));
+        java.lang.reflect.Method action = ReflectionHelper.findMethod(GuiScreen.class, "actionPerformed", "func_146284_a", GuiButton.class);
+        action.invoke(warning, find(wb, 2));
+        action.invoke(warning, find(wb, 0));
+        check("client: Proceed opens the server list", mc.currentScreen instanceof net.minecraft.client.gui.GuiMultiplayer, mc.currentScreen);
+        check("client: the ticked box is remembered", "true".equals(com.exiledradio.backportcore.presentation.option.OptionStore.get(
+                com.exiledradio.backportcore.presentation.client.TitleScreenExtras.SKIP_WARNING)));
+        mc.displayGuiScreen(menu);
+        mc.displayGuiScreen(new net.minecraft.client.gui.GuiMultiplayer(menu));
+        check("client: after that the server list opens straight away", mc.currentScreen instanceof net.minecraft.client.gui.GuiMultiplayer, mc.currentScreen);
+        mc.displayGuiScreen(menu);
+        com.exiledradio.backportcore.presentation.option.OptionStore.put(com.exiledradio.backportcore.presentation.client.TitleScreenExtras.SKIP_WARNING, "false");
+    }
+
+    private static void finishWorld(Minecraft mc) throws Exception {
+        check("client: P13: Core's chat drew (1.14 and later)", com.exiledradio.backportcore.presentation.client.ChatRenderer.frames > 0,
+                com.exiledradio.backportcore.presentation.client.ChatRenderer.frames);
+        check("client: the held line came out after the delay", com.exiledradio.backportcore.presentation.client.ChatRenderer.queued() == 0,
+                com.exiledradio.backportcore.presentation.client.ChatRenderer.queued());
+        Presentation.CHAT_DELAY.set(0.0);
+        check("client: the debug text steps ran while F3 showed", debugEdits > 0
+                && com.exiledradio.backportcore.presentation.client.DebugText.frames > 0, debugEdits);
+        check("client: P15/P16: the sky and cloud steps were asked", skyAsks > 0 && cloudAsks > 0, "sky " + skyAsks + " clouds " + cloudAsks);
+        check("client: the cloud step moves the cloud layer too", PresentationHooks.cloudLayer(128.0D) == mc.world.provider.getCloudHeight() + 64.0F,
+                PresentationHooks.cloudLayer(128.0D));
+        check("client: the in-game music choice was made", com.exiledradio.backportcore.presentation.client.GameMusic.lastChoice != null,
+                com.exiledradio.backportcore.presentation.client.GameMusic.lastChoice);
+
+        net.minecraft.client.gui.GuiIngameMenu pause = new net.minecraft.client.gui.GuiIngameMenu();
+        mc.displayGuiScreen(pause);
+        List<GuiButton> pb = buttons(pause);
+        int top = pause.height / 4 - 16;
+        GuiButton feedback = null;
+        GuiButton bugs = null;
+        for (GuiButton b : pb) {
+            if (b instanceof OptionWidgets.Action && b.y == top + 72) {
+                if (b.x == pause.width / 2 - 102) {
+                    feedback = b;
+                } else if (b.x == pause.width / 2 + 4) {
+                    bugs = b;
+                }
+            }
+        }
+        GuiButton back = find(pb, 4);
+        GuiButton mods = find(pb, 12);
+        check("client: 1.14's pause menu: Give Feedback and Report Bugs at row 72, 204 wide grid", feedback != null && bugs != null
+                && back != null && back.width == 204 && back.x == pause.width / 2 - 102, describe(pb));
+        check("client: Forge's Mod Options moves below the grid", mods == null || mods.y == top + 144, mods == null ? "none" : mods.y);
+        mc.displayGuiScreen(null);
+
+        java.lang.reflect.Method orderOf = com.exiledradio.backportcore.presentation.client.CreativeOrder.class.getDeclaredMethod("order", net.minecraft.util.ResourceLocation.class);
+        orderOf.setAccessible(true);
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Integer> o = (java.util.Map<String, Integer>) orderOf.invoke(null, Presentation.creativeOrder());
+        java.lang.reflect.Method rank = com.exiledradio.backportcore.presentation.client.CreativeOrder.class.getDeclaredMethod("rank", java.util.Map.class,
+                net.minecraft.item.ItemStack.class);
+        rank.setAccessible(true);
+        int sword = (Integer) rank.invoke(null, o, new net.minecraft.item.ItemStack(net.minecraft.init.Items.DIAMOND_SWORD));
+        int stone = (Integer) rank.invoke(null, o, new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.STONE));
+        int granite = (Integer) rank.invoke(null, o, new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.STONE, 1, 1));
+        int red = (Integer) rank.invoke(null, o, new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.WOOL, 1, 14));
+        check("client: the creative order ranks by name@meta, then name, others last", sword == 0 && stone == 1 && red == 2 && granite == Integer.MAX_VALUE,
+                sword + " " + stone + " " + red + " " + granite);
+        net.minecraft.client.gui.inventory.GuiContainerCreative creative = new net.minecraft.client.gui.inventory.GuiContainerCreative(mc.player);
+        mc.displayGuiScreen(creative);
+        java.lang.reflect.Method setTab = ReflectionHelper.findMethod(net.minecraft.client.gui.inventory.GuiContainerCreative.class, "setCurrentCreativeTab",
+                "func_147050_b", net.minecraft.creativetab.CreativeTabs.class);
+        setTab.invoke(creative, net.minecraft.creativetab.CreativeTabs.COMBAT);
+        int sortsBefore = com.exiledradio.backportcore.presentation.client.CreativeOrder.sorts;
+        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent.Pre(creative, 0, 0, 0.0F));
+        net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> items = ((net.minecraft.client.gui.inventory.GuiContainerCreative.ContainerCreative) creative.inventorySlots).itemList;
+        check("client: the open creative tab is sorted by the newest order (the diamond sword first in Combat)",
+                com.exiledradio.backportcore.presentation.client.CreativeOrder.sorts > sortsBefore && !items.isEmpty()
+                        && items.get(0).getItem() == net.minecraft.init.Items.DIAMOND_SWORD, items.isEmpty() ? "empty" : items.get(0));
+        mc.displayGuiScreen(null);
+    }
+
+    private static void backups(Minecraft mc) {
+        try {
+            File out = new File(mc.gameDir, "selftest-backups");
+            FileUtils.deleteDirectory(out);
+            long size = com.exiledradio.backportcore.presentation.client.WorldBackups.backup(new File(mc.gameDir, "saves"), WORLD, out);
+            File[] zips = out.listFiles();
+            boolean named = zips != null && zips.length == 1 && zips[0].getName().matches("\\d{4}-\\d\\d-\\d\\d_\\d\\d-\\d\\d-\\d\\d_" + WORLD + "\\.zip");
+            boolean hasLevel = false;
+            if (named) {
+                try (java.util.zip.ZipFile z = new java.util.zip.ZipFile(zips[0])) {
+                    hasLevel = z.getEntry(WORLD + "/level.dat") != null && z.getEntry(WORLD + "/session.lock") == null;
+                }
+            }
+            check("client: Make Backup zips the world as 1.13 names it, level.dat in, session.lock out", size > 0 && named && hasLevel,
+                    zips == null ? "none" : java.util.Arrays.toString(zips));
+        } catch (Exception e) {
+            SelfTestRunner.fail("client: backup threw", e.toString());
+        }
     }
 
     private static String splash(GuiMainMenu menu) {

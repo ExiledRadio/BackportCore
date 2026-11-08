@@ -23,6 +23,12 @@ public final class SliderOption extends PresentationOption {
     @Nullable
     private String valueKey;
     @Nullable
+    private String zeroKey;
+    @Nullable
+    private String wholeKey;
+    @Nullable
+    private String wholeZeroKey;
+    @Nullable
     private Consumer<Double> listener;
 
     public SliderOption(String id, String labelKey, OptionScreen screen, double min, double max, double step, double defaultValue) {
@@ -99,6 +105,46 @@ public final class SliderOption extends PresentationOption {
     @Nullable
     public String valueKey() {
         return this.valueKey;
+    }
+
+    /**
+     * At zero the value shows as this lang string instead of the number, as 1.16's "Distortion Effects: OFF"
+     * ({@code zeroKey("options.off")}).
+     */
+    public SliderOption zeroKey(String key) {
+        this.zeroKey = key;
+        return this;
+    }
+
+    @Nullable
+    public String zeroKey() {
+        return this.zeroKey;
+    }
+
+    /**
+     * The whole button text is one lang string with the shown number as {@code %s}, and at zero another one, as
+     * 1.16's Chat Delay ({@code "options.chat.delay"} "Chat Delay: %s seconds", {@code "options.chat.delay_none"}
+     * "Chat Delay: None"). The label key is then only the option's name for the log.
+     */
+    public SliderOption wholeLabel(String key, @Nullable String atZero) {
+        this.wholeKey = key;
+        this.wholeZeroKey = atZero;
+        return this;
+    }
+
+    @Nullable
+    public String wholeKey() {
+        return this.wholeKey;
+    }
+
+    @Nullable
+    public String wholeZeroKey() {
+        return this.wholeZeroKey;
+    }
+
+    /** @return true when the value is at zero (or the range's bottom when that is above zero, never) */
+    public boolean isZero() {
+        return get() == 0.0;
     }
 
     /** @return the value as shown after the label, before any {@link #valueKey}: "50%" or "2.5" */

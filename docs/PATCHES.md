@@ -36,11 +36,11 @@ tasks name it with `-Dfml.coreMods.load`.
 
 **Tested** (`gradlew runServer -Pselftest`, `selftest/PatchTests`): P1 reports itself applied when vanilla
 loads `EntityLivingBase` in the dev server; the coremod is registered with the class loader; the bytes of
-all eleven target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
+all target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same eleven classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same classes from Forge's SRG-named jar (Forge's own classes from its universal jar) (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 
@@ -261,3 +261,72 @@ here and by the backports that use it.
 *   **Fails safe**: method missing: skipped; 1.12.2's (= 1.15's) rules.
 *   **Tested**: transformer chain and SRG names; the vanilla oracle: 1.16.5's strongholds on all six seeds,
     and 1.16.5's 1:4 map 18,000 blocks out (seed 171).
+
+## Frames in production classes (read before writing a patch)
+
+Mojang's shipped classes carry ProGuard's stack map frames, which mark a local as unused (TOP) once the original
+code stops reading it. The coremod writes with `COMPUTE_MAXS` only, so those frames stay. Inserted code may
+therefore read a local only where the original code still reads it later, or at method entry; anything else
+fails JVM verification in a real game while every dev run passes (dev runs use javac-compiled Minecraft, whose
+frames keep every parameter). P12 to P16 read no local at all: each only changes the owner of an existing call
+or passes an existing constant through a hook of the same type.
+
+## P12. Button label colors
+
+*   **Classes**: `net.minecraft.client.gui.GuiButton` and Forge's `net.minecraftforge.fml.client.config.GuiButtonExt`,
+    method `drawButton(Lnet/minecraft/client/Minecraft;IIF)V` (`func_191745_a`). **Transformer**:
+    `asm/ScreenPatchesTransformer`. **Hook**: `presentation/client/PresentationHooks.buttonTextColor`. **Since**: 1.2.0.
+*   **Vanilla 1.15**: a button's label is white whether hovered or not (1.15's `AbstractButton`: 0xFFFFFF when
+    active), where 1.12.2 to 1.14 draw it light gray (0xE0E0E0) and yellow when hovered (0xFFFFA0). The hover
+    outline itself is `textures/gui/widgets.png`, which the 1.15 backport ships (`Contribution.replaceAsset`).
+*   **Why a patch**: the colors are constants inside `drawButton`; every screen's buttons draw through it.
+*   **What changes**: the two constants `14737632` and `16777120` each pass through `buttonTextColor(int)`, which
+    returns them unchanged until the newest installed version is 1.15 or later. The disabled color and a
+    button's own `packedFGColour` are left alone.
+*   **Fails safe**: method missing, or not exactly one of each constant: skipped; 1.12.2's colors.
+*   **Tested**: transformer chain and SRG names (Forge's class from its universal jar); the client self-test.
+
+## P13. The chat's drawing
+
+*   **Classes**: `net.minecraft.client.gui.GuiIngame.renderGameOverlay(F)V` (`func_175180_a`) and Forge's
+    `net.minecraftforge.client.GuiIngameForge.renderChat(II)V`. **Hook**: `PresentationHooks.drawChat`. **Since**: 1.2.0.
+*   **Vanilla 1.14 and 1.16**: Text Background Opacity (the chat's background no longer follows its text's
+    opacity), Line Spacing and Chat Delay's "[+N pending lines]" (1.16.5's `ChatComponent.render`).
+*   **Why a patch**: `GuiNewChat.drawChat` reads its own private fields and fixed numbers; Forge has no chat
+    rendering event. Changing the callers rather than `drawChat` itself keeps other mods' changes to
+    `drawChat` working whenever Core's chat is not in use.
+*   **What changes**: the one `drawChat(updateCounter)` call in each method becomes
+    `PresentationHooks.drawChat(chat, updateCounter)`, which calls vanilla's `drawChat` before 1.14 and Core's
+    `presentation/client/ChatRenderer` from 1.14 on.
+*   **Fails safe**: method missing or not exactly one call: skipped; 1.12.2's chat.
+*   **Tested**: transformer chain and SRG names; the client self-test (chat drawn, delay queue).
+
+## P14. The chat screen
+
+*   **Class**: `net.minecraft.client.gui.GuiChat`, `drawScreen(IIF)V` and `mouseClicked(III)V`. **Hooks**:
+    `PresentationHooks.chatComponent`, `chatBoxColor`. **Since**: 1.2.0.
+*   **Vanilla 1.14 and 1.16**: the component under the mouse is found with the line spacing (1.16.5's
+    `getClickedComponentStyleAt`), and the input box takes the text background opacity when Text Background is
+    "Everywhere" (1.14.4's `Options.getBackgroundColor`).
+*   **What changes**: both `getChatComponent(x, y)` calls change owner; the input box's `Integer.MIN_VALUE`
+    passes through `chatBoxColor(int)`.
+*   **Fails safe**: not exactly one call in each method and one box color: skipped.
+*   **Tested**: transformer chain and SRG names.
+
+## P15 and P16. Sky color and cloud height
+
+*   **Classes**: `net.minecraft.client.renderer.RenderGlobal` (`renderSky(FI)V`, `renderClouds(FIDDD)V`,
+    `renderCloudsFancy(FIDDD)V`; P15) and `net.minecraft.client.renderer.EntityRenderer` (`updateFogColor(F)V`,
+    `renderWorldPass(IFJ)V`; P16). **Hooks**: `PresentationHooks.skyColor`, `cloudHeight`, `cloudLayer`. **Since**: 1.2.0.
+*   **Vanilla**: later versions change the sky and the clouds (1.18 raises the clouds from 128 to 192); the fog
+    pipeline (`presentation/client/FogPipeline`) applies each version's step in order.
+*   **Why a patch**: Forge has events for the fog, not for the sky color or the cloud height.
+*   **What changes**: P15: `renderSky`'s `world.getSkyColor(entity, partialTicks)` and the two cloud passes'
+    `provider.getCloudHeight()` change owner. P16: `updateFogColor`'s `getSkyColor` call changes owner (the fog's
+    blend with the sky follows the same color), and `renderWorldPass`'s two `128.0D` (whether the camera is below
+    the clouds, which decides if they draw before or after the terrain) pass through `cloudLayer(double)`,
+    which returns 128.0 until a step moves the clouds.
+*   **Who it reaches**: nothing changes until a backport adds a step with `sky` or `clouds`.
+*   **Fails safe**: any method missing or a count other than one `getSkyColor`, one `getCloudHeight` per pass
+    and two `128.0D`: skipped for that class; vanilla's sky and clouds.
+*   **Tested**: transformer chain and SRG names; the client self-test's dummy step (clouds +64) sees both.

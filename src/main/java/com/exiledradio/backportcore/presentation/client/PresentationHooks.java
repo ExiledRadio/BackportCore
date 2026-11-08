@@ -125,6 +125,63 @@ public final class PresentationHooks {
         }
     }
 
+    // ---- P12: button labels ----
+
+    /** P12: a button label color 1.12.2's {@code GuiButton.drawButton} uses (normal or hovered). */
+    public static int buttonTextColor(int vanilla) {
+        return com.exiledradio.backportcore.presentation.VanillaRevisions.buttonTextColor(vanilla);
+    }
+
+    // ---- P13, P14: the chat ----
+
+    /** P13: the chat's {@code drawChat(updateCounter)}: Core's from 1.14 on (its text options), vanilla's before. */
+    public static void drawChat(net.minecraft.client.gui.GuiNewChat chat, int updateCounter) {
+        if (ChatRenderer.active()) {
+            ChatRenderer.draw(chat, updateCounter);
+        } else {
+            chat.drawChat(updateCounter);
+        }
+    }
+
+    /** P14: the chat component under the mouse, with the line spacing Core's chat draws. */
+    @javax.annotation.Nullable
+    public static net.minecraft.util.text.ITextComponent chatComponent(net.minecraft.client.gui.GuiNewChat chat, int mouseX, int mouseY) {
+        if (ChatRenderer.active()) {
+            return ChatRenderer.componentAt(chat, mouseX, mouseY);
+        }
+        return chat.getChatComponent(mouseX, mouseY);
+    }
+
+    /** P14: the chat input box's color ({@code Integer.MIN_VALUE}, half black); 1.14's Text Background: Everywhere. */
+    public static int chatBoxColor(int vanilla) {
+        return ChatRenderer.boxColor(vanilla);
+    }
+
+    // ---- P15, P16: sky and clouds ----
+
+    /** P15/P16: {@code world.getSkyColor(entity, partialTicks)}, then the fog pipeline's sky steps. */
+    public static net.minecraft.util.math.Vec3d skyColor(net.minecraft.world.World world, net.minecraft.entity.Entity entity, float partialTicks) {
+        net.minecraft.util.math.Vec3d vanilla = world.getSkyColor(entity, partialTicks);
+        return FogPipeline.skyColor(world, entity, partialTicks, vanilla);
+    }
+
+    /** P15: {@code provider.getCloudHeight()}, then the fog pipeline's cloud steps. */
+    public static float cloudHeight(net.minecraft.world.WorldProvider provider) {
+        return FogPipeline.cloudHeight(provider, provider.getCloudHeight());
+    }
+
+    /**
+     * P16: {@code renderWorldPass}'s 128.0 (whether the camera is below the clouds, which decides whether they draw
+     * before or after the terrain): vanilla's constant until a step moves the clouds, then the height they draw at.
+     */
+    public static double cloudLayer(double vanilla) {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+        if (mc.world == null || !FogPipeline.movesClouds()) {
+            return vanilla;
+        }
+        return cloudHeight(mc.world.provider);
+    }
+
     /**
      * Prints a line in chat as vanilla's F3 keys do: a bold yellow "[Debug]:" and the translated message.
      * For a backport's {@link DebugKeys.Action}.

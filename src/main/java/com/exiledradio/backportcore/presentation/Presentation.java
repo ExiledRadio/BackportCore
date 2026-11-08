@@ -1,5 +1,6 @@
 package com.exiledradio.backportcore.presentation;
 
+import com.exiledradio.backportcore.presentation.option.CycleOption;
 import com.exiledradio.backportcore.presentation.option.OptionScreen;
 import com.exiledradio.backportcore.presentation.option.PresentationOption;
 import com.exiledradio.backportcore.presentation.option.SliderOption;
@@ -46,11 +47,120 @@ public final class Presentation {
     public static final ToggleOption HIDE_SPLASH_TEXTS = new ToggleOption("backportcore:hide_splash_texts",
             "options.hideSplashTexts", OptionScreen.ACCESSIBILITY, false);
 
+    /** 1.14's Text Background Opacity (Accessibility, and Chat Settings): the chat's background apart from its text. */
+    public static final SliderOption TEXT_BACKGROUND_OPACITY = new SliderOption("backportcore:text_background_opacity",
+            "options.accessibility.text_background_opacity", OptionScreen.ACCESSIBILITY, 0.0, 1.0, 0.0, 0.5);
+    /** 1.14's Text Background (Accessibility): Chat Only or Everywhere, where that opacity applies. */
+    public static final CycleOption TEXT_BACKGROUND = new CycleOption("backportcore:text_background",
+            "options.accessibility.text_background", OptionScreen.ACCESSIBILITY, new String[] {"chat", "everywhere"},
+            new String[] {"options.accessibility.text_background.chat", "options.accessibility.text_background.everywhere"}, "chat");
+    /** 1.16's Line Spacing (Chat Settings and Accessibility), 0 to 100%. */
+    public static final SliderOption CHAT_LINE_SPACING = new SliderOption("backportcore:chat_line_spacing",
+            "options.chat.line_spacing", OptionScreen.CHAT, 0.0, 1.0, 0.0, 0.0);
+    /** 1.16's Chat Delay (Chat Settings and Accessibility), 0 to 6 seconds in tenths. */
+    public static final SliderOption CHAT_DELAY = new SliderOption("backportcore:chat_delay",
+            "options.chat.delay_none", OptionScreen.CHAT, 0.0, 6.0, 0.1, 0.0);
+    /** 1.17's Monochrome Logo (Accessibility): the startup screen in black instead of red. */
+    public static final ToggleOption MONOCHROME_LOGO = new ToggleOption("backportcore:monochrome_logo",
+            "options.darkMojangStudiosBackgroundColor", OptionScreen.ACCESSIBILITY, false);
+
     static {
         PANORAMA_SPEED.since("1.19.3");
         HIDE_SPLASH_TEXTS.since("1.20.3");
         registerOption(PANORAMA_SPEED);
         registerOption(HIDE_SPLASH_TEXTS);
+        // 1.16.5's AccessibilityOptionsScreen order: narrator, subtitles, text background opacity, text background,
+        // chat opacity, line spacing, chat delay, Auto-Jump, ...
+        TEXT_BACKGROUND_OPACITY.since("1.14");
+        TEXT_BACKGROUND_OPACITY.after("SHOW_SUBTITLES");
+        TEXT_BACKGROUND_OPACITY.alsoOn(OptionScreen.CHAT);
+        TEXT_BACKGROUND.since("1.14");
+        TEXT_BACKGROUND.after(TEXT_BACKGROUND_OPACITY.id());
+        CHAT_LINE_SPACING.decimals(-1);
+        CHAT_LINE_SPACING.since("1.16");
+        CHAT_LINE_SPACING.after("CHAT_OPACITY");
+        CHAT_LINE_SPACING.alsoOn(OptionScreen.ACCESSIBILITY);
+        CHAT_DELAY.wholeLabel("options.chat.delay", "options.chat.delay_none").decimals(1);
+        CHAT_DELAY.since("1.16");
+        CHAT_DELAY.after(CHAT_LINE_SPACING.id());
+        CHAT_DELAY.alsoOn(OptionScreen.ACCESSIBILITY);
+        MONOCHROME_LOGO.since("1.17");
+        MONOCHROME_LOGO.tooltip("options.darkMojangStudiosBackgroundColor.tooltip");
+        for (PresentationOption o : new PresentationOption[] {TEXT_BACKGROUND_OPACITY, TEXT_BACKGROUND, CHAT_LINE_SPACING, CHAT_DELAY, MONOCHROME_LOGO}) {
+            registerOption(o);
+        }
+    }
+
+    // ---- Single slots: newest installed version that has one ----
+
+    /** @return the source of vanilla asset {@code path} (a path under {@code assets/minecraft/}), or null for vanilla's */
+    @Nullable
+    public static ResourceLocation asset(String path) {
+        ResourceLocation found = null;
+        for (Contribution c : installed()) {
+            ResourceLocation r = c.assets.get(path);
+            if (r != null) {
+                found = r;
+            }
+        }
+        return found;
+    }
+
+    /** @return every vanilla asset path an installed version replaces, with its newest source */
+    public static Map<String, ResourceLocation> assets() {
+        Map<String, ResourceLocation> out = new LinkedHashMap<String, ResourceLocation>();
+        for (Contribution c : installed()) {
+            out.putAll(c.assets);
+        }
+        return out;
+    }
+
+    /** @return every installed version's vanilla-text folders, oldest version first (later ones win) */
+    public static List<ResourceLocation> vanillaTexts() {
+        List<ResourceLocation> out = new ArrayList<ResourceLocation>();
+        for (Contribution c : installed()) {
+            out.addAll(c.texts);
+        }
+        return out;
+    }
+
+    /** @return the title screen's Accessibility icon from 1.14 on, or null when none is to show */
+    @Nullable
+    public static ResourceLocation titleAccessibilityIcon() {
+        if (!isAtLeast("1.14")) {
+            return null;
+        }
+        ResourceLocation found = null;
+        for (Contribution c : installed()) {
+            if (c.accessibilityIcon != null) {
+                found = c.accessibilityIcon;
+            }
+        }
+        return found;
+    }
+
+    /** @return the multiplayer warning's {header, message, check} keys, or null when no installed version has it */
+    @Nullable
+    public static String[] multiplayerWarning() {
+        String[] found = null;
+        for (Contribution c : installed()) {
+            if (c.multiplayerWarning != null) {
+                found = c.multiplayerWarning;
+            }
+        }
+        return found == null ? null : found.clone();
+    }
+
+    /** @return the newest installed version's creative order file, or null */
+    @Nullable
+    public static ResourceLocation creativeOrder() {
+        ResourceLocation found = null;
+        for (Contribution c : installed()) {
+            if (c.creativeOrder != null) {
+                found = c.creativeOrder;
+            }
+        }
+        return found;
     }
 
     private Presentation() {
@@ -178,7 +288,7 @@ public final class Presentation {
         GameVersion newest = newest();
         List<PresentationOption> out = new ArrayList<PresentationOption>();
         for (PresentationOption o : options()) {
-            if (o.isShownAt(newest) && o.screen().resolve(newest) == screen) {
+            if (o.isShownAt(newest) && o.isOn(screen, newest)) {
                 out.add(o);
             }
         }

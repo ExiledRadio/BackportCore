@@ -40,6 +40,14 @@ public final class Contribution {
     final List<Integer> debugRemoves = new ArrayList<Integer>();
     final List<VersionedDefaults.Entry> defaults = new ArrayList<VersionedDefaults.Entry>();
     final List<PresentationOption> options = new ArrayList<PresentationOption>();
+    final java.util.Map<String, ResourceLocation> assets = new java.util.LinkedHashMap<String, ResourceLocation>();
+    final List<ResourceLocation> texts = new ArrayList<ResourceLocation>();
+    @Nullable
+    ResourceLocation accessibilityIcon;
+    @Nullable
+    String[] multiplayerWarning;
+    @Nullable
+    ResourceLocation creativeOrder;
 
     Contribution(GameVersion version) {
         this.version = version;
@@ -216,6 +224,84 @@ public final class Contribution {
     /** An F3 key combination this version removed: F3 + {@code keyCode} does nothing from this version on. */
     public Contribution removeDebugKey(int keyCode) {
         this.debugRemoves.add(keyCode);
+        return this;
+    }
+
+    // ---- Vanilla assets and text ----
+
+    /**
+     * One of vanilla's own assets as this version shipped it: {@code replaceAsset("textures/gui/title/minecraft.png",
+     * new ResourceLocation("netherupdatebackport", "textures/gui/title/minecraft.png"))}. Core serves {@code
+     * minecraft:<path>} from the newest installed version that replaces it, through its own resource pack above
+     * vanilla's (a player's resource packs still win, as in vanilla). The file is read from the backport's jar.
+     * Core never ships a vanilla asset.
+     *
+     * <p>The title logo ({@link #titleLogo}), the startup screen's logo ({@link #startupLogo}) and the button
+     * texture ({@code textures/gui/widgets.png}, 1.15's highlight) are all this.
+     */
+    public Contribution replaceAsset(String vanillaPath, ResourceLocation source) {
+        this.assets.put(vanillaPath, source);
+        return this;
+    }
+
+    /** This version's title logo: {@code replaceAsset("textures/gui/title/minecraft.png", logo)} (1.16 redrew it). */
+    public Contribution titleLogo(ResourceLocation logo) {
+        return replaceAsset("textures/gui/title/minecraft.png", logo);
+    }
+
+    /**
+     * This version's startup-screen logo, by vanilla's own file name at that version: 1.14's
+     * {@code textures/gui/title/mojang.png}, 1.16's {@code textures/gui/title/mojangstudios.png}. Which layout the
+     * screen has (1.14's white screen and bar, 1.16's red one) is Core's table ({@link StartupRevision}).
+     */
+    public Contribution startupLogo(String vanillaPath, ResourceLocation logo) {
+        return replaceAsset(vanillaPath, logo);
+    }
+
+    /**
+     * This version's rewording of vanilla's own text: a folder in the backport's assets holding {@code <code>.lang}
+     * files ({@code new ResourceLocation("netherupdatebackport", "vanilla_text")} is {@code
+     * assets/netherupdatebackport/vanilla_text/en_us.lang} and so on), each with vanilla's keys only. Core loads
+     * every installed version's files into {@code minecraft}'s language, oldest version first, so where two
+     * versions reword one key the newest wins, whatever order the mods load in. Keep vanilla's keys out of the
+     * mod's own {@code lang/} folder, which would decide by load order instead.
+     */
+    public Contribution vanillaText(ResourceLocation folder) {
+        this.texts.add(folder);
+        return this;
+    }
+
+    // ---- Title screen and menus ----
+
+    /**
+     * The icon of 1.14's Accessibility button on the title screen (19w13a), vanilla's {@code
+     * textures/gui/accessibility.png}: a 32 by 64 texture, the plain icon at the top and the hovered one 20 pixels
+     * down. The button shows from 1.14 on, with the newest version's icon that has one.
+     */
+    public Contribution titleAccessibilityIcon(ResourceLocation icon) {
+        this.accessibilityIcon = icon;
+        return this;
+    }
+
+    /**
+     * The multiplayer warning screen (1.15.2's "Online play is not rated", reworded in 1.16) shown before the
+     * server list, from the title screen, until "Do not show this screen again" is ticked: its header, message and
+     * check-box lang keys (vanilla's are {@code multiplayerWarning.header}, {@code .message}, {@code .check}).
+     * Newest version wins.
+     */
+    public Contribution multiplayerWarning(String headerKey, String messageKey, String checkKey) {
+        this.multiplayerWarning = new String[] {headerKey, messageKey, checkKey};
+        return this;
+    }
+
+    /**
+     * This version's creative inventory order: a text file in the backport's assets, one item per line, as
+     * {@code modid:name} or {@code modid:name@meta}, in the order the version lists them (any tab). Every tab is
+     * sorted by it, items not in it keeping their own order after those that are. The newest version with a file
+     * wins.
+     */
+    public Contribution creativeOrder(ResourceLocation file) {
+        this.creativeOrder = file;
         return this;
     }
 

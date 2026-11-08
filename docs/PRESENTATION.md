@@ -30,6 +30,12 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Menu music | `v.addMenuMusic("modid:music/menu/track", 1)`, `v.removeMenuMusic("minecraft:music/menu/menu1")` | Sound names as sounds.json writes them; the `.ogg` sits under `assets/<modid>/sounds/`. Streamed, full volume, weighted. |
 | F3 keys | `v.debugKey(Keyboard.KEY_C, "debug.copy_location.help", () -> {...; return true;})`, `v.removeDebugKey(Keyboard.KEY_F)` | LWJGL 2 key codes. Register the action from client code (it runs on the client thread, no screen open). `PresentationHooks.debugFeedback("key", args)` prints vanilla's yellow "[Debug]:" line. |
 
+| Vanilla assets | `v.replaceAsset("textures/gui/widgets.png", new ResourceLocation("modid", "textures/gui/widgets.png"))`, and the shorthands `v.titleLogo(rl)` (`minecraft.png`) and `v.startupLogo("textures/gui/title/mojangstudios.png", rl)` | Core's own resource pack serves `minecraft:<path>` from the newest version that replaces it, above vanilla's default pack (a player's resource packs still win). Read from the backport's jar. |
+| Vanilla text | `v.vanillaText(new ResourceLocation("modid", "vanilla_text"))` | `assets/modid/vanilla_text/<code>.lang`, vanilla's keys only. Composed into `minecraft:lang/<code>.lang`, oldest version first, so the newest wording wins whatever the mod load order. Keep vanilla keys out of the mod's own `lang/`. |
+| Title Accessibility icon (1.14) | `v.titleAccessibilityIcon(rl)` | Vanilla's 32 by 64 `accessibility.png`. The button shows from 1.14 with the newest icon. |
+| Multiplayer warning (1.15.2) | `v.multiplayerWarning("multiplayerWarning.header", "multiplayerWarning.message", "multiplayerWarning.check")` | Shown before the server list from the title screen until dismissed for good (`backportcore:skip_multiplayer_warning`). The wording is whatever the newest version's text says. |
+| Creative order | `v.creativeOrder(new ResourceLocation("modid", "creative_order.txt"))` | One `modid:name` or `modid:name@meta` per line; every tab is sorted by the newest file, unnamed items after. |
+| Option polish | `option.tooltip("options.x.tooltip")`, `option.alsoOn(OptionScreen.VIDEO)`, `slider.zeroKey("options.off")`, `slider.wholeLabel("options.chat.delay", "options.chat.delay_none")` | 1.16's tooltips (wrapped at 200 pixels), one option on two screens (one value), "OFF" at zero, and labels that are one sentence. |
 Client-only registrations, from the backport's client proxy:
 
 | Piece | Call | Notes |
@@ -37,6 +43,9 @@ Client-only registrations, from the backport's client proxy:
 | Fog | `FogPipeline.add("1.13", "underwater visibility", step)` | `FogPipeline.Step` has `colors`, `density` and `distance`, each optional. Steps run oldest version first, each seeing what the ones before did. |
 | Loading screen drawer | `LoadingScreens.register(LoadingRevision.PANORAMA_1_20_5, drawer)` | For the revisions Core does not draw (1.20.5, 1.21, 1.21.9). |
 
+| Debug text (F3) | `DebugText.add("1.15", "no chunk updates", lines -> ...)` | Each step edits `lines.left` and `lines.right` in place, oldest version first, before other mods add their lines (Forge's `RenderGameOverlayEvent.Text`). |
+| In-game music | `GameMusic.add("1.13", "under water", s -> { if (...) s.choose(new GameMusic.Track(event, 12000, 24000, false)); })` | The choice starts as 1.12.2's (`getAmbientMusicType`); each version's step may change it. Core's ticker (1.16.5's `MusicManager`, each track saying whether it cuts off another) replaces vanilla's once a step exists. |
+| Sky and clouds | `FogPipeline.add(version, name, step)` with `sky(Sky)` / `clouds(Clouds)` | Patches P15 and P16: the sky dome, the fog's blend with the sky, both cloud passes and the camera-above-clouds test. |
 Core resolves everything lazily, so the order backports load in does not matter.
 
 ## How each piece resolves
@@ -83,16 +92,37 @@ Core resolves everything lazily, so the order backports load in does not matter.
 * **F3 keys** (patch P7): once a version changes the map, every F3 combination goes through it; F3+Q lists
   the map, letter keys alphabetically, then the others in the order added.
 
+## What Core decides by version (no registration)
+
+Core knows vanilla's own screens at each version (`VanillaRevisions`), as it knows the loading screen's, so a
+change one version made stays made when only a later backport is installed:
+
+* **Startup screen** (1.14: white, `mojang.png` 256 by 256, the red bar; 1.16: red `0xEF323D`, the Mojang
+  Studios logo in two halves, a white bar; 1.17's Monochrome Logo: black). Drawn when each resource load
+  ends (the game's last one at startup, F3+T, resource packs), covering the screen with the bar full for one
+  second, then fading for one second over what is beneath. Its logo is the backports' `startupLogo`.
+* **Title screen**: 1.13's fade-in on the first start (panorama at once, the rest over the next second); 1.14's
+  Accessibility button (with an icon registered).
+* **Video Settings**: 1.13 removes 3D Anaglyph (off) and numbers GUI Scale (Auto, 1, 2 ... up to what the window
+  fits); 1.14 removes Use VBOs (on).
+* **Pause menu** (1.14): 1.14.4's 204-wide grid with Give Feedback and Report Bugs; Forge's Mod Options moves below.
+* **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
+* **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
+* **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing
+  and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.
+* **Accessibility Guide** (1.16.4): at the bottom of Accessibility Settings, beside Done.
+* **World list** (1.13): Edit World's Make Backup (a zip in `.minecraft/backups`) and Open Backups Folder.
 ## What is not covered yet
 
-* The 1.16 and 1.20 title logos, the Mojang startup screen and 1.17's Monochrome Logo.
-* 1.14's Accessibility button on the title screen (it needs 1.14's icon texture from the backport).
-* The 1.13+ fade-in of the title screen on first start.
-* Reordering or renaming vanilla's own entries on 1.12.2's options screens (a lang change can rename).
-* Sky color and cloud height in the fog pipeline (Forge has no event for them; a patch would be needed).
-* The pause menu, the death screen and the creative tab order (one owner each, still to build).
+* The 1.20 title logo layout (its logo file can be replaced; the 1.20 layout is not drawn).
+* Forge's own loading screen during the game's start stays Forge's; Core's startup screen shows as each load
+  ends. 1.12.2 loads resources in one blocking call, so the bar cannot move during a reload.
+* The world list's search bar (1.13.1): its list, title and focus are private to `GuiWorldSelection`, so it
+  would mean replacing the screen.
+* Optimize World (the Flattening's converter), Command Suggestions (no Brigadier), Raw Input (LWJGL 2), Fabulous
+  graphics, Biome Blend: no 1.12.2 counterpart.
+* Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
 * Key Binds, Online and Font Settings screens.
-
 ## Testing
 
 `gradlew runServer -Pselftest` (delete `eclipse/world` first) checks the registry, the panorama choice, the

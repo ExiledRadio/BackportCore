@@ -147,7 +147,8 @@ public final class OptionsInjector {
 
     private static void video(GuiScreen gui, List<GuiButton> buttons) throws Exception {
         List<PresentationOption> options = Presentation.optionsOn(OptionScreen.VIDEO);
-        if (options.isEmpty()) {
+        boolean edits = com.exiledradio.backportcore.presentation.VanillaRevisions.anaglyphRemoved();
+        if (options.isEmpty() && !edits) {
             return;
         }
         if (videoList == null) {
@@ -176,6 +177,7 @@ public final class OptionsInjector {
                 }
             }
         }
+        VideoOptions.edit(gui, entries, keys);
         insertAfterAnchors(entries, keys, options);
         rows.clear();
         for (int i = 0; i < entries.size(); i += 2) {

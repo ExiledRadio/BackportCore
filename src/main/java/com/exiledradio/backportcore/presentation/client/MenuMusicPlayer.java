@@ -65,7 +65,8 @@ public final class MenuMusicPlayer {
                 accessorList = ReflectionHelper.findField(SoundEventAccessor.class, "accessorList", "field_188716_a");
             }
             MusicTicker ticker = mc.getMusicTicker();
-            if (currentMusic.get(ticker) != sound) {
+            GameMusic.CoreTicker core = ticker instanceof GameMusic.CoreTicker ? (GameMusic.CoreTicker) ticker : null;
+            if ((core != null ? core.current() : currentMusic.get(ticker)) != sound) {
                 return; // someone else's menu-music sound, not the ticker's
             }
             Map<String, Sound> vanilla = new HashMap<String, Sound>();
@@ -79,7 +80,11 @@ public final class MenuMusicPlayer {
                 chosen = new Sound(pick.soundName, 1.0F, 1.0F, pick.weight, Sound.Type.FILE, true);
             }
             Track replacement = new Track(chosen);
-            currentMusic.set(ticker, replacement);
+            if (core != null) {
+                core.setCurrent(replacement);
+            } else {
+                currentMusic.set(ticker, replacement);
+            }
             event.setResultSound(replacement);
             lastPick = pick.soundName;
         } catch (Exception e) {

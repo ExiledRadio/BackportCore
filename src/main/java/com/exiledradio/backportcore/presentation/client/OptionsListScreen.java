@@ -82,9 +82,20 @@ public class OptionsListScreen extends GuiScreen {
             this.buttonList.add(b);
             i++;
         }
+        if (this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast("1.16.4")) {
+            // 1.16.4's AccessibilityOptionsScreen.createFooter: the guide and Done side by side at the bottom.
+            this.buttonList.add(new OptionWidgets.Action(this.width / 2 - 155, this.height - 27, 150, I18n.format("options.accessibility.link"),
+                    () -> MenuScreens.confirmLink(this, GUIDE_URL)));
+            this.buttonList.add(new GuiButton(200, this.width / 2 + 5, this.height - 27, 150, 20, I18n.format("gui.done")));
+            return;
+        }
         int doneY = Math.max(this.height / 6 + 144, lastY + 24);
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, doneY, I18n.format("gui.done")));
     }
+
+    /** 1.16.4's Accessibility Guide. */
+    static final String GUIDE_URL = "https://aka.ms/MinecraftJavaAccessibility";
+
 
     private GuiButton vanillaButton(GameSettings.Options o) {
         if (o.isFloat()) {

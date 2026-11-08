@@ -30,7 +30,7 @@ public final class Asm {
     static final String PRESENTATION_HOOKS = "com/exiledradio/backportcore/presentation/client/PresentationHooks";
     static final String WORLDGEN_HOOKS = "com/exiledradio/backportcore/worldgen/WorldgenHooks";
 
-    /** Each patch's state by its id ("P1".."P11"): "applied", or why it was skipped. Read by the self-tests. */
+    /** Each patch's state by its id ("P1".."P16"): "applied", or why it was skipped. Read by the self-tests. */
     private static final Map<String, String> STATE = new ConcurrentHashMap<String, String>();
 
     private Asm() {
@@ -80,6 +80,46 @@ public final class Asm {
             }
         }
         return found;
+    }
+
+    /**
+     * Changes the owner of every matching call: an instance call becomes a static call of the hook with the same
+     * arguments, the receiver first. The stack is the same before and after, and no local is read, so the
+     * method's stack map frames stay valid (production classes carry ProGuard's frames).
+     *
+     * @return how many calls changed
+     */
+    static int swapCalls(MethodNode method, int opcode, String owner, String mcp, String srg, String desc, String hookName, String hookDesc) {
+        List<MethodInsnNode> found = calls(method, opcode, owner, mcp, srg, desc);
+        for (MethodInsnNode call : found) {
+            method.instructions.set(call, new MethodInsnNode(Opcodes.INVOKESTATIC, PRESENTATION_HOOKS, hookName, hookDesc, false));
+        }
+        return found.size();
+    }
+
+    /** @return every {@code LDC} of exactly this constant in the method */
+    static List<org.objectweb.asm.tree.LdcInsnNode> constants(MethodNode method, Object constant) {
+        List<org.objectweb.asm.tree.LdcInsnNode> out = new ArrayList<org.objectweb.asm.tree.LdcInsnNode>();
+        for (AbstractInsnNode insn : method.instructions.toArray()) {
+            if (insn instanceof org.objectweb.asm.tree.LdcInsnNode && constant.equals(((org.objectweb.asm.tree.LdcInsnNode) insn).cst)) {
+                out.add((org.objectweb.asm.tree.LdcInsnNode) insn);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Passes every {@code LDC} of this constant through a static hook that takes and returns its type (one value
+     * in, one out): the stack is the same afterwards and no local is read, so the frames stay valid.
+     *
+     * @return how many constants were wrapped
+     */
+    static int wrapConstants(MethodNode method, Object constant, String hookName, String hookDesc) {
+        List<org.objectweb.asm.tree.LdcInsnNode> found = constants(method, constant);
+        for (org.objectweb.asm.tree.LdcInsnNode ldc : found) {
+            method.instructions.insert(ldc, new MethodInsnNode(Opcodes.INVOKESTATIC, PRESENTATION_HOOKS, hookName, hookDesc, false));
+        }
+        return found.size();
     }
 
     /** @return every call in the method with this opcode, name and descriptor (any owner when owner is null) */

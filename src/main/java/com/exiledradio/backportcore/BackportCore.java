@@ -88,6 +88,7 @@ public final class BackportCore {
     public void construct(FMLConstructionEvent event) {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.client.ModernTextures.install();
+            com.exiledradio.backportcore.presentation.client.VanillaAssetPack.install();
         }
     }
 
@@ -109,6 +110,9 @@ public final class BackportCore {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         DuplicateBlocks.hideFromCreative();
+        if (event.getSide().isClient()) {
+            com.exiledradio.backportcore.presentation.client.PresentationClient.initLate();
+        }
         // Saved jigsaw pieces (bastions and the like) of every backport that uses Core's assembler.
         net.minecraft.world.gen.structure.MapGenStructureIO.registerStructureComponent(
                 com.exiledradio.backportcore.structure.JigsawPiece.class, "BCJigsaw");
@@ -118,6 +122,8 @@ public final class BackportCore {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         DuplicateBlocks.removeLateRecipes();
+        // World generators of another mod whose duplicate blocks are hidden.
+        DuplicateBlocks.removeGenerators();
     }
 
     /** The world-loading grid records the spawn area from here (integrated and dedicated servers alike). */

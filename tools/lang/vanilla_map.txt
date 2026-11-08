@@ -1,0 +1,2 @@
+gui.proceed = gui.proceed
+options.darkMojangStudiosBackgroundColor.tooltip = options.darkMojangStudiosBackgroundColor.tooltip

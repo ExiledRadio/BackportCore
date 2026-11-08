@@ -78,7 +78,12 @@ final class PresentationTests {
                 .removeSplashes("Made by Notch!")
                 .option(defaulted).option(overridden)
                 .optionDefault(defaulted, "true")
-                .optionDefault(overridden, "y");
+                .optionDefault(overridden, "y")
+                .titleLogo(new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_1.png"))
+                .startupLogo("textures/gui/title/mojang.png", new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_2.png"))
+                .vanillaText(new ResourceLocation(DOMAIN, "vanilla_text_14"))
+                .titleAccessibilityIcon(new ResourceLocation(DOMAIN, "textures/gui/accessibility.png"))
+                .multiplayerWarning("selftest.warning.header", "selftest.warning.message", "selftest.warning.check");
         toggle = new ToggleOption(DOMAIN + ":toggle", "options.selftest.toggle", OptionScreen.VIDEO, true);
         slider = new SliderOption(DOMAIN + ":slider", "options.selftest.slider", OptionScreen.VIDEO, 0.5, 5.0, 0.25, 1.0);
         cycle = new CycleOption(DOMAIN + ":cycle", "options.selftest.cycle", OptionScreen.CHAT,
@@ -101,7 +106,92 @@ final class PresentationTests {
                     copyRuns++;
                     return true;
                 })
-                .removeDebugKey(33);
+                .removeDebugKey(33)
+                .titleLogo(new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_3.png"))
+                .startupLogo("textures/gui/title/mojangstudios.png", new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_4.png"))
+                .vanillaText(new ResourceLocation(DOMAIN, "vanilla_text_16"))
+                .creativeOrder(new ResourceLocation(DOMAIN, "creative_order.txt"));
+        tooltipped = new SliderOption(DOMAIN + ":tooltipped", "options.selftest.tooltipped", OptionScreen.ACCESSIBILITY, 0.0, 1.0, 0.0, 1.0);
+        tooltipped.zeroKey("options.off");
+        tooltipped.tooltip("options.selftest.tooltipped.tooltip");
+        tooltipped.alsoOn(OptionScreen.VIDEO, OptionScreen.ACCESSIBILITY);
+        tooltipped.since("1.16");
+        Presentation.version("1.16").option(tooltipped);
+    }
+
+    static SliderOption tooltipped;
+
+    /** CORE_REQUESTS (Nether 8, Buzzy Bees 7, Village & Pillage, Update Aquatic): the rest of the module. */
+    static void scheduleFinish() {
+        then(1, "presentation: vanilla assets, text and single slots", world -> {
+            check("finish: the title logo is the newest version's (1.16 over 1.14)",
+                    new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_3.png").equals(Presentation.asset("textures/gui/title/minecraft.png")),
+                    Presentation.asset("textures/gui/title/minecraft.png"));
+            check("finish: 1.14's startup logo stays (no later version replaces mojang.png)",
+                    new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_2.png").equals(Presentation.asset("textures/gui/title/mojang.png")));
+            check("finish: an asset no version replaces is vanilla's", Presentation.asset("textures/gui/widgets.png") == null);
+            check("finish: three vanilla assets replaced", Presentation.assets().size() == 3, Presentation.assets());
+            check("finish: vanilla text folders oldest version first", Presentation.vanillaTexts().equals(Arrays.asList(
+                    new ResourceLocation(DOMAIN, "vanilla_text_14"), new ResourceLocation(DOMAIN, "vanilla_text_16"))), Presentation.vanillaTexts());
+            check("finish: the title Accessibility icon is 1.14's, the only one", new ResourceLocation(DOMAIN, "textures/gui/accessibility.png")
+                    .equals(Presentation.titleAccessibilityIcon()));
+            String[] warn = Presentation.multiplayerWarning();
+            check("finish: the multiplayer warning is the newest that has one (1.14's here)", warn != null && "selftest.warning.header".equals(warn[0]),
+                    warn == null ? "none" : Arrays.toString(warn));
+            check("finish: creative order from 1.16", new ResourceLocation(DOMAIN, "creative_order.txt").equals(Presentation.creativeOrder()));
+        });
+        then(1, "presentation: vanilla revisions by version", world -> {
+            com.exiledradio.backportcore.presentation.VanillaRevisions.Startup s;
+            check("finish: startup screen: none at 1.13, the bar at 1.14 and 1.15, Mojang Studios at 1.16",
+                    com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.forVersion(GameVersion.parse("1.13")) == com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.NONE
+                            && com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.forVersion(GameVersion.parse("1.15.2")) == com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.BAR_1_14
+                            && com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.forVersion(GameVersion.parse("1.16")) == com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.STUDIOS_1_16);
+            s = com.exiledradio.backportcore.presentation.VanillaRevisions.startup();
+            check("finish: at the newest (1.16) it is Mojang Studios, logo mojangstudios.png", s == com.exiledradio.backportcore.presentation.VanillaRevisions.Startup.STUDIOS_1_16
+                    && "textures/gui/title/mojangstudios.png".equals(s.logoPath()), s);
+            check("finish: 1.15's white button text, hovered or not", com.exiledradio.backportcore.presentation.VanillaRevisions.buttonTextColor(0xE0E0E0) == 0xFFFFFF
+                    && com.exiledradio.backportcore.presentation.VanillaRevisions.buttonTextColor(0xFFFFA0) == 0xFFFFFF
+                    && com.exiledradio.backportcore.presentation.VanillaRevisions.buttonTextColor(0xA0A0A0) == 0xA0A0A0);
+            check("finish: 1.13 to 1.15 table: fade-in, Anaglyph and VBOs gone, numbered GUI scale, feedback row, hardcore title button",
+                    com.exiledradio.backportcore.presentation.VanillaRevisions.titleFadeIn() && com.exiledradio.backportcore.presentation.VanillaRevisions.anaglyphRemoved()
+                            && com.exiledradio.backportcore.presentation.VanillaRevisions.vboRemoved() && com.exiledradio.backportcore.presentation.VanillaRevisions.numberedGuiScale()
+                            && com.exiledradio.backportcore.presentation.VanillaRevisions.pauseFeedback() && com.exiledradio.backportcore.presentation.VanillaRevisions.hardcoreTitleButton());
+        });
+        then(1, "presentation: Core's chat and accessibility options", world -> {
+            GameVersion v116 = GameVersion.parse("1.16");
+            List<PresentationOption> access = Presentation.optionsOn(OptionScreen.ACCESSIBILITY);
+            List<PresentationOption> chat = Presentation.optionsOn(OptionScreen.CHAT);
+            check("finish: Text Background Opacity on Accessibility and Chat (1.14)", access.contains(Presentation.TEXT_BACKGROUND_OPACITY)
+                    && chat.contains(Presentation.TEXT_BACKGROUND_OPACITY));
+            check("finish: Text Background on Accessibility only", access.contains(Presentation.TEXT_BACKGROUND) && !chat.contains(Presentation.TEXT_BACKGROUND));
+            check("finish: Line Spacing and Chat Delay on Chat and Accessibility (1.16)", chat.contains(Presentation.CHAT_LINE_SPACING)
+                    && chat.contains(Presentation.CHAT_DELAY) && access.contains(Presentation.CHAT_LINE_SPACING) && access.contains(Presentation.CHAT_DELAY));
+            check("finish: Line Spacing is not shown at 1.15", !Presentation.CHAT_LINE_SPACING.isShownAt(GameVersion.parse("1.15.2")));
+            check("finish: Monochrome Logo waits for 1.17", !Presentation.MONOCHROME_LOGO.isShown() && Presentation.MONOCHROME_LOGO.isShownAt(GameVersion.parse("1.17")));
+            check("finish: an option on two screens shows once on each", count(access, tooltipped) == 1
+                    && count(Presentation.optionsOn(OptionScreen.VIDEO), tooltipped) == 1, tooltipped.alsoOn());
+            check("finish: isOn follows the fallback (Accessibility is Chat before 1.14)", tooltipped.isOn(OptionScreen.CHAT, GameVersion.parse("1.13"))
+                    && !tooltipped.isOn(OptionScreen.CHAT, v116));
+            check("finish: tooltip and zero key kept", "options.selftest.tooltipped.tooltip".equals(tooltipped.tooltipKey()) && "options.off".equals(tooltipped.zeroKey()));
+            double was = tooltipped.get();
+            tooltipped.set(0.0);
+            check("finish: zero is zero", tooltipped.isZero());
+            tooltipped.set(was);
+            check("finish: Chat Delay reads as one sentence, None at zero", "options.chat.delay".equals(Presentation.CHAT_DELAY.wholeKey())
+                    && "options.chat.delay_none".equals(Presentation.CHAT_DELAY.wholeZeroKey()) && Presentation.CHAT_DELAY.snap(2.04) == 2.0);
+            check("finish: 1.16.5's order: chat delay after line spacing after chat opacity", "CHAT_OPACITY".equals(Presentation.CHAT_LINE_SPACING.after())
+                    && Presentation.CHAT_LINE_SPACING.id().equals(Presentation.CHAT_DELAY.after()) && "SHOW_SUBTITLES".equals(Presentation.TEXT_BACKGROUND_OPACITY.after()));
+        });
+    }
+
+    private static int count(List<PresentationOption> list, PresentationOption o) {
+        int n = 0;
+        for (PresentationOption x : list) {
+            if (x == o) {
+                n++;
+            }
+        }
+        return n;
     }
 
     static void schedule() {
@@ -142,7 +232,8 @@ final class PresentationTests {
             check("a 1.20 option is hidden at 1.16", !future.isShown() && future.isShownAt(GameVersion.parse("1.20")));
             check("an option removed in 1.15 is hidden at 1.16, shown at 1.14", !retired.isShown() && retired.isShownAt(v114));
             List<PresentationOption> video = Presentation.optionsOn(OptionScreen.VIDEO);
-            check("Video shows the toggle and the slider only", video.size() == 2 && video.contains(toggle) && video.contains(slider), ids(video));
+            check("Video shows the toggle and the slider, and the option also placed there", video.size() == 3 && video.contains(toggle)
+                    && video.contains(slider) && video.contains(tooltipped), ids(video));
             check("Chat shows the cycle", Presentation.optionsOn(OptionScreen.CHAT).contains(cycle));
             check("Accessibility (1.14+) shows its option", Presentation.optionsOn(OptionScreen.ACCESSIBILITY).contains(accessibility),
                     ids(Presentation.optionsOn(OptionScreen.ACCESSIBILITY)));

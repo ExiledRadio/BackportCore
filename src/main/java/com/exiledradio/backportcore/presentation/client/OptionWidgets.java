@@ -54,8 +54,28 @@ public final class OptionWidgets {
         void refresh();
     }
 
+    /**
+     * @return a slider's text: "Label: value", with 1.16's OFF at zero ({@link SliderOption#zeroKey}), or one whole
+     * lang string ({@link SliderOption#wholeLabel}, 1.16's "Chat Delay: 2.0 seconds" and "Chat Delay: None")
+     */
+    public static String label(SliderOption option) {
+        if (option.wholeKey() != null) {
+            if (option.isZero() && option.wholeZeroKey() != null) {
+                return I18n.format(option.wholeZeroKey());
+            }
+            return I18n.format(option.wholeKey(), option.valueText());
+        }
+        String value;
+        if (option.isZero() && option.zeroKey() != null) {
+            value = I18n.format(option.zeroKey());
+        } else {
+            value = option.valueKey() != null ? I18n.format(option.valueKey(), option.valueText()) : option.valueText();
+        }
+        return I18n.format(option.labelKey()) + ": " + value;
+    }
+
     /** A plain button that runs an action when pressed (opening one of Core's screens). */
-    public static final class Action extends GuiButton {
+    public static class Action extends GuiButton {
         final Runnable action;
 
         public Action(int x, int y, int width, String text, Runnable action) {
@@ -142,8 +162,7 @@ public final class OptionWidgets {
 
         @Override
         public void refresh() {
-            String value = this.option.valueKey() != null ? I18n.format(this.option.valueKey(), this.option.valueText()) : this.option.valueText();
-            this.displayString = I18n.format(this.option.labelKey()) + ": " + value;
+            this.displayString = label(this.option);
         }
 
         @Override

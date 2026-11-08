@@ -27,7 +27,9 @@ import java.util.List;
  * It runs on Forge's three fog events (no patch): {@code FogColors} (the clear and fog color),
  * {@code FogDensity} (exponential fog: a step that sets a density makes the fog exponential, as vanilla's
  * water and lava fog are) and {@code RenderFogEvent} (linear fog's start and end, after vanilla set them).
- * Sky color and cloud height are not on Forge's events and are not part of the pipeline yet.
+ * The sky color and the cloud height have no Forge event; patches P15 and P16 hand them to {@link #skyColor} and
+ * {@link #cloudHeight} (the sky dome, the fog's blend with the sky, both cloud passes, and whether the camera is
+ * above the clouds), so 1.18's clouds at 192 are one step.
  */
 @SideOnly(Side.CLIENT)
 public final class FogPipeline {
@@ -45,6 +47,95 @@ public final class FogPipeline {
         /** Linear fog's start and end distances, after vanilla's {@code setupFog}. */
         default void distance(Distance distance) {
         }
+
+        /** The sky's color ({@code World.getSkyColor}), 0 to 1 each. */
+        default void sky(Sky sky) {
+        }
+
+        /** The height the clouds draw at ({@code WorldProvider.getCloudHeight}, 128 in 1.12.2's overworld). */
+        default void clouds(Clouds clouds) {
+        }
+    }
+
+    /** The sky color as vanilla (and the steps before) left it. */
+    public static final class Sky {
+        public final net.minecraft.world.World world;
+        public final Entity entity;
+        public final float partialTicks;
+        public double red;
+        public double green;
+        public double blue;
+
+        Sky(net.minecraft.world.World world, Entity entity, float partialTicks, net.minecraft.util.math.Vec3d color) {
+            this.world = world;
+            this.entity = entity;
+            this.partialTicks = partialTicks;
+            this.red = color.x;
+            this.green = color.y;
+            this.blue = color.z;
+        }
+    }
+
+    /** The cloud height as vanilla (and the steps before) left it. */
+    public static final class Clouds {
+        public final net.minecraft.world.WorldProvider provider;
+        public float height;
+
+        Clouds(net.minecraft.world.WorldProvider provider, float height) {
+            this.provider = provider;
+            this.height = height;
+        }
+    }
+
+    /** P15/P16: the sky color after every step's {@link Step#sky}; vanilla's own when no step changes it. */
+    public static net.minecraft.util.math.Vec3d skyColor(net.minecraft.world.World world, Entity entity, float partialTicks,
+                                                       net.minecraft.util.math.Vec3d vanilla) {
+        List<Step> steps = STEPS.steps();
+        if (steps.isEmpty()) {
+            return vanilla;
+        }
+        Sky s = new Sky(world, entity, partialTicks, vanilla);
+        for (Step step : steps) {
+            step.sky(s);
+        }
+        if (s.red == vanilla.x && s.green == vanilla.y && s.blue == vanilla.z) {
+            return vanilla;
+        }
+        return new net.minecraft.util.math.Vec3d(s.red, s.green, s.blue);
+    }
+
+    /** P15: the cloud height after every step's {@link Step#clouds}. */
+    public static float cloudHeight(net.minecraft.world.WorldProvider provider, float vanilla) {
+        List<Step> steps = STEPS.steps();
+        if (steps.isEmpty()) {
+            return vanilla;
+        }
+        Clouds c = new Clouds(provider, vanilla);
+        for (Step step : steps) {
+            step.clouds(c);
+        }
+        return c.height;
+    }
+
+    private static volatile List<Step> cloudCheckedFor;
+    private static volatile boolean movesClouds;
+
+    /** @return true when a step at the newest version overrides {@link Step#clouds} (P16 then compares with its height) */
+    public static boolean movesClouds() {
+        List<Step> steps = STEPS.steps();
+        if (steps != cloudCheckedFor) {
+            boolean any = false;
+            for (Step step : steps) {
+                try {
+                    any |= step.getClass().getMethod("clouds", Clouds.class).getDeclaringClass() != Step.class;
+                } catch (NoSuchMethodException e) {
+                    // cannot happen: Step declares it
+                }
+            }
+            movesClouds = any;
+            cloudCheckedFor = steps;
+        }
+        return movesClouds;
     }
 
     private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>();

@@ -1,0 +1,5 @@
+menu.quit=Quit Game (1.14 test)
+selftest.reworded=fourteen
+selftest.warning.header=Test warning
+selftest.warning.message=A test of the multiplayer warning screen, long enough to wrap onto a second line on a small window, which it should.
+selftest.warning.check=Do not show this screen again

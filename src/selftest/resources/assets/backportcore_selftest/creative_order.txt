@@ -1,0 +1,4 @@
+# test order: these first, in this order
+minecraft:diamond_sword
+minecraft:stone@0
+minecraft:wool@14

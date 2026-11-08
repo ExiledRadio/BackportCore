@@ -66,11 +66,14 @@ public final class SelfTestRunner {
     SelfTestRunner() {
         STEPS.clear();
         WaterTests.schedule();
+        WaterRuleTests.schedule();
+        DuplicateTests.schedule();
         StructureTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();
         NetherTests.schedule();
         PresentationTests.schedule();
+        PresentationTests.scheduleFinish();
     }
 
     @SubscribeEvent

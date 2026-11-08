@@ -23,6 +23,27 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());
         MinecraftForge.EVENT_BUS.register(new MenuMusicPlayer());
         MinecraftForge.EVENT_BUS.register(new FogPipeline.Events());
+        MinecraftForge.EVENT_BUS.register(new ChatRenderer.Events());
+        MinecraftForge.EVENT_BUS.register(new StartupScreen.Events());
+        MinecraftForge.EVENT_BUS.register(new TitleScreenExtras());
+        MinecraftForge.EVENT_BUS.register(new MenuScreens());
+        MinecraftForge.EVENT_BUS.register(new CreativeOrder());
+        MinecraftForge.EVENT_BUS.register(new DebugText.Events());
+        MinecraftForge.EVENT_BUS.register(new GameMusic.Events());
+        MinecraftForge.EVENT_BUS.register(new OptionTooltips());
+        MinecraftForge.EVENT_BUS.register(new WorldBackups());
+    }
+
+    /**
+     * From Core's init: the startup screen listens for the end of every resource load from here on (the last one
+     * of the game's start included).
+     */
+    public static void initLate() {
+        net.minecraft.client.resources.IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
+        if (rm instanceof net.minecraft.client.resources.IReloadableResourceManager) {
+            ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(StartupScreen.INSTANCE);
+        }
+        VideoOptions.applyForced(Minecraft.getMinecraft());
     }
 
     /** Forge event handlers; public for the event bus. */

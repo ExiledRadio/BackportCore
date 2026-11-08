@@ -34,6 +34,9 @@ final class PatchTests {
 
     private static final String SRG_JAR = System.getProperty("user.home")
             + "/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.5.2847/stable/39/forge-1.12.2-14.23.5.2847-srgBin.jar";
+    /** Forge's own classes as a real game runs them (SRG names): its universal jar, from FG2's download cache. */
+    private static final String FORGE_JAR = System.getProperty("user.home")
+            + "/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/forge/1.12.2-14.23.5.2859/forge-1.12.2-14.23.5.2859-universal.jar";
 
     /** class, patch, hook names that must appear, each with its count */
     private static final Object[][] CLASSES = {
@@ -48,6 +51,13 @@ final class PatchTests {
             {"net.minecraft.world.gen.structure.MapGenVillage", "P9", new String[] {"villageBiomes"}},
             {"net.minecraft.world.gen.layer.GenLayer", "P10", new String[] {"similarBiomes"}},
             {"net.minecraft.world.gen.layer.GenLayerBiomeEdge", "P11", new String[] {"canBeNeighbors"}},
+            {"net.minecraft.client.gui.GuiButton", "P12", new String[] {"buttonTextColor*2"}},
+            {"net.minecraftforge.fml.client.config.GuiButtonExt", "P12", new String[] {"buttonTextColor*2"}},
+            {"net.minecraft.client.gui.GuiIngame", "P13", new String[] {"drawChat"}},
+            {"net.minecraftforge.client.GuiIngameForge", "P13", new String[] {"drawChat"}},
+            {"net.minecraft.client.gui.GuiChat", "P14", new String[] {"chatComponent*2", "chatBoxColor"}},
+            {"net.minecraft.client.renderer.RenderGlobal", "P15", new String[] {"skyColor", "cloudHeight*2"}},
+            {"net.minecraft.client.renderer.EntityRenderer", "P16", new String[] {"skyColor", "cloudLayer*2"}},
     };
 
     private PatchTests() {
@@ -87,14 +97,16 @@ final class PatchTests {
             if (!check("Forge's SRG jar in the Gradle cache", jar.isFile(), SRG_JAR)) {
                 return;
             }
-            try (ZipFile zip = new ZipFile(jar)) {
+            File forge = new File(FORGE_JAR);
+            try (ZipFile zip = new ZipFile(jar); ZipFile forgeZip = forge.isFile() ? new ZipFile(forge) : null) {
                 for (Object[] c : CLASSES) {
                     String name = (String) c[0];
-                    ZipEntry entry = zip.getEntry(name.replace('.', '/') + ".class");
-                    if (!check("SRG bytes of " + name, entry != null)) {
+                    ZipFile from = name.startsWith("net.minecraftforge.") && forgeZip != null ? forgeZip : zip;
+                    ZipEntry entry = from.getEntry(name.replace('.', '/') + ".class");
+                    if (!check("SRG bytes of " + name, entry != null, from.getName())) {
                         continue;
                     }
-                    byte[] raw = readAll(zip.getInputStream(entry));
+                    byte[] raw = readAll(from.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
                     check("SRG " + c[1] + " transformed", out != raw, Asm.state((String) c[1]));
                     verify("SRG " + c[1], name, out, (String[]) c[2]);
@@ -124,6 +136,7 @@ final class PatchTests {
             case "P8": cls = "BiomeSearchTransformer"; break;
             case "P9": cls = "VillageBiomeTransformer"; break;
             case "P10": case "P11": cls = "LayerRulesTransformer"; break;
+            case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
