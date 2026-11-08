@@ -185,7 +185,7 @@ public final class CreativePlacement {
         if (tab == null && VanillaOrder.position(modernId) >= 0) {
             BackportCore.LOGGER.info("Creative tabs: {} is in no creative tab, as in vanilla", modernId);
         } else if (tab == null) {
-            BackportCore.LOGGER.warn("Creative tabs: vanilla has no {}; name a tab with place(..., tab)", modernId);
+            BackportCore.LOGGER.info("Creative tabs: vanilla has no {} item, so it is in no creative tab", modernId);
         }
         return tab;
     }

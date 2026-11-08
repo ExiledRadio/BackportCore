@@ -183,7 +183,7 @@ public final class CreativeTabsClient {
         }
         double gapAfter = key - keys.get(after - 1);
         double gapAhead = keys.get(ahead) - key;
-        return gapAhead + 1e-3 < gapAfter ? ahead : after;
+        return gapAhead + 1e-4 < gapAfter ? ahead : after;
     }
 
     /** @return how many {@code _}-separated words two ids end with in common ({@code stone_slab}, {@code dye}) */
@@ -297,11 +297,10 @@ public final class CreativeTabsClient {
         keys.put(p, NONE); // an anchor chain that loops ends here
         double key = NONE;
         if (p.modernId != null) {
-            int pos = VanillaOrder.position(p.modernId);
-            key = pos < 0 ? NONE : pos;
+            key = VanillaOrder.key(p.modernId);
         } else if (p.anchor != null) {
             double anchor = anchorKey(p.anchor);
-            key = Double.isNaN(anchor) ? NONE : anchor + 0.5;
+            key = Double.isNaN(anchor) ? NONE : anchor + 0.0005;
         }
         if (Double.isNaN(key) && WARNED.add(String.valueOf(p.modernId) + p.anchor)) {
             BackportCore.LOGGER.warn("Creative tabs: no place for {} in vanilla's order; it stays where it is listed",
@@ -312,9 +311,9 @@ public final class CreativeTabsClient {
     }
 
     private static double anchorKey(String anchor) {
-        int pos = VanillaOrder.position(anchor);
-        if (pos >= 0) {
-            return pos;
+        double vanilla = VanillaOrder.key(anchor);
+        if (!Double.isNaN(vanilla)) {
+            return vanilla;
         }
         // Another backport item, by registry name.
         Item item = Item.getByNameOrId(anchor);
@@ -360,8 +359,7 @@ public final class CreativeTabsClient {
         if (id == null) {
             return NONE;
         }
-        int pos = VanillaOrder.position(id);
-        return pos < 0 ? NONE : pos;
+        return VanillaOrder.key(id);
     }
 
     /**

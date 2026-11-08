@@ -12,8 +12,12 @@ Transportation, Miscellaneous, Foodstuffs, Tools, Combat, Brewing; Materials is 
 
 Later items (1.19.3 onward have no such tabs): each one is inserted right after the item that comes
 before it in a newer `Items` (26.1, unobfuscated), which keeps Mojang's kinds together (cherry planks with
-the planks, cherry doors with the doors). Its tab is the tab of the 1.19.2 item it follows. A few items
-newer versions append at the very end of the registry are given a place by hand (HAND_PLACED below).
+the planks, cherry doors with the doors). Its tab is the tab of the 1.19.2 item it follows. Then:
+  - the newer woods go in the order today's tabs show them: after mangrove, cherry, pale oak, bamboo
+    (the registry files cherry after acacia);
+  - newer spawn eggs go where the alphabet puts them, as 1.19.2 lists its eggs by mob name;
+  - items newer versions append at the very end of the registry are given a place by hand (HAND_PLACED),
+    from where today's creative tabs show them.
 
 Inputs:
   1. 1.19.2's `net/minecraft/world/item/Items.java`, decompiled with Mojang's names.
@@ -67,9 +71,10 @@ def _chain(ids, tab, after):
 
 _COPPER = ['', 'exposed_', 'weathered_', 'oxidized_']
 HAND_PLACED = (
-    # Building Blocks: each grate after its chiseled copper (today: chiseled copper, grate, cut copper).
-    [('%scopper_grate' % w, 'BUILDING_BLOCKS', '%schiseled_copper' % w) for w in _COPPER]
-    + [('waxed_%scopper_grate' % w, 'BUILDING_BLOCKS', 'waxed_%schiseled_copper' % w) for w in _COPPER]
+    # Building Blocks: the grates as a run of their own after the chiseled coppers, as the registry keeps each kind
+    # of copper block together (today's tab puts the grate after the chiseled copper of each stage).
+    _chain(['%scopper_grate' % w for w in _COPPER], 'BUILDING_BLOCKS', 'oxidized_chiseled_copper')
+    + _chain(['waxed_%scopper_grate' % w for w in _COPPER], 'BUILDING_BLOCKS', 'waxed_oxidized_chiseled_copper')
     # Redstone: the bulbs after the redstone lamp, as today's Redstone Blocks tab; the crafter after the dropper.
     + _chain(['%scopper_bulb' % w for w in _COPPER] + ['waxed_%scopper_bulb' % w for w in _COPPER], 'REDSTONE', 'redstone_lamp')
     + [('crafter', 'REDSTONE', 'dropper')]
@@ -91,7 +96,8 @@ HAND_PLACED = (
 
 # Field names that are not the item's id (Mojang's typo, kept in every version since).
 FIELD_FIXES = {'cut_standstone_slab': 'cut_sandstone_slab'}
-NEWER_RENAMES = {'short_grass': 'grass'}
+# Items a later version renamed: the same item, not a new one.
+NEWER_RENAMES = {'short_grass': 'grass', 'iron_chain': 'chain', 'turtle_scute': 'scute'}
 
 
 def order_1192(path):
@@ -128,6 +134,65 @@ def flattening(path):
     return pairs
 
 
+# The newer wood sets in the order every vanilla tab since 1.20 shows them (oak ... dark oak, mangrove, cherry,
+# pale oak, bamboo, crimson, warped), not the registry's (which files cherry after acacia): each newer wood's item
+# goes after the same item of the wood before it. Bamboo's block, mosaic and raft stand for a log, planks and boat.
+NEWER_WOODS = [('cherry', 'mangrove'), ('pale_oak', 'cherry'), ('bamboo', 'pale_oak')]
+BAMBOO_KINDS = {'block': 'log', 'raft': 'boat', 'chest_raft': 'chest_boat'}
+
+
+def reorder_woods(merged, newer):
+    ids = [r[0] for r in merged]
+    for wood, before in NEWER_WOODS:
+        for rid in [i for i in ids if i in newer]:
+            kind = None
+            for prefix in ('stripped_', ''):
+                if rid.startswith(prefix + wood + '_'):
+                    kind = (prefix, rid[len(prefix + wood) + 1:])
+                    break
+            if kind is None or kind[1].startswith('mosaic'):
+                continue
+            prefix, k = kind
+            sibling_kind = BAMBOO_KINDS.get(k, k) if wood == 'bamboo' else k
+            if sibling_kind == 'boat':
+                # A boat follows the wood before's chest boat; a chest boat its own wood's boat.
+                anchor = before + '_chest_boat'
+            elif sibling_kind == 'chest_boat':
+                anchor = wood + ('_raft' if wood == 'bamboo' else '_boat')
+            elif sibling_kind == 'sapling' and before == 'mangrove':
+                anchor = 'mangrove_propagule'
+            else:
+                anchor = prefix + before + '_' + sibling_kind
+            if anchor not in ids:
+                continue
+            row = merged.pop(ids.index(rid))
+            ids.remove(rid)
+            i = ids.index(anchor) + 1
+            merged.insert(i, row)
+            ids.insert(i, rid)
+    # bamboo mosaic after bamboo planks, its slab and stairs after bamboo's
+    for rid, anchor in (('bamboo_mosaic', 'bamboo_planks'), ('bamboo_mosaic_slab', 'bamboo_slab'),
+                        ('bamboo_mosaic_stairs', 'bamboo_stairs')):
+        if rid in ids and anchor in ids:
+            row = merged.pop(ids.index(rid))
+            ids.remove(rid)
+            i = ids.index(anchor) + 1
+            merged.insert(i, row)
+            ids.insert(i, rid)
+
+
+def sort_new_eggs(merged, newer):
+    """1.19.2 lists its spawn eggs by mob name, alphabetically; a newer egg goes where the alphabet puts it."""
+    for rid in sorted(r[0] for r in merged if r[0] in newer and r[0].endswith('_spawn_egg')):
+        row = next(r for r in merged if r[0] == rid)
+        merged.remove(row)
+        eggs = [i for i, r in enumerate(merged) if r[0].endswith('_spawn_egg')]
+        mob = rid[:-len('_spawn_egg')]
+        earlier = [i for i in eggs if merged[i][0][:-len('_spawn_egg')] < mob]
+        at = (earlier[-1] + 1) if earlier else eggs[0]
+        merged.insert(at, row)
+
+
 def main():
     items_java, newer_javap, flat_javap, out_dir = sys.argv[1:5]
     merged = order_1192(items_java)
@@ -157,7 +222,9 @@ def main():
             i = next(i for i, r in enumerate(merged) if r[0] == anchor)
             merged.insert(i + 1, [nid, tab])
         known.add(nid)
-    newer = set(order_newer(newer_javap)) - {r[0] for r in order_1192(items_java)}
+    newer = {NEWER_RENAMES.get(n, n) for n in order_newer(newer_javap)} - {r[0] for r in order_1192(items_java)}
+    reorder_woods(merged, newer)
+    sort_new_eggs(merged, newer)
     with open(out_dir + '/vanilla_order.txt', 'w', newline='\n') as f:
         f.write('# Generated by tools/creative/build_tables.py. One item per line, in creative order:\n')
         f.write('# <today\'s id> <tab> [new]   tab = its 1.19.2 tab (- for none); "new" = added after 1.19.2.\n')

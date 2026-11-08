@@ -490,6 +490,46 @@ Presentation.version("1.14")
 Everything, with how each piece resolves, is in `docs/PRESENTATION.md`; what to check in game is in
 `docs/PRESENTATION_CHECKLIST.md`. Patches P6 (title panorama) and P7 (F3 keys) are in `docs/PATCHES.md`.
 
+## Creative tabs (`creative.CreativePlacement`, 1.3.0)
+
+A backport has no creative tab of its own. Each block or item goes in the vanilla tab it has in 1.19.2 (the
+last version with 1.12's tab set), next to its vanilla neighbor. Call it where the block or item is
+registered, on both sides:
+
+```java
+CreativePlacement.place(block);                  // <modid>:stripped_oak_log -> minecraft:stripped_oak_log's tab and place
+CreativePlacement.place(item);                   // the same for an item
+CreativePlacement.place(block, CreativeTabs.DECORATIONS);              // a tab named (an item newer than the table's tab)
+CreativePlacement.place(item, CreativeTabs.MISC, "minecraft:x");      // as a vanilla item of another name
+CreativePlacement.variant(item, 3, "minecraft:granite_wall");          // one metadata of a placed item
+CreativePlacement.placeAfter(item, 0, CreativeTabs.MISC, "minecraft:x"); // an item vanilla does not have
+CreativePlacement.placeSpawnEggs(MOD_ID);         // every egg of this mod's mobs, where vanilla lists that mob's
+CreativePlacement.addEnchantmentType(CreativeTabs.COMBAT, type);        // books of a new type, keeping the tab's own
+```
+
+*   **Tab:** `place(block)` takes the tab from `assets/backportcore/creative/vanilla_order.txt`. A vanilla item that is
+    in no tab (the debug stick, suspicious stew) stays out of the creative menu, as in vanilla, with an info line.
+*   **Place:** when a tab is listed, each placed stack goes after the nearest stack before it in vanilla's order that
+    the tab really shows (vanilla's, or another backport's), or before the nearest one after it: the one of the same
+    kind (the longer shared name ending), then the nearer, wins. So placements follow whichever backports are
+    installed: stripped logs after the dark oak log alone, after the warped stem once the Nether Update is there.
+    Other mods' items are never moved and are never anchors.
+*   **How:** on the client, Core replaces each vanilla tab that has a placement in `CreativeTabs.CREATIVE_TAB_ARRAY`,
+    at its own index, with a `creative.client.VanillaTab`: it passes every question (icon, label, background,
+    search bar, enchantment types) to the original, and lists the original's items before moving the placed
+    stacks. Items keep the original tab object, so `Item.isInCreativeTab`, `getSubItems`, the search tab, JEI and
+    every mod that asks an item for its tab see vanilla's. No patch. If another mod has already replaced a slot,
+    Core leaves it alone (a warning in the log).
+*   **Data:** `vanilla_order.txt` is 1.19.2's item registry order (which up to 1.19.2 is every tab's order) with each
+    tab, and every later item where today's game puts it; `legacy_items.txt` turns a 1.12.2 stack (`minecraft:stone`
+    at 1) into today's id (`minecraft:granite`). Both come from Mojang's own code via `tools/creative/build_tables.py`;
+    the rules for the later items are in `docs/CREATIVE_TABS.md`.
+*   **Dev check:** a client started with `-Dbackportcore.creativeDump=<file>` writes every vanilla tab's list at the
+    first title screen, to the file and the log: each placed stack marked with the stack before it, placements that
+    show nowhere, vanilla stacks the table cannot place, and whether every placed item lists itself for the search
+    tab, for its own tab object and (if installed) in JEI. `-Dbackportcore.creativeDump.exit=true` then closes the
+    game. With Gradle, an init script can set both on `runClient` (see `docs/CREATIVE_TABS.md`).
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

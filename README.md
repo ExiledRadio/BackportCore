@@ -16,6 +16,8 @@ A Forge 1.12.2 library for the update backports. It adds no blocks or items. It 
 - **1.14's player poses**: the swimming pose and crawling with their 0.6-block box and low eyes, sent to other
   players, drawn lying along the swim (armor included), with the camera easing to the new height; and the
   movement hooks a backport's swimming rules use.
+- **Vanilla's creative tabs** for the backports' blocks and items, each next to its vanilla neighbor as 1.19.2
+  lists it. The backports have no tabs of their own.
 - A **trade registry**, **smithing upgrades** and a table of which backport owns each shared block.
 
 A small coremod of its own for the pose engine's hooks (every patch in `docs/PATCHES.md`; each does what

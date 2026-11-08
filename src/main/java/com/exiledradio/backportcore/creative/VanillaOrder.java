@@ -31,6 +31,7 @@ public final class VanillaOrder {
     private static final String LEGACY = "/assets/backportcore/creative/legacy_items.txt";
 
     private static Map<String, Integer> positions;
+    private static Map<String, Double> keys;
     private static Map<String, String> tabs;
     private static Set<String> before;
     private static Map<String, String> legacy;
@@ -44,6 +45,17 @@ public final class VanillaOrder {
         load();
         Integer p = positions.get(modernId);
         return p == null ? -1 : p;
+    }
+
+    /**
+     * @return the item's spot in vanilla's order counted in 1.19.2's items (an item added later sits a fraction after
+     * the 1.19.2 item before it), so a distance between two items is the number of 1.19.2 items between them; NaN if
+     * vanilla has no such item
+     */
+    public static double key(String modernId) {
+        load();
+        Double k = keys.get(modernId);
+        return k == null ? Double.NaN : k;
     }
 
     /** @return true if the item is found by what follows it (the first of a run), not by what comes before */
@@ -128,11 +140,24 @@ public final class VanillaOrder {
         Set<String> first = new HashSet<String>();
         Map<String, String> old = new HashMap<String, String>();
         Map<String, String> eggs = new HashMap<String, String>();
+        Map<String, Double> key = new HashMap<String, Double>();
         int n = 0;
+        int last1192 = -1;
+        int added = 0;
         for (String line : lines(ORDER)) {
             String[] f = line.split(" ");
             if (!pos.containsKey(f[0])) {
                 pos.put(f[0], n++);
+                boolean isNew = false;
+                for (int i = 2; i < f.length; i++) {
+                    isNew |= "new".equals(f[i]);
+                }
+                if (isNew) {
+                    key.put(f[0], last1192 + ++added * 0.001);
+                } else {
+                    key.put(f[0], (double) ++last1192);
+                    added = 0;
+                }
             }
             if (f.length > 1 && !"-".equals(f[1])) {
                 tab.put(f[0], f[1]);
@@ -151,6 +176,7 @@ public final class VanillaOrder {
                 old.put(f[0], f[1]);
             }
         }
+        keys = key;
         tabs = tab;
         before = first;
         legacy = old;

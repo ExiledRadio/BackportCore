@@ -41,23 +41,23 @@ minecraft:spruce_planks BUILDING_BLOCKS
 minecraft:birch_planks BUILDING_BLOCKS
 minecraft:jungle_planks BUILDING_BLOCKS
 minecraft:acacia_planks BUILDING_BLOCKS
-minecraft:cherry_planks BUILDING_BLOCKS new
 minecraft:dark_oak_planks BUILDING_BLOCKS
-minecraft:pale_oak_planks BUILDING_BLOCKS new
 minecraft:mangrove_planks BUILDING_BLOCKS
+minecraft:cherry_planks BUILDING_BLOCKS new
+minecraft:pale_oak_planks BUILDING_BLOCKS new
 minecraft:bamboo_planks BUILDING_BLOCKS new
+minecraft:bamboo_mosaic BUILDING_BLOCKS new
 minecraft:crimson_planks BUILDING_BLOCKS
 minecraft:warped_planks BUILDING_BLOCKS
-minecraft:bamboo_mosaic BUILDING_BLOCKS new
 minecraft:oak_sapling DECORATIONS
 minecraft:spruce_sapling DECORATIONS
 minecraft:birch_sapling DECORATIONS
 minecraft:jungle_sapling DECORATIONS
 minecraft:acacia_sapling DECORATIONS
-minecraft:cherry_sapling DECORATIONS new
 minecraft:dark_oak_sapling DECORATIONS
-minecraft:pale_oak_sapling DECORATIONS new
 minecraft:mangrove_propagule DECORATIONS
+minecraft:cherry_sapling DECORATIONS new
+minecraft:pale_oak_sapling DECORATIONS new
 minecraft:bedrock BUILDING_BLOCKS
 minecraft:sand BUILDING_BLOCKS
 minecraft:suspicious_sand BUILDING_BLOCKS new
@@ -98,12 +98,12 @@ minecraft:exposed_copper BUILDING_BLOCKS
 minecraft:weathered_copper BUILDING_BLOCKS
 minecraft:oxidized_copper BUILDING_BLOCKS
 minecraft:chiseled_copper BUILDING_BLOCKS new
-minecraft:copper_grate BUILDING_BLOCKS new
 minecraft:exposed_chiseled_copper BUILDING_BLOCKS new
-minecraft:exposed_copper_grate BUILDING_BLOCKS new
 minecraft:weathered_chiseled_copper BUILDING_BLOCKS new
-minecraft:weathered_copper_grate BUILDING_BLOCKS new
 minecraft:oxidized_chiseled_copper BUILDING_BLOCKS new
+minecraft:copper_grate BUILDING_BLOCKS new
+minecraft:exposed_copper_grate BUILDING_BLOCKS new
+minecraft:weathered_copper_grate BUILDING_BLOCKS new
 minecraft:oxidized_copper_grate BUILDING_BLOCKS new
 minecraft:cut_copper BUILDING_BLOCKS
 minecraft:exposed_cut_copper BUILDING_BLOCKS
@@ -122,12 +122,12 @@ minecraft:waxed_exposed_copper BUILDING_BLOCKS
 minecraft:waxed_weathered_copper BUILDING_BLOCKS
 minecraft:waxed_oxidized_copper BUILDING_BLOCKS
 minecraft:waxed_chiseled_copper BUILDING_BLOCKS new
-minecraft:waxed_copper_grate BUILDING_BLOCKS new
 minecraft:waxed_exposed_chiseled_copper BUILDING_BLOCKS new
-minecraft:waxed_exposed_copper_grate BUILDING_BLOCKS new
 minecraft:waxed_weathered_chiseled_copper BUILDING_BLOCKS new
-minecraft:waxed_weathered_copper_grate BUILDING_BLOCKS new
 minecraft:waxed_oxidized_chiseled_copper BUILDING_BLOCKS new
+minecraft:waxed_copper_grate BUILDING_BLOCKS new
+minecraft:waxed_exposed_copper_grate BUILDING_BLOCKS new
+minecraft:waxed_weathered_copper_grate BUILDING_BLOCKS new
 minecraft:waxed_oxidized_copper_grate BUILDING_BLOCKS new
 minecraft:waxed_cut_copper BUILDING_BLOCKS
 minecraft:waxed_exposed_cut_copper BUILDING_BLOCKS
@@ -146,24 +146,25 @@ minecraft:spruce_log BUILDING_BLOCKS
 minecraft:birch_log BUILDING_BLOCKS
 minecraft:jungle_log BUILDING_BLOCKS
 minecraft:acacia_log BUILDING_BLOCKS
-minecraft:cherry_log BUILDING_BLOCKS new
-minecraft:pale_oak_log BUILDING_BLOCKS new
 minecraft:dark_oak_log BUILDING_BLOCKS
 minecraft:mangrove_log BUILDING_BLOCKS
+minecraft:cherry_log BUILDING_BLOCKS new
+minecraft:pale_oak_log BUILDING_BLOCKS new
+minecraft:bamboo_block BUILDING_BLOCKS new
 minecraft:mangrove_roots BUILDING_BLOCKS
 minecraft:muddy_mangrove_roots BUILDING_BLOCKS
 minecraft:crimson_stem BUILDING_BLOCKS
 minecraft:warped_stem BUILDING_BLOCKS
-minecraft:bamboo_block BUILDING_BLOCKS new
 minecraft:stripped_oak_log BUILDING_BLOCKS
 minecraft:stripped_spruce_log BUILDING_BLOCKS
 minecraft:stripped_birch_log BUILDING_BLOCKS
 minecraft:stripped_jungle_log BUILDING_BLOCKS
 minecraft:stripped_acacia_log BUILDING_BLOCKS
-minecraft:stripped_cherry_log BUILDING_BLOCKS new
 minecraft:stripped_dark_oak_log BUILDING_BLOCKS
-minecraft:stripped_pale_oak_log BUILDING_BLOCKS new
 minecraft:stripped_mangrove_log BUILDING_BLOCKS
+minecraft:stripped_cherry_log BUILDING_BLOCKS new
+minecraft:stripped_pale_oak_log BUILDING_BLOCKS new
+minecraft:stripped_bamboo_block BUILDING_BLOCKS new
 minecraft:stripped_crimson_stem BUILDING_BLOCKS
 minecraft:stripped_warped_stem BUILDING_BLOCKS
 minecraft:stripped_oak_wood BUILDING_BLOCKS
@@ -171,22 +172,21 @@ minecraft:stripped_spruce_wood BUILDING_BLOCKS
 minecraft:stripped_birch_wood BUILDING_BLOCKS
 minecraft:stripped_jungle_wood BUILDING_BLOCKS
 minecraft:stripped_acacia_wood BUILDING_BLOCKS
-minecraft:stripped_cherry_wood BUILDING_BLOCKS new
 minecraft:stripped_dark_oak_wood BUILDING_BLOCKS
-minecraft:stripped_pale_oak_wood BUILDING_BLOCKS new
 minecraft:stripped_mangrove_wood BUILDING_BLOCKS
+minecraft:stripped_cherry_wood BUILDING_BLOCKS new
+minecraft:stripped_pale_oak_wood BUILDING_BLOCKS new
 minecraft:stripped_crimson_hyphae BUILDING_BLOCKS
 minecraft:stripped_warped_hyphae BUILDING_BLOCKS
-minecraft:stripped_bamboo_block BUILDING_BLOCKS new
 minecraft:oak_wood BUILDING_BLOCKS
 minecraft:spruce_wood BUILDING_BLOCKS
 minecraft:birch_wood BUILDING_BLOCKS
 minecraft:jungle_wood BUILDING_BLOCKS
 minecraft:acacia_wood BUILDING_BLOCKS
-minecraft:cherry_wood BUILDING_BLOCKS new
-minecraft:pale_oak_wood BUILDING_BLOCKS new
 minecraft:dark_oak_wood BUILDING_BLOCKS
 minecraft:mangrove_wood BUILDING_BLOCKS
+minecraft:cherry_wood BUILDING_BLOCKS new
+minecraft:pale_oak_wood BUILDING_BLOCKS new
 minecraft:crimson_hyphae BUILDING_BLOCKS
 minecraft:warped_hyphae BUILDING_BLOCKS
 minecraft:oak_leaves DECORATIONS
@@ -194,10 +194,10 @@ minecraft:spruce_leaves DECORATIONS
 minecraft:birch_leaves DECORATIONS
 minecraft:jungle_leaves DECORATIONS
 minecraft:acacia_leaves DECORATIONS
-minecraft:cherry_leaves DECORATIONS new
 minecraft:dark_oak_leaves DECORATIONS
-minecraft:pale_oak_leaves DECORATIONS new
 minecraft:mangrove_leaves DECORATIONS
+minecraft:cherry_leaves DECORATIONS new
+minecraft:pale_oak_leaves DECORATIONS new
 minecraft:azalea_leaves DECORATIONS
 minecraft:flowering_azalea_leaves DECORATIONS
 minecraft:sponge BUILDING_BLOCKS
@@ -283,10 +283,10 @@ minecraft:spruce_slab BUILDING_BLOCKS
 minecraft:birch_slab BUILDING_BLOCKS
 minecraft:jungle_slab BUILDING_BLOCKS
 minecraft:acacia_slab BUILDING_BLOCKS
-minecraft:cherry_slab BUILDING_BLOCKS new
 minecraft:dark_oak_slab BUILDING_BLOCKS
-minecraft:pale_oak_slab BUILDING_BLOCKS new
 minecraft:mangrove_slab BUILDING_BLOCKS
+minecraft:cherry_slab BUILDING_BLOCKS new
+minecraft:pale_oak_slab BUILDING_BLOCKS new
 minecraft:bamboo_slab BUILDING_BLOCKS new
 minecraft:bamboo_mosaic_slab BUILDING_BLOCKS new
 minecraft:crimson_slab BUILDING_BLOCKS
@@ -314,15 +314,15 @@ minecraft:smooth_sandstone BUILDING_BLOCKS
 minecraft:smooth_stone BUILDING_BLOCKS
 minecraft:bricks BUILDING_BLOCKS
 minecraft:acacia_shelf BUILDING_BLOCKS new
-minecraft:bamboo_shelf BUILDING_BLOCKS new
 minecraft:birch_shelf BUILDING_BLOCKS new
-minecraft:cherry_shelf BUILDING_BLOCKS new
 minecraft:crimson_shelf BUILDING_BLOCKS new
 minecraft:dark_oak_shelf BUILDING_BLOCKS new
 minecraft:jungle_shelf BUILDING_BLOCKS new
 minecraft:mangrove_shelf BUILDING_BLOCKS new
-minecraft:oak_shelf BUILDING_BLOCKS new
+minecraft:cherry_shelf BUILDING_BLOCKS new
 minecraft:pale_oak_shelf BUILDING_BLOCKS new
+minecraft:bamboo_shelf BUILDING_BLOCKS new
+minecraft:oak_shelf BUILDING_BLOCKS new
 minecraft:spruce_shelf BUILDING_BLOCKS new
 minecraft:warped_shelf BUILDING_BLOCKS new
 minecraft:bookshelf BUILDING_BLOCKS
@@ -372,10 +372,10 @@ minecraft:spruce_fence DECORATIONS
 minecraft:birch_fence DECORATIONS
 minecraft:jungle_fence DECORATIONS
 minecraft:acacia_fence DECORATIONS
-minecraft:cherry_fence DECORATIONS new
 minecraft:dark_oak_fence DECORATIONS
-minecraft:pale_oak_fence DECORATIONS new
 minecraft:mangrove_fence DECORATIONS
+minecraft:cherry_fence DECORATIONS new
+minecraft:pale_oak_fence DECORATIONS new
 minecraft:bamboo_fence DECORATIONS new
 minecraft:crimson_fence DECORATIONS
 minecraft:warped_fence DECORATIONS
@@ -414,7 +414,6 @@ minecraft:brown_mushroom_block DECORATIONS
 minecraft:red_mushroom_block DECORATIONS
 minecraft:mushroom_stem DECORATIONS
 minecraft:iron_bars DECORATIONS
-minecraft:iron_chain DECORATIONS new
 minecraft:chain DECORATIONS
 minecraft:glass_pane DECORATIONS
 minecraft:melon BUILDING_BLOCKS
@@ -455,10 +454,10 @@ minecraft:spruce_stairs BUILDING_BLOCKS
 minecraft:birch_stairs BUILDING_BLOCKS
 minecraft:jungle_stairs BUILDING_BLOCKS
 minecraft:acacia_stairs BUILDING_BLOCKS
-minecraft:cherry_stairs BUILDING_BLOCKS new
 minecraft:dark_oak_stairs BUILDING_BLOCKS
-minecraft:pale_oak_stairs BUILDING_BLOCKS new
 minecraft:mangrove_stairs BUILDING_BLOCKS
+minecraft:cherry_stairs BUILDING_BLOCKS new
+minecraft:pale_oak_stairs BUILDING_BLOCKS new
 minecraft:bamboo_stairs BUILDING_BLOCKS new
 minecraft:bamboo_mosaic_stairs BUILDING_BLOCKS new
 minecraft:crimson_stairs BUILDING_BLOCKS
@@ -774,10 +773,10 @@ minecraft:spruce_button REDSTONE
 minecraft:birch_button REDSTONE
 minecraft:jungle_button REDSTONE
 minecraft:acacia_button REDSTONE
-minecraft:cherry_button REDSTONE new
 minecraft:dark_oak_button REDSTONE
-minecraft:pale_oak_button REDSTONE new
 minecraft:mangrove_button REDSTONE
+minecraft:cherry_button REDSTONE new
+minecraft:pale_oak_button REDSTONE new
 minecraft:bamboo_button REDSTONE new
 minecraft:crimson_button REDSTONE
 minecraft:warped_button REDSTONE
@@ -790,10 +789,10 @@ minecraft:spruce_pressure_plate REDSTONE
 minecraft:birch_pressure_plate REDSTONE
 minecraft:jungle_pressure_plate REDSTONE
 minecraft:acacia_pressure_plate REDSTONE
-minecraft:cherry_pressure_plate REDSTONE new
 minecraft:dark_oak_pressure_plate REDSTONE
-minecraft:pale_oak_pressure_plate REDSTONE new
 minecraft:mangrove_pressure_plate REDSTONE
+minecraft:cherry_pressure_plate REDSTONE new
+minecraft:pale_oak_pressure_plate REDSTONE new
 minecraft:bamboo_pressure_plate REDSTONE new
 minecraft:crimson_pressure_plate REDSTONE
 minecraft:warped_pressure_plate REDSTONE
@@ -803,10 +802,10 @@ minecraft:spruce_door REDSTONE
 minecraft:birch_door REDSTONE
 minecraft:jungle_door REDSTONE
 minecraft:acacia_door REDSTONE
-minecraft:cherry_door REDSTONE new
 minecraft:dark_oak_door REDSTONE
-minecraft:pale_oak_door REDSTONE new
 minecraft:mangrove_door REDSTONE
+minecraft:cherry_door REDSTONE new
+minecraft:pale_oak_door REDSTONE new
 minecraft:bamboo_door REDSTONE new
 minecraft:crimson_door REDSTONE
 minecraft:warped_door REDSTONE
@@ -824,10 +823,10 @@ minecraft:spruce_trapdoor REDSTONE
 minecraft:birch_trapdoor REDSTONE
 minecraft:jungle_trapdoor REDSTONE
 minecraft:acacia_trapdoor REDSTONE
-minecraft:cherry_trapdoor REDSTONE new
 minecraft:dark_oak_trapdoor REDSTONE
-minecraft:pale_oak_trapdoor REDSTONE new
 minecraft:mangrove_trapdoor REDSTONE
+minecraft:cherry_trapdoor REDSTONE new
+minecraft:pale_oak_trapdoor REDSTONE new
 minecraft:bamboo_trapdoor REDSTONE new
 minecraft:crimson_trapdoor REDSTONE
 minecraft:warped_trapdoor REDSTONE
@@ -844,10 +843,10 @@ minecraft:spruce_fence_gate REDSTONE
 minecraft:birch_fence_gate REDSTONE
 minecraft:jungle_fence_gate REDSTONE
 minecraft:acacia_fence_gate REDSTONE
-minecraft:cherry_fence_gate REDSTONE new
 minecraft:dark_oak_fence_gate REDSTONE
-minecraft:pale_oak_fence_gate REDSTONE new
 minecraft:mangrove_fence_gate REDSTONE
+minecraft:cherry_fence_gate REDSTONE new
+minecraft:pale_oak_fence_gate REDSTONE new
 minecraft:bamboo_fence_gate REDSTONE new
 minecraft:crimson_fence_gate REDSTONE
 minecraft:warped_fence_gate REDSTONE
@@ -890,14 +889,14 @@ minecraft:jungle_boat TRANSPORTATION
 minecraft:jungle_chest_boat TRANSPORTATION
 minecraft:acacia_boat TRANSPORTATION
 minecraft:acacia_chest_boat TRANSPORTATION
-minecraft:cherry_boat TRANSPORTATION new
-minecraft:cherry_chest_boat TRANSPORTATION new
 minecraft:dark_oak_boat TRANSPORTATION
 minecraft:dark_oak_chest_boat TRANSPORTATION
-minecraft:pale_oak_boat TRANSPORTATION new
-minecraft:pale_oak_chest_boat TRANSPORTATION new
 minecraft:mangrove_boat TRANSPORTATION
 minecraft:mangrove_chest_boat TRANSPORTATION
+minecraft:cherry_boat TRANSPORTATION new
+minecraft:cherry_chest_boat TRANSPORTATION new
+minecraft:pale_oak_boat TRANSPORTATION new
+minecraft:pale_oak_chest_boat TRANSPORTATION new
 minecraft:bamboo_raft TRANSPORTATION new
 minecraft:bamboo_chest_raft TRANSPORTATION new
 minecraft:structure_block -
@@ -905,10 +904,9 @@ minecraft:jigsaw -
 minecraft:test_block - new
 minecraft:test_instance_block - new
 minecraft:turtle_helmet COMBAT
-minecraft:turtle_scute COMBAT new
-minecraft:armadillo_scute COMBAT new
-minecraft:wolf_armor COMBAT new
 minecraft:scute MISC
+minecraft:armadillo_scute MISC new
+minecraft:wolf_armor MISC new
 minecraft:flint_and_steel TOOLS
 minecraft:apple FOOD
 minecraft:bow COMBAT
@@ -1011,10 +1009,10 @@ minecraft:spruce_sign DECORATIONS
 minecraft:birch_sign DECORATIONS
 minecraft:jungle_sign DECORATIONS
 minecraft:acacia_sign DECORATIONS
-minecraft:cherry_sign DECORATIONS new
 minecraft:dark_oak_sign DECORATIONS
-minecraft:pale_oak_sign DECORATIONS new
 minecraft:mangrove_sign DECORATIONS
+minecraft:cherry_sign DECORATIONS new
+minecraft:pale_oak_sign DECORATIONS new
 minecraft:bamboo_sign DECORATIONS new
 minecraft:crimson_sign DECORATIONS
 minecraft:warped_sign DECORATIONS
@@ -1023,10 +1021,10 @@ minecraft:spruce_hanging_sign DECORATIONS new
 minecraft:birch_hanging_sign DECORATIONS new
 minecraft:jungle_hanging_sign DECORATIONS new
 minecraft:acacia_hanging_sign DECORATIONS new
-minecraft:cherry_hanging_sign DECORATIONS new
 minecraft:dark_oak_hanging_sign DECORATIONS new
-minecraft:pale_oak_hanging_sign DECORATIONS new
 minecraft:mangrove_hanging_sign DECORATIONS new
+minecraft:cherry_hanging_sign DECORATIONS new
+minecraft:pale_oak_hanging_sign DECORATIONS new
 minecraft:bamboo_hanging_sign DECORATIONS new
 minecraft:crimson_hanging_sign DECORATIONS new
 minecraft:warped_hanging_sign DECORATIONS new
@@ -1151,10 +1149,14 @@ minecraft:ender_eye MISC
 minecraft:glistering_melon_slice BREWING
 minecraft:trial_spawner MISC new
 minecraft:allay_spawn_egg MISC
+minecraft:armadillo_spawn_egg MISC new
 minecraft:axolotl_spawn_egg MISC
 minecraft:bat_spawn_egg MISC
 minecraft:bee_spawn_egg MISC
 minecraft:blaze_spawn_egg MISC
+minecraft:bogged_spawn_egg MISC new
+minecraft:breeze_spawn_egg MISC new
+minecraft:camel_spawn_egg MISC new
 minecraft:cat_spawn_egg MISC
 minecraft:cave_spider_spawn_egg MISC
 minecraft:chicken_spawn_egg MISC
@@ -1171,22 +1173,15 @@ minecraft:evoker_spawn_egg MISC
 minecraft:fox_spawn_egg MISC
 minecraft:frog_spawn_egg MISC
 minecraft:ghast_spawn_egg MISC
-minecraft:happy_ghast_spawn_egg MISC new
 minecraft:glow_squid_spawn_egg MISC
-minecraft:nautilus_spawn_egg MISC new
 minecraft:goat_spawn_egg MISC
 minecraft:guardian_spawn_egg MISC
 minecraft:hoglin_spawn_egg MISC
 minecraft:horse_spawn_egg MISC
 minecraft:husk_spawn_egg MISC
-minecraft:parched_spawn_egg MISC new
 minecraft:llama_spawn_egg MISC
 minecraft:magma_cube_spawn_egg MISC
 minecraft:mooshroom_spawn_egg MISC
-minecraft:sniffer_spawn_egg MISC new
-minecraft:copper_golem_spawn_egg MISC new
-minecraft:iron_golem_spawn_egg MISC new
-minecraft:snow_golem_spawn_egg MISC new
 minecraft:mule_spawn_egg MISC
 minecraft:ocelot_spawn_egg MISC
 minecraft:panda_spawn_egg MISC
@@ -1202,18 +1197,24 @@ minecraft:rabbit_spawn_egg MISC
 minecraft:ravager_spawn_egg MISC
 minecraft:salmon_spawn_egg MISC
 minecraft:sheep_spawn_egg MISC
-minecraft:camel_spawn_egg MISC new
+minecraft:camel_husk_spawn_egg MISC new
+minecraft:copper_golem_spawn_egg MISC new
+minecraft:creaking_spawn_egg MISC new
+minecraft:ender_dragon_spawn_egg MISC new
+minecraft:happy_ghast_spawn_egg MISC new
+minecraft:iron_golem_spawn_egg MISC new
+minecraft:nautilus_spawn_egg MISC new
+minecraft:parched_spawn_egg MISC new
 minecraft:shulker_spawn_egg MISC
 minecraft:silverfish_spawn_egg MISC
 minecraft:skeleton_spawn_egg MISC
 minecraft:skeleton_horse_spawn_egg MISC
 minecraft:slime_spawn_egg MISC
+minecraft:sniffer_spawn_egg MISC new
+minecraft:snow_golem_spawn_egg MISC new
 minecraft:spider_spawn_egg MISC
-minecraft:breeze_spawn_egg MISC new
-minecraft:creaking_spawn_egg MISC new
 minecraft:squid_spawn_egg MISC
 minecraft:stray_spawn_egg MISC
-minecraft:wither_spawn_egg MISC new
 minecraft:strider_spawn_egg MISC
 minecraft:tadpole_spawn_egg MISC
 minecraft:trader_llama_spawn_egg MISC
@@ -1223,20 +1224,17 @@ minecraft:vex_spawn_egg MISC
 minecraft:villager_spawn_egg MISC
 minecraft:vindicator_spawn_egg MISC
 minecraft:wandering_trader_spawn_egg MISC
-minecraft:bogged_spawn_egg MISC new
-minecraft:camel_husk_spawn_egg MISC new
 minecraft:warden_spawn_egg MISC
 minecraft:witch_spawn_egg MISC
+minecraft:wither_spawn_egg MISC new
 minecraft:wither_skeleton_spawn_egg MISC
 minecraft:wolf_spawn_egg MISC
-minecraft:armadillo_spawn_egg MISC new
 minecraft:zoglin_spawn_egg MISC
 minecraft:zombie_spawn_egg MISC
 minecraft:zombie_horse_spawn_egg MISC
 minecraft:zombie_nautilus_spawn_egg MISC new
 minecraft:zombie_villager_spawn_egg MISC
 minecraft:zombified_piglin_spawn_egg MISC
-minecraft:ender_dragon_spawn_egg MISC new
 minecraft:experience_bottle MISC
 minecraft:trial_key MISC new
 minecraft:ominous_trial_key MISC new
