@@ -100,6 +100,8 @@ public final class BackportCore {
         PoseNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
+        // Stored-waterlogged conversions: listening from here, never from inside a registry event (see there).
+        com.exiledradio.backportcore.waterlog.Waterlogging.initMigrations();
         // The overworld rules 1.13 and later share, applied by the newest installed backport (worldgen/).
         com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
         if (event.getSide().isClient()) {

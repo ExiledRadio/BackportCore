@@ -65,6 +65,17 @@ final class WaterlogMigration {
             throw new IllegalArgumentException(block.getRegistryName() + " has no property " + waterlogged.getName());
         }
         MIGRATIONS.put(block, waterlogged);
+    }
+
+    /**
+     * Registers the chunk listeners, once, from Backport Core's pre-init.
+     *
+     * <p>Not from {@link #register}: backports call that while blocks are being registered, and adding a
+     * listener to the event bus from inside a registry event left the overworld's decoration broken for
+     * the whole session (Update Aquatic's kelp, seagrass and ocean ruins stopped generating). With no
+     * migrations registered the listeners do nothing.
+     */
+    static synchronized void listen() {
         if (!listening) {
             listening = true;
             MinecraftForge.EVENT_BUS.register(new WaterlogMigration.Events());

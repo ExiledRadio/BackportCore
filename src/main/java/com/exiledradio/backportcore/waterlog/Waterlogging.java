@@ -172,6 +172,11 @@ public final class Waterlogging {
      * the property true becomes the same state with it false plus a water source. New placements
      * should never set it. Call in pre-init or init.
      */
+    /** Starts the conversion's chunk listeners. Backport Core's own pre-init calls this; nothing else should. */
+    public static void initMigrations() {
+        WaterlogMigration.listen();
+    }
+
     public static void migrateStoredProperty(Block block, IProperty<Boolean> waterlogged) {
         WaterlogMigration.register(block, waterlogged);
     }
