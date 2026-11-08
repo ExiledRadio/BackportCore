@@ -122,6 +122,7 @@ final class PresentationTests {
         });
         schedulePanorama();
         scheduleLoading();
+        scheduleOptions();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -227,6 +228,39 @@ final class PresentationTests {
             }
         }
         return true;
+    }
+
+    /** Piece 4: option values, their saved form and their placement. */
+    static void scheduleOptions() {
+        then(1, "presentation: option values", world -> {
+            check("a toggle starts at its default", toggle.get());
+            toggle.set(false);
+            slider.set(1.13);
+            check("a slider snaps to its step", slider.get() == 1.25, slider.get());
+            slider.set(10);
+            check("and clamps to its range", slider.get() == 5.0, slider.get());
+            slider.set(2.5);
+            check("it shows a percentage by default", "250%".equals(slider.valueText()), slider.valueText());
+            check("its slider position", Math.abs(slider.fraction() - (2.0 / 4.5)) < 1e-9, slider.fraction());
+            cycle.cycle(false);
+            check("a cycle steps forward", "b".equals(cycle.get()) && "options.selftest.b".equals(cycle.valueKey()), cycle.get());
+            cycle.cycle(true);
+            cycle.cycle(true);
+            check("and backward, wrapping", "c".equals(cycle.get()), cycle.get());
+            String saved = OptionStore.get(toggle.id());
+            check("values are saved as id:value", "false".equals(saved) && "2.5".equals(OptionStore.get(slider.id())), saved);
+            // Forget the file's contents and read them again, as the next launch would.
+            OptionStore.useFile(OptionStore.file());
+            ToggleOption again = new ToggleOption(toggle.id(), toggle.labelKey(), OptionScreen.VIDEO, true);
+            CycleOption cycleAgain = new CycleOption(cycle.id(), cycle.labelKey(), OptionScreen.CHAT,
+                    new String[] {"a", "b", "c"}, new String[] {"x", "y", "z"}, "a");
+            check("a new launch reads them back", !again.get() && "c".equals(cycleAgain.get()));
+            ToggleOption junk = new ToggleOption(DOMAIN + ":junk", "x", OptionScreen.VIDEO, true);
+            OptionStore.put(junk.id(), "maybe");
+            check("a malformed saved value keeps the default", junk.get());
+            toggle.reset();
+            check("reset puts the default back", toggle.get());
+        });
     }
 
     static String ids(List<PresentationOption> options) {

@@ -18,6 +18,7 @@ public final class PresentationClient {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new Events());
+        MinecraftForge.EVENT_BUS.register(new OptionsInjector());
     }
 
     /** Forge event handlers; public for the event bus. */
