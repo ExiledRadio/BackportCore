@@ -17,10 +17,13 @@ tasks name it with `-Dfml.coreMods.load`.
     the dev environment; every transformer matches both) and after Fluidlogged API's transformers (1401),
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
-*   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`).
+*   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
+    `presentation/client/PresentationHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
-    has registered rules with `pose.Poses` and they are on. With no backport installed, the patched game
-    plays as vanilla.
+    has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
+    with `presentation.Presentation`. With no backport installed, the patched game plays as vanilla.
+*   P6 and P7 only change the owner of an existing call (an instance call becomes a static call with the
+    same arguments); the hook calls the original method by reflection when it keeps vanilla's behavior.
 *   A transformer that does not find the exact shape it expects changes nothing, logs
     `P<n> ...: <why>; patch skipped, vanilla behavior kept.`, and records why (`asm.Asm.state`). It never
     half-patches a method. A patched class logs `P<n> ...: patched.`
@@ -31,11 +34,11 @@ tasks name it with `-Dfml.coreMods.load`.
 
 **Tested** (`gradlew runServer -Pselftest`, `selftest/PatchTests`): P1 reports itself applied when vanilla
 loads `EntityLivingBase` in the dev server; the coremod is registered with the class loader; the bytes of
-all five target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
+all seven target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same five classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same seven classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 

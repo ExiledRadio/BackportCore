@@ -29,7 +29,7 @@ import java.util.Random;
  * it once a 1.20.3 or later backport shows that option.
  */
 @SideOnly(Side.CLIENT)
-final class TitleSplashes {
+public final class TitleSplashes {
 
     private static final ResourceLocation SPLASHES = new ResourceLocation("texts/splashes.txt");
     /** The line vanilla never shows ("This message will never appear on the splash screen, isn't that weird?"). */
@@ -39,7 +39,7 @@ final class TitleSplashes {
     private static Field splashText;
 
     /** For the client self-test: the pool used last. */
-    static volatile List<String> lastPool;
+    public static volatile List<String> lastPool;
 
     private TitleSplashes() {
     }

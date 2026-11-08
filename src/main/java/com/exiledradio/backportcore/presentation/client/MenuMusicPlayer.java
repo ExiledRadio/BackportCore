@@ -46,7 +46,7 @@ public final class MenuMusicPlayer {
     private static Field accessorList;
 
     /** For the client self-test: the last track picked. */
-    static volatile String lastPick;
+    public static volatile String lastPick;
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onPlaySound(PlaySoundEvent event) {

@@ -26,11 +26,11 @@ import java.util.Set;
  * {@code GameSettings.loadOptions}, so every setting 1.12.2 knows can be defaulted without a table here.
  */
 @SideOnly(Side.CLIENT)
-final class ClientDefaults {
+public final class ClientDefaults {
 
     private static boolean done;
     /** For the client self-test: how many entries were applied this launch. */
-    static int applied = -1;
+    public static int applied = -1;
 
     private ClientDefaults() {
     }

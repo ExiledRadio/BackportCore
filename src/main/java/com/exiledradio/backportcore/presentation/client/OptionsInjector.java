@@ -58,7 +58,7 @@ public final class OptionsInjector {
     private static Field rowB;
 
     /** For the client self-test: the screens injected into this session. */
-    static final List<String> INJECTED = new ArrayList<String>();
+    public static final List<String> INJECTED = new ArrayList<String>();
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {

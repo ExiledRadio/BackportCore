@@ -47,6 +47,8 @@ public final class PanoramaRenderer {
     private static WeakReference<GuiScreen> screen = new WeakReference<GuiScreen>(null);
     private static float time;
     private static long lastMillis;
+    /** For the client self-test: frames drawn. */
+    public static volatile int frames;
 
     private PanoramaRenderer() {
     }
@@ -89,6 +91,7 @@ public final class PanoramaRenderer {
         float speed = Presentation.PANORAMA_SPEED.isShown() ? (float) Presentation.PANORAMA_SPEED.get() : 1.0F;
         time += elapsed * speed;
         drawCube(Minecraft.getMinecraft(), faces(), MathHelper.sin(time * 0.001F) * 5.0F + 25.0F, -time * 0.1F, 1.0F);
+        frames++;
     }
 
     /** 1.13's {@code RenderSkyboxCube.render}, on 1.12.2's GL state manager. */

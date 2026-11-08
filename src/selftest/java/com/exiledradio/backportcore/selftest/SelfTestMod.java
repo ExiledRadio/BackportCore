@@ -27,6 +27,9 @@ public final class SelfTestMod {
         MinecraftForge.EVENT_BUS.register(this);
         PoseTests.register();
         PresentationTests.register();
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            ClientPresentationTests.register();
+        }
     }
 
     @SubscribeEvent

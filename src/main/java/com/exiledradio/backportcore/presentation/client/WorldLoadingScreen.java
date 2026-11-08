@@ -31,10 +31,10 @@ import java.lang.reflect.Field;
 public final class WorldLoadingScreen extends LoadingScreenRenderer {
 
     /** Frames drawn, by kind, for the client self-test. */
-    static volatile int frames;
-    static volatile int gridFrames;
-    static volatile int dataFrames;
-    static volatile LoadingRevision lastRevision;
+    public static volatile int frames;
+    public static volatile int gridFrames;
+    public static volatile int dataFrames;
+    public static volatile LoadingRevision lastRevision;
 
     private static boolean warned;
     private static Field running;
