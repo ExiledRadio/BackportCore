@@ -21,7 +21,24 @@ public final class CoreConfig {
     @Config.Comment("1.14's Texture Update for vanilla blocks, items and mobs.")
     public static final Textures textures = new Textures();
 
+    @Config.LangKey("config.backportcore.presentation")
+    @Config.Comment("The parts of the game's look that follow the newest installed backport, as vanilla's did at that version.")
+    public static final PresentationSettings presentation = new PresentationSettings();
+
     private CoreConfig() {
+    }
+
+    public static final class PresentationSettings {
+
+        @Config.Comment({
+                "Which panorama the title screen shows behind its buttons:",
+                "  LATEST - the newest installed backport's (vanilla's choice),",
+                "  a version, such as 1.14 - that version's, if a backport of it is installed (1.12.2 for 1.12.2's own),",
+                "  ROTATE - a different installed version's each time the game starts.",
+                "",
+                "Client only; a server ignores it. Takes effect the next time the game starts."
+        })
+        public String panorama = "LATEST";
     }
 
     public static final class Textures {

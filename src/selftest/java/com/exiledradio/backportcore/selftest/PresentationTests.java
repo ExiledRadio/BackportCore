@@ -1,8 +1,10 @@
 package com.exiledradio.backportcore.selftest;
 
+import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.presentation.Contribution;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
+import com.exiledradio.backportcore.presentation.PanoramaChoice;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VersionedDefaults;
 import com.exiledradio.backportcore.presentation.option.CycleOption;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.check;
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
@@ -114,6 +117,7 @@ final class PresentationTests {
             check("Core's 1.19.3 and 1.20.3 options are hidden at 1.16", !Presentation.PANORAMA_SPEED.isShown() && !Presentation.HIDE_SPLASH_TEXTS.isShown());
             check("an id without a mod id is refused", refusedOption("toggle"));
         });
+        schedulePanorama();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -132,6 +136,45 @@ final class PresentationTests {
             check("a declared older revision does not", Presentation.loadingRevision(GameVersion.parse("1.16"),
                     Collections.singletonList(older)) == LoadingRevision.DATA_1_16);
         });
+    }
+
+    /** Piece 2: which panorama shows, from the presentation.panorama setting. */
+    static void schedulePanorama() {
+        then(1, "presentation: panorama choice", world -> {
+            ResourceLocation[] a = faces("a");
+            ResourceLocation[] b = faces("b");
+            List<Presentation.Panorama> two = Arrays.asList(new Presentation.Panorama(GameVersion.parse("1.14"), a),
+                    new Presentation.Panorama(GameVersion.parse("1.16"), b));
+            Random random = new Random(1);
+            check("the default setting is LATEST", "LATEST".equals(CoreConfig.presentation.panorama), CoreConfig.presentation.panorama);
+            check("LATEST shows the newest", PanoramaChoice.choose("LATEST", two, null, random).faces == b);
+            check("a fixed installed version shows its own", PanoramaChoice.choose("1.14", two, null, random).faces == a);
+            PanoramaChoice base = PanoramaChoice.choose("1.12.2", two, null, random);
+            check("1.12.2 shows 1.12.2's own faces", base.faces == null && base.version.equals(GameVersion.BASE), base);
+            check("a version not installed shows the latest", PanoramaChoice.choose("1.15", two, null, random).faces == b);
+            check("a bad setting shows the latest", PanoramaChoice.choose("newest please", two, null, random).faces == b);
+            check("lower case works", PanoramaChoice.choose("latest", two, null, random).faces == b);
+            check("with nothing installed, 1.12.2's", PanoramaChoice.choose("LATEST", Collections.<Presentation.Panorama>emptyList(), null, random).faces == null);
+            boolean neverLast = true;
+            boolean sawBase = false;
+            boolean sawA = false;
+            for (int i = 0; i < 60; i++) {
+                PanoramaChoice c = PanoramaChoice.choose("ROTATE", two, "1.16", random);
+                neverLast &= c.faces != b;
+                sawBase |= c.faces == null;
+                sawA |= c.faces == a;
+            }
+            check("ROTATE never repeats last launch's and reaches every other one", neverLast && sawBase && sawA);
+            check("ROTATE with only 1.12.2 shows 1.12.2's", PanoramaChoice.choose("ROTATE", Collections.<Presentation.Panorama>emptyList(), "1.12.2", random).faces == null);
+        });
+    }
+
+    private static ResourceLocation[] faces(String name) {
+        ResourceLocation[] f = new ResourceLocation[6];
+        for (int i = 0; i < 6; i++) {
+            f[i] = new ResourceLocation(DOMAIN, name + i);
+        }
+        return f;
     }
 
     static String ids(List<PresentationOption> options) {

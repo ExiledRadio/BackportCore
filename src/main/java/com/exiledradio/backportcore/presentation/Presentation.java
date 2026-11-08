@@ -196,7 +196,7 @@ public final class Presentation {
         public final GameVersion version;
         public final ResourceLocation[] faces;
 
-        Panorama(GameVersion version, ResourceLocation[] faces) {
+        public Panorama(GameVersion version, ResourceLocation[] faces) {
             this.version = version;
             this.faces = faces;
         }

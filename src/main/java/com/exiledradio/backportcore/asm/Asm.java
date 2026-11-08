@@ -27,8 +27,9 @@ public final class Asm {
 
     static final String HOOKS = "com/exiledradio/backportcore/pose/MovementHooks";
     static final String CLIENT_HOOKS = "com/exiledradio/backportcore/pose/client/ClientHooks";
+    static final String PRESENTATION_HOOKS = "com/exiledradio/backportcore/presentation/client/PresentationHooks";
 
-    /** Each patch's state by its id ("P1".."P5"): "applied", or why it was skipped. Read by the self-tests. */
+    /** Each patch's state by its id ("P1".."P7"): "applied", or why it was skipped. Read by the self-tests. */
     private static final Map<String, String> STATE = new ConcurrentHashMap<String, String>();
 
     private Asm() {

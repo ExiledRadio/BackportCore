@@ -153,3 +153,25 @@ here and by the backports that use it.
 *   **Fails safe**: method missing or not exactly one `getEyeHeight` call: skipped; the camera snaps as in
     1.12.2.
 *   **Tested**: transformer chain and SRG names. Not seen in a running client.
+
+## P6. The title screen panorama
+
+*   **Class**: `net.minecraft.client.gui.GuiMainMenu`, method `drawScreen(IIF)V` (`func_73863_a`).
+    **Transformer**: `asm/TitlePanoramaTransformer`. **Hooks**: `presentation/client/PresentationHooks.renderSkybox`,
+    `drawGradient`. **Since**: 1.2.0.
+*   **Vanilla 1.13**: the title screen draws its panorama sharp (no blur), through an 85 degree perspective at
+    the window's shape, turning a full circle (`RenderSkyboxCube`, `RenderSkybox`), and draws
+    `panorama_overlay.png` over it in place of 1.12.2's two gradients.
+*   **Why a patch**: `renderSkybox` is private and draws through a 256 by 256 blurred texture; no event comes
+    between it and the gradients, and replacing the whole title screen class would break every mod that
+    checks for it.
+*   **What changes**: three call sites change owner, nothing else: the one `renderSkybox(mouseX, mouseY,
+    partialTicks)` call and the two `drawGradientRect` calls become static calls to the hooks, with the menu
+    as the first argument.
+*   **Who it reaches**: the title screen, once any backport is installed (a 1.13 or later version is
+    registered). With none, both hooks call vanilla's own methods. The overlay replaces the gradients only
+    when an installed version registered one.
+*   **Fails safe**: method missing, or not exactly one `renderSkybox` and two `drawGradientRect` calls:
+    skipped; the panorama is 1.12.2's, blurred, with the chosen faces not shown.
+*   **Tested**: transformer chain and SRG names (`selftest/PatchTests`); the client self-test
+    (`runClient -Pselftest`) reports the hook drawing the dummy version's faces at the main menu.
