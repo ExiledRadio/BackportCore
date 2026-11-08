@@ -46,7 +46,10 @@ Client-only registrations, from the backport's client proxy:
 | Debug text (F3) | `DebugText.add("1.15", "no chunk updates", lines -> ...)` | Each step edits `lines.left` and `lines.right` in place, oldest version first, before other mods add their lines (Forge's `RenderGameOverlayEvent.Text`). |
 | In-game music | `GameMusic.add("1.13", "under water", s -> { if (...) s.choose(new GameMusic.Track(event, 12000, 24000, false)); })` | The choice starts as 1.12.2's (`getAmbientMusicType`); each version's step may change it. Core's ticker (1.16.5's `MusicManager`, each track saying whether it cuts off another) replaces vanilla's once a step exists. |
 | Sky and clouds | `FogPipeline.add(version, name, step)` with `sky(Sky)` / `clouds(Clouds)` | Patches P15 and P16: the sky dome, the fog's blend with the sky, both cloud passes and the camera-above-clouds test. |
-Core resolves everything lazily, so the order backports load in does not matter.
+Core resolves everything lazily, so the order backports load in does not matter. The game's one resource load at
+startup runs before the backports' pre-init, so Core reads the languages again (and any replaced texture already
+loaded) once every mod has loaded. The version that ships 1.13's underwater music hands Core its event
+(`GameMusic.setUnderWater`), so later versions' music rules can ask for it.
 
 ## How each piece resolves
 
