@@ -530,8 +530,32 @@ final class StructureTests {
             if (heights == null) {
                 return;
             }
+            // The finder can return a coastal 1:4 cell, so take the chunk with the most predicted water within
+            // two chunks of it (predictions generate nothing). A coastal pick failed the "> 200 wet" check below.
             int cx = ocean.getX() >> 4;
             int cz = ocean.getZ() >> 4;
+            int bestWet = -1;
+            int bestX = cx;
+            int bestZ = cz;
+            for (int ox = -2; ox <= 2; ox++) {
+                for (int oz = -2; oz <= 2; oz++) {
+                    int count = 0;
+                    for (int x = 0; x < 16; x++) {
+                        for (int z = 0; z < 16; z++) {
+                            if (heights.isWater(((cx + ox) << 4) + x, ((cz + oz) << 4) + z)) {
+                                count++;
+                            }
+                        }
+                    }
+                    if (count > bestWet) {
+                        bestWet = count;
+                        bestX = cx + ox;
+                        bestZ = cz + oz;
+                    }
+                }
+            }
+            cx = bestX;
+            cz = bestZ;
             int[][] predicted = new int[256][3];
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
