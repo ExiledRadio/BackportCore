@@ -126,6 +126,14 @@ public final class BackportCore {
         DuplicateBlocks.removeGenerators();
     }
 
+    /** Every mod has loaded: the backports' vanilla text and assets go into the client's languages and textures. */
+    @Mod.EventHandler
+    public void loadComplete(net.minecraftforge.fml.common.event.FMLLoadCompleteEvent event) {
+        if (event.getSide().isClient()) {
+            com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
+        }
+    }
+
     /** The world-loading grid records the spawn area from here (integrated and dedicated servers alike). */
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {

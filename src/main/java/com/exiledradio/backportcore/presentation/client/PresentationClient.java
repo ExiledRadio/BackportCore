@@ -34,9 +34,17 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
     }
 
+    /** From Core's load-complete event: the backports' vanilla text and assets take effect. */
+    public static void loadComplete() {
+        Minecraft mc = Minecraft.getMinecraft();
+        VanillaAssetPack.afterLoading(mc);
+        // The game's last resource load ran before the mods: the startup screen fades from here into the title.
+        StartupScreen.INSTANCE.onResourceManagerReload(mc.getResourceManager());
+    }
+
     /**
-     * From Core's init: the startup screen listens for the end of every resource load from here on (the last one
-     * of the game's start included).
+     * From Core's init: the startup screen listens for the end of every resource load from here on (F3+T, the
+     * resource packs screen).
      */
     public static void initLate() {
         net.minecraft.client.resources.IResourceManager rm = Minecraft.getMinecraft().getResourceManager();

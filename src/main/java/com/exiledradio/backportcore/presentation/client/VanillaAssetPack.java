@@ -168,6 +168,35 @@ public final class VanillaAssetPack implements IResourcePack {
         return BackportCore.MOD_ID + ":vanilla_by_version";
     }
 
+    /**
+     * Once every mod has loaded: the game's resource load ran before the backports' pre-init registered their
+     * vanilla text and assets, so the languages are read again now (only the languages; 1.12.2 reads them once per
+     * load), and any texture Core now serves that was already loaded is read again from its new source.
+     */
+    public static void afterLoading(Minecraft mc) {
+        if (!installed) {
+            return;
+        }
+        if (!Presentation.vanillaTexts().isEmpty()) {
+            mc.getLanguageManager().onResourceManagerReload(mc.getResourceManager());
+        }
+        int textures = 0;
+        for (String path : Presentation.assets().keySet()) {
+            ResourceLocation rl = new ResourceLocation(path);
+            net.minecraft.client.renderer.texture.ITextureObject tex = mc.getTextureManager().getTexture(rl);
+            if (tex instanceof net.minecraft.client.renderer.texture.SimpleTexture) {
+                try {
+                    ((net.minecraft.client.renderer.texture.SimpleTexture) tex).loadTexture(mc.getResourceManager());
+                    textures++;
+                } catch (IOException e) {
+                    BackportCore.LOGGER.warn("Presentation: could not reload {}", rl, e);
+                }
+            }
+        }
+        BackportCore.LOGGER.info("Presentation: vanilla text from {} folder(s) and {} asset(s) in place ({} reloaded textures)",
+                Presentation.vanillaTexts().size(), Presentation.assets().size(), textures);
+    }
+
     /** For the self-tests: what the pack serves now, path to source. */
     public static Map<String, ResourceLocation> served() {
         return Presentation.assets();
