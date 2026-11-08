@@ -4,6 +4,8 @@ import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.presentation.Contribution;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
+import com.exiledradio.backportcore.presentation.LoadingStatus;
+import com.exiledradio.backportcore.presentation.SpawnProgress;
 import com.exiledradio.backportcore.presentation.PanoramaChoice;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VersionedDefaults;
@@ -15,6 +17,7 @@ import com.exiledradio.backportcore.presentation.option.SliderOption;
 import com.exiledradio.backportcore.presentation.option.ToggleOption;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 
 import java.io.File;
 import java.util.Arrays;
@@ -118,6 +121,7 @@ final class PresentationTests {
             check("an id without a mod id is refused", refusedOption("toggle"));
         });
         schedulePanorama();
+        scheduleLoading();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -175,6 +179,54 @@ final class PresentationTests {
             f[i] = new ResourceLocation(DOMAIN, name + i);
         }
         return f;
+    }
+
+    /** Piece 3: the spawn area the world-loading grid drew while this server started. */
+    static void scheduleLoading() {
+        then(1, "presentation: world-loading grid", world -> {
+            check("grid colors are 1.14's", LoadingStatus.EMPTY.color() == 0x545454 && LoadingStatus.FEATURES.color() == 0x21C600
+                    && LoadingStatus.FULL.color() == 0xFFFFFF && LoadingStatus.argb(null) == 0xFF000000);
+            check("recording stopped once the server started", !SpawnProgress.isActive());
+            SpawnProgress.Snapshot s = SpawnProgress.last();
+            if (!check("a picture was kept from the server start", s != null)) {
+                return;
+            }
+            BlockPos spawn = world.getSpawnPoint();
+            check("its center is the spawn chunk", s.center != null && s.center.x == spawn.getX() >> 4 && s.center.z == spawn.getZ() >> 4, s.center);
+            check("43 by 43 cells", s.side == 43 && s.cells.length == 43 * 43, s.side);
+            check("the whole spawn area loaded: 100%", s.percent == 100, s.percent);
+            check("the spawn chunk is FULL", s.at(0, 0) == LoadingStatus.FULL, s.at(0, 0));
+            int full = 0;
+            int partial = 0;
+            int untracked = 0;
+            for (LoadingStatus c : s.cells) {
+                if (c == LoadingStatus.FULL) {
+                    full++;
+                } else if (c == null) {
+                    untracked++;
+                } else {
+                    partial++;
+                }
+            }
+            // 1.12.2 loads exactly the 25 by 25 square; a chunk is populated once its +x, +z and +xz neighbors exist,
+            // and FULL once all eight neighbors are populated, so the FULL core is 22 by 22 on vanilla terrain.
+            check("1.12.2's 25 by 25 spawn square is tracked, its core FULL", full + partial >= 625 && full >= 21 * 21,
+                    "full=" + full + " partial=" + partial + " untracked=" + untracked);
+            check("a ring of generated, not yet ready chunks around it", partial > 0, partial);
+            check("the far corners were never loaded (the black border)", s.at(21, 21) == null && s.at(-21, -21) == null);
+            check("every spawn-square cell has a status", allTracked(s));
+        });
+    }
+
+    private static boolean allTracked(SpawnProgress.Snapshot s) {
+        for (int dx = -SpawnProgress.SPAWN_RADIUS; dx <= SpawnProgress.SPAWN_RADIUS; dx++) {
+            for (int dz = -SpawnProgress.SPAWN_RADIUS; dz <= SpawnProgress.SPAWN_RADIUS; dz++) {
+                if (s.at(dx, dz) == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     static String ids(List<PresentationOption> options) {

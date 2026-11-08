@@ -5,6 +5,7 @@ import com.exiledradio.backportcore.duplicate.DuplicateBlocks;
 import com.exiledradio.backportcore.migrate.FutureMcCommand;
 import com.exiledradio.backportcore.pose.PoseEvents;
 import com.exiledradio.backportcore.pose.PoseNetwork;
+import com.exiledradio.backportcore.presentation.SpawnProgress;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +13,8 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +39,8 @@ import org.apache.logging.log4j.Logger;
  * <li>{@code waterlog} - 1.13's waterlogging for the family's blocks, through Fluidlogged API.</li>
  * <li>{@code pose} - 1.14's player poses: the swimming pose and crawling, their hitbox and eyes, sent to
  * other players and drawn; and the movement hooks a backport's swimming rules use.</li>
+ * <li>{@code presentation} - each version's look and feel (panorama, world-loading screen, options screens,
+ * splashes, menu music, F3 keys, fog), following the newest installed backport.</li>
  * </ul>
  *
  * <p>Its own small coremod ({@code asm}, every patch in {@code docs/PATCHES.md}) gives the pose engine the
@@ -86,8 +91,10 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new CoreConfig.EventHandler());
         PoseNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
+        MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
+            com.exiledradio.backportcore.presentation.client.PresentationClient.init();
         }
     }
 
@@ -106,8 +113,19 @@ public final class BackportCore {
         DuplicateBlocks.removeLateRecipes();
     }
 
+    /** The world-loading grid records the spawn area from here (integrated and dedicated servers alike). */
+    @Mod.EventHandler
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        SpawnProgress.start();
+    }
+
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new FutureMcCommand());
+    }
+
+    @Mod.EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        SpawnProgress.finish();
     }
 }
