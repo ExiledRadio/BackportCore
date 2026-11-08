@@ -35,12 +35,24 @@ public final class ClientHooks {
         return PoseClient.cameraEyeHeight(entity, partialTicks);
     }
 
-    /** P3, first line of {@code ModelBiped.setRotationAngles}. */
-    public static void beforeAngles(ModelBiped model, Entity entity) {
+    /**
+     * P3, first line of {@code ModelBiped.setRotationAngles}. Everything the two later hooks need is handed over
+     * here: Mojang's shipped classes mark a parameter unusable once the original code stops reading it, so reading
+     * limbSwing, headPitch or the entity further down fails verification in a real game (never in a dev run, which
+     * recompiles Minecraft). The later hooks find this call's frame by the model.
+     */
+    public static void beforeAngles(ModelBiped model, Entity entity, float limbSwing, float headPitch) {
         PoseClient.Frame frame = PoseClient.frame(entity);
         if (frame == null) {
+            PoseClient.Frame top = PoseClient.frameFor(model);
+            if (top != null) {
+                top.model = null; // this model is now posing something else
+            }
             return;
         }
+        frame.model = model;
+        frame.limbSwing = limbSwing;
+        frame.headPitch = headPitch;
         frame.prevHeadX = model.bipedHead.rotateAngleX;
         if (frame.pose == Pose.SWIMMING) {
             // 1.14 crouches the model by pose (SNEAKING), and the swimming pose wins over sneaking.
@@ -49,18 +61,18 @@ public final class ClientHooks {
     }
 
     /** P3, after the head's angles: 1.14 blends the head from its last angle toward where a swimmer looks. */
-    public static void afterHead(ModelBiped model, Entity entity, float headPitch) {
-        PoseClient.Frame frame = PoseClient.frame(entity);
-        if (frame == null || frame.swim <= 0.0F || ((EntityLivingBase) entity).getTicksElytraFlying() > 4) {
+    public static void afterHead(ModelBiped model) {
+        PoseClient.Frame frame = PoseClient.frameFor(model);
+        if (frame == null || frame.swim <= 0.0F || frame.player.getTicksElytraFlying() > 4) {
             return;
         }
-        float target = frame.pose == Pose.SWIMMING ? -PI / 4.0F : headPitch * (PI / 180.0F);
+        float target = frame.pose == Pose.SWIMMING ? -PI / 4.0F : frame.headPitch * (PI / 180.0F);
         model.bipedHead.rotateAngleX = rotLerp(frame.prevHeadX, target, frame.swim);
     }
 
     /** P3, before the head is copied to the headwear: backports' arm poses, then 1.14's swim stroke. */
-    public static void afterAngles(ModelBiped model, Entity entity, float limbSwing) {
-        PoseClient.Frame frame = PoseClient.frame(entity);
+    public static void afterAngles(ModelBiped model) {
+        PoseClient.Frame frame = PoseClient.frameFor(model);
         if (frame == null) {
             return;
         }
@@ -73,7 +85,7 @@ public final class ClientHooks {
         if (swim <= 0.0F) {
             return;
         }
-        float f7 = limbSwing % 26.0F;
+        float f7 = frame.limbSwing % 26.0F;
         float f8 = model.swingProgress > 0.0F ? 0.0F : swim;
         if (f7 < 14.0F) {
             model.bipedLeftArm.rotateAngleX = rotLerp(model.bipedLeftArm.rotateAngleX, 0.0F, swim);
@@ -99,8 +111,8 @@ public final class ClientHooks {
             model.bipedLeftArm.rotateAngleZ = rotLerp(model.bipedLeftArm.rotateAngleZ, PI, swim);
             model.bipedRightArm.rotateAngleZ = lerp(f8, model.bipedRightArm.rotateAngleZ, PI);
         }
-        model.bipedLeftLeg.rotateAngleX = lerp(swim, model.bipedLeftLeg.rotateAngleX, 0.3F * MathHelper.cos(limbSwing * 0.33333334F + PI));
-        model.bipedRightLeg.rotateAngleX = lerp(swim, model.bipedRightLeg.rotateAngleX, 0.3F * MathHelper.cos(limbSwing * 0.33333334F));
+        model.bipedLeftLeg.rotateAngleX = lerp(swim, model.bipedLeftLeg.rotateAngleX, 0.3F * MathHelper.cos(frame.limbSwing * 0.33333334F + PI));
+        model.bipedRightLeg.rotateAngleX = lerp(swim, model.bipedRightLeg.rotateAngleX, 0.3F * MathHelper.cos(frame.limbSwing * 0.33333334F));
     }
 
     /**
