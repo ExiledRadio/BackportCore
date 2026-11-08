@@ -94,7 +94,13 @@ public final class MultiplayerWarningScreen extends GuiScreen {
             if (Presentation.asset("textures/gui/checkbox.png") != null) {
                 mc.getTextureManager().bindTexture(CHECKBOX);
                 GlStateManager.enableBlend();
-                Gui.drawModalRectWithCustomSizedTexture(this.x, this.y, this.hovered ? 20.0F : 0.0F, this.selected ? 20.0F : 0.0F, 20, this.height, 64.0F, 64.0F);
+                if (Presentation.isAtLeast("1.16")) {
+                    // 1.16's 64 by 64 texture: a hovered column beside the plain one.
+                    Gui.drawModalRectWithCustomSizedTexture(this.x, this.y, this.hovered ? 20.0F : 0.0F, this.selected ? 20.0F : 0.0F, 20, this.height, 64.0F, 64.0F);
+                } else {
+                    // 1.15.2's 32 by 64 texture: plain and ticked, no hovered look.
+                    Gui.drawModalRectWithCustomSizedTexture(this.x, this.y, 0.0F, this.selected ? 20.0F : 0.0F, 20, this.height, 32.0F, 64.0F);
+                }
             } else {
                 drawRect(this.x, this.y, this.x + 20, this.y + 20, this.hovered ? 0xFFFFFFFF : 0xFFA0A0A0);
                 drawRect(this.x + 1, this.y + 1, this.x + 19, this.y + 19, 0xFF000000);
