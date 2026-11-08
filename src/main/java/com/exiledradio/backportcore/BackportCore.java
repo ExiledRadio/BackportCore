@@ -5,7 +5,9 @@ import com.exiledradio.backportcore.duplicate.DuplicateBlocks;
 import com.exiledradio.backportcore.migrate.FutureMcCommand;
 import com.exiledradio.backportcore.pose.PoseEvents;
 import com.exiledradio.backportcore.pose.PoseNetwork;
+import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.SpawnProgress;
+import com.exiledradio.backportcore.presentation.VersionedDefaults;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -117,6 +119,10 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         SpawnProgress.start();
+        // A client applies them at its title screen; a dedicated server has none, so here.
+        if (event.getSide().isServer()) {
+            VersionedDefaults.apply(Presentation.installed(), null);
+        }
     }
 
     @Mod.EventHandler

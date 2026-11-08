@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.presentation.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -27,7 +28,11 @@ public final class PresentationClient {
         @SubscribeEvent
         public void onClientTick(TickEvent.ClientTickEvent event) {
             if (event.phase == TickEvent.Phase.START) {
-                WorldLoadingScreen.install(Minecraft.getMinecraft());
+                Minecraft mc = Minecraft.getMinecraft();
+                WorldLoadingScreen.install(mc);
+                if (mc.currentScreen instanceof GuiMainMenu) {
+                    ClientDefaults.applyOnce(mc);
+                }
             }
         }
 

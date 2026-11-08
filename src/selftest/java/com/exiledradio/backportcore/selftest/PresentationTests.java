@@ -20,6 +20,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +46,9 @@ final class PresentationTests {
     static ToggleOption future;
     static ToggleOption retired;
     static ToggleOption accessibility;
+    static ToggleOption defaulted;
+    static CycleOption overridden;
+    static int actionRuns;
 
     private PresentationTests() {
     }
@@ -57,9 +62,17 @@ final class PresentationTests {
         }
         OptionStore.useFile(new File(dir, "options.txt"));
         VersionedDefaults.useFile(new File(dir, "applied_defaults.txt"));
+        defaulted = new ToggleOption(DOMAIN + ":defaulted", "options.selftest.defaulted", OptionScreen.VIDEO, false);
+        defaulted.until("1.13.1");
+        overridden = new CycleOption(DOMAIN + ":overridden", "options.selftest.overridden", OptionScreen.VIDEO,
+                new String[] {"x", "y", "z"}, new String[] {"a", "b", "c"}, "x");
+        overridden.until("1.13.1");
         Presentation.version("1.14")
                 .addSplashes("Rainbow turtle?", "{PLAYER} IS YOU", "Now Java 16!")
-                .removeSplashes("Made by Notch!");
+                .removeSplashes("Made by Notch!")
+                .option(defaulted).option(overridden)
+                .optionDefault(defaulted, "true")
+                .optionDefault(overridden, "y");
         toggle = new ToggleOption(DOMAIN + ":toggle", "options.selftest.toggle", OptionScreen.VIDEO, true);
         slider = new SliderOption(DOMAIN + ":slider", "options.selftest.slider", OptionScreen.VIDEO, 0.5, 5.0, 0.25, 1.0);
         cycle = new CycleOption(DOMAIN + ":cycle", "options.selftest.cycle", OptionScreen.CHAT,
@@ -72,7 +85,10 @@ final class PresentationTests {
         accessibility.after("SHOW_SUBTITLES");
         Presentation.version("1.16")
                 .panorama(DOMAIN + ":textures/gui/title/background/panorama_")
-                .option(toggle).option(slider).option(cycle).option(future).option(retired).option(accessibility);
+                .option(toggle).option(slider).option(cycle).option(future).option(retired).option(accessibility)
+                .optionDefault(overridden, "z")
+                .defaultAction("selftest_counter", () -> actionRuns++)
+                .gameOptionDefault("chatLinksPrompt", "false");
     }
 
     static void schedule() {
@@ -123,6 +139,7 @@ final class PresentationTests {
         schedulePanorama();
         scheduleLoading();
         scheduleOptions();
+        scheduleDefaults();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -260,6 +277,31 @@ final class PresentationTests {
             check("a malformed saved value keeps the default", junk.get());
             toggle.reset();
             check("reset puts the default back", toggle.get());
+        });
+    }
+
+    /** Piece 5: changed defaults, applied once per instance (the dedicated server applied them as it started). */
+    static void scheduleDefaults() {
+        then(1, "presentation: versioned defaults", world -> {
+            check("an option default was applied", defaulted.get());
+            check("the later version's default for the same option wins", "z".equals(overridden.get()), overridden.get());
+            check("a default action ran once", actionRuns == 1, actionRuns);
+            List<VersionedDefaults.Entry> pending = VersionedDefaults.pending(Presentation.installed());
+            check("only the vanilla setting is left for a client", pending.size() == 1
+                    && pending.get(0).kind == VersionedDefaults.Kind.GAME_OPTION && "chatLinksPrompt".equals(pending.get(0).key), pending.size());
+            defaulted.set(false);
+            int again = VersionedDefaults.apply(Presentation.installed(), null);
+            check("applying again changes nothing", again == 0 && actionRuns == 1 && !defaulted.get(), again);
+            String record = new String(Files.readAllBytes(VersionedDefaults.file().toPath()), StandardCharsets.UTF_8);
+            check("the record names each applied default", record.contains("1.14/option/" + defaulted.id())
+                    && record.contains("1.16/action/selftest_counter") && !record.contains("chatLinksPrompt"), record.replace(System.lineSeparator(), " "));
+            int[] wrote = {0};
+            int client = VersionedDefaults.apply(Presentation.installed(), values -> {
+                wrote[0] = values.size();
+                return "false".equals(values.get("chatLinksPrompt"));
+            });
+            check("a client writes the vanilla setting once", client == 1 && wrote[0] == 1
+                    && VersionedDefaults.pending(Presentation.installed()).isEmpty(), client);
         });
     }
 
