@@ -33,6 +33,7 @@ public final class PresentationHooks {
     private static Method renderSkybox;
     private static Method drawGradientRect;
     private static Method processKeyF3;
+    private static boolean loggedClassic;
 
     private PresentationHooks() {
     }
@@ -42,6 +43,10 @@ public final class PresentationHooks {
         if (PanoramaRenderer.modern()) {
             PanoramaRenderer.render(menu);
             return;
+        }
+        if (!loggedClassic) {
+            loggedClassic = true;
+            BackportCore.LOGGER.info("Presentation: no backport installed; the title screen is 1.12.2's");
         }
         try {
             if (renderSkybox == null) {
