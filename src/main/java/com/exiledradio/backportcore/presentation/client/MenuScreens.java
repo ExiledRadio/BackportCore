@@ -28,7 +28,8 @@ import java.util.List;
  *       Give Feedback, Report Bugs; Options..., Open to LAN; Save and Quit to Title). Forge's own Mod Options button,
  *       which vanilla has no place for, moves below the grid.</li>
  *   <li>Death, 1.15 (19w35a): a hardcore death screen's second button is "Title screen" instead of Delete World or
- *       Leave Server (1.12.2's button already only leaves the world).</li>
+ *       Leave Server, and it leaves the world for the title screen, saving it (1.15's {@code exitToTitleScreen};
+ *       1.12.2's only showed the title screen over a world still running).</li>
  * </ul>
  */
 @SideOnly(Side.CLIENT)
@@ -52,6 +53,25 @@ public final class MenuScreens {
                 }
             }
         }
+    }
+
+    /** For the client self-test. */
+    public static volatile int hardcoreExits;
+
+    @SubscribeEvent
+    public void onAction(GuiScreenEvent.ActionPerformedEvent.Pre event) {
+        if (!(event.getGui() instanceof GuiGameOver) || event.getButton().id != 1 || !VanillaRevisions.hardcoreTitleButton()) {
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.world == null || !mc.world.getWorldInfo().isHardcoreModeEnabled()) {
+            return;
+        }
+        event.setCanceled(true);
+        hardcoreExits++;
+        mc.world.sendQuittingDisconnectingPacket();
+        mc.loadWorld(null);
+        mc.displayGuiScreen(new net.minecraft.client.gui.GuiMainMenu());
     }
 
     static void pause(GuiScreen gui, List<GuiButton> buttons) {
