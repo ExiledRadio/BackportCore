@@ -125,7 +125,9 @@ public final class Oracle1144 {
     }
 
     static void dump(long seed, PrintWriter w) throws Exception {
-        LevelData data = new LevelData(new LevelSettings(seed, GameType.SURVIVAL, true, false, LevelType.NORMAL), "oracle");
+        // -Doracle.levelType=largeBiomes (or amplified) for another vanilla world type.
+        LevelType type = LevelType.getLevelType(System.getProperty("oracle.levelType", "default"));
+        LevelData data = new LevelData(new LevelSettings(seed, GameType.SURVIVAL, true, false, type), "oracle");
         OverworldGeneratorSettings settings = new OverworldGeneratorSettings();
         OverworldBiomeSource source = new OverworldBiomeSource(new OverworldBiomeSourceSettings().setLevelData(data).setGeneratorSettings(settings));
         ChunkGenerator<OverworldGeneratorSettings> gen = generator(seed, source, settings);
