@@ -47,6 +47,11 @@ public final class PoseClient {
         final Pose pose;
         final float swim;
         float prevHeadX;
+        /** P3: the call's limbSwing and headPitch, taken at the method's first line (see BipedAnglesTransformer). */
+        float limbSwing;
+        float headPitch;
+        /** P3: the model whose angles are being set for this player, so the later hooks need no parameters. */
+        net.minecraft.client.model.ModelBiped model;
 
         Frame(EntityPlayer player, Pose pose, float swim) {
             this.player = player;
@@ -91,6 +96,12 @@ public final class PoseClient {
     }
 
     /** @return the draw going on for this entity, or null outside a third-person player render */
+    /** P3's later hooks: this player's frame while {@code model}'s angles are being set, else null. */
+    static Frame frameFor(net.minecraft.client.model.ModelBiped model) {
+        Frame top = FRAMES.peekLast();
+        return top != null && top.model == model ? top : null;
+    }
+
     static Frame frame(Entity entity) {
         Frame top = FRAMES.peekLast();
         return top != null && top.player == entity ? top : null;

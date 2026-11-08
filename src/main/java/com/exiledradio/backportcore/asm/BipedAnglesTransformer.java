@@ -18,15 +18,18 @@ import java.util.List;
  *
  * <p>Three additions to {@code ModelBiped.setRotationAngles}, all calls into {@code pose.client.ClientHooks}:
  * <ol>
- *   <li>at the start: {@code beforeAngles(this, entity)} - remembers the head's last angle (1.14 blends
+ *   <li>at the start: {@code beforeAngles(this, entity, limbSwing, headPitch)} - remembers the head's last angle (1.14 blends
  *       from it), and a player in the swimming pose is not drawn crouched, as 1.14 draws by pose rather
  *       than by the sneak key;</li>
  *   <li>right after the head's angles are set (before the first {@code bipedBody} statement, where 1.14
- *       blends the head): {@code afterHead(this, entity, headPitch)};</li>
+ *       blends the head): {@code afterHead(this)};</li>
  *   <li>before the last {@code copyModelAngles} (the head to the headwear, the method's last line, where
- *       1.14 adds the stroke): {@code afterAngles(this, entity, limbSwing)} - 1.14's swim stroke for arms
+ *       1.14 adds the stroke): {@code afterAngles(this)} - 1.14's swim stroke for arms
  *       and legs, blended in by the player's swim amount.</li>
  * </ol>
+ * The parameters are read only at the first line: the shipped (ProGuard) stack-map frames mark headPitch,
+ * limbSwing and the entity unusable further down, where the original code no longer reads them, and a later FLOAD there is a
+ * VerifyError in a real game. Dev runs recompile Minecraft with javac and never show it.
  * All three do nothing unless the model is being drawn for a player in a third-person render.
  */
 public final class BipedAnglesTransformer implements IClassTransformer {
@@ -38,6 +41,7 @@ public final class BipedAnglesTransformer implements IClassTransformer {
     private static final String DESC = "(FFFFFFLnet/minecraft/entity/Entity;)V";
     private static final String COPY = "(Lnet/minecraft/client/model/ModelRenderer;Lnet/minecraft/client/model/ModelRenderer;)V";
     private static final String MODEL_ENTITY = "(Lnet/minecraft/client/model/ModelBiped;Lnet/minecraft/entity/Entity;";
+    private static final String MODEL_ONLY = "(Lnet/minecraft/client/model/ModelBiped;)V";
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -69,22 +73,20 @@ public final class BipedAnglesTransformer implements IClassTransformer {
         InsnList head = new InsnList();
         head.add(new VarInsnNode(Opcodes.ALOAD, 0));
         head.add(new VarInsnNode(Opcodes.ALOAD, 7));
-        head.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "beforeAngles", MODEL_ENTITY + ")V", false));
+        head.add(new VarInsnNode(Opcodes.FLOAD, 1));
+        head.add(new VarInsnNode(Opcodes.FLOAD, 5));
+        head.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "beforeAngles", MODEL_ENTITY + "FF)V", false));
         angles.instructions.insert(head);
 
         InsnList afterHead = new InsnList();
         afterHead.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        afterHead.add(new VarInsnNode(Opcodes.ALOAD, 7));
-        afterHead.add(new VarInsnNode(Opcodes.FLOAD, 5));
-        afterHead.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "afterHead", MODEL_ENTITY + "F)V", false));
+        afterHead.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "afterHead", MODEL_ONLY, false));
         angles.instructions.insertBefore(bodyStart, afterHead);
 
         // The copy's two arguments are already on the stack; the hook leaves them there.
         InsnList tail = new InsnList();
         tail.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        tail.add(new VarInsnNode(Opcodes.ALOAD, 7));
-        tail.add(new VarInsnNode(Opcodes.FLOAD, 1));
-        tail.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "afterAngles", MODEL_ENTITY + "F)V", false));
+        tail.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.CLIENT_HOOKS, "afterAngles", MODEL_ONLY, false));
         angles.instructions.insertBefore(copies.get(copies.size() - 1), tail);
         Asm.applied(PATCH, WHAT);
         return Asm.write(node);
