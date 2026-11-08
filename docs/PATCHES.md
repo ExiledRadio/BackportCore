@@ -21,11 +21,11 @@ tasks name it with `-Dfml.coreMods.load`.
     `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
-    with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed. With no backport
+    with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
     installed, the patched game plays as vanilla.
 *   P6, P7 and P9 only change the owner of an existing call (an instance call becomes a static call with the
-    same arguments); the hook calls the original method when it keeps vanilla's behavior. P8 replaces a whole
-    method body with one call, and its hook runs 1.12.2's own loop line for line.
+    same arguments); the hook calls the original method when it keeps vanilla's behavior. P8, P10 and P11 replace a
+    whole method body with one call, and their hooks run 1.12.2's own code line for line.
 *   A transformer that does not find the exact shape it expects changes nothing, logs
     `P<n> ...: <why>; patch skipped, vanilla behavior kept.`, and records why (`asm.Asm.state`). It never
     half-patches a method. A patched class logs `P<n> ...: patched.`
@@ -36,11 +36,11 @@ tasks name it with `-Dfml.coreMods.load`.
 
 **Tested** (`gradlew runServer -Pselftest`, `selftest/PatchTests`): P1 reports itself applied when vanilla
 loads `EntityLivingBase` in the dev server; the coremod is registered with the class loader; the bytes of
-all nine target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
+all eleven target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same nine classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same eleven classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 
@@ -239,3 +239,25 @@ here and by the backports that use it.
 *   **Fails safe**: method missing, or not exactly one such call: skipped; 1.12.2's point.
 *   **Tested**: transformer chain and SRG names; vanilla oracles: the same village start chunks as each
     version's own code over 6 seeds, blocks -4096..4095.
+
+## P10 and P11. The biome layers' neighbor rules of 1.16
+
+*   **Classes**: `net.minecraft.world.gen.layer.GenLayer`, static `biomesEqualOrMesaPlateau(II)Z` (`func_151616_a`,
+    P10), and `net.minecraft.world.gen.layer.GenLayerBiomeEdge`, private `canBiomesBeNeighbors(II)Z`
+    (`func_151634_b`, P11). **Transformer**: `asm/LayerRulesTransformer`. **Hooks**: `worldgen/WorldgenHooks.similarBiomes`,
+    `canBeNeighbors`. **Since**: 1.2.0.
+*   **Vanilla 1.16**: biomes became data, so the layers stopped asking biome objects. 1.16.5's `Layers.isSame`
+    looks both ids up in one fixed category table, where the badlands plateaus have a category of their own;
+    1.15's (and 1.12.2's) test asks the biome category (class) and treats a plateau specially only from the
+    plateau's side, so a badlands cell counted as "like" a plateau beside it. And 1.16.5's
+    `BiomeEdgeLayer.checkEdge` keeps every mountain cell, where 1.15 turned mountains beside a biome of another
+    temperature into mountain edge. Both are rare: no difference inside 1,024 blocks of 0, 0 on the six test
+    seeds, but the badlands plateaus 18,000 blocks out move strongholds (found through `strongholdtrace`, see
+    `seedcheck/OverworldDump`).
+*   **Why a patch**: both are asked by vanilla's own layer classes (hills, biome edge, shore), which Village &
+    Pillage's 1.14 stack reuses; only the methods themselves reach every caller.
+*   **What changes**: each whole body becomes one call to its hook, which runs 1.12.2's code line for line
+    until a 1.16 backport is installed (read once per world, when its biome map is made).
+*   **Fails safe**: method missing: skipped; 1.12.2's (= 1.15's) rules.
+*   **Tested**: transformer chain and SRG names; the vanilla oracle: 1.16.5's strongholds on all six seeds,
+    and 1.16.5's 1:4 map 18,000 blocks out (seed 171).

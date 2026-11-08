@@ -1,5 +1,6 @@
 package com.exiledradio.backportcore.worldgen;
 
+import net.minecraft.init.Biomes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
@@ -21,7 +22,65 @@ public final class WorldgenHooks {
 
     private static final Field GEN_BIOMES = ReflectionHelper.findField(BiomeProvider.class, "genBiomes", "field_76944_d");
 
+    /**
+     * Whether the biome layers follow 1.16's neighbor rules (P10, P11). Asked for every cell, so it is not
+     * resolved per call: {@link ModernWorldgen} sets it when a world's biome map is made, after every mod's
+     * pre-init.
+     */
+    static volatile boolean layers116;
+
     private WorldgenHooks() {
+    }
+
+    /**
+     * Patch P10: the whole body of {@code GenLayer.biomesEqualOrMesaPlateau}, the "same kind of biome" test of
+     * the hills, edge and shore layers.
+     *
+     * <p>1.12.2 (and 1.15's {@code Layers.isSame}, by biome category): the same biome class, except that a
+     * badlands plateau is only like a badlands plateau, and asked from the plateau's side only. 1.16.5's
+     * {@code Layers.isSame} looks both biomes up in one fixed category table in which the two badlands plateaus
+     * have a category of their own, so a badlands (or eroded badlands) cell is no longer "like" a plateau
+     * next to it, which keeps more plateau where the layers test from the badlands' side.
+     */
+    public static boolean similarBiomes(int a, int b) {
+        if (a == b) {
+            return true;
+        }
+        Biome x = Biome.getBiome(a);
+        Biome y = Biome.getBiome(b);
+        if (x == null || y == null) {
+            return false;
+        }
+        boolean px = x == Biomes.MESA_ROCK || x == Biomes.MESA_CLEAR_ROCK;
+        boolean py = y == Biomes.MESA_ROCK || y == Biomes.MESA_CLEAR_ROCK;
+        if (layers116) {
+            return px || py ? px && py : x.getBiomeClass() == y.getBiomeClass();
+        }
+        // 1.12.2's own.
+        if (!px) {
+            return x == y || x.getBiomeClass() == y.getBiomeClass();
+        }
+        return py;
+    }
+
+    /**
+     * Patch P11: the whole body of {@code GenLayerBiomeEdge.canBiomesBeNeighbors}, which turns mountains next to
+     * a biome of another temperature into mountain edge. 1.16.5's {@code BiomeEdgeLayer.checkEdge} keeps every
+     * mountain cell as it is (biomes lost their temperature categories in 1.16), so no mountain edge forms there.
+     */
+    public static boolean canBeNeighbors(int a, int b) {
+        if (layers116 || similarBiomes(a, b)) {
+            return true;
+        }
+        // 1.12.2's own.
+        Biome x = Biome.getBiome(a);
+        Biome y = Biome.getBiome(b);
+        if (x != null && y != null) {
+            Biome.TempCategory tx = x.getTempCategory();
+            Biome.TempCategory ty = y.getTempCategory();
+            return tx == ty || tx == Biome.TempCategory.MEDIUM || ty == Biome.TempCategory.MEDIUM;
+        }
+        return false;
     }
 
     /**

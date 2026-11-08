@@ -130,7 +130,9 @@ public final class Oracle1165OW {
 
         w.println("version 1.16.5");
         w.println("seed " + seed);
-        int bx = -R, bz = -R;
+        // -Doracle.center=<x>,<z> (blocks, multiples of 64) moves the biome window off 0, 0, as OverworldDump's.
+        String[] center = System.getProperty("oracle.center", "0,0").split(",");
+        int bx = Integer.parseInt(center[0].trim()) - R, bz = Integer.parseInt(center[1].trim()) - R;
         int c0 = bx >> 2, d0 = bz >> 2, n = (2 * R) >> 2;
         w.println("biome4 " + c0 + " " + d0 + " " + n + " " + n);
         for (int z = 0; z < n; z++) {
@@ -178,6 +180,9 @@ public final class Oracle1165OW {
             }
         }
 
+        if (Boolean.getBoolean("oracle.strongholdTrace")) {
+            strongholdTrace(seed, source, w);
+        }
         gen.hasStronghold(new ChunkPos(0, 0));
         Field f = net.minecraft.world.level.chunk.ChunkGenerator.class.getDeclaredField("strongholdPositions");
         f.setAccessible(true);
@@ -197,6 +202,56 @@ public final class Oracle1165OW {
                 if (WorldgenRandom.seedSlimeChunk(cx, cz, seed, 987234911L).nextInt(10) == 0) {
                     w.println("slime " + cx + " " + cz);
                 }
+            }
+        }
+    }
+
+    /**
+     * ChunkGenerator.generateStrongholds' loop, written out, with each search's centre and number of matching cells
+     * ("strongholdtrace i centreX centreZ count foundX foundZ"), to find where two worlds' searches part.
+     */
+    static void strongholdTrace(long seed, OverworldBiomeSource source, PrintWriter w) {
+        java.util.List<Biome> list = new java.util.ArrayList<>();
+        for (Biome b : source.possibleBiomes()) {
+            if (b.getGenerationSettings().isValidStart(StructureFeature.STRONGHOLD)) {
+                list.add(b);
+            }
+        }
+        int k1 = 32, l1 = 128, i = 3;
+        Random random = new Random();
+        random.setSeed(seed);
+        double d0 = random.nextDouble() * Math.PI * 2.0D;
+        int j = 0, k = 0;
+        for (int l = 0; l < l1; ++l) {
+            double d1 = (double) (4 * k1 + k1 * k * 6) + (random.nextDouble() - 0.5D) * (double) k1 * 2.5D;
+            int i1 = (int) Math.round(Math.cos(d0) * d1);
+            int j1 = (int) Math.round(Math.sin(d0) * d1);
+            int x = (i1 << 4) + 8, z = (j1 << 4) + 8;
+            int ci = x >> 2, cj = z >> 2, r = 112 >> 2, count = 0;
+            BlockPos found = null;
+            for (int dz = -r; dz <= r; dz++) {
+                for (int dx = -r; dx <= r; dx++) {
+                    if (list.contains(source.getNoiseBiome(ci + dx, 0, cj + dz))) {
+                        if (found == null || random.nextInt(count + 1) == 0) {
+                            found = new BlockPos(ci + dx << 2, 0, cj + dz << 2);
+                        }
+                        ++count;
+                    }
+                }
+            }
+            if (found != null) {
+                i1 = found.getX() >> 4;
+                j1 = found.getZ() >> 4;
+            }
+            w.println("strongholdtrace " + l + " " + x + " " + z + " " + count + " " + i1 + " " + j1);
+            d0 += (Math.PI * 2D) / (double) i;
+            ++j;
+            if (j == i) {
+                ++k;
+                j = 0;
+                i = i + 2 * i / (k + 1);
+                i = Math.min(i, l1 - l);
+                d0 += random.nextDouble() * Math.PI * 2.0D;
             }
         }
     }

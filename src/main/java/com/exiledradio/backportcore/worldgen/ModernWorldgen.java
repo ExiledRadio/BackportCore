@@ -37,6 +37,8 @@ import java.util.Set;
  *       and the like) and some hills; 1.13's layer contexts all get the world seed. Found by running
  *       vanilla 1.12.2 and 1.13.2 side by side ({@code tools/vanilla-oracle}).</li>
  *   <li><b>1.15's block-scale biome</b> (1.15+): the Voronoi layer gives way to {@link FuzzyZoomLayer}.</li>
+ *   <li><b>1.16's neighbor rules</b> in the biome layers (1.16+, patches P10 and P11): badlands plateaus are
+ *       their own kind, and mountains no longer turn into mountain edge.</li>
  *   <li><b>Temples</b> (1.13+): {@link ModernTemples}, four grids.</li>
  *   <li><b>Monuments</b> (1.13+): {@link ModernMonument}, the squares from block (9, 9).</li>
  *   <li><b>Stronghold biomes</b> (1.13+): 1.12.2 allows every biome above sea level; each version's
@@ -57,9 +59,14 @@ public final class ModernWorldgen {
         MinecraftForge.TERRAIN_GEN_BUS.register(ModernWorldgen.class);
     }
 
-    /** After the backports' own layer changes (Village &amp; Pillage at HIGH, Update Aquatic's ocean mixing). */
-    @SubscribeEvent(priority = EventPriority.LOW)
+    /**
+     * After every other change to the map (Village &amp; Pillage's stack at HIGH, Update Aquatic's ocean mixing at
+     * LOW): the 1.15 zoom must replace the Voronoi layer the ocean mixing built, not be mixed over at block scale.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void onInitBiomeGens(WorldTypeEvent.InitBiomeGens event) {
+        // The layers read this for every cell; the version is complete once a world is made.
+        WorldgenHooks.layers116 = StructurePlacements.isAtLeast("1.16");
         GenLayer[] layers = event.getNewBiomeGens();
         if (layers == null || !StructurePlacements.isAtLeast("1.13")) {
             return;

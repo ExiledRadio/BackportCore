@@ -164,6 +164,14 @@ public final class OverworldDump {
         }
 
         if (stronghold != null) {
+            StringBuilder allowed = new StringBuilder("strongholdbiomes");
+            for (Biome b : stronghold.allowedBiomes) {
+                allowed.append(' ').append(Biome.getIdForBiome(b));
+            }
+            w.println(allowed);
+            if (Boolean.getBoolean(PROPERTY + ".strongholdtrace")) {
+                strongholdTrace(world, stronghold.allowedBiomes, w);
+            }
             canSpawn.invoke(stronghold, 0, 0);
             for (Field f : MapGenStronghold.class.getDeclaredFields()) {
                 if (f.getType() == ChunkPos[].class && !Modifier.isStatic(f.getModifiers())) {
@@ -188,6 +196,51 @@ public final class OverworldDump {
                 if (new Chunk(world, cx, cz).getRandomWithSeed(987234911L).nextInt(10) == 0) {
                     w.println("slime " + cx + " " + cz);
                 }
+            }
+        }
+    }
+
+    /**
+     * MapGenStronghold.generatePositions' loop (1.12.2's ring math, the search 1.13+ picks with), written out, with
+     * each search's centre and number of matching cells, in Oracle1165OW's "strongholdtrace" format: where two worlds'
+     * stronghold lists part, the first line whose count differs names the search.
+     */
+    static void strongholdTrace(World world, List<Biome> allowed, PrintWriter w) {
+        Random random = new Random();
+        random.setSeed(world.getSeed());
+        double d0 = random.nextDouble() * Math.PI * 2.0D;
+        int spread = 3, j = 0, i1 = 0;
+        for (int i = 0; i < 128; ++i) {
+            double d1 = 4.0D * 32.0D + 32.0D * (double) j * 6.0D + (random.nextDouble() - 0.5D) * 32.0D * 2.5D;
+            int k = (int) Math.round(Math.cos(d0) * d1);
+            int l = (int) Math.round(Math.sin(d0) * d1);
+            int x = (k << 4) + 8, z = (l << 4) + 8;
+            int x0 = x - 112 >> 2, z0 = z - 112 >> 2;
+            int wdt = (x + 112 >> 2) - x0 + 1, hgt = (z + 112 >> 2) - z0 + 1;
+            Biome[] cells = world.getBiomeProvider().getBiomesForGeneration(null, x0, z0, wdt, hgt);
+            BlockPos found = null;
+            int count = 0;
+            for (int c = 0; c < wdt * hgt; c++) {
+                if (allowed.contains(cells[c])) {
+                    if (found == null || random.nextInt(count + 1) == 0) {
+                        found = new BlockPos(x0 + c % wdt << 2, 0, z0 + c / wdt << 2);
+                    }
+                    count++;
+                }
+            }
+            if (found != null) {
+                k = found.getX() >> 4;
+                l = found.getZ() >> 4;
+            }
+            w.println("strongholdtrace " + i + " " + x + " " + z + " " + count + " " + k + " " + l);
+            d0 += (Math.PI * 2D) / (double) spread;
+            ++i1;
+            if (i1 == spread) {
+                ++j;
+                i1 = 0;
+                spread += 2 * spread / (j + 1);
+                spread = Math.min(spread, 128 - i);
+                d0 += random.nextDouble() * Math.PI * 2.0D;
             }
         }
     }

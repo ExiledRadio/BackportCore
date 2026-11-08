@@ -46,6 +46,8 @@ final class PatchTests {
             {"net.minecraft.client.Minecraft", "P7", new String[] {"processKeyF3"}},
             {"net.minecraft.world.biome.BiomeProvider", "P8", new String[] {"findBiomePosition"}},
             {"net.minecraft.world.gen.structure.MapGenVillage", "P9", new String[] {"villageBiomes"}},
+            {"net.minecraft.world.gen.layer.GenLayer", "P10", new String[] {"similarBiomes"}},
+            {"net.minecraft.world.gen.layer.GenLayerBiomeEdge", "P11", new String[] {"canBeNeighbors"}},
     };
 
     private PatchTests() {
@@ -121,6 +123,7 @@ final class PatchTests {
             case "P7": cls = "DebugKeysTransformer"; break;
             case "P8": cls = "BiomeSearchTransformer"; break;
             case "P9": cls = "VillageBiomeTransformer"; break;
+            case "P10": case "P11": cls = "LayerRulesTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
