@@ -4,7 +4,7 @@ The look of the game follows the newest installed backport, as vanilla's did at 
 owns every single-slot piece (the panorama, the world-loading screen, the options screens, the splash list,
 the menu music, the F3 keys, the fog) and builds each from what the installed backports contribute, so they
 never fight. Package `com.exiledradio.backportcore.presentation`; the client-only parts are in its `client`
-subpackage. Since Core 1.2.0.
+subpackage. Since Core 1.1.0.
 
 With no backport installed, the newest version is 1.12.2 and the game looks exactly as 1.12.2 does: every
 hook calls vanilla's own code.

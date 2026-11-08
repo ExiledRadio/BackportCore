@@ -8,7 +8,7 @@ its version yet (each one's "look and feel" stream does that), so there are two 
     test options). The run checks itself and closes after about 30 seconds; to look around, comment out the
     `mc.shutdown()` in `selftest/ClientPresentationTests`.
 *   **Later, in a real instance**: once a backport's stream registers its version, with that backport and
-    Backport Core 1.2.0 installed.
+    Backport Core 1.1.0 installed.
 
 ## Backport Core alone (no backport installed)
 

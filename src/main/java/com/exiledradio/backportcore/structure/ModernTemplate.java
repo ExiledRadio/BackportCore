@@ -378,7 +378,7 @@ public final class ModernTemplate {
 
     /**
      * Every block of the file in one palette, before any processor: its position in the template and
-     * the block. Jigsaw blocks, structure blocks and structure voids are not among them. Since 1.2.0.
+     * the block. Jigsaw blocks, structure blocks and structure voids are not among them. Since 1.1.0.
      */
     public void forEachBlock(int palette, java.util.function.BiConsumer<BlockPos, TemplateBlock> action) {
         int p = Math.min(Math.max(palette, 0), palettes() - 1);

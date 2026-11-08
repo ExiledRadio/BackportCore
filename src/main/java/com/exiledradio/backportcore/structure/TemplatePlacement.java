@@ -105,7 +105,7 @@ public final class TemplatePlacement {
 
     /**
      * Gives each spawned mob its first-spawn setup ({@code onInitialSpawn}: equipment and the like), as
-     * today's jigsaw pieces do ({@code setFinalizeEntities}). Off by default. Since 1.2.0.
+     * today's jigsaw pieces do ({@code setFinalizeEntities}). Off by default. Since 1.1.0.
      */
     public TemplatePlacement finalizeEntities(boolean finalizeEntities) {
         this.finalizeEntities = finalizeEntities;
@@ -115,7 +115,7 @@ public final class TemplatePlacement {
     /**
      * Today's gravity processor (a {@code terrain_matching} jigsaw piece): each block goes to the ground
      * height at its column plus {@code offset} plus its own height in the file. Processors still see the
-     * position before the move, as today's do. Null to turn it off (the default). Since 1.2.0.
+     * position before the move, as today's do. Null to turn it off (the default). Since 1.1.0.
      *
      * @param surface the ground height at a column (x, z), as 1.16's {@code WORLD_SURFACE_WG}
      */

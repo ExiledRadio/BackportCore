@@ -54,7 +54,7 @@ final class Flattening {
 
     /**
      * The properties of the block's default state, today's name: what a file means by the bare name
-     * ({@code minecraft:stone_slab} is a bottom half). Since 1.2.0.
+     * ({@code minecraft:stone_slab} is a bottom half). Since 1.1.0.
      *
      * @return the default state's properties; empty for a block without properties or one 1.16.5 did not have
      */

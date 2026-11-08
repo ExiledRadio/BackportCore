@@ -62,7 +62,7 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.check;
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 
 /**
- * Core 1.2.0's nether support, against Mojang's real 1.16.5 bastion and ruined portal files and
+ * Core 1.1.0's nether support, against Mojang's real 1.16.5 bastion and ruined portal files and
  * against what 1.16.5's own code decides (the oracle files, written by running 1.16.5's classes).
  */
 final class NetherTests {

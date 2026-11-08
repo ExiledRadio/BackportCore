@@ -1,4 +1,6 @@
-# 1.2.0
+# 1.1.0
+
+**Now requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 
 *   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the
     same seed, a bastion is laid out piece for piece as in 1.16.5.
@@ -28,9 +30,6 @@
     version such as `1.14`, or `ROTATE` for a different one each time the game starts.
 *   With Backport Core alone, the title screen and every other screen stay 1.12.2's.
 
-# 1.1.0
-
-*   **Requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 *   **Waterlogging** for the backports' blocks: lanterns, sea pickles, kelp and the rest keep the water
     they are placed in, buckets fill and empty them, and water flows in and out of them, as in 1.13.
     Vanilla's own blocks keep Fluidlogged API's settings.

@@ -163,7 +163,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.client.gui.GuiMainMenu`, method `drawScreen(IIF)V` (`func_73863_a`).
     **Transformer**: `asm/TitlePanoramaTransformer`. **Hooks**: `presentation/client/PresentationHooks.renderSkybox`,
-    `drawGradient`. **Since**: 1.2.0.
+    `drawGradient`. **Since**: 1.1.0.
 *   **Vanilla 1.13**: the title screen draws its panorama sharp (no blur), through an 85 degree perspective at
     the window's shape, turning a full circle (`RenderSkyboxCube`, `RenderSkybox`), and draws
     `panorama_overlay.png` over it in place of 1.12.2's two gradients.
@@ -185,7 +185,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.client.Minecraft`, method `runTickKeyboard()V` (`func_184118_az`).
     **Transformer**: `asm/DebugKeysTransformer`. **Hook**: `presentation/client/PresentationHooks.processKeyF3`.
-    **Since**: 1.2.0.
+    **Since**: 1.1.0.
 *   **Vanilla**: each version adds, changes and removes F3 combinations (1.13 F3+C and F3+I, 1.16 F3+F4,
     1.17 F3+L, 1.19 removes F3+F), and F3+Q lists the current ones.
 *   **Why a patch**: `processKeyF3` is private and runs before Forge's key event; by the time a mod hears the
@@ -203,7 +203,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.world.biome.BiomeProvider`, method `findBiomePosition(IIILjava/util/List;Ljava/util/Random;)`
     (`func_180630_a`). **Transformer**: `asm/BiomeSearchTransformer`. **Hook**: `worldgen/WorldgenHooks.findBiomePosition`.
-    **Since**: 1.2.0 (Update Aquatic Backport's P5 before).
+    **Since**: 1.1.0 (Update Aquatic Backport's P5 before).
 *   **Vanilla 1.13+**: the search keeps one matching 1:4 cell of the square, replacing the kept one with chance
     `1 / (n + 1)`, and counts `n` for every matching cell (1.13's `OverworldBiomeProvider.findBiomePosition`;
     1.14's `findBiome` and 1.15's and 1.16's `findBiomeHorizontal` walk the same cells in the same order for
@@ -224,7 +224,7 @@ here and by the backports that use it.
 
 *   **Class**: `net.minecraft.world.gen.structure.MapGenVillage`, method `canSpawnStructureAtCoords(II)Z`
     (`func_75047_a`). **Transformer**: `asm/VillageBiomeTransformer`. **Hook**: `worldgen/WorldgenHooks.villageBiomes`.
-    **Since**: 1.2.0 (Update Aquatic Backport's P4 before).
+    **Since**: 1.1.0 (Update Aquatic Backport's P4 before).
 *   **Vanilla**: 1.12.2 reads the 1:4 cell at block (8, 8) of the candidate chunk
     (`areBiomesViable(x * 16 + 8, z * 16 + 8, 0, VILLAGE_SPAWN_BIOMES)`); 1.13 to 1.15 read the block-scale biome
     at (9, 0, 9) (`ChunkGenerator.createStructures`), 1.16 the 1:4 cell at (4x + 2, 4z + 2). The grid and biome
@@ -245,7 +245,7 @@ here and by the backports that use it.
 *   **Classes**: `net.minecraft.world.gen.layer.GenLayer`, static `biomesEqualOrMesaPlateau(II)Z` (`func_151616_a`,
     P10), and `net.minecraft.world.gen.layer.GenLayerBiomeEdge`, private `canBiomesBeNeighbors(II)Z`
     (`func_151634_b`, P11). **Transformer**: `asm/LayerRulesTransformer`. **Hooks**: `worldgen/WorldgenHooks.similarBiomes`,
-    `canBeNeighbors`. **Since**: 1.2.0.
+    `canBeNeighbors`. **Since**: 1.1.0.
 *   **Vanilla 1.16**: biomes became data, so the layers stopped asking biome objects. 1.16.5's `Layers.isSame`
     looks both ids up in one fixed category table, where the badlands plateaus have a category of their own;
     1.15's (and 1.12.2's) test asks the biome category (class) and treats a plateau specially only from the
@@ -275,7 +275,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Classes**: `net.minecraft.client.gui.GuiButton` and Forge's `net.minecraftforge.fml.client.config.GuiButtonExt`,
     method `drawButton(Lnet/minecraft/client/Minecraft;IIF)V` (`func_191745_a`). **Transformer**:
-    `asm/ScreenPatchesTransformer`. **Hook**: `presentation/client/PresentationHooks.buttonTextColor`. **Since**: 1.2.0.
+    `asm/ScreenPatchesTransformer`. **Hook**: `presentation/client/PresentationHooks.buttonTextColor`. **Since**: 1.1.0.
 *   **Vanilla 1.15**: a button's label is white whether hovered or not (1.15's `AbstractButton`: 0xFFFFFF when
     active), where 1.12.2 to 1.14 draw it light gray (0xE0E0E0) and yellow when hovered (0xFFFFA0). The hover
     outline itself is `textures/gui/widgets.png`, which the 1.15 backport ships (`Contribution.replaceAsset`).
@@ -289,7 +289,7 @@ or passes an existing constant through a hook of the same type.
 ## P13. The chat's drawing
 
 *   **Classes**: `net.minecraft.client.gui.GuiIngame.renderGameOverlay(F)V` (`func_175180_a`) and Forge's
-    `net.minecraftforge.client.GuiIngameForge.renderChat(II)V`. **Hook**: `PresentationHooks.drawChat`. **Since**: 1.2.0.
+    `net.minecraftforge.client.GuiIngameForge.renderChat(II)V`. **Hook**: `PresentationHooks.drawChat`. **Since**: 1.1.0.
 *   **Vanilla 1.14 and 1.16**: Text Background Opacity (the chat's background no longer follows its text's
     opacity), Line Spacing and Chat Delay's "[+N pending lines]" (1.16.5's `ChatComponent.render`).
 *   **Why a patch**: `GuiNewChat.drawChat` reads its own private fields and fixed numbers; Forge has no chat
@@ -304,7 +304,7 @@ or passes an existing constant through a hook of the same type.
 ## P14. The chat screen
 
 *   **Class**: `net.minecraft.client.gui.GuiChat`, `drawScreen(IIF)V` and `mouseClicked(III)V`. **Hooks**:
-    `PresentationHooks.chatComponent`, `chatBoxColor`. **Since**: 1.2.0.
+    `PresentationHooks.chatComponent`, `chatBoxColor`. **Since**: 1.1.0.
 *   **Vanilla 1.14 and 1.16**: the component under the mouse is found with the line spacing (1.16.5's
     `getClickedComponentStyleAt`), and the input box takes the text background opacity when Text Background is
     "Everywhere" (1.14.4's `Options.getBackgroundColor`).
@@ -317,7 +317,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Classes**: `net.minecraft.client.renderer.RenderGlobal` (`renderSky(FI)V`, `renderClouds(FIDDD)V`,
     `renderCloudsFancy(FIDDD)V`; P15) and `net.minecraft.client.renderer.EntityRenderer` (`updateFogColor(F)V`,
-    `renderWorldPass(IFJ)V`; P16). **Hooks**: `PresentationHooks.skyColor`, `cloudHeight`, `cloudLayer`. **Since**: 1.2.0.
+    `renderWorldPass(IFJ)V`; P16). **Hooks**: `PresentationHooks.skyColor`, `cloudHeight`, `cloudLayer`. **Since**: 1.1.0.
 *   **Vanilla**: later versions change the sky and the clouds (1.18 raises the clouds from 128 to 192); the fog
     pipeline (`presentation/client/FogPipeline`) applies each version's step in order.
 *   **Why a patch**: Forge has events for the fog, not for the sky color or the cloud height.

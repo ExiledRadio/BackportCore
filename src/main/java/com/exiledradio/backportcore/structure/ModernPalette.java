@@ -157,14 +157,14 @@ public final class ModernPalette {
 
     /**
      * Gives an entity of a structure file a 1.12.2 id: {@code minecraft:piglin} in a bastion's mob piece
-     * spawns as {@code to}. Since 1.2.0. Entities 1.12.2 has under the same id need nothing; others
+     * spawns as {@code to}. Since 1.1.0. Entities 1.12.2 has under the same id need nothing; others
      * with no id here are left out, as 1.12.2 leaves out any entity it does not know.
      */
     public static synchronized void entity(String from, ResourceLocation to) {
         ENTITIES.put(full(from), to.toString());
     }
 
-    /** @return the entity id to spawn for an id a structure file gives. Since 1.2.0. */
+    /** @return the entity id to spawn for an id a structure file gives. Since 1.1.0. */
     public static synchronized String entity(String fromFile) {
         String mapped = ENTITIES.get(full(fromFile));
         return mapped == null ? fromFile : mapped;

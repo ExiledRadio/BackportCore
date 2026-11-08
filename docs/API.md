@@ -22,7 +22,7 @@ Then `mkdir deps` in the backport, add its folder name to `dependents` in this r
 and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
 
 ```java
-dependencies = "required-after:backportcore@[1.1.0,)"   // [1.2.0,) for jigsaw, nether heights or seed parity
+dependencies = "required-after:backportcore@[1.1.0,)"
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
@@ -143,7 +143,7 @@ Future Delight's surface-estimate fallback is the one approximation). Call `forW
 the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
-### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.2.0)
+### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.1.0)
 
 ```java
 NetherHeights heights = NetherHeights.forWorld(world);   // columns as they will generate (caves included)
@@ -231,10 +231,10 @@ BlockPos inWorld = ModernTemplate.worldPos(origin, localPos, p);
 t.dataMarkers();       // data-mode structure blocks: pos (in the template), metadata ("chest", "map_chest")
 t.jigsaws();           // pos, front, top, name, target, pool, joint, finalState: for jigsaw assembly
 t.unresolvedBlocks();  // block names nothing provides; worth a test
-t.forEachBlock(0, (local, block) -> { });   // every block of one palette, before processors (1.2.0)
+t.forEachBlock(0, (local, block) -> { });   // every block of one palette, before processors (1.1.0)
 ```
 
-1.2.0 adds two settings to `TemplatePlacement`: `finalizeEntities(true)` gives mobs their `onInitialSpawn`, as
+1.1.0 adds two settings to `TemplatePlacement`: `finalizeEntities(true)` gives mobs their `onInitialSpawn`, as
 jigsaw pieces do, and `followTerrain(surface, offset)` is today's gravity processor. A jigsaw block whose file has
 no `joint` is now read as today's game reads it: `aligned` facing sideways, `rollable` facing up or down. 1.1.0
 read every such block as `rollable`.
@@ -265,7 +265,7 @@ ModernPalette.map("minecraft:conduit", props -> conduit.getDefaultState());
 ModernPalette.map("minecraft:sea_pickle", () -> seaPickle);    // properties carried across by name
 ModernPalette.fallback("minecraft:tuff_bricks", "minecraft:stone_bricks");
 ModernPalette.lootTable("minecraft:chests/shipwreck_supply", new ResourceLocation("yourmod", "chests/shipwreck_supply"));
-ModernPalette.entity("minecraft:piglin", new ResourceLocation("yourmod", "piglin"));   // 1.2.0: entities of the files
+ModernPalette.entity("minecraft:piglin", new ResourceLocation("yourmod", "piglin"));   // 1.1.0: entities of the files
 ModernPalette.Resolved r = ModernPalette.resolve("minecraft:oak_stairs[facing=east]");  // r.state, r.tile, r.water
 ```
 
@@ -330,7 +330,7 @@ ocean_ruin, buried_treasure, ruined_portal, bastion_remnant, nether_fossil, anci
 trial_chambers, village, pillager_outpost). A locator runs on the server thread, generates nothing and
 loads no chunk it does not need. This is Update Aquatic's dolphin-stream `StructureLocator` API, unchanged.
 
-### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.2.0)
+### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.1.0)
 
 1.16.5's jigsaw assembly (`JigsawPlacement.addPieces`), read from Mojang's own files. Given the same random, it lays
 out what 1.16.5 does, piece for piece: the self-test compares 24 whole bastions with 1.16.5's own code.
@@ -378,7 +378,7 @@ public static final class BastionStart extends StructureStart {
   `ModernProcessors.tag("minecraft:doors", names...)` adds to a `tag_match` tag.
 - **Block names** are today's: a 1.16 file's `minecraft:chain` is read as `minecraft:iron_chain` (26.x renamed it).
 
-### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.2.0)
+### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.1.0)
 
 ```java
 Random r = StructureRandoms.start(seed, chunkX, chunkZ);   // 1.16's setLargeFeatureSeed: every StructureStart's random
@@ -402,7 +402,7 @@ NetherStructureSlots.roll(seed, chunkX, chunkZ);             // the same without
   `startAt(...) == Slot.BASTION`. `fortressStartsAt` and `savedFortress` read the fortress side.
 - None of this loads or generates chunks, so a seed tool can ask about any chunk.
 
-### The overworld's seed maps (`worldgen.StructurePlacements`, 1.2.0)
+### The overworld's seed maps (`worldgen.StructurePlacements`, 1.1.0)
 
 A world made from seed X with backports installed should show what Chunkbase shows for seed X at the newest
 installed backport's version. Each backport registers its version's structure numbers in pre-init, read from
@@ -473,7 +473,7 @@ drawing does.
     vanilla's angles and before the stroke (where 1.14's `BipedModel` sets arm poses), for the player model
     and its armor; `PoseClient.modelHooksWork()` says whether it runs.
 
-## Look and feel (`presentation.Presentation`, 1.2.0)
+## Look and feel (`presentation.Presentation`, 1.1.0)
 
 Each backport declares the release it brings and adds its version's non-content changes; Core shows what the
 newest installed version would: panorama, world-loading screen, options on the right screens (and 1.14's
