@@ -5,6 +5,10 @@ A Forge 1.12.2 library for the update backports. It adds no blocks or items. It 
 - **1.14's Texture Update** for vanilla's blocks, items and mobs, plus 1.15's enchantment glint, with a switch
   back to 1.12.2's look (`textures.modernTextures` in `config/backportcore.cfg`). Resource packs you pick,
   and mods that change a vanilla texture on purpose, still win over it.
+- **Threaded chunk rebuilds**: blocks the server changes near you (a kelp column breaking, crops, pistons)
+  are rebuilt on the chunk builder threads instead of stalling the frame, as current vanilla's "Chunk
+  Builder" setting does (`rendering.blockUpdates`; `NEARBY` is 1.12.2's rule). Not needed, and inactive,
+  with OptiFine, Celeritas, Vintagium or Nothirium.
 - **Moving worlds over** from another mod's copies of the same blocks: on demand, or automatically when that
   mod has been removed, keeping each block's facing, contents and the rest.
 - **Hiding duplicates** when two mods add the same block.

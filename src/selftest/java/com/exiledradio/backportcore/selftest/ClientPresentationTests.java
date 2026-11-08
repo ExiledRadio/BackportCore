@@ -317,8 +317,19 @@ final class ClientPresentationTests {
     }
 
     private static void finishTitle(Minecraft mc) throws Exception {
-        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16"}) {
+        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16", "P17"}) {
             check("client: " + p + " applied", "applied".equals(Asm.state(p)), Asm.state(p));
+        }
+        com.exiledradio.backportcore.CoreConfig.BlockUpdates mode = com.exiledradio.backportcore.CoreConfig.rendering.blockUpdates;
+        try {
+            for (com.exiledradio.backportcore.CoreConfig.BlockUpdates m : com.exiledradio.backportcore.CoreConfig.BlockUpdates.values()) {
+                com.exiledradio.backportcore.CoreConfig.rendering.blockUpdates = m;
+                double d = com.exiledradio.backportcore.render.client.ChunkRebuildHooks.nearbyDistanceSq(768.0D);
+                check("client: P17 " + m + ": near-camera distance rule " + (m == com.exiledradio.backportcore.CoreConfig.BlockUpdates.NEARBY ? "kept" : "off"),
+                        m == com.exiledradio.backportcore.CoreConfig.BlockUpdates.NEARBY ? d == 768.0D : d <= 0.0D, d);
+            }
+        } finally {
+            com.exiledradio.backportcore.CoreConfig.rendering.blockUpdates = mode;
         }
         check("client: the vanilla asset pack is in", com.exiledradio.backportcore.presentation.client.VanillaAssetPack.isInstalled());
         net.minecraft.client.resources.IResource logo = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/title/minecraft.png"));

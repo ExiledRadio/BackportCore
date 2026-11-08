@@ -2,6 +2,12 @@
 
 **Now requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 
+*   **Threaded chunk rebuilds** (patch P17): blocks the server changes near the camera, such as a kelp column
+    breaking one block a tick, no longer rebuild their chunk on the render thread every tick; only your own
+    placing and breaking does. It is current vanilla's "Chunk Builder" setting, `rendering.blockUpdates` in
+    `backportcore.cfg`: `NONE` ("Threaded"), `PLAYER_AFFECTED` ("Semi Blocking", the default) or `NEARBY`
+    ("Fully Blocking", 1.12.2's rule). Changing it in game takes effect at once. With OptiFine, Celeritas,
+    Vintagium or Nothirium it does nothing; they thread rebuilds themselves.
 *   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the
     same seed, a bastion is laid out piece for piece as in 1.16.5.
 *   **Seed parity for nether structures**: with Nether Update Backport, bastions and nether fortresses share

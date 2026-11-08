@@ -18,7 +18,7 @@ tasks name it with `-Dfml.coreMods.load`.
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
-    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`).
+    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
     with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
@@ -330,3 +330,41 @@ or passes an existing constant through a hook of the same type.
 *   **Fails safe**: any method missing or a count other than one `getSkyColor`, one `getCloudHeight` per pass
     and two `128.0D`: skipped for that class; vanilla's sky and clouds.
 *   **Tested**: transformer chain and SRG names; the client self-test's dummy step (clouds +64) sees both.
+
+## P17. Threaded chunk rebuilds
+
+*   **Class**: `net.minecraft.client.renderer.RenderGlobal`, `setupTerrain(Lnet/minecraft/entity/Entity;DLnet/minecraft/client/renderer/culling/ICamera;IZ)V`
+    (`func_174970_a`) and `updateChunks(J)V` (`func_174967_a`). **Transformer**: `asm/ChunkRebuildsTransformer`.
+    **Hooks**: `render/client/ChunkRebuildHooks.nearbyDistanceSq`, `needsImmediateUpdate`. **Config**:
+    `rendering.blockUpdates` ("Chunk Builder": `NONE`, `PLAYER_AFFECTED`, `NEARBY`; default `PLAYER_AFFECTED`). **Since**: 1.2.0.
+*   **Vanilla**: 1.12.2 rebuilds every changed render chunk whose center is within sqrt(768) blocks of the camera,
+    and every chunk the player dirtied (`needsImmediateUpdate`, set by a block change with flag 8, which
+    `PlayerControllerMP` uses for the player's own breaking and placing; a change the server sends uses flags 3),
+    on the render thread in the same frame. 1.15.2 and 1.16.5 still do exactly that (the `768.0D` test is in both
+    jars' `LevelRenderer.setupRender`). 1.18.2 made it the "Chunk Builder" video setting (`prioritizeChunkUpdates`;
+    1.19.2's `LevelRenderer.compileChunks` read here): None = "Threaded", every rebuild on the builder threads,
+    the default; Player Affected = "Semi Blocking", only the player's own changes at once; Nearby = "Fully
+    Blocking", 1.12.2's rule. `rendering.blockUpdates` takes the same three values. Its default is
+    `PLAYER_AFFECTED`, not vanilla's `NONE`: it removes the measured stall below and keeps the player's own
+    breaking free of the one-frame hole `NONE` can show (vanilla's own tooltip says so); `NONE` is one word away.
+*   **Why a patch**: the rule is inline in `setupTerrain`, and Forge's only switch (`alwaysSetupTerrainOffThread`
+    in forge.cfg) also threads the player's own changes. Measured 2026-11-08 on the user's test instance with a
+    spark client profile, swimming through and breaking a kelp forest with Update Aquatic and Fluidlogged API
+    3.3.3: `ChunkRenderDispatcher.updateChunkNow` from `setupTerrain` was 9.8% of client time (about half of it
+    Fluidlogged API's liquid extended state; the family's own code 0.12%). A kelp column breaks one block a tick
+    from the server, so 1.12.2's rule rebuilt a chunk on the render thread every tick for a second (about 40 fps).
+*   **What changes**: `setupTerrain`'s one `768.0D` passes through `nearbyDistanceSq(double)`, which returns it
+    for `NEARBY` and -1.0 otherwise (no squared distance is below it). The result of the one
+    `renderChunk.needsImmediateUpdate()` call in `setupTerrain` and the one in `updateChunks` passes through
+    `needsImmediateUpdate(boolean)`, which keeps it except `false` for `NONE`. The constant and the calls
+    themselves stay, so another mod's mixin aimed at them still finds its target. Forge's
+    `alwaysSetupTerrainOffThread` is still checked first, as before. The setting is read on every call, so a
+    change in the config screen takes effect at once.
+*   **Who it reaches**: every client with Core installed, with no backport needed: it is a renderer rule, not a
+    version's content. Servers never load `RenderGlobal`; the transformer names client classes only as strings.
+*   **Fails safe**: either method missing, or not exactly one `768.0D` and one `needsImmediateUpdate` call in each:
+    skipped with one log line; 1.12.2's rule. OptiFine, Celeritas, Vintagium and Nothirium replace `setupTerrain`
+    and thread the rebuilds themselves. Where the method no longer has vanilla's shape the patch is skipped. A
+    mixin that overwrites the method later in the chain simply drops the hooks.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); a dedicated-server boot; the client self-test
+    (P17 applied, the distance rule per mode). Frame rate by hand: see the 1.2.0 handover.
