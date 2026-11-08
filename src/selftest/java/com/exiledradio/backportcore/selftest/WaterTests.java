@@ -141,8 +141,10 @@ final class WaterTests {
                     world.getBlockState(b2.east()).getMaterial() == Material.WATER, world.getBlockState(b2.east()));
             check("3 it keeps its source while flowing out", Waterlogging.hasWaterSource(world, b2));
             BlockPos c = at(2);
-            check("3 water flows back into it", Waterlogging.hasWater(world, c), world.getBlockState(c));
-            check("6 onWaterChanged from flow", changed("optional", c, true), TestBlocks.CHANGES);
+            // 1.13 and later: a waterloggable block takes only a source, so one source beside it leaves it dry
+            // (Core's WaterRules; two sources form one, WaterRuleTests).
+            check("3 one source beside it does not waterlog it (1.13+)", !Waterlogging.hasWater(world, c), world.getBlockState(c));
+            check("6 no onWaterChanged from flow", !changed("optional", c, true), TestBlocks.CHANGES);
         });
 
         // 4: swimming and drowning inside it

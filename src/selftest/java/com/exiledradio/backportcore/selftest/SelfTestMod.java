@@ -40,8 +40,10 @@ public final class SelfTestMod {
         TestBlocks.legacy = new TestBlocks.Legacy();
         TestBlocks.slab = new TestBlocks.Slab.Half();
         TestBlocks.doubleSlab = new TestBlocks.Slab.Double();
+        TestBlocks.dryStairs = new TestBlocks.Stairs("test_dry_stairs");
+        TestBlocks.waterStairs = new TestBlocks.WaterStairs();
         event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy,
-                TestBlocks.slab, TestBlocks.doubleSlab);
+                TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
     }
 
     @Mod.EventHandler

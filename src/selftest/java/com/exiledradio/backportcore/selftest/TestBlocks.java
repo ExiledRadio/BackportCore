@@ -27,6 +27,9 @@ final class TestBlocks {
     static Legacy legacy;
     static Slab slab;
     static Slab doubleSlab;
+    /** A family stair that is not Waterloggable (WaterRules refuses it water) and one that is. */
+    static Stairs dryStairs;
+    static Stairs waterStairs;
 
     /** Every onWaterChanged call: "optional@x,y,z=true". */
     static final List<String> CHANGES = new ArrayList<String>();
@@ -113,6 +116,22 @@ final class TestBlocks {
         @Override
         public Comparable<?> getTypeForItem(net.minecraft.item.ItemStack stack) {
             return Variant.DEFAULT;
+        }
+    }
+
+    /** A stair of this mod (which requires Backport Core): not waterloggable. */
+    static class Stairs extends net.minecraft.block.BlockStairs {
+        Stairs(String name) {
+            super(net.minecraft.init.Blocks.PLANKS.getDefaultState());
+            setRegistryName(SelfTestMod.MOD_ID, name);
+            setTranslationKey(SelfTestMod.MOD_ID + "." + name);
+        }
+    }
+
+    /** A stair of this mod that 1.13 made waterloggable. */
+    static final class WaterStairs extends Stairs implements Waterloggable {
+        WaterStairs() {
+            super("test_water_stairs");
         }
     }
 

@@ -26,10 +26,13 @@ import javax.annotation.Nonnull;
  * methods below.
  *
  * <h2>What Fluidlogged API decides</h2>
- * A server's Fluidlogged API config and other mods' {@code FluidloggableEvent} handlers are asked
- * first and win over these answers; with neither, these apply even when the player has turned
- * Fluidlogged API's {@code allowDefaults} off ({@link #overrideApplyDefaultsSetting}). Water only:
- * lava and other mods' fluids are refused.
+ * Backport Core's own {@code FluidloggableEvent} handler ({@link WaterRules}, at {@code HIGHEST}) is asked
+ * first, for every block of this interface: it refuses every fluid but water, and flowing water unless the
+ * block opts in ({@link #acceptsFlowingWater}), before Fluidlogged API's built-in list of stairs, slabs and
+ * the like could let them in. A server's Fluidlogged API config and other mods' handlers come next; with
+ * neither, these answers apply even when the player has turned Fluidlogged API's {@code allowDefaults} off
+ * ({@link #overrideApplyDefaultsSetting}). A dry block between two water sources takes a source, as 1.13
+ * and later ({@link SourceForming}).
  *
  * <h2>Rules for implementers</h2>
  * <ul>
@@ -60,6 +63,15 @@ public interface Waterloggable extends IFluidloggable {
     /** @return whether this state can hold water at all (false for a double slab); true unless overridden */
     default boolean canHoldWater(IBlockState state, IBlockAccess world, BlockPos pos) {
         return true;
+    }
+
+    /**
+     * @return whether flowing (non-source) water may run into this state; false unless overridden, as in 1.13 and
+     * later, where a waterloggable block only takes a water source ({@code IWaterLoggable.canPlaceLiquid}: {@code
+     * fluid == Fluids.WATER}). Backport Core's {@link WaterRules} asks this before Fluidlogged API's own list.
+     */
+    default boolean acceptsFlowingWater(IBlockState state) {
+        return false;
     }
 
     /**

@@ -1,0 +1,142 @@
+package com.exiledradio.backportcore.waterlog;
+
+import com.exiledradio.backportcore.BackportCore;
+
+import git.jbredwards.fluidlogged_api.api.event.FluidloggableEvent;
+import git.jbredwards.fluidlogged_api.api.util.FluidState;
+import git.jbredwards.fluidlogged_api.api.util.FluidloggedUtils;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBasePressurePlate;
+import net.minecraft.block.BlockButton;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockFence;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockSign;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockStairs;
+import net.minecraft.block.BlockTrapDoor;
+import net.minecraft.block.BlockWall;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 1.13 and later's waterlogging rules for the family's blocks, over Fluidlogged API's own.
+ *
+ * <p>Fluidlogged API also waterlogs by its built-in list ({@code whitelist.jsonc}): every block extending a
+ * vanilla stair, slab, wall, fence, trapdoor, sign, fence gate, door, button or pressure plate, with any fluid and
+ * with flowing fluid too. Its list answers before a block's own {@link Waterloggable} is asked, so a family stair
+ * would take lava. This handler, at {@code HIGHEST}, puts vanilla's rules back:
+ * <ul>
+ *   <li>A {@link Waterloggable} block takes water only, and only a <i>source</i> (1.16.5's {@code
+ *       IWaterLoggable.canPlaceLiquid}: {@code fluid == Fluids.WATER}, never {@code FLOWING_WATER}), unless it
+ *       opts in to flowing water ({@link Waterloggable#acceptsFlowingWater}). Flowing water does not run into a
+ *       stair; a block placed into flowing water replaces it; a bucket or a source still waterlogs.</li>
+ *   <li>A family block of those shapes that is not {@link Waterloggable} holds no water at all (a fence gate, a
+ *       door, a button: none of them waterlogs in vanilla). "Family" means a mod that requires Backport Core.</li>
+ * </ul>
+ * Every other block is left to Fluidlogged API and its config. The block's own {@link
+ * Waterloggable#canHoldWater} (a double slab) is asked afterwards by Fluidlogged API as usual.
+ */
+@Mod.EventBusSubscriber(modid = BackportCore.MOD_ID)
+public final class WaterRules {
+
+    /** The vanilla shapes Fluidlogged API's built-in list waterlogs, as the family requests name them. */
+    private static final Class<?>[] SHAPES = {
+            BlockStairs.class, BlockSlab.class, BlockWall.class, BlockFence.class, BlockTrapDoor.class, BlockSign.class,
+            BlockFenceGate.class, BlockDoor.class, BlockButton.class, BlockBasePressurePlate.class,
+    };
+
+    private static final Map<String, Boolean> FAMILY = new ConcurrentHashMap<String, Boolean>();
+
+    private WaterRules() {
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public static void fluidloggable(FluidloggableEvent event) {
+        if (decide(event.state, event.fluidState) == Boolean.FALSE) {
+            event.setCanceled(true);
+            event.setResult(Event.Result.DENY);
+        }
+    }
+
+    /**
+     * @return {@code false} when the rules refuse this fluid in this state, or null when they leave it to
+     * Fluidlogged API (they never force a block to take a fluid)
+     */
+    @Nullable
+    public static Boolean decide(IBlockState state, FluidState fluid) {
+        Block block = state.getBlock();
+        if (block instanceof Waterloggable) {
+            if (fluid.isEmpty()) {
+                return null;
+            }
+            if (!FluidloggedUtils.isCompatibleFluid(fluid.getFluid(), FluidRegistry.WATER)) {
+                return Boolean.FALSE;
+            }
+            if (!fluid.isSource() && !((Waterloggable) block).acceptsFlowingWater(state)) {
+                return Boolean.FALSE;
+            }
+            return null;
+        }
+        return isShape(block) && isFamily(block) ? Boolean.FALSE : null;
+    }
+
+    /** @return true for a block extending one of the vanilla shapes Fluidlogged API's list waterlogs */
+    public static boolean isShape(Block block) {
+        for (Class<?> shape : SHAPES) {
+            if (shape.isInstance(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @return true for a block registered by Backport Core or by a mod that requires it */
+    public static boolean isFamily(Block block) {
+        ResourceLocation name = block.getRegistryName();
+        if (name == null) {
+            return false;
+        }
+        String mod = name.getNamespace();
+        Boolean known = FAMILY.get(mod);
+        if (known == null) {
+            known = requiresCore(mod);
+            FAMILY.put(mod, known);
+        }
+        return known;
+    }
+
+    private static boolean requiresCore(String modId) {
+        if (BackportCore.MOD_ID.equals(modId)) {
+            return true;
+        }
+        ModContainer mod = Loader.instance().getIndexedModList().get(modId);
+        if (mod == null) {
+            return false;
+        }
+        for (ArtifactVersion v : mod.getRequirements()) {
+            if (BackportCore.MOD_ID.equals(v.getLabel())) {
+                return true;
+            }
+        }
+        for (ArtifactVersion v : mod.getDependencies()) {
+            if (BackportCore.MOD_ID.equals(v.getLabel())) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
