@@ -70,6 +70,7 @@ public final class SelfTestRunner {
         PatchTests.schedule();
         PoseTests.schedule();
         NetherTests.schedule();
+        PresentationTests.schedule();
     }
 
     @SubscribeEvent

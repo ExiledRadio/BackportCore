@@ -17,10 +17,13 @@ tasks name it with `-Dfml.coreMods.load`.
     the dev environment; every transformer matches both) and after Fluidlogged API's transformers (1401),
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
-*   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`).
+*   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
+    `presentation/client/PresentationHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
-    has registered rules with `pose.Poses` and they are on. With no backport installed, the patched game
-    plays as vanilla.
+    has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
+    with `presentation.Presentation`. With no backport installed, the patched game plays as vanilla.
+*   P6 and P7 only change the owner of an existing call (an instance call becomes a static call with the
+    same arguments); the hook calls the original method by reflection when it keeps vanilla's behavior.
 *   A transformer that does not find the exact shape it expects changes nothing, logs
     `P<n> ...: <why>; patch skipped, vanilla behavior kept.`, and records why (`asm.Asm.state`). It never
     half-patches a method. A patched class logs `P<n> ...: patched.`
@@ -31,11 +34,11 @@ tasks name it with `-Dfml.coreMods.load`.
 
 **Tested** (`gradlew runServer -Pselftest`, `selftest/PatchTests`): P1 reports itself applied when vanilla
 loads `EntityLivingBase` in the dev server; the coremod is registered with the class loader; the bytes of
-all five target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
+all seven target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same five classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same seven classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 
@@ -153,3 +156,43 @@ here and by the backports that use it.
 *   **Fails safe**: method missing or not exactly one `getEyeHeight` call: skipped; the camera snaps as in
     1.12.2.
 *   **Tested**: transformer chain and SRG names. Not seen in a running client.
+
+## P6. The title screen panorama
+
+*   **Class**: `net.minecraft.client.gui.GuiMainMenu`, method `drawScreen(IIF)V` (`func_73863_a`).
+    **Transformer**: `asm/TitlePanoramaTransformer`. **Hooks**: `presentation/client/PresentationHooks.renderSkybox`,
+    `drawGradient`. **Since**: 1.2.0.
+*   **Vanilla 1.13**: the title screen draws its panorama sharp (no blur), through an 85 degree perspective at
+    the window's shape, turning a full circle (`RenderSkyboxCube`, `RenderSkybox`), and draws
+    `panorama_overlay.png` over it in place of 1.12.2's two gradients.
+*   **Why a patch**: `renderSkybox` is private and draws through a 256 by 256 blurred texture; no event comes
+    between it and the gradients, and replacing the whole title screen class would break every mod that
+    checks for it.
+*   **What changes**: three call sites change owner, nothing else: the one `renderSkybox(mouseX, mouseY,
+    partialTicks)` call and the two `drawGradientRect` calls become static calls to the hooks, with the menu
+    as the first argument.
+*   **Who it reaches**: the title screen, once any backport is installed (a 1.13 or later version is
+    registered). With none, both hooks call vanilla's own methods. The overlay replaces the gradients only
+    when an installed version registered one.
+*   **Fails safe**: method missing, or not exactly one `renderSkybox` and two `drawGradientRect` calls:
+    skipped; the panorama is 1.12.2's, blurred, with the chosen faces not shown.
+*   **Tested**: transformer chain and SRG names (`selftest/PatchTests`); the client self-test
+    (`runClient -Pselftest`) reports the hook drawing the dummy version's faces at the main menu.
+
+## P7. F3 key combinations
+
+*   **Class**: `net.minecraft.client.Minecraft`, method `runTickKeyboard()V` (`func_184118_az`).
+    **Transformer**: `asm/DebugKeysTransformer`. **Hook**: `presentation/client/PresentationHooks.processKeyF3`.
+    **Since**: 1.2.0.
+*   **Vanilla**: each version adds, changes and removes F3 combinations (1.13 F3+C and F3+I, 1.16 F3+F4,
+    1.17 F3+L, 1.19 removes F3+F), and F3+Q lists the current ones.
+*   **Why a patch**: `processKeyF3` is private and runs before Forge's key event; by the time a mod hears the
+    key, vanilla has already acted on it, so a key cannot be changed or removed from outside.
+*   **What changes**: the one `this.processKeyF3(key)` call changes owner: it becomes
+    `PresentationHooks.processKeyF3(this, key)`. Nothing else in the method moves.
+*   **Who it reaches**: every F3 combination, once an installed version changes the key map
+    (`presentation.DebugKeys`); until then the hook calls vanilla's own `processKeyF3` for every key.
+    F3+C's held-for-ten-seconds crash is outside this method and unchanged.
+*   **Fails safe**: method missing or not exactly one `processKeyF3` call: skipped; 1.12.2's keys only.
+*   **Tested**: transformer chain and SRG names; the client self-test calls the hook with the dummy
+    version's added and removed keys.

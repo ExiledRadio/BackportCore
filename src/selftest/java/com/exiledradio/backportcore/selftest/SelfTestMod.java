@@ -6,6 +6,7 @@ import com.exiledradio.backportcore.waterlog.Waterlogging;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
@@ -25,6 +26,10 @@ public final class SelfTestMod {
     public SelfTestMod() {
         MinecraftForge.EVENT_BUS.register(this);
         PoseTests.register();
+        PresentationTests.register();
+        if (FMLCommonHandler.instance().getSide().isClient()) {
+            ClientPresentationTests.register();
+        }
     }
 
     @SubscribeEvent
@@ -48,6 +53,9 @@ public final class SelfTestMod {
 
     @Mod.EventHandler
     public void started(FMLServerStartedEvent event) {
-        MinecraftForge.EVENT_BUS.register(new SelfTestRunner());
+        // Only a dedicated server runs the tests (and stops itself after them); a dev client's world does not.
+        if (FMLCommonHandler.instance().getSide().isServer()) {
+            MinecraftForge.EVENT_BUS.register(new SelfTestRunner());
+        }
     }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
  * has no hook. One transformer per patch, each documented in {@code docs/PATCHES.md}. No MixinBooter.
  *
  * <p>Every patch only adds a call into the library's hook classes ({@code pose.MovementHooks},
- * {@code pose.client.ClientHooks}), which do exactly what vanilla 1.12.2 did until a backport turns the
+ * {@code pose.client.ClientHooks}, {@code presentation.client.PresentationHooks}), which do exactly what vanilla 1.12.2 did until a backport turns the
  * matching rules on. A transformer that does not find the exact shape it expects changes nothing and logs
  * a warning; it never half-patches a method.
  *
@@ -33,6 +33,8 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             BipedAnglesTransformer.class.getName(),
             PlayerRotationsTransformer.class.getName(),
             CameraHeightTransformer.class.getName(),
+            TitlePanoramaTransformer.class.getName(),
+            DebugKeysTransformer.class.getName(),
     };
 
     @Override

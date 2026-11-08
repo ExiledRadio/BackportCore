@@ -3,3 +3,7 @@ config.backportcore.textures=テクスチャ
 backportcore.general.textures.moderntextures=1.14のテクスチャ
 config.backportcore.textures.tooltip=バニラのブロック、アイテム、Mobに適用する、1.14のテクスチャアップデートです。
 backportcore.general.textures.moderntextures.tooltip=バニラのブロック、アイテム、Mobに、1.14のテクスチャアップデートで導入されたテクスチャと、1.15のエンチャントのオーラを適用します。オフにすると1.12.2のものが保たれ、1.12.2にもともとあったものをバックポートが独自に複製したもの（タキシード、赤、シャムのネコ）も1.12.2の見た目に戻ります。\n\nクライアント専用で、サーバーはこの設定を無視します。自分で選んだリソースパックや、意図的にバニラのテクスチャを変更するほかのModは、この設定より優先されます。村人、ウマ、水はどちらの場合も1.12.2のテクスチャのままです。1.14のものは1.12.2のモデルや色に合わないためです。\n\nゲーム内で変更すると、F3+Tと同じようにリソースが再読み込みされます。
+config.backportcore.presentation=見た目
+backportcore.general.presentation.panorama=パノラマ
+config.backportcore.presentation.tooltip=インストールされている最新のバックポートに合わせて変わる、ゲームの見た目の部分です。そのバージョンのバニラと同じになります。
+backportcore.general.presentation.panorama.tooltip=タイトル画面のボタンの後ろに表示するパノラマ:\nLATEST - インストールされている最新のバックポートのもの(バニラと同じ)\nバージョン(例: 1.14) - そのバージョンのバックポートがインストールされていれば、そのバージョンのもの(1.12.2 なら 1.12.2 自身のもの)\nROTATE - 起動するたびに、インストールされている別のバージョンのもの\n\nクライアントのみ。サーバーでは無視されます。次回の起動から反映されます。

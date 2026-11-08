@@ -439,6 +439,23 @@ drawing does.
     vanilla's angles and before the stroke (where 1.14's `BipedModel` sets arm poses), for the player model
     and its armor; `PoseClient.modelHooksWork()` says whether it runs.
 
+## Look and feel (`presentation.Presentation`, 1.2.0)
+
+Each backport declares the release it brings and adds its version's non-content changes; Core shows what the
+newest installed version would: panorama, world-loading screen, options on the right screens (and 1.14's
+Accessibility and Mouse Settings), splashes, menu music, F3 keys, fog, and changed defaults applied once.
+
+```java
+Presentation.version("1.14")
+        .panorama("villagerbackport:textures/gui/title/background/panorama_")
+        .addSplashes(new ResourceLocation("villagerbackport", "texts/splashes_added.txt"))
+        .option(new SliderOption("villagerbackport:text_background_opacity", "options.accessibility.text_background_opacity",
+                OptionScreen.ACCESSIBILITY, 0, 1, 0.01, 0.5).after("SHOW_SUBTITLES"));
+```
+
+Everything, with how each piece resolves, is in `docs/PRESENTATION.md`; what to check in game is in
+`docs/PRESENTATION_CHECKLIST.md`. Patches P6 (title panorama) and P7 (F3 keys) are in `docs/PATCHES.md`.
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

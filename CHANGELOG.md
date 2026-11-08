@@ -14,6 +14,15 @@
 *   Structure pieces made of a single jigsaw block (a bastion's gold blocks) are placed; slabs in structures are the
     right half (or double), including the backports' own slabs and slabs a structure names without a type.
 *   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
+*   **Each version's look and feel**, following the newest installed backport as vanilla's did at that
+    version: the title-screen panorama (sharp and turning, as 1.13 and later draw it), the world-loading
+    screen (1.13's percentage, 1.14's colored chunk grid, 1.16's "Reading world data..."), the backports'
+    options on the right options screens, 1.14's Accessibility Settings and Mouse Settings, the splash
+    texts, the title-screen music, the F3 key combinations and the fog, built from every installed
+    backport's additions and removals. A version's changed defaults are applied once and then left to you.
+*   `presentation.panorama` in `config/backportcore.cfg`: `LATEST` (the newest backport's panorama), a
+    version such as `1.14`, or `ROTATE` for a different one each time the game starts.
+*   With Backport Core alone, the title screen and every other screen stay 1.12.2's.
 
 # 1.1.0
 

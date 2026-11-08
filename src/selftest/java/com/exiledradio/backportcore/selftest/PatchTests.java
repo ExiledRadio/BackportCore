@@ -42,6 +42,8 @@ final class PatchTests {
             {"net.minecraft.client.model.ModelBiped", "P3", new String[] {"beforeAngles", "afterHead", "afterAngles"}},
             {"net.minecraft.client.renderer.entity.RenderPlayer", "P4", new String[] {"applyRotations"}},
             {"net.minecraft.client.renderer.EntityRenderer", "P5", new String[] {"cameraEyeHeight"}},
+            {"net.minecraft.client.gui.GuiMainMenu", "P6", new String[] {"renderSkybox", "drawGradient*2"}},
+            {"net.minecraft.client.Minecraft", "P7", new String[] {"processKeyF3"}},
     };
 
     private PatchTests() {
@@ -113,6 +115,8 @@ final class PatchTests {
             case "P2": cls = "PlayerSprintTransformer"; break;
             case "P3": cls = "BipedAnglesTransformer"; break;
             case "P4": cls = "PlayerRotationsTransformer"; break;
+            case "P6": cls = "TitlePanoramaTransformer"; break;
+            case "P7": cls = "DebugKeysTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -120,8 +124,12 @@ final class PatchTests {
 
     private static void verify(String label, String name, byte[] out, String[] hooks) {
         ClassNode node = read(out);
-        for (String hook : hooks) {
-            check(label + ": one call to " + hook, countCalls(node, hook) == 1, countCalls(node, hook));
+        for (String spec : hooks) {
+            // "name*2": that many calls; otherwise exactly one.
+            int star = spec.indexOf('*');
+            String hook = star < 0 ? spec : spec.substring(0, star);
+            int want = star < 0 ? 1 : Integer.parseInt(spec.substring(star + 1));
+            check(label + ": " + want + " call(s) to " + hook, countCalls(node, hook) == want, countCalls(node, hook));
         }
         String bad = null;
         for (MethodNode m : node.methods) {
@@ -146,7 +154,8 @@ final class PatchTests {
         for (MethodNode m : node.methods) {
             for (AbstractInsnNode insn : m.instructions.toArray()) {
                 if (insn instanceof MethodInsnNode && hook.equals(((MethodInsnNode) insn).name)
-                        && (((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/pose/")
+                        && ((((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/pose/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/presentation/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }
