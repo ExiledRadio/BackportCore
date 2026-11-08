@@ -40,7 +40,7 @@ all target classes, put through the dev class loader's whole transformer chain (
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same classes from Forge's SRG-named jar (Forge's own classes from its universal jar) (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same classes from Forge's SRG-named jar (Minecraft's; Forge's own classes are not in it, and FML remaps them to the same SRG names at runtime) (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 
@@ -284,7 +284,7 @@ or passes an existing constant through a hook of the same type.
     returns them unchanged until the newest installed version is 1.15 or later. The disabled color and a
     button's own `packedFGColour` are left alone.
 *   **Fails safe**: method missing, or not exactly one of each constant: skipped; 1.12.2's colors.
-*   **Tested**: transformer chain and SRG names (Forge's class from its universal jar); the client self-test.
+*   **Tested**: transformer chain (both classes) and SRG names (GuiButton); the client self-test.
 
 ## P13. The chat's drawing
 

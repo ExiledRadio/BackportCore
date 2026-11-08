@@ -34,9 +34,7 @@ final class PatchTests {
 
     private static final String SRG_JAR = System.getProperty("user.home")
             + "/.gradle/caches/minecraft/net/minecraftforge/forge/1.12.2-14.23.5.2847/stable/39/forge-1.12.2-14.23.5.2847-srgBin.jar";
-    /** Forge's own classes as a real game runs them (SRG names): its universal jar, from FG2's download cache. */
-    private static final String FORGE_JAR = System.getProperty("user.home")
-            + "/.gradle/caches/forge_gradle/maven_downloader/net/minecraftforge/forge/1.12.2-14.23.5.2859/forge-1.12.2-14.23.5.2859-universal.jar";
+
 
     /** class, patch, hook names that must appear, each with its count */
     private static final Object[][] CLASSES = {
@@ -97,16 +95,20 @@ final class PatchTests {
             if (!check("Forge's SRG jar in the Gradle cache", jar.isFile(), SRG_JAR)) {
                 return;
             }
-            File forge = new File(FORGE_JAR);
-            try (ZipFile zip = new ZipFile(jar); ZipFile forgeZip = forge.isFile() ? new ZipFile(forge) : null) {
+            try (ZipFile zip = new ZipFile(jar)) {
                 for (Object[] c : CLASSES) {
                     String name = (String) c[0];
-                    ZipFile from = name.startsWith("net.minecraftforge.") && forgeZip != null ? forgeZip : zip;
-                    ZipEntry entry = from.getEntry(name.replace('.', '/') + ".class");
-                    if (!check("SRG bytes of " + name, entry != null, from.getName())) {
+                    if (name.startsWith("net.minecraftforge.")) {
+                        // Forge's own classes are not in the SRG jar: Forge ships them with Mojang's obfuscated
+                        // references, and FML's remapper gives them the same SRG names before these transformers
+                        // run. The transformer matches both names; the dev chain above checks the shape.
                         continue;
                     }
-                    byte[] raw = readAll(from.getInputStream(entry));
+                    ZipEntry entry = zip.getEntry(name.replace('.', '/') + ".class");
+                    if (!check("SRG bytes of " + name, entry != null)) {
+                        continue;
+                    }
+                    byte[] raw = readAll(zip.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
                     check("SRG " + c[1] + " transformed", out != raw, Asm.state((String) c[1]));
                     verify("SRG " + c[1], name, out, (String[]) c[2]);
