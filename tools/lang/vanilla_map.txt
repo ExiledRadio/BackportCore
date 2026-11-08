@@ -1,2 +1,7 @@
 gui.proceed = gui.proceed
 options.darkMojangStudiosBackgroundColor.tooltip = options.darkMojangStudiosBackgroundColor.tooltip
+commands.locate.structure.success = commands.locate.structure.success
+commands.locate.structure.not_found = commands.locate.structure.not_found
+commands.locate.structure.invalid = commands.locate.structure.invalid
+chat.coordinates = chat.coordinates
+chat.coordinates.tooltip = chat.coordinates.tooltip

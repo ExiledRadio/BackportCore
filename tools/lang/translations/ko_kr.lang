@@ -7,3 +7,4 @@ config.backportcore.presentation=외관
 backportcore.general.presentation.panorama=파노라마
 config.backportcore.presentation.tooltip=설치된 가장 최신 백포트를 따르는 게임 외관 부분으로, 해당 버전의 바닐라와 같습니다.
 backportcore.general.presentation.panorama.tooltip=타이틀 화면의 버튼 뒤에 보이는 파노라마:\nLATEST - 설치된 가장 최신 백포트의 것 (바닐라와 같음)\n버전 (예: 1.14) - 그 버전의 백포트가 설치되어 있으면 그 버전의 것 (1.12.2이면 1.12.2 자체의 것)\nROTATE - 게임을 시작할 때마다 설치된 다른 버전의 것\n\n클라이언트 전용이며 서버는 무시합니다. 다음에 게임을 시작할 때 적용됩니다.
+commands.backportcore.locate.usage=/locate structure <구조물>

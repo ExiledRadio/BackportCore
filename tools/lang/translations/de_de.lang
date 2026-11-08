@@ -7,3 +7,4 @@ config.backportcore.presentation=Aussehen
 backportcore.general.presentation.panorama=Panorama
 config.backportcore.presentation.tooltip=Die Teile des Spielbilds, die dem neuesten installierten Backport folgen, so wie Vanilla sie in dieser Version hatte.
 backportcore.general.presentation.panorama.tooltip=Welches Panorama der Titelbildschirm hinter seinen Schaltflächen zeigt:\nLATEST - das des neuesten installierten Backports (wie Vanilla),\neine Version, etwa 1.14 - das dieser Version, wenn ein Backport davon installiert ist (1.12.2 für das von 1.12.2 selbst),\nROTATE - bei jedem Spielstart das einer anderen installierten Version.\n\nNur clientseitig; ein Server ignoriert es. Wirkt ab dem nächsten Spielstart.
+commands.backportcore.locate.usage=/locate structure <Bauwerk>

@@ -7,3 +7,4 @@ config.backportcore.presentation=外观
 backportcore.general.presentation.panorama=全景图
 config.backportcore.presentation.tooltip=游戏外观中跟随已安装的最新移植模组的部分，与该版本的原版相同。
 backportcore.general.presentation.panorama.tooltip=标题画面按钮后面显示的全景图：\nLATEST - 已安装的最新移植模组的全景图（原版的选择）\n某个版本，如1.14 - 若安装了该版本的移植模组，则显示该版本的（1.12.2为1.12.2自己的）\nROTATE - 每次启动游戏时显示另一个已安装版本的\n\n仅限客户端；服务端会忽略此项。下次启动游戏时生效。
+commands.backportcore.locate.usage=/locate structure <结构>

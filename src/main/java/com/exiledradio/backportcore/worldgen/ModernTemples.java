@@ -82,7 +82,7 @@ public final class ModernTemples extends MapGenScatteredFeature {
      *
      * @return the index of the temple starting in the chunk, or -1
      */
-    int kindAt(World world, int chunkX, int chunkZ) {
+    public int kindAt(World world, int chunkX, int chunkZ) {
         int biomeKind = -2;
         long seed = world.getSeed();
         for (int i = 0; i < KINDS.length; i++) {
@@ -110,10 +110,49 @@ public final class ModernTemples extends MapGenScatteredFeature {
         return new MapGenScatteredFeature.Start(this.world, this.rand, chunkX, chunkZ, as);
     }
 
+    /** Today's ids of {@link #KINDS}, in that order. */
+    private static final String[] IDS = {"minecraft:desert_pyramid", "minecraft:igloo", "minecraft:jungle_pyramid",
+            "minecraft:swamp_hut"};
+
+    /** Set while {@link #of} asks the world's temple generator who it is. */
+    private static final ThreadLocal<ModernTemples[]> PROBE = new ThreadLocal<ModernTemples[]>();
+
+    /** @return today's structure ids of the four kinds, in the order {@link #kindAt} and {@link #grid} number them */
+    public static String[] ids() {
+        return IDS.clone();
+    }
+
+    /** @return a kind's grid in this world */
+    public ScatteredPlacement grid(int kind) {
+        return this.grids[kind];
+    }
+
+    /**
+     * @return the world's temple generator if it is this class, else null (1.12.2's own, another mod's, or none
+     *         where structures are off). Asks the world's own {@code /locate Temple} route, so whichever chunk
+     *         generator the world has is asked; nothing is searched or loaded.
+     */
+    @javax.annotation.Nullable
+    public static ModernTemples of(World world) {
+        ModernTemples[] box = new ModernTemples[1];
+        PROBE.set(box);
+        try {
+            world.findNearestStructure("Temple", BlockPos.ORIGIN, false);
+        } finally {
+            PROBE.remove();
+        }
+        return box[0];
+    }
+
     /** {@code /locate Temple}: the nearest start of any of the four kinds. */
     @Override
     public BlockPos getNearestStructurePos(World world, BlockPos pos, boolean findUnexplored) {
         this.world = world;
+        ModernTemples[] probe = PROBE.get();
+        if (probe != null) {
+            probe[0] = this;
+            return null;
+        }
         BlockPos best = null;
         for (int i = 0; i < KINDS.length; i++) {
             final int kind = i;

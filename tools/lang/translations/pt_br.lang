@@ -7,3 +7,4 @@ config.backportcore.presentation=Aparência
 backportcore.general.presentation.panorama=Panorama
 config.backportcore.presentation.tooltip=As partes da aparência do jogo que seguem o backport instalado mais recente, como o vanilla as tinha nessa versão.
 backportcore.general.presentation.panorama.tooltip=Qual panorama a tela de título mostra atrás dos botões:\nLATEST - o do backport instalado mais recente (a escolha do vanilla),\numa versão, como 1.14 - o dessa versão, se um backport dela estiver instalado (1.12.2 para o próprio do 1.12.2),\nROTATE - o de uma versão instalada diferente a cada vez que o jogo inicia.\n\nSó no cliente; um servidor ignora. Vale a partir da próxima vez que o jogo iniciar.
+commands.backportcore.locate.usage=/locate structure <estrutura>

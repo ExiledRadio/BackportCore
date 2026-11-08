@@ -437,6 +437,58 @@ StructurePlacements.isAtLeast("1.16");   // the newest of this table's and the p
 - Checked with `tools/vanilla-oracle` (vanilla 1.12.2, 1.13.2, 1.14.4, 1.15.2 and 1.16.5 against
   `seedcheck.OverworldDump` on a real server).
 
+## Locate (`locate.StructureLocate`, 1.1.0)
+
+Core replaces 1.12.2's `/locate` with today's: `/locate structure <id>` or `/locate structure #<tag>`, plus
+1.12.2's names (`Stronghold`, `Monument`, `Mansion`, `EndCity`, `Fortress`, `Temple`, `Mineshaft`; `Village`
+only until a backport registers today's village types, after which it still works but is not listed) and
+1.13-1.18's bare ids. Each backport registers what it builds, in init, under today's ids:
+
+```java
+// A ScatteredStructure kind: the kind's own start rule; the id is decided per start where a kind has several.
+StructureLocate.scattered("minecraft:ocean_ruins", Structures.OCEAN_RUIN,
+        (world, structure, x, z) -> "minecraft:ocean_ruin_" + structure.variantAt(world, x, z),
+        "minecraft:ocean_ruin_cold", "minecraft:ocean_ruin_warm");
+StructureLocate.tag("minecraft:ocean_ruin", "minecraft:ocean_ruin_cold", "minecraft:ocean_ruin_warm");
+
+// Any other grid: the world's placement (null where it has none; throw Unavailable to say why).
+StructureLocate.placement("minecraft:villages", world -> new StructureLocate.Grid(grid, (x, z) -> idStartingAt(x, z)),
+        "minecraft:village_plains", ...);
+
+// Not on a grid, or a fallback where the world's generator is another mod's:
+StructureLocate.finder("minecraft:stronghold", (world, from) -> world.findNearestStructure("Stronghold", from, false));
+```
+
+The search is today's `ChunkGenerator.findNearestMapStructure`: finders first, then up to 100 rings of regions
+around the sender's region, each grid walked x outer, z inner, the first ring with any start ending the search
+with the nearest of that ring's first starts. The reply names the start chunk's lowest corner plus the set's
+`locate_offset` (`Grid`'s offset arguments; buried treasure's is 9, 0, 9), like `getLocatePos`. A tag search
+names what it found ("#minecraft:village (minecraft:village_desert)"). `Placement.startAt` is asked only of
+candidate chunks and must not load or generate anything; `ScatteredStructure.locatableAt` gives a kind's answer,
+skipping a start already laid out empty.
+
+`locate.LocateChecks` is for the backports' self-tests: `checkRingOrder` walks the grids region by region to
+confirm a result is today's, `savedStart` reads a generator's laid-out start, `generateAround` loads chunks, and
+`run`/`complete` run the command or its tab completion as an operator.
+
+Core registers 1.12.2's structures under today's ids (`minecraft:stronghold`, `monument`, `mansion`, `end_city`,
+`mineshaft` through 1.12.2's own search; `minecraft:fortress` on 1.16.5's shared nether grid once a backport
+installs `NetherStructureSlots`; `minecraft:desert_pyramid`, `jungle_pyramid`, `swamp_hut`, `igloo` on their
+own grids when the world's temples are `ModernTemples`), and `#minecraft:village` falling back to 1.12.2's
+village search. Messages use today's keys (`commands.locate.structure.success` / `not_found` / `invalid`,
+`chat.coordinates.tooltip`), translated from Mojang's files.
+
+What the family registers:
+
+| Backport | Ids | Tags |
+| --- | --- | --- |
+| Village & Pillage | `village_plains`, `village_desert`, `village_savanna`, `village_snowy`, `village_taiga`, `pillager_outpost` | `#village` |
+| Update Aquatic | `shipwreck`, `shipwreck_beached`, `ocean_ruin_cold`, `ocean_ruin_warm`, `buried_treasure` | `#shipwreck`, `#ocean_ruin` |
+| Nether Update | `bastion_remnant`, `nether_fossil`, `ruined_portal`, `ruined_portal_desert`, `_jungle`, `_swamp`, `_mountain`, `_ocean`, `_nether` | `#ruined_portal` |
+| Wild Update | not yet: `ancient_city` (not built) | |
+| Trails & Tales | not yet: `trail_ruins` (not built) | |
+| Tricky Trials | not yet: `trial_chambers` (not built) | |
+
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 
 1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server

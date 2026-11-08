@@ -8,6 +8,14 @@
     `backportcore.cfg`: `NONE` ("Threaded"), `PLAYER_AFFECTED` ("Semi Blocking", the default) or `NEARBY`
     ("Fully Blocking", 1.12.2's rule). Changing it in game takes effect at once. With OptiFine, Celeritas,
     Vintagium or Nothirium it does nothing; they thread rebuilds themselves.
+*   **Today's `/locate`**: `/locate structure <id>` finds the backports' structures by today's ids
+    (`minecraft:shipwreck`, `minecraft:village_plains`, `minecraft:bastion_remnant` ...) and tags
+    (`#minecraft:village` finds the nearest village of any type), searching in today's order and answering as
+    today's game does: "The nearest minecraft:shipwreck is at [x, ~, z] (n blocks away)", the coordinates a click
+    away from a teleport. Tab completion lists every installed backport's structures. 1.12.2's own names
+    (`/locate Stronghold`, `Temple`, ...) still work, and 1.12.2's structures also answer to today's ids
+    (`minecraft:stronghold`, `minecraft:fortress`, and with a 1.13 or later backport the four temples one by
+    one). Nothing is generated or loaded to find a structure.
 *   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the
     same seed, a bastion is laid out piece for piece as in 1.16.5.
 *   **Seed parity for nether structures**: with Nether Update Backport, bastions and nether fortresses share

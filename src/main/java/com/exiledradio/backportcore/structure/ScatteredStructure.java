@@ -121,13 +121,7 @@ public abstract class ScatteredStructure extends MapGenStructure {
     public BlockPos nearest(World world, BlockPos from, int radiusChunks) {
         this.world = world;
         initializeStructureData(world);
-        ChunkPos found = this.placement.nearest(world.getSeed(), from, radiusChunks, c -> {
-            if (!canStartAt(world, c.x, c.z)) {
-                return false;
-            }
-            StructureStart known = this.structureMap.get(ChunkPos.asLong(c.x, c.z));
-            return known == null || known.isSizeableStructure();
-        });
+        ChunkPos found = this.placement.nearest(world.getSeed(), from, radiusChunks, c -> locatableAt(world, c.x, c.z));
         if (found == null) {
             return null;
         }
@@ -137,6 +131,21 @@ public abstract class ScatteredStructure extends MapGenStructure {
             return new BlockPos((box.minX + box.maxX) / 2, (box.minY + box.maxY) / 2, (box.minZ + box.maxZ) / 2);
         }
         return new BlockPos((found.x << 4) + 8, from.getY(), (found.z << 4) + 8);
+    }
+
+    /**
+     * Whether a candidate chunk of this kind's grid holds a start a locator should report: the kind's own start
+     * rule, and not a start already laid out and found empty (today's {@code StructureStart.isValid}). Asked only
+     * of candidate chunks; loads and generates nothing.
+     */
+    public boolean locatableAt(World world, int chunkX, int chunkZ) {
+        this.world = world;
+        if (!canStartAt(world, chunkX, chunkZ)) {
+            return false;
+        }
+        initializeStructureData(world);
+        StructureStart known = this.structureMap.get(ChunkPos.asLong(chunkX, chunkZ));
+        return known == null || known.isSizeableStructure();
     }
 
     @Nullable

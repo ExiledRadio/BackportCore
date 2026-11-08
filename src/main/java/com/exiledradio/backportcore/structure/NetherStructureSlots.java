@@ -158,6 +158,16 @@ public final class NetherStructureSlots {
         return fortress != null && fortress.startsAt(chunkX, chunkZ);
     }
 
+    /**
+     * @return true if this world's fortresses are the shared rule's (its fortress generator has run in this world,
+     *         which it does as soon as any chunk there is generated or loaded)
+     */
+    public static boolean drives(World world) {
+        synchronized (FORTRESSES) {
+            return FORTRESSES.containsKey(world);
+        }
+    }
+
     /** @return the fortress start saved in the world for this chunk, or null */
     @Nullable
     public static StructureStart savedFortress(World world, int chunkX, int chunkZ) {

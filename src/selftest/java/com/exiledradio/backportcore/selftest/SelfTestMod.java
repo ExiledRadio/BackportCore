@@ -51,6 +51,7 @@ public final class SelfTestMod {
         Waterlogging.migrateStoredProperty(TestBlocks.legacy, TestBlocks.Legacy.WATERLOGGED);
         StructureTests.init();
         NetherTests.init();
+        LocateTests.init();
     }
 
     @Mod.EventHandler

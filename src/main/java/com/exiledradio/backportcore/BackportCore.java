@@ -122,6 +122,8 @@ public final class BackportCore {
         // Saved jigsaw pieces (bastions and the like) of every backport that uses Core's assembler.
         net.minecraft.world.gen.structure.MapGenStructureIO.registerStructureComponent(
                 com.exiledradio.backportcore.structure.JigsawPiece.class, "BCJigsaw");
+        // 1.12.2's structures under today's ids for /locate (each backport registers its own in its init).
+        com.exiledradio.backportcore.locate.VanillaLocate.register();
     }
 
     /** Recipes another mod added after the recipe registry event. */
@@ -154,6 +156,8 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new FutureMcCommand());
+        // Today's /locate, in place of 1.12.2's (same name, so it replaces vanilla's).
+        event.registerServerCommand(new com.exiledradio.backportcore.locate.LocateCommand());
     }
 
     /** Also starts {@code -Dbackportcore.seeddump=<folder>}: the overworld's seed-parity dump (a dev tool). */

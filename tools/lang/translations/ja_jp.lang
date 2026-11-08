@@ -7,3 +7,4 @@ config.backportcore.presentation=見た目
 backportcore.general.presentation.panorama=パノラマ
 config.backportcore.presentation.tooltip=インストールされている最新のバックポートに合わせて変わる、ゲームの見た目の部分です。そのバージョンのバニラと同じになります。
 backportcore.general.presentation.panorama.tooltip=タイトル画面のボタンの後ろに表示するパノラマ:\nLATEST - インストールされている最新のバックポートのもの(バニラと同じ)\nバージョン(例: 1.14) - そのバージョンのバックポートがインストールされていれば、そのバージョンのもの(1.12.2 なら 1.12.2 自身のもの)\nROTATE - 起動するたびに、インストールされている別のバージョンのもの\n\nクライアントのみ。サーバーでは無視されます。次回の起動から反映されます。
+commands.backportcore.locate.usage=/locate structure <構造物>
