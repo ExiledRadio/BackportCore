@@ -39,6 +39,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             VillageBiomeTransformer.class.getName(),
             LayerRulesTransformer.class.getName(),
             ScreenPatchesTransformer.class.getName(),
+            ChunkRebuildsTransformer.class.getName(),
     };
 
     @Override

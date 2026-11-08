@@ -56,6 +56,7 @@ final class PatchTests {
             {"net.minecraft.client.gui.GuiChat", "P14", new String[] {"chatComponent*2", "chatBoxColor"}},
             {"net.minecraft.client.renderer.RenderGlobal", "P15", new String[] {"skyColor", "cloudHeight*2"}},
             {"net.minecraft.client.renderer.EntityRenderer", "P16", new String[] {"skyColor", "cloudLayer*2"}},
+            {"net.minecraft.client.renderer.RenderGlobal", "P17", new String[] {"nearbyDistanceSq", "needsImmediateUpdate*2"}},
     };
 
     private PatchTests() {
@@ -139,6 +140,7 @@ final class PatchTests {
             case "P9": cls = "VillageBiomeTransformer"; break;
             case "P10": case "P11": cls = "LayerRulesTransformer"; break;
             case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
+            case "P17": cls = "ChunkRebuildsTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -178,7 +180,8 @@ final class PatchTests {
                 if (insn instanceof MethodInsnNode && hook.equals(((MethodInsnNode) insn).name)
                         && ((((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/pose/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/presentation/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/worldgen/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/worldgen/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/render/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }

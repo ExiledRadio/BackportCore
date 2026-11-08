@@ -25,7 +25,40 @@ public final class CoreConfig {
     @Config.Comment("The parts of the game's look that follow the newest installed backport, as vanilla's did at that version.")
     public static final PresentationSettings presentation = new PresentationSettings();
 
+    @Config.LangKey("config.backportcore.rendering")
+    @Config.Comment("How the world's chunks are rebuilt when blocks change, as later versions do it.")
+    public static final Rendering rendering = new Rendering();
+
     private CoreConfig() {
+    }
+
+    /** Current vanilla's "Chunk Builder" video setting ({@code prioritizeChunkUpdates}, from 1.18.2), by its own value names. */
+    public enum BlockUpdates {
+        /** "Threaded": every rebuild goes to the chunk builder threads (current vanilla's default). */
+        NONE,
+        /** "Semi Blocking": only chunks the player changed are rebuilt at once. */
+        PLAYER_AFFECTED,
+        /** "Fully Blocking": also every changed chunk near the camera, the only rule before 1.18.2. */
+        NEARBY
+    }
+
+    public static final class Rendering {
+
+        @Config.Comment({
+                "Which changed chunks the game rebuilds at once, holding up the frame, instead of on the",
+                "chunk builder threads. Current vanilla's \"Chunk Builder\" video setting (1.18.2 on):",
+                "  NONE - none; every rebuild is threaded (\"Threaded\", current vanilla's default; a block",
+                "    you break can leave a hole for a frame),",
+                "  PLAYER_AFFECTED - only chunks you changed yourself, by placing or breaking a block",
+                "    (\"Semi Blocking\"),",
+                "  NEARBY - also every changed chunk within about 28 blocks of the camera (\"Fully Blocking\",",
+                "    the only rule before 1.18.2). Blocks the server changes nearby, such as a kelp or sugar",
+                "    cane column breaking, then cost a rebuild on the render thread every tick.",
+                "",
+                "Client only; a server ignores it. Takes effect at once. OptiFine, Celeritas, Vintagium and",
+                "Nothirium replace this part of the game with their own threaded rebuilds; with them it does nothing."
+        })
+        public BlockUpdates blockUpdates = BlockUpdates.PLAYER_AFFECTED;
     }
 
     public static final class PresentationSettings {
