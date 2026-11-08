@@ -47,6 +47,8 @@
     after the redstone lamp, the crafter after the dropper).
 *   The search tab, JEI and other mods' items in those tabs are unchanged.
 *   A developer check: `-Dbackportcore.creativeDump=<file>` writes every tab's list.
+*   **Sea pickles belong to Update Aquatic Backport**, not Village & Pillage: when two backports need the same
+    block, it belongs to the one it fits best. Blue ice stays Village & Pillage's.
 *   **Requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 
 *   **Waterlogging** for the backports' blocks: lanterns, sea pickles, kelp and the rest keep the water

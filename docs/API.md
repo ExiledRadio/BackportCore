@@ -98,7 +98,8 @@ BlockOwnership.provides("yourmod", () -> config.blocksEnabled); // if yours can 
 ```
 
 Village & Pillage's 1.13 blocks (stripped logs and wood, the five wood trapdoors, buttons and pressure plates,
-blue ice, sea pickles) are in the table already. Ask from your block registry event or later. Not done yet:
+blue ice) are in the table already. Sea pickles are Update Aquatic's: when two backports need a block, it
+belongs to the one it fits best, and Village & Pillage uses Update Aquatic's pickles when it is installed. Ask from your block registry event or later. Not done yet:
 the owner remapping another mod's copies when it is added to a world later (use `RegistryEvent.MissingMappings`
 plus the chunk conversion in `migrate.FutureMcRemoved` as the model).
 

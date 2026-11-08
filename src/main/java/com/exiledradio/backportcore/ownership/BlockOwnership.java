@@ -17,8 +17,9 @@ import java.util.function.BooleanSupplier;
  * Which backport owns each block more than one of them needs (the family plan's Rule 1).
  *
  * <p>Some blocks belong to one update but are needed by another: 1.14's villages are built from 1.13's
- * stripped logs, blue ice and sea pickles, so Village &amp; Pillage ships them. The mod that ships a
- * block first owns it, and every other backport asks the same question the same way:
+ * stripped logs and blue ice, so Village &amp; Pillage ships them. The mod that ships a block first
+ * owns it, unless it fits another backport better (sea pickles are Update Aquatic's, though V&amp;P
+ * shipped them first), and every other backport asks the same question the same way:
  * <ul>
  * <li><b>The owner is installed</b> ({@link #ownerProvides}): register nothing, and use the owner's
  * block ({@link #block}).</li>
@@ -53,7 +54,12 @@ public final class BlockOwnership {
                 own(vp, wood + "_trapdoor", wood + "_button", wood + "_pressure_plate");
             }
         }
-        own(vp, "blue_ice", "sea_pickle");
+        own(vp, "blue_ice");
+
+        // Update Aquatic Backport (1.13). When two backports need the same block, it belongs to the one it
+        // fits best: sea pickles are an ocean block, moved here from Village & Pillage on 2026-11-08. V&P's
+        // villages and wandering trader use Update Aquatic's when it is installed.
+        own("updateaquaticbackport", "sea_pickle");
     }
 
     private BlockOwnership() {
