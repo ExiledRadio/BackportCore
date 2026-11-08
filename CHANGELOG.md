@@ -10,6 +10,10 @@
 *   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure
     processors of today's files.
 *   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
+*   **Overworld seed check** for the backports (a developer tool): started with
+    `-Dbackportcore.seeddump=<folder>`, a server writes its overworld's biome map, structure starts,
+    strongholds, spawn search and slime chunks, for comparing with vanilla 1.13.2's and 1.14.4's own code
+    (`tools/vanilla-oracle`). Without the setting nothing runs.
 *   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
 
 # 1.1.0

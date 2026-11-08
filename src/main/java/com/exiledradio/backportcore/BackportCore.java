@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -109,5 +110,12 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new FutureMcCommand());
+    }
+
+    /** {@code -Dbackportcore.seeddump=<folder>}: the overworld's seed-parity dump (a dev tool). */
+    @Mod.EventHandler
+    public void serverStarted(FMLServerStartedEvent event) {
+        com.exiledradio.backportcore.seedcheck.OverworldDump.serverStarted(
+                net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance());
     }
 }
