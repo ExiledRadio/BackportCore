@@ -22,6 +22,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new Events());
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());
         MinecraftForge.EVENT_BUS.register(new MenuMusicPlayer());
+        MinecraftForge.EVENT_BUS.register(new FogPipeline.Events());
     }
 
     /** Forge event handlers; public for the event bus. */

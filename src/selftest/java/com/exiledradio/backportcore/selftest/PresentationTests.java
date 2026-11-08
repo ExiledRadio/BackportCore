@@ -4,6 +4,7 @@ import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.presentation.Contribution;
 import com.exiledradio.backportcore.presentation.DebugKeys;
 import com.exiledradio.backportcore.presentation.MenuMusic;
+import com.exiledradio.backportcore.presentation.OrderedSteps;
 import com.exiledradio.backportcore.presentation.Splashes;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
@@ -153,6 +154,7 @@ final class PresentationTests {
         scheduleOptions();
         scheduleDefaults();
         scheduleLists();
+        schedulePipeline();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -375,6 +377,22 @@ final class PresentationTests {
             List<DebugKeys.Key> mixed = DebugKeys.helpOrder(Arrays.asList(new DebugKeys.Key(62, "f4", null),
                     new DebugKeys.Key(48, "b", null), new DebugKeys.Key(1, "esc", null), new DebugKeys.Key(30, "a", null)));
             check("other keys follow the letters in the order added", "a b f4 esc".equals(helpKeys(mixed)), helpKeys(mixed));
+        });
+    }
+
+    /** Piece 7: the ordered pipeline the fog steps run in. */
+    static void schedulePipeline() {
+        then(1, "presentation: ordered steps", world -> {
+            OrderedSteps<String> steps = new OrderedSteps<String>();
+            steps.add("1.18", "clouds at 192", "c");
+            steps.add("1.13", "underwater visibility", "a");
+            steps.add("1.16", "darker nether", "b");
+            steps.add("1.13", "second 1.13 step", "a2");
+            steps.add("1.20", "a later version", "d");
+            check("version order, then the order added", Arrays.asList("a", "a2", "b").equals(steps.steps()), steps.steps());
+            check("names at 1.18 include its step", steps.names(GameVersion.parse("1.18")).equals(Arrays.asList(
+                    "1.13 underwater visibility", "1.13 second 1.13 step", "1.16 darker nether", "1.18 clouds at 192")),
+                    steps.names(GameVersion.parse("1.18")));
         });
     }
 

@@ -30,6 +30,7 @@ public final class OrderedSteps<T> {
 
     private final List<Slot<T>> slots = new ArrayList<Slot<T>>();
     private volatile List<T> cache = Collections.emptyList();
+    private volatile GameVersion builtFor;
     private int added;
 
     /** Adds a step of {@code version}; {@code name} identifies it in the log. */
@@ -44,6 +45,9 @@ public final class OrderedSteps<T> {
 
     /** @return the steps to run, in order, at the newest installed version */
     public List<T> steps() {
+        if (this.builtFor != Presentation.newest()) {
+            rebuild();
+        }
         return this.cache;
     }
 
@@ -68,5 +72,6 @@ public final class OrderedSteps<T> {
             }
         }
         this.cache = Collections.unmodifiableList(out);
+        this.builtFor = newest;
     }
 }
