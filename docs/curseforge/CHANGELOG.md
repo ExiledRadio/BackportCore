@@ -22,6 +22,7 @@ Everything the update backports share for their next releases: waterlogging, tod
 *   **The backports' items in vanilla's creative tabs**: no backport has a tab of its own any more. Each block and item is in the tab vanilla 1.19.2 gives it (Building Blocks, Decoration Blocks, Redstone, Transportation, Miscellaneous, Foodstuffs, Tools, Combat, Brewing), next to its vanilla neighbor: stripped logs after the logs, new walls after the cobblestone wall, bee nests and beehives where 1.19.2 shows them, each spawn egg among the others in alphabetical order. The places follow whichever backports are installed.
 *   Items newer than 1.19.2 are placed where today's game puts them (cherry wood after mangrove, the copper bulbs after the redstone lamp, the crafter after the dropper).
 *   The search tab, JEI and other mods' items in those tabs are unchanged.
+*   **Sea pickles belong to Update Aquatic Backport**, not Village & Pillage: when two backports need the same block, it belongs to the one it fits best. Blue ice stays Village & Pillage's.
 *   **An icon** in the mod list.
 *   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch. Block and item names use Minecraft's own translations.
 *   The texture switch now shows its name, "1.14 Textures", in the config screen instead of `modernTextures`.
