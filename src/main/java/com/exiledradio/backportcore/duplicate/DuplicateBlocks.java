@@ -19,11 +19,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryModifiable;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -225,11 +229,15 @@ public final class DuplicateBlocks {
      */
     public static void hideFromCreative() {
         for (Block block : hidden().keySet()) {
-            block.setCreativeTab(null);
+            try {
+                block.setCreativeTab(null);
+            } catch (RuntimeException refused) {
+                clearField(Block.class, block, block.getRegistryName(), "displayOnCreativeTab", "field_149772_a");
+            }
         }
         // Signs are listed by their item, not their block.
         for (Item item : hiddenItems()) {
-            item.setCreativeTab(null);
+            hideItem(item);
         }
 
         for (Source source : SOURCES) {
@@ -239,6 +247,107 @@ public final class DuplicateBlocks {
                         name(source.theirModId), source.found, name(source.ourModId),
                         name(keep == Keep.THEIRS ? source.theirModId : source.ourModId));
             }
+        }
+    }
+
+    /**
+     * Takes one item out of the creative menu. Some mods' items refuse {@code setCreativeTab(null)} (a Kotlin
+     * override with a non-null parameter throws {@code IllegalArgumentException}); for those the tab field is
+     * cleared directly, so one item can never stop the game loading.
+     *
+     * @return true when the item's tab is now null
+     */
+    public static boolean hideItem(Item item) {
+        try {
+            item.setCreativeTab(null);
+            return true;
+        } catch (RuntimeException refused) {
+            return clearField(Item.class, item, item.getRegistryName(), "tabToDisplayOn", "field_77701_a");
+        }
+    }
+
+    private static boolean clearField(Class<?> owner, Object target, @Nullable ResourceLocation name, String mcp, String srg) {
+        try {
+            ReflectionHelper.findField(owner, mcp, srg).set(target, null);
+            return true;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            BackportCore.LOGGER.warn("Could not take {} out of the creative menu.", name, e);
+            return false;
+        }
+    }
+
+    // ---- World generators ----
+
+    /**
+     * Registers another mod's world generator that goes with blocks one of {@link #register}'s pairs hides: once
+     * that mod's half is the hidden one ({@code keep} is {@link Keep#OURS} and the mod is installed), every
+     * {@link IWorldGenerator} of exactly this class is taken out of {@link GameRegistry}'s list in post-init, so
+     * the hidden block stops generating (the registering mod's own generator places the visible one).
+     *
+     * @param theirClassName the generator's class name, as {@code getClass().getName()} gives it
+     */
+    public static synchronized void registerGenerator(String ourModId, String theirModId, Supplier<Keep> keep, String theirClassName) {
+        GENERATORS.add(new Generator(ourModId, theirModId, keep, theirClassName));
+    }
+
+    private static final List<Generator> GENERATORS = new ArrayList<Generator>();
+
+    /** Post-init: takes out every registered generator whose mod's duplicates are hidden. Safe to call twice. */
+    public static synchronized void removeGenerators() {
+        for (Generator g : GENERATORS) {
+            if (g.keep.get() != Keep.OURS || !Loader.isModLoaded(g.theirModId)) {
+                continue;
+            }
+            int removed = removeGenerators(g.className);
+            if (removed > 0) {
+                BackportCore.LOGGER.info("{}'s duplicates are hidden; removed {} of its world generators ({}), {} generates instead.",
+                        name(g.theirModId), removed, g.className, name(g.ourModId));
+            }
+        }
+    }
+
+    /** @return how many world generators of exactly this class were taken out of Forge's list */
+    @SuppressWarnings("unchecked")
+    public static int removeGenerators(String className) {
+        int removed = 0;
+        try {
+            Field setField = GameRegistry.class.getDeclaredField("worldGenerators");
+            Field indexField = GameRegistry.class.getDeclaredField("worldGeneratorIndex");
+            Field sortedField = GameRegistry.class.getDeclaredField("sortedGeneratorList");
+            setField.setAccessible(true);
+            indexField.setAccessible(true);
+            sortedField.setAccessible(true);
+            Collection<IWorldGenerator> set = (Collection<IWorldGenerator>) setField.get(null);
+            Map<IWorldGenerator, Integer> index = (Map<IWorldGenerator, Integer>) indexField.get(null);
+            for (Iterator<IWorldGenerator> it = set.iterator(); it.hasNext(); ) {
+                IWorldGenerator generator = it.next();
+                if (generator.getClass().getName().equals(className)) {
+                    it.remove();
+                    index.remove(generator);
+                    removed++;
+                }
+            }
+            if (removed > 0) {
+                // Forge rebuilds the sorted list from the set the next time a chunk is decorated.
+                sortedField.set(null, null);
+            }
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            BackportCore.LOGGER.warn("Could not take out another mod's world generator {}.", className, e);
+        }
+        return removed;
+    }
+
+    private static final class Generator {
+        final String ourModId;
+        final String theirModId;
+        final Supplier<Keep> keep;
+        final String className;
+
+        Generator(String ourModId, String theirModId, Supplier<Keep> keep, String className) {
+            this.ourModId = ourModId;
+            this.theirModId = theirModId;
+            this.keep = keep;
+            this.className = className;
         }
     }
 
