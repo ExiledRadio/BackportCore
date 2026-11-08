@@ -103,6 +103,8 @@ final class NetherTests {
 
     static void init() {
         JigsawPools.source(SelfTestMod.MOD_ID);
+        // Its test_slab and test_double_slab serve a file's minecraft:test_slab (the family's slab convention).
+        ModernPalette.source(SelfTestMod.MOD_ID);
         NetherStructureSlots.install(NetherStructureSlots.VANILLA_1_16_5);
         ModernPalette.entity("minecraft:piglin", new ResourceLocation("minecraft", "zombie_pigman"));
         ModernPalette.entity("minecraft:piglin_brute", new ResourceLocation("minecraft", "zombie_pigman"));
@@ -179,6 +181,7 @@ final class NetherTests {
             int wrong = 0;
             int portals = 0;
             int fossils = 0;
+            int netherPortals = 0;
             int placementWrong = 0;
             String first = "";
             for (String[] l : oracle("slots_1165.txt")) {
@@ -209,6 +212,13 @@ final class NetherTests {
                             placementWrong++;
                         }
                         break;
+                    case "portal_nether":
+                        portals++;
+                        netherPortals++;
+                        if (!VanillaPlacements.V1_16_5.RUINED_PORTAL_NETHER.candidate(seed, x, z).equals(new ChunkPos(x, z))) {
+                            placementWrong++;
+                        }
+                        break;
                     case "fossil":
                         fossils++;
                         if (!VanillaPlacements.V1_16_5.NETHER_FOSSIL.candidate(seed, x, z).equals(new ChunkPos(x, z))) {
@@ -221,8 +231,8 @@ final class NetherTests {
             }
             check("seed parity: bastion or fortress in exactly 1.16.5's chunks", wrong == 0 && bastions > 1000 && fortresses > 1000,
                     bastions + " bastion and " + fortresses + " fortress slots over 4 seeds, " + wrong + " differ " + first);
-            check("seed parity: ruined portal and nether fossil candidates are 1.16.5's", placementWrong == 0 && portals > 0 && fossils > 0,
-                    portals + " portals, " + fossils + " fossils, " + placementWrong + " differ");
+            check("seed parity: ruined portal and nether fossil candidates are 1.16.5's", placementWrong == 0 && portals > 0 && netherPortals > 0 && fossils > 0,
+                    portals + " portals (" + netherPortals + " with the nether's settings), " + fossils + " fossils, " + placementWrong + " differ");
             int randomWrong = 0;
             List<String[]> starts = oracle("start_random_1165.txt");
             for (String[] l : starts) {
@@ -365,6 +375,52 @@ final class NetherTests {
             }
             check("assembly: 200 bastions from all four starts stay in the 80-block cube", outside == 0 && startKinds.size() == 4,
                     starts + " bastions, " + total + " pieces, starts " + startKinds + ", " + outside + " outside");
+        });
+
+        then(1, "stream X's Core requests", world -> {
+            // A block named without properties is its default state: block_age's bare stone slab is a bottom half.
+            IBlockState bare = ModernPalette.resolve("minecraft:stone_slab").state;
+            IBlockState smooth = ModernPalette.resolve("minecraft:smooth_stone_slab").state;
+            IBlockState brick = ModernPalette.resolve("minecraft:stone_brick_slab").state;
+            IBlockState top = ModernPalette.resolve("minecraft:stone_brick_slab[type=top]").state;
+            IBlockState dbl = ModernPalette.resolve("minecraft:stone_brick_slab[type=double]").state;
+            check("palette: a slab named without properties is a bottom half (its default state)",
+                    bare != null && bare.getBlock() == Blocks.STONE_SLAB && bare.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.BOTTOM
+                            && bare.getValue(net.minecraft.block.BlockStoneSlab.VARIANT) == net.minecraft.block.BlockStoneSlab.EnumType.STONE
+                            && bare.equals(smooth)
+                            && brick != null && brick.getBlock() == Blocks.STONE_SLAB && brick.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.BOTTOM
+                            && brick.getValue(net.minecraft.block.BlockStoneSlab.VARIANT) == net.minecraft.block.BlockStoneSlab.EnumType.SMOOTHBRICK
+                            && top != null && top.getBlock() == Blocks.STONE_SLAB && top.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.TOP
+                            && dbl != null && dbl.getBlock() == Blocks.DOUBLE_STONE_SLAB,
+                    bare + ", " + smooth + ", " + brick + ", " + top + ", " + dbl);
+            IBlockState stairs = ModernPalette.resolve("minecraft:oak_stairs").state;
+            check("palette: bare stairs are 1.16's default (north, bottom)", stairs != null && stairs.getBlock() == Blocks.OAK_STAIRS
+                    && stairs.getValue(net.minecraft.block.BlockStairs.FACING) == net.minecraft.util.EnumFacing.NORTH
+                    && stairs.getValue(net.minecraft.block.BlockStairs.HALF) == net.minecraft.block.BlockStairs.EnumHalf.BOTTOM, stairs);
+            // A source mod's 1.12.2-style slab: type picks the half or the _double_slab block.
+            IBlockState sb = ModernPalette.resolve("minecraft:test_slab[type=bottom,waterlogged=false]").state;
+            IBlockState st = ModernPalette.resolve("minecraft:test_slab[type=top,waterlogged=false]").state;
+            IBlockState sd = ModernPalette.resolve("minecraft:test_slab[type=double,waterlogged=false]").state;
+            IBlockState sn = ModernPalette.resolve("minecraft:test_slab").state;
+            check("palette: a source mod's slab follows type (bottom, top, its _double_slab)",
+                    sb != null && sb.getBlock() == TestBlocks.slab && sb.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.BOTTOM
+                            && st != null && st.getBlock() == TestBlocks.slab && st.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.TOP
+                            && sd != null && sd.getBlock() == TestBlocks.doubleSlab
+                            && sn != null && sn.getBlock() == TestBlocks.slab && sn.getValue(net.minecraft.block.BlockSlab.HALF) == net.minecraft.block.BlockSlab.EnumBlockHalf.BOTTOM,
+                    sb + ", " + st + ", " + sd + ", " + sn);
+            // A template of nothing but a jigsaw places the jigsaw's final state (bastion/blocks/gold: a gold block).
+            ModernTemplate gold = ModernTemplate.load(JigsawPools.templateId(new ResourceLocation("minecraft", "bastion/blocks/gold")));
+            BlockPos site = world.getSpawnPoint().add(3000, 0, 3200);
+            site = new BlockPos(site.getX(), 120, site.getZ());
+            world.getChunk(site);
+            world.setBlockToAir(site);
+            int placed = gold.place(world, site, new TemplatePlacement());
+            BlockPos at = gold.jigsaws().isEmpty() ? site : site.add(gold.jigsaws().get(0).pos);
+            check("placing: a template of nothing but a jigsaw places its final state", placed == 1 && gold.jigsaws().size() == 1
+                    && world.getBlockState(at).getBlock() == Blocks.GOLD_BLOCK, placed + " placed, " + world.getBlockState(at));
+            check("seed parity: the nether's ruined portals are (25, 10), the overworld's (40, 15)",
+                    VanillaPlacements.V1_16_5.RUINED_PORTAL_NETHER.spacing() == 25 && VanillaPlacements.V1_16_5.RUINED_PORTAL_NETHER.separation() == 10
+                            && VanillaPlacements.V1_16_5.RUINED_PORTAL.spacing() == 40);
         });
 
         then(1, "blocks resolved", world -> {

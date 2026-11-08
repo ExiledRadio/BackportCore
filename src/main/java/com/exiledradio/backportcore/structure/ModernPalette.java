@@ -6,6 +6,7 @@ import com.exiledradio.backportcore.ownership.BlockOwnership;
 import com.exiledradio.backportcore.util.BlockStates;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -219,12 +220,12 @@ public final class ModernPalette {
         if (vanilla) {
             Block owned = BlockOwnership.block(path);
             if (owned != null) {
-                return new Resolved(finish(owned.getDefaultState(), props), null, water);
+                return new Resolved(family(owned, props), null, water);
             }
             for (String source : sources) {
                 Block block = registered(source + ":" + path);
                 if (block != null) {
-                    return new Resolved(finish(block.getDefaultState(), props), null, water);
+                    return new Resolved(family(block, props), null, water);
                 }
             }
             Resolved legacy = LegacyTiles.resolve(path, props, water);
@@ -265,11 +266,15 @@ public final class ModernPalette {
      * connections).
      */
     @Nullable
-    private static IBlockState flattened(String modern, Map<String, String> props) {
+    private static IBlockState flattened(String modern, Map<String, String> fileProps) {
         List<Flattening.Entry> entries = Flattening.entries(modern);
         if (entries.isEmpty()) {
             return null;
         }
+        // A property the file leaves out has the block's default value, as in the game: a bare
+        // minecraft:stone_slab is a bottom half, not the first of its id:metas (the double slab).
+        Map<String, String> props = new LinkedHashMap<String, String>(Flattening.defaults(modern));
+        props.putAll(fileProps);
         // Matches minus mismatches: an id:meta's 1.13 state also carries properties 1.12.2 worked out
         // from its neighbors (a stair's shape is always "straight" there), which a file may differ on.
         Flattening.Entry best = entries.get(0);
@@ -344,6 +349,36 @@ public final class ModernPalette {
             }
         }
         return value;
+    }
+
+    /**
+     * A family mod's block for a file's state. Slabs follow the family's 1.12.2 convention: {@code <name>_slab} is
+     * the half, with {@code half=bottom|top}, and {@code <name>_double_slab} (same mod) is the double; today's
+     * {@code type} picks between them. Every other block carries properties across by name.
+     */
+    private static IBlockState family(Block block, Map<String, String> props) {
+        String type = props.get("type");
+        IBlockState state = block.getDefaultState();
+        if (type == null || !state.getPropertyKeys().contains(BlockSlab.HALF)) {
+            return finish(state, props);
+        }
+        Map<String, String> rest = new LinkedHashMap<String, String>(props);
+        rest.remove("type");
+        if ("double".equals(type)) {
+            ResourceLocation id = block.getRegistryName();
+            if (id != null && id.getPath().endsWith("_slab")) {
+                String path = id.getPath();
+                Block full = registered(id.getNamespace() + ":" + path.substring(0, path.length() - "_slab".length()) + "_double_slab");
+                if (full != null) {
+                    return finish(full.getDefaultState(), rest);
+                }
+            }
+            // No double block in this mod: the half is the closest it has.
+            rest.put("half", "bottom");
+        } else {
+            rest.put("half", "top".equals(type) ? "top" : "bottom");
+        }
+        return finish(state, rest);
     }
 
     /** Carries properties across by name (wall sides as 1.12.2 writes them), then prefers a visible twin. */

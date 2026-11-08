@@ -13,7 +13,10 @@ public final class VanillaPlacements {
     private VanillaPlacements() {
     }
 
-    /** 1.16.5 ({@code DimensionStructuresSettings.DEFAULTS}); every one linear. */
+    /**
+     * 1.16.5 ({@code DimensionStructuresSettings.DEFAULTS}, plus the nether's override from
+     * {@code DimensionSettings.nether}); every one linear.
+     */
     public static final class V1_16_5 {
         private V1_16_5() {
         }
@@ -27,8 +30,16 @@ public final class VanillaPlacements {
         public static final ScatteredPlacement OCEAN_MONUMENT = new ScatteredPlacement(32, 5, 10387313);
         public static final ScatteredPlacement END_CITY = new ScatteredPlacement(20, 11, 10387313);
         public static final ScatteredPlacement WOODLAND_MANSION = new ScatteredPlacement(80, 20, 10387319);
-        /** Every ruined portal, overworld and nether alike; the biome picks the variant. */
+        /**
+         * Ruined portals in the overworld (and every dimension but the nether); the biome picks the variant.
+         * The nether's own settings override this: see {@link #RUINED_PORTAL_NETHER}.
+         */
         public static final ScatteredPlacement RUINED_PORTAL = new ScatteredPlacement(40, 15, 34222645);
+        /**
+         * Ruined portals in the nether: {@code DimensionSettings.nether} puts (25, 10, 34222645) into the
+         * nether's structure settings in place of the default (40, 15).
+         */
+        public static final ScatteredPlacement RUINED_PORTAL_NETHER = new ScatteredPlacement(25, 10, 34222645);
         public static final ScatteredPlacement SHIPWRECK = new ScatteredPlacement(24, 4, 165745295);
         public static final ScatteredPlacement OCEAN_RUIN = new ScatteredPlacement(20, 8, 14357621);
         /** Shared by bastions and nether fortresses: see {@link NetherStructureSlots}. */

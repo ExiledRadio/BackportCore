@@ -275,6 +275,11 @@ Built-in stand-ins: non-oak wood trapdoors, buttons and pressure plates become o
 plain ones, blue ice packed ice, 1.14's plain stone slab the smooth one, cave and void air plain air, and
 kelp, seagrass and bubble columns plain water (still counted wet).
 
+A property a file or processor leaves out has the block's default value, as in the game: a bare
+`minecraft:stone_slab` (what `block_age` writes) is a bottom half, bare stairs face north. A family mod's slab
+(owner or source) follows the family's 1.12.2 convention: `type=bottom|top` sets `half` on `<name>_slab`, and
+`type=double` is the same mod's `<name>_double_slab`.
+
 ### Pieces and scattered structures (`TemplatePiece`, `ScatteredPlacement`, `ScatteredStructure`)
 
 ```java
@@ -378,6 +383,7 @@ public static final class BastionStart extends StructureStart {
 ```java
 Random r = StructureRandoms.start(seed, chunkX, chunkZ);   // 1.16's setLargeFeatureSeed: every StructureStart's random
 VanillaPlacements.V1_16_5.RUINED_PORTAL;                     // 1.16.5's spacing, separation and salt, per structure
+VanillaPlacements.V1_16_5.RUINED_PORTAL_NETHER;              // the nether's own ruined portal grid: (25, 10), not (40, 15)
 
 NetherStructureSlots.install(NetherStructureSlots.VANILLA_1_16_5);   // pre-init: bastions take fortress slots
 NetherStructureSlots.Slot s = NetherStructureSlots.startAt(world, chunkX, chunkZ); // NONE, FORTRESS or BASTION

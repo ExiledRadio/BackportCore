@@ -25,11 +25,95 @@ final class TestBlocks {
     static Post required;
     static Post dry;
     static Legacy legacy;
+    static Slab slab;
+    static Slab doubleSlab;
 
     /** Every onWaterChanged call: "optional@x,y,z=true". */
     static final List<String> CHANGES = new ArrayList<String>();
 
     private TestBlocks() {
+    }
+
+    /**
+     * A slab in the family's 1.12.2 convention: {@code test_slab} (a half, {@code half=bottom|top}) and
+     * {@code test_double_slab}. Structure tests read 1.16 slabs from this mod as a palette source.
+     */
+    abstract static class Slab extends net.minecraft.block.BlockSlab {
+        static final net.minecraft.block.properties.PropertyEnum<Variant> VARIANT =
+                net.minecraft.block.properties.PropertyEnum.create("variant", Variant.class);
+
+        enum Variant implements net.minecraft.util.IStringSerializable {
+            DEFAULT;
+
+            @Override
+            public String getName() {
+                return "default";
+            }
+        }
+
+        static final class Half extends Slab {
+            Half() {
+                super("test_slab");
+            }
+
+            @Override
+            public boolean isDouble() {
+                return false;
+            }
+        }
+
+        static final class Double extends Slab {
+            Double() {
+                super("test_double_slab");
+            }
+
+            @Override
+            public boolean isDouble() {
+                return true;
+            }
+        }
+
+        Slab(String name) {
+            super(Material.ROCK);
+            IBlockState state = this.blockState.getBaseState().withProperty(VARIANT, Variant.DEFAULT);
+            if (!isDouble()) {
+                state = state.withProperty(HALF, EnumBlockHalf.BOTTOM);
+            }
+            setDefaultState(state);
+            setRegistryName(SelfTestMod.MOD_ID, name);
+            setTranslationKey(SelfTestMod.MOD_ID + "." + name);
+        }
+
+        @Override
+        protected BlockStateContainer createBlockState() {
+            return isDouble() ? new BlockStateContainer(this, VARIANT) : new BlockStateContainer(this, HALF, VARIANT);
+        }
+
+        @Override
+        public IBlockState getStateFromMeta(int meta) {
+            IBlockState state = getDefaultState();
+            return isDouble() ? state : state.withProperty(HALF, (meta & 8) != 0 ? EnumBlockHalf.TOP : EnumBlockHalf.BOTTOM);
+        }
+
+        @Override
+        public int getMetaFromState(IBlockState state) {
+            return isDouble() || state.getValue(HALF) == EnumBlockHalf.BOTTOM ? 0 : 8;
+        }
+
+        @Override
+        public String getTranslationKey(int meta) {
+            return getTranslationKey();
+        }
+
+        @Override
+        public net.minecraft.block.properties.IProperty<?> getVariantProperty() {
+            return VARIANT;
+        }
+
+        @Override
+        public Comparable<?> getTypeForItem(net.minecraft.item.ItemStack stack) {
+            return Variant.DEFAULT;
+        }
     }
 
     /** A thin post water can flow through and mobs can stand in. */

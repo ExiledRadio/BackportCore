@@ -473,7 +473,9 @@ public final class ModernTemplate {
      * @return how many blocks were placed
      */
     public int place(World world, BlockPos origin, TemplatePlacement placement) {
-        if (this.blocks.isEmpty() && this.entities.isEmpty()) {
+        // Today's StructureTemplate.placeInWorld counts jigsaw blocks among the palette's blocks, so a template
+        // of nothing but jigsaws (bastion/blocks/gold, for one) still places their final states.
+        if (this.blocks.isEmpty() && this.entities.isEmpty() && this.jigsaws.isEmpty()) {
             return 0;
         }
         int palette = placement.palette >= 0 ? Math.min(placement.palette, palettes() - 1)

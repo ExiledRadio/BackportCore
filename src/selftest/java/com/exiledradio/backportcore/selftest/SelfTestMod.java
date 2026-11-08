@@ -33,7 +33,10 @@ public final class SelfTestMod {
         TestBlocks.required = new TestBlocks.Post("required", Waterloggable.Need.REQUIRED, true);
         TestBlocks.dry = new TestBlocks.Post("dry", Waterloggable.Need.OPTIONAL, false);
         TestBlocks.legacy = new TestBlocks.Legacy();
-        event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy);
+        TestBlocks.slab = new TestBlocks.Slab.Half();
+        TestBlocks.doubleSlab = new TestBlocks.Slab.Double();
+        event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy,
+                TestBlocks.slab, TestBlocks.doubleSlab);
     }
 
     @Mod.EventHandler

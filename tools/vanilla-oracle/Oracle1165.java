@@ -1,5 +1,6 @@
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.worldgen.BastionPieces;
 import net.minecraft.data.worldgen.Pools;
 import net.minecraft.server.Bootstrap;
@@ -8,6 +9,7 @@ import net.minecraft.server.packs.VanillaPackResources;
 import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.StructureSettings;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
@@ -34,7 +36,7 @@ import java.util.List;
  *   python -I pack_pools.py out/worldgen <client data/minecraft/structures> src/selftest/resources/assets/backportcore_selftest
  *
  * Writes what vanilla 1.16.5's own code decides, for Backport Core's self-tests to compare with:
- * the shared bastion/fortress slots, ruined portal and nether fossil candidates, the start random,
+ * the shared bastion/fortress slots, ruined portal (overworld and nether settings) and nether fossil candidates, the start random,
  * and whole bastion layouts from JigsawPlacement.addPieces.
  */
 public final class Oracle1165 {
@@ -52,7 +54,11 @@ public final class Oracle1165 {
             StructureFeatureConfiguration fc = StructureSettings.DEFAULTS.get(StructureFeature.NETHER_BRIDGE);
             StructureFeatureConfiguration rp = StructureSettings.DEFAULTS.get(StructureFeature.RUINED_PORTAL);
             StructureFeatureConfiguration nf = StructureSettings.DEFAULTS.get(StructureFeature.NETHER_FOSSIL);
-            w.println("# seed kind chunkX chunkZ   (kind: bastion, fortress, none = candidate chunk with neither; portal, fossil = candidates)");
+            // The nether's own structure settings (DimensionSettings.nether): ruined portals at (25, 10).
+            StructureFeatureConfiguration rpn = BuiltinRegistries.NOISE_GENERATOR_SETTINGS.get(NoiseGeneratorSettings.NETHER)
+                    .structureSettings().getConfig(StructureFeature.RUINED_PORTAL);
+            w.println("# nether ruined portal settings: " + rpn.spacing() + " " + rpn.separation() + " " + rpn.salt());
+            w.println("# seed kind chunkX chunkZ   (kind: bastion, fortress, none = candidate chunk with neither; portal, portal_nether, fossil = candidates)");
             for (long seed : SEEDS) {
                 for (int rx = -20; rx < 20; rx++) {
                     for (int rz = -20; rz < 20; rz++) {
@@ -76,6 +82,8 @@ public final class Oracle1165 {
                         w.println(seed + " portal " + c.x + " " + c.z);
                         ChunkPos d = StructureFeature.NETHER_FOSSIL.getPotentialFeatureChunk(nf, seed, new WorldgenRandom(), rx * nf.spacing(), rz * nf.spacing());
                         w.println(seed + " fossil " + d.x + " " + d.z);
+                        ChunkPos e = StructureFeature.RUINED_PORTAL.getPotentialFeatureChunk(rpn, seed, new WorldgenRandom(), rx * rpn.spacing(), rz * rpn.spacing());
+                        w.println(seed + " portal_nether " + e.x + " " + e.z);
                     }
                 }
             }

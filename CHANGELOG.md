@@ -10,6 +10,9 @@
 *   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure
     processors of today's files.
 *   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
+*   Ruined portals in the nether have the nether's own spacing (25 chunks, not 40), as in 1.16.
+*   Structure pieces made of a single jigsaw block (a bastion's gold blocks) are placed; slabs in structures are the
+    right half (or double), including the backports' own slabs and slabs a structure names without a type.
 *   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
 
 # 1.1.0

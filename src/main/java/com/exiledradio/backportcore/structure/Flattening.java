@@ -38,6 +38,10 @@ final class Flattening {
     }
 
     private static Map<String, List<Entry>> table;
+    private static Map<String, Map<String, String>> defaults;
+
+    /** 1.16.5's data version: the names in {@code defaults.txt}. */
+    private static final int DEFAULTS_DATA_VERSION = 2586;
 
     private Flattening() {
     }
@@ -46,6 +50,17 @@ final class Flattening {
     static List<Entry> entries(String modernName) {
         List<Entry> found = table().get(modernName);
         return found == null ? Collections.<Entry>emptyList() : found;
+    }
+
+    /**
+     * The properties of the block's default state, today's name: what a file means by the bare name
+     * ({@code minecraft:stone_slab} is a bottom half). Since 1.2.0.
+     *
+     * @return the default state's properties; empty for a block without properties or one 1.16.5 did not have
+     */
+    static Map<String, String> defaults(String modernName) {
+        Map<String, String> found = defaults().get(modernName);
+        return found == null ? Collections.<String, String>emptyMap() : found;
     }
 
     /** @return true if 1.12.2 had this block under some name */
@@ -93,6 +108,40 @@ final class Flattening {
             table = load();
         }
         return table;
+    }
+
+    private static synchronized Map<String, Map<String, String>> defaults() {
+        if (defaults == null) {
+            defaults = loadDefaults();
+        }
+        return defaults;
+    }
+
+    private static Map<String, Map<String, String>> loadDefaults() {
+        Map<String, Map<String, String>> out = new HashMap<String, Map<String, String>>();
+        String path = "/assets/" + BackportCore.MOD_ID + "/structure/defaults.txt";
+        InputStream in = Flattening.class.getResourceAsStream(path);
+        if (in == null) {
+            BackportCore.LOGGER.error("The default block states {} are missing from the jar; a block a structure names "
+                    + "without properties is read as its first Flattening entry.", path);
+            return out;
+        }
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.isEmpty() || line.charAt(0) == '#') {
+                    continue;
+                }
+                Map<String, String> props = new LinkedHashMap<String, String>();
+                String name = upgrade(parse(line, props), props, DEFAULTS_DATA_VERSION);
+                out.put(name, Collections.unmodifiableMap(props));
+            }
+            reader.close();
+        } catch (Exception e) {
+            BackportCore.LOGGER.error("Could not read the default block states {}.", path, e);
+        }
+        return out;
     }
 
     private static Map<String, List<Entry>> load() {
