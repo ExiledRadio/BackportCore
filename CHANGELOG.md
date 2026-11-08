@@ -1,15 +1,3 @@
-# 1.3.0
-
-*   **The backports' items in vanilla's creative tabs**: no backport has a tab of its own any more. Each block and
-    item is in the tab vanilla 1.19.2 gives it (Building Blocks, Decoration Blocks, Redstone, Transportation,
-    Miscellaneous, Foodstuffs, Tools, Combat, Brewing), next to its vanilla neighbor: stripped logs after the logs,
-    new walls after the cobblestone wall, bee nests and beehives where 1.19.2 shows them, each spawn egg among the
-    others in alphabetical order. The places follow whichever backports are installed.
-*   Items newer than 1.19.2 are placed where today's game puts them (cherry wood after mangrove, the copper bulbs
-    after the redstone lamp, the crafter after the dropper).
-*   The search tab, JEI and other mods' items in those tabs are unchanged.
-*   A developer check: `-Dbackportcore.creativeDump=<file>` writes every tab's list.
-
 # 1.2.0
 
 *   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the
@@ -42,6 +30,15 @@
 
 # 1.1.0
 
+*   **The backports' items in vanilla's creative tabs**: no backport has a tab of its own any more. Each block and
+    item is in the tab vanilla 1.19.2 gives it (Building Blocks, Decoration Blocks, Redstone, Transportation,
+    Miscellaneous, Foodstuffs, Tools, Combat, Brewing), next to its vanilla neighbor: stripped logs after the logs,
+    new walls after the cobblestone wall, bee nests and beehives where 1.19.2 shows them, each spawn egg among the
+    others in alphabetical order. The places follow whichever backports are installed.
+*   Items newer than 1.19.2 are placed where today's game puts them (cherry wood after mangrove, the copper bulbs
+    after the redstone lamp, the crafter after the dropper).
+*   The search tab, JEI and other mods' items in those tabs are unchanged.
+*   A developer check: `-Dbackportcore.creativeDump=<file>` writes every tab's list.
 *   **Requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 *   **Waterlogging** for the backports' blocks: lanterns, sea pickles, kelp and the rest keep the water
     they are placed in, buckets fill and empty them, and water flows in and out of them, as in 1.13.

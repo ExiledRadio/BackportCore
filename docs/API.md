@@ -490,7 +490,7 @@ Presentation.version("1.14")
 Everything, with how each piece resolves, is in `docs/PRESENTATION.md`; what to check in game is in
 `docs/PRESENTATION_CHECKLIST.md`. Patches P6 (title panorama) and P7 (F3 keys) are in `docs/PATCHES.md`.
 
-## Creative tabs (`creative.CreativePlacement`, 1.3.0)
+## Creative tabs (`creative.CreativePlacement`, 1.1.0)
 
 A backport has no creative tab of its own. Each block or item goes in the vanilla tab it has in 1.19.2 (the
 last version with 1.12's tab set), next to its vanilla neighbor. Call it where the block or item is
