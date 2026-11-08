@@ -18,12 +18,14 @@ tasks name it with `-Dfml.coreMods.load`.
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
-    `presentation/client/PresentationHooks`).
+    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
-    with `presentation.Presentation`. With no backport installed, the patched game plays as vanilla.
-*   P6 and P7 only change the owner of an existing call (an instance call becomes a static call with the
-    same arguments); the hook calls the original method by reflection when it keeps vanilla's behavior.
+    with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed. With no backport
+    installed, the patched game plays as vanilla.
+*   P6, P7 and P9 only change the owner of an existing call (an instance call becomes a static call with the
+    same arguments); the hook calls the original method when it keeps vanilla's behavior. P8 replaces a whole
+    method body with one call, and its hook runs 1.12.2's own loop line for line.
 *   A transformer that does not find the exact shape it expects changes nothing, logs
     `P<n> ...: <why>; patch skipped, vanilla behavior kept.`, and records why (`asm.Asm.state`). It never
     half-patches a method. A patched class logs `P<n> ...: patched.`
@@ -34,11 +36,11 @@ tasks name it with `-Dfml.coreMods.load`.
 
 **Tested** (`gradlew runServer -Pselftest`, `selftest/PatchTests`): P1 reports itself applied when vanilla
 loads `EntityLivingBase` in the dev server; the coremod is registered with the class loader; the bytes of
-all seven target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
+all nine target classes, put through the dev class loader's whole transformer chain (Fluidlogged API's
 included; Forge's side check left out, since the client classes would be refused on a server), carry exactly
 the hook calls listed below, still carry Fluidlogged API's own hooks where it has them (`travel`,
 `EntityPlayerSP.onLivingUpdate`), and every method of each class passes ASM's stack and type check; and the
-same seven classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
+same nine classes from Forge's SRG-named jar (`forge-1.12.2-14.23.5.2847-srgBin.jar`, the names a real game
 runs with) are patched the same way and verify. The behavior each patch enables is tested by the pose tests
 here and by the backports that use it.
 
@@ -196,3 +198,44 @@ here and by the backports that use it.
 *   **Fails safe**: method missing or not exactly one `processKeyF3` call: skipped; 1.12.2's keys only.
 *   **Tested**: transformer chain and SRG names; the client self-test calls the hook with the dummy
     version's added and removed keys.
+
+## P8. The strongholds' and spawn point's biome search
+
+*   **Class**: `net.minecraft.world.biome.BiomeProvider`, method `findBiomePosition(IIILjava/util/List;Ljava/util/Random;)`
+    (`func_180630_a`). **Transformer**: `asm/BiomeSearchTransformer`. **Hook**: `worldgen/WorldgenHooks.findBiomePosition`.
+    **Since**: 1.2.0 (Update Aquatic Backport's P5 before).
+*   **Vanilla 1.13+**: the search keeps one matching 1:4 cell of the square, replacing the kept one with chance
+    `1 / (n + 1)`, and counts `n` for every matching cell (1.13's `OverworldBiomeProvider.findBiomePosition`;
+    1.14's `findBiome` and 1.15's and 1.16's `findBiomeHorizontal` walk the same cells in the same order for
+    these squares). 1.12.2 counts only the cells it keeps, so it draws different random numbers. The search
+    places all 128 strongholds (one shared random, so one difference moves every later stronghold) and starts
+    the spawn point.
+*   **Why a patch**: `MapGenStronghold` and `WorldServer.createSpawnPosition` call the method directly; only the
+    method itself reaches both, and the other world types' providers that inherit it.
+*   **What changes**: the method's whole body becomes `return WorldgenHooks.findBiomePosition(this, x, z, range,
+    biomes, random)`. The hook runs 1.12.2's own loop, line for line (reading the provider's `genBiomes`), until
+    the newest installed backport is 1.13 or later, then 1.13's (over `getBiomesForGeneration` of the same
+    square). The new body is straight-line; the old body's frames, locals and handlers go with it.
+*   **Fails safe**: method missing: skipped; 1.12.2's pick.
+*   **Tested**: transformer chain and SRG names; vanilla oracles: the same 128 strongholds and spawn biome
+    search as 1.13.2, 1.14.4, 1.15.2 and 1.16.5's own code over 6 seeds, and 1.12.2's with Core alone.
+
+## P9. The villages' biome point
+
+*   **Class**: `net.minecraft.world.gen.structure.MapGenVillage`, method `canSpawnStructureAtCoords(II)Z`
+    (`func_75047_a`). **Transformer**: `asm/VillageBiomeTransformer`. **Hook**: `worldgen/WorldgenHooks.villageBiomes`.
+    **Since**: 1.2.0 (Update Aquatic Backport's P4 before).
+*   **Vanilla**: 1.12.2 reads the 1:4 cell at block (8, 8) of the candidate chunk
+    (`areBiomesViable(x * 16 + 8, z * 16 + 8, 0, VILLAGE_SPAWN_BIOMES)`); 1.13 to 1.15 read the block-scale biome
+    at (9, 0, 9) (`ChunkGenerator.createStructures`), 1.16 the 1:4 cell at (4x + 2, 4z + 2). The grid and biome
+    list are unchanged, so only villages near biome edges move; that is enough to differ from the seed maps.
+*   **Why a patch**: replacing the village generator through `InitMapGenEvent` would take the slot Village &
+    Pillage's villages need (they replace exactly vanilla's class). The patch keeps vanilla's class, and
+    subclasses that call this method get the point too.
+*   **What changes**: the one `INVOKEVIRTUAL BiomeProvider.areBiomesViable(IIILjava/util/List;)Z` changes owner:
+    it becomes `INVOKESTATIC WorldgenHooks.villageBiomes`, same arguments with the provider first. For radius 0
+    and a newest version of 1.13 or later the hook reads `StructurePlacements.biomeAt`; otherwise it calls
+    `areBiomesViable` unchanged.
+*   **Fails safe**: method missing, or not exactly one such call: skipped; 1.12.2's point.
+*   **Tested**: transformer chain and SRG names; vanilla oracles: the same village start chunks as each
+    version's own code over 6 seeds, blocks -4096..4095.

@@ -1,10 +1,12 @@
-"""Compare overworld dumps: vanilla's (Oracle1132 / Oracle1144) against ours (Backport Core's OverworldDump),
-or one vanilla version against another.
+"""Compare overworld dumps: vanilla's (Oracle1132 / Oracle1144 / Oracle1152 / Oracle1165OW) against ours
+(Backport Core's OverworldDump), or one vanilla version against another.
 
 Usage: python -I compare_overworld.py <expected dir> <actual dir> [--examples N] [--only kind,kind]
-                                     [--skip kind,kind] [--fold-oceans]
+                                     [--skip kind,kind] [--fold-oceans] [--fold-bamboo]
 --fold-oceans maps every ocean biome (all temperatures, deep or not) to one id on both sides, to judge a
 world without Update Aquatic (which owns them) on everything else.
+--fold-bamboo maps the bamboo jungle (hills) to the jungle (hills) on both sides, to judge a world without
+Village & Pillage (which owns them) on everything else.
 
 Both directories hold seed_<seed>.txt files. A file may start with 'biomeid <local id> <registry name>'
 lines (ours do): its grids then use local ids, mapped here to vanilla's numeric ids. Vanilla's own biomes keep
@@ -26,11 +28,16 @@ MODDED = {
 FOLD = {10: 0, 24: 0, 44: 0, 45: 0, 46: 0, 47: 0, 48: 0, 49: 0, 50: 0}
 
 
-def fold(d):
+# 1.14's bamboo jungle and its hills, as the jungle and jungle hills.
+FOLD_BAMBOO = {168: 21, 169: 22}
+
+
+def fold(d, table=None):
+    table = FOLD if table is None else table
     for k in ('biome4', 'block4'):
         if d[k]:
             x0, z0, w, h, grid = d[k]
-            d[k] = (x0, z0, w, h, [[FOLD.get(v, v) for v in row] for row in grid])
+            d[k] = (x0, z0, w, h, [[table.get(v, v) for v in row] for row in grid])
     return d
 
 
@@ -81,6 +88,7 @@ def main():
     only = set(sys.argv[sys.argv.index('--only') + 1].split(',')) if '--only' in sys.argv else None
     skip = set(sys.argv[sys.argv.index('--skip') + 1].split(',')) if '--skip' in sys.argv else set()
     folding = '--fold-oceans' in sys.argv
+    bamboo = '--fold-bamboo' in sys.argv
     total = 0
     seeds = sorted(f for f in os.listdir(exp_dir) if f.startswith('seed_'))
     for name in seeds:
@@ -92,6 +100,8 @@ def main():
         e, a = load(os.path.join(exp_dir, name)), load(ap)
         if folding:
             e, a = fold(e), fold(a)
+        if bamboo:
+            e, a = fold(e, FOLD_BAMBOO), fold(a, FOLD_BAMBOO)
         print('==', name)
         for k in ('biome4', 'block4'):
             if only and k not in only:

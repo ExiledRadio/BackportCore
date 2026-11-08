@@ -402,6 +402,40 @@ NetherStructureSlots.roll(seed, chunkX, chunkZ);             // the same without
   `startAt(...) == Slot.BASTION`. `fortressStartsAt` and `savedFortress` read the fortress side.
 - None of this loads or generates chunks, so a seed tool can ask about any chunk.
 
+### The overworld's seed maps (`worldgen.StructurePlacements`, 1.2.0)
+
+A world made from seed X with backports installed should show what Chunkbase shows for seed X at the newest
+installed backport's version. Each backport registers its version's structure numbers in pre-init, read from
+that version's decompiled code; for every structure the newest installed version that names it wins.
+
+```java
+StructurePlacements.version("1.16")
+        .biomePoint(BiomePoint.QUART_CENTER)                 // where every single-biome start check reads
+        .grid(Structures.SHIPWRECK, 24, 4, 165745295)          // spacing, separation, salt (linear)
+        .grid(StructurePlacements.OCEAN_MONUMENT, 32, 5, 10387313, true)   // triangular
+        .structureBiome(StructurePlacements.JUNGLE_PYRAMID, "bamboo_jungle")  // a biome a structure gains
+        .strongholdBiome("minecraft:mushroom_island_shore", true)
+        .strongholdBiome("bamboo_jungle", false);            // a bare path: that biome whichever mod adds it
+
+ScatteredPlacement grid = StructurePlacements.placement(Structures.SHIPWRECK, new ScatteredPlacement(16, 8, 165745295));
+Biome biome = StructurePlacements.biomeAt(world.getBiomeProvider(), chunkX, chunkZ);   // the version's point
+StructurePlacements.isAtLeast("1.16");   // the newest of this table's and the presentation module's versions
+```
+
+- Biome points: `LEGACY` (1.12.2, each generator's own), `BLOCK_9_9` (1.13 to 1.15: the block biome at
+  block (9, 0, 9)), `QUART_CENTER` (1.16 on: the 1:4 cell at (4x + 2, 4z + 2)). A version installed with no
+  point of its own gets vanilla's for its number.
+- Resolve the grid when your generator is built for a world (a `ScatteredStructure` factory runs once per
+  world), not in a static field: the table is complete only after every mod's pre-init.
+- Once the newest installed version is 1.13 or later, Core applies the rules every later version shares, with
+  no registration: the strongholds' and spawn point's biome search (patch P8), the villages' biome point (P9),
+  the hills layer's river noise seeded with the world seed, 1.12.2's temples on four grids (`ModernTemples`,
+  with `/locate Temple` finding any of them), the monument's squares from block (9, 9) (`ModernMonument`, only
+  where the overworld still has vanilla's generator) and the stronghold biome rulings. From 1.15, 1.15's
+  block-scale biome zoom (`FuzzyZoomLayer`). With Core alone none of it runs.
+- Checked with `tools/vanilla-oracle` (vanilla 1.12.2, 1.13.2, 1.14.4, 1.15.2 and 1.16.5 against
+  `seedcheck.OverworldDump` on a real server).
+
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 
 1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server

@@ -41,6 +41,9 @@ import org.apache.logging.log4j.Logger;
  * <li>{@code waterlog} - 1.13's waterlogging for the family's blocks, through Fluidlogged API.</li>
  * <li>{@code pose} - 1.14's player poses: the swimming pose and crawling, their hitbox and eyes, sent to
  * other players and drawn; and the movement hooks a backport's swimming rules use.</li>
+ * <li>{@code worldgen} - seed parity: the structure placement table each backport fills with its version's
+ * numbers (newest wins), and the overworld rules 1.13 and later share (biome search, hills seeding, 1.15's
+ * biome zoom, temples on four grids).</li>
  * <li>{@code presentation} - each version's look and feel (panorama, world-loading screen, options screens,
  * splashes, menu music, F3 keys, fog), following the newest installed backport.</li>
  * </ul>
@@ -94,6 +97,8 @@ public final class BackportCore {
         PoseNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
+        // The overworld rules 1.13 and later share, applied by the newest installed backport (worldgen/).
+        com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();

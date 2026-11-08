@@ -44,6 +44,8 @@ final class PatchTests {
             {"net.minecraft.client.renderer.EntityRenderer", "P5", new String[] {"cameraEyeHeight"}},
             {"net.minecraft.client.gui.GuiMainMenu", "P6", new String[] {"renderSkybox", "drawGradient*2"}},
             {"net.minecraft.client.Minecraft", "P7", new String[] {"processKeyF3"}},
+            {"net.minecraft.world.biome.BiomeProvider", "P8", new String[] {"findBiomePosition"}},
+            {"net.minecraft.world.gen.structure.MapGenVillage", "P9", new String[] {"villageBiomes"}},
     };
 
     private PatchTests() {
@@ -117,6 +119,8 @@ final class PatchTests {
             case "P4": cls = "PlayerRotationsTransformer"; break;
             case "P6": cls = "TitlePanoramaTransformer"; break;
             case "P7": cls = "DebugKeysTransformer"; break;
+            case "P8": cls = "BiomeSearchTransformer"; break;
+            case "P9": cls = "VillageBiomeTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -155,7 +159,8 @@ final class PatchTests {
             for (AbstractInsnNode insn : m.instructions.toArray()) {
                 if (insn instanceof MethodInsnNode && hook.equals(((MethodInsnNode) insn).name)
                         && ((((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/pose/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/presentation/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/presentation/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/worldgen/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }

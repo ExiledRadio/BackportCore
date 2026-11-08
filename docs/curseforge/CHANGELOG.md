@@ -7,6 +7,7 @@ What Nether Update Backport needs for its structures: jigsaw assembly, nether fl
 *   **Nether floors**: structures can be planned on the nether's floors, lava sea and caves included, before the chunks exist.
 *   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure processors of today's files.
 *   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
+*   **Seed parity for the overworld**: with backports installed, a seed shows the biomes and structures that Minecraft's seed maps show for the newest installed backport's version, 1.13 to 1.16. Each backport brings its version's structure spacing and biome rules, and the newest one wins. With 1.13 or later installed, strongholds, the spawn point, temples, villages and the rare biome variants (sunflower plains, ice spikes and the like) are placed as in that version; from 1.15, the biome of each block blends between biomes as in 1.15.
 *   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
 
 # 1.1.0
