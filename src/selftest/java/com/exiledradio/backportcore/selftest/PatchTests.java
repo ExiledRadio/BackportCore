@@ -43,6 +43,7 @@ final class PatchTests {
             {"net.minecraft.client.renderer.entity.RenderPlayer", "P4", new String[] {"applyRotations"}},
             {"net.minecraft.client.renderer.EntityRenderer", "P5", new String[] {"cameraEyeHeight"}},
             {"net.minecraft.client.gui.GuiMainMenu", "P6", new String[] {"renderSkybox", "drawGradient*2"}},
+            {"net.minecraft.client.Minecraft", "P7", new String[] {"processKeyF3"}},
     };
 
     private PatchTests() {

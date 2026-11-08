@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.presentation.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -20,6 +21,7 @@ public final class PresentationClient {
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new Events());
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());
+        MinecraftForge.EVENT_BUS.register(new MenuMusicPlayer());
     }
 
     /** Forge event handlers; public for the event bus. */
@@ -39,6 +41,16 @@ public final class PresentationClient {
         @SubscribeEvent(priority = EventPriority.LOW)
         public void onGuiOpen(GuiOpenEvent event) {
             WorldLoadingScreen.install(Minecraft.getMinecraft());
+            if (event.getGui() instanceof GuiMainMenu) {
+                TitleSplashes.pick((GuiMainMenu) event.getGui());
+            }
+        }
+
+        @SubscribeEvent
+        public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post event) {
+            if (event.getGui() instanceof GuiMainMenu) {
+                TitleSplashes.afterInit((GuiMainMenu) event.getGui());
+            }
         }
     }
 }

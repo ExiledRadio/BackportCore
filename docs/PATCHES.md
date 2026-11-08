@@ -175,3 +175,21 @@ here and by the backports that use it.
     skipped; the panorama is 1.12.2's, blurred, with the chosen faces not shown.
 *   **Tested**: transformer chain and SRG names (`selftest/PatchTests`); the client self-test
     (`runClient -Pselftest`) reports the hook drawing the dummy version's faces at the main menu.
+
+## P7. F3 key combinations
+
+*   **Class**: `net.minecraft.client.Minecraft`, method `runTickKeyboard()V` (`func_184118_az`).
+    **Transformer**: `asm/DebugKeysTransformer`. **Hook**: `presentation/client/PresentationHooks.processKeyF3`.
+    **Since**: 1.2.0.
+*   **Vanilla**: each version adds, changes and removes F3 combinations (1.13 F3+C and F3+I, 1.16 F3+F4,
+    1.17 F3+L, 1.19 removes F3+F), and F3+Q lists the current ones.
+*   **Why a patch**: `processKeyF3` is private and runs before Forge's key event; by the time a mod hears the
+    key, vanilla has already acted on it, so a key cannot be changed or removed from outside.
+*   **What changes**: the one `this.processKeyF3(key)` call changes owner: it becomes
+    `PresentationHooks.processKeyF3(this, key)`. Nothing else in the method moves.
+*   **Who it reaches**: every F3 combination, once an installed version changes the key map
+    (`presentation.DebugKeys`); until then the hook calls vanilla's own `processKeyF3` for every key.
+    F3+C's held-for-ten-seconds crash is outside this method and unchanged.
+*   **Fails safe**: method missing or not exactly one `processKeyF3` call: skipped; 1.12.2's keys only.
+*   **Tested**: transformer chain and SRG names; the client self-test calls the hook with the dummy
+    version's added and removed keys.

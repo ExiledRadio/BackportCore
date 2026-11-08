@@ -2,6 +2,9 @@ package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.presentation.Contribution;
+import com.exiledradio.backportcore.presentation.DebugKeys;
+import com.exiledradio.backportcore.presentation.MenuMusic;
+import com.exiledradio.backportcore.presentation.Splashes;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
 import com.exiledradio.backportcore.presentation.LoadingStatus;
@@ -25,6 +28,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.check;
@@ -49,6 +53,7 @@ final class PresentationTests {
     static ToggleOption defaulted;
     static CycleOption overridden;
     static int actionRuns;
+    static int copyRuns;
 
     private PresentationTests() {
     }
@@ -88,7 +93,14 @@ final class PresentationTests {
                 .option(toggle).option(slider).option(cycle).option(future).option(retired).option(accessibility)
                 .optionDefault(overridden, "z")
                 .defaultAction("selftest_counter", () -> actionRuns++)
-                .gameOptionDefault("chatLinksPrompt", "false");
+                .gameOptionDefault("chatLinksPrompt", "false")
+                .addMenuMusic("minecraft:music/game/calm1", 1)
+                .removeMenuMusic("minecraft:music/menu/menu1")
+                .debugKey(46, "debug.copy_location.help", () -> {
+                    copyRuns++;
+                    return true;
+                })
+                .removeDebugKey(33);
     }
 
     static void schedule() {
@@ -140,6 +152,7 @@ final class PresentationTests {
         scheduleLoading();
         scheduleOptions();
         scheduleDefaults();
+        scheduleLists();
         then(1, "presentation: loading revisions", world -> {
             check("1.12.2 is the classic screen", LoadingRevision.forVersion(GameVersion.BASE) == LoadingRevision.CLASSIC);
             check("1.13.2 is 1.13's text", LoadingRevision.forVersion(GameVersion.parse("1.13.2")) == LoadingRevision.TEXT_1_13);
@@ -303,6 +316,82 @@ final class PresentationTests {
             check("a client writes the vanilla setting once", client == 1 && wrote[0] == 1
                     && VersionedDefaults.pending(Presentation.installed()).isEmpty(), client);
         });
+    }
+
+    /** Piece 6: the splash list, the menu music pool and the F3 key map. */
+    static void scheduleLists() {
+        then(1, "presentation: splashes", world -> {
+            List<String> base = Arrays.asList("Made by Notch!", "Now Java 8!", "Also try Terraria!", " ", "Ooh, shiny!");
+            Contribution c114 = Presentation.detached("1.14").addSplashes("Rainbow turtle?", "{PLAYER} IS YOU", "Now Java 16!")
+                    .removeSplashes("Made by Notch!");
+            Contribution c116 = Presentation.detached("1.16").removeSplashes("Rainbow turtle?", "Now Java 8!").addSplashes("Ooh, shiny!", "Truly gone fishing!");
+            List<String> one = Splashes.pool(base, Collections.singletonList(c114), null);
+            check("1.14 alone: its additions in, its removal out", one.contains("Rainbow turtle?") && !one.contains("Made by Notch!")
+                    && one.contains("{PLAYER} IS YOU"), one);
+            check("a Java-version addition is dropped", !one.contains("Now Java 16!"));
+            List<String> both = Splashes.pool(base, Arrays.asList(c114, c116), null);
+            check("a later version's removal applies", !both.contains("Rainbow turtle?") && both.contains("Truly gone fishing!"), both);
+            check("a removal of 1.12.2's own Java splash is ignored", both.contains("Now Java 8!"));
+            check("no duplicates, no blanks", both.size() == 5 && !both.contains(""), both.size());
+            check("{PLAYER} is the name in capitals", "DEV IS YOU".equals(Splashes.personalize("{PLAYER} IS YOU", "Dev")));
+            check("OpenGL splashes are about the runtime, other splashes are not", Splashes.isAboutTheRuntime("Now on OpenGL 3.2 core profile!")
+                    && !Splashes.isAboutTheRuntime("Javascript is not a version!") && !Splashes.isAboutTheRuntime("Ooh, shiny!"));
+            check("the installed list changes splashes", Splashes.changed(Presentation.installed()));
+        });
+        then(1, "presentation: menu music", world -> {
+            List<MenuMusic.Track> base = new java.util.ArrayList<MenuMusic.Track>();
+            for (int i = 1; i <= 4; i++) {
+                base.add(new MenuMusic.Track("minecraft:music/menu/menu" + i, 1));
+            }
+            List<MenuMusic.Track> pool = MenuMusic.pool(base, Presentation.installed());
+            check("menu1 removed, calm1 added", pool.size() == 4 && !names(pool).contains("minecraft:music/menu/menu1")
+                    && names(pool).contains("minecraft:music/game/calm1"), names(pool));
+            Contribution later = Presentation.detached("1.19").removeMenuMusic("minecraft:music/game/calm1").addMenuMusic("x:music/menu/new", 3);
+            List<MenuMusic.Track> after = MenuMusic.pool(base, Arrays.asList(Presentation.contribution("1.16"), later));
+            check("a later version removes an earlier one's track", !names(after).contains("minecraft:music/game/calm1")
+                    && names(after).contains("x:music/menu/new"), names(after));
+            Random r = new Random(7);
+            int heavy = 0;
+            for (int i = 0; i < 600; i++) {
+                if ("x:music/menu/new".equals(MenuMusic.pick(after, r).soundName)) {
+                    heavy++;
+                }
+            }
+            check("picks follow the weights (3 of 6)", heavy > 240 && heavy < 360, heavy);
+            check("an empty pool picks nothing", MenuMusic.pick(Collections.<MenuMusic.Track>emptyList(), r) == null);
+        });
+        then(1, "presentation: F3 keys", world -> {
+            Map<Integer, DebugKeys.Key> map = DebugKeys.map(Presentation.installed());
+            check("F3+C added with its action", map.containsKey(46) && map.get(46).action != null);
+            check("F3+F removed", !map.containsKey(33));
+            check("1.12.2's F3+B kept as vanilla's", map.containsKey(48) && map.get(48).action == null);
+            StringBuilder order = new StringBuilder();
+            for (DebugKeys.Key k : map.values()) {
+                order.append((char) DebugKeys.letterOf(k.keyCode));
+            }
+            check("F3+Q lists letters alphabetically", "ABCDGHNPQT".equals(order.toString()), order);
+            Contribution back = Presentation.detached("1.20").debugKey(33, "debug.cycle_renderdistance.help", null);
+            check("a later version can bring a removed key back", DebugKeys.map(Arrays.asList(Presentation.contribution("1.16"), back)).containsKey(33));
+            List<DebugKeys.Key> mixed = DebugKeys.helpOrder(Arrays.asList(new DebugKeys.Key(62, "f4", null),
+                    new DebugKeys.Key(48, "b", null), new DebugKeys.Key(1, "esc", null), new DebugKeys.Key(30, "a", null)));
+            check("other keys follow the letters in the order added", "a b f4 esc".equals(helpKeys(mixed)), helpKeys(mixed));
+        });
+    }
+
+    private static List<String> names(List<MenuMusic.Track> tracks) {
+        List<String> out = new java.util.ArrayList<String>();
+        for (MenuMusic.Track t : tracks) {
+            out.add(t.soundName);
+        }
+        return out;
+    }
+
+    private static String helpKeys(List<DebugKeys.Key> keys) {
+        StringBuilder b = new StringBuilder();
+        for (DebugKeys.Key k : keys) {
+            b.append(k.helpKey).append(' ');
+        }
+        return b.toString().trim();
     }
 
     static String ids(List<PresentationOption> options) {
