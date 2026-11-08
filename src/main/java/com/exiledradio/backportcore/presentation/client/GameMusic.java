@@ -98,6 +98,22 @@ public final class GameMusic {
 
     private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>();
     private static boolean tried;
+    @Nullable
+    private static volatile SoundEvent underWater;
+
+    /**
+     * 1.13's {@code music.under_water}, from the version that ships its tracks. Later versions' music rules ask
+     * for it (1.16.5's {@code getSituationalMusic} still plays it under water in an ocean or river).
+     */
+    public static void setUnderWater(SoundEvent event) {
+        underWater = event;
+    }
+
+    /** @return 1.13's underwater music event, or null while no installed version has registered it */
+    @Nullable
+    public static SoundEvent underWater() {
+        return underWater;
+    }
     /** For the client self-test. */
     public static volatile String lastChoice;
 
