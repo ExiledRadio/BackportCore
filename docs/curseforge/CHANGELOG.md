@@ -1,29 +1,31 @@
-# 1.2.0
-
-What Nether Update Backport needs for its structures: jigsaw assembly, nether floors, and seed parity for bastions and fortresses.
-
-*   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the same seed, a bastion is laid out piece for piece as in 1.16.5.
-*   **Seed parity for nether structures**: with Nether Update Backport, bastions and nether fortresses share 1.16's slots, so a seed puts a bastion or a fortress in the same chunks as vanilla 1.16.5. Fortresses already in a world stay where they are.
-*   **Nether floors**: structures can be planned on the nether's floors, lava sea and caves included, before the chunks exist.
-*   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure processors of today's files.
-*   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
-*   **Seed parity for the overworld**: with backports installed, a seed shows the biomes and structures that Minecraft's seed maps show for the newest installed backport's version, 1.13 to 1.16. Each backport brings its version's structure spacing and biome rules, and the newest one wins. With 1.13 or later installed, strongholds, the spawn point, temples, villages and the rare biome variants (sunflower plains, ice spikes and the like) are placed as in that version; from 1.15, the biome of each block blends between biomes as in 1.15.
-*   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
-
 # 1.1.0
 
-What Update Aquatic Backport needs: waterlogging, today's structure files, structures on the sea floor, and swimming and crawling poses.
+Everything the update backports share for their next releases: waterlogging, today's structure files, seed parity, each version's look and feel, swimming and crawling poses, and the backports' items in vanilla's creative tabs.
 
 **Now requires Fluidlogged API 3.3.3 or newer**, installed beside Backport Core on the client and the server.
 
 *   **Waterlogging** for the backports' blocks, as in 1.13: lanterns, sea pickles, kelp and the rest keep the water they are placed in, buckets fill and empty them, and water flows in and out of them. Vanilla's own blocks keep Fluidlogged API's settings.
 *   **Today's structure files**, Mojang's own, read into 1.12.2 blocks for the backports' structures: shipwrecks, ocean ruins and later ones. Structures are placed chunk by chunk without loading their neighbors, and wall torches stay up at chunk edges.
 *   **Structures on the sea floor**: they can be planned on the sea floor as well as the surface, on every terrain Backport Core already reads.
+*   **Jigsaw structures** as 1.16 builds them, from Mojang's own pool files: bastion remnants first. For the same seed, a bastion is laid out piece for piece as in 1.16.5.
+*   **Seed parity for nether structures**: with Nether Update Backport, bastions and nether fortresses share 1.16's slots, so a seed puts a bastion or a fortress in the same chunks as vanilla 1.16.5. Fortresses already in a world stay where they are.
+*   **Nether floors**: structures can be planned on the nether's floors, lava sea and caves included, before the chunks exist.
+*   Ruined portals' weathering (moss, cracks, crying obsidian, blackstone in the nether) and the other structure processors of today's files.
+*   Mobs in structure files spawn with their usual gear, and a backport can name its own mob for one of today's.
+*   **Seed parity for the overworld**: with backports installed, a seed shows the biomes and structures that Minecraft's seed maps show for the newest installed backport's version, 1.13 to 1.16. Each backport brings its version's structure spacing and biome rules, and the newest one wins. With 1.13 or later installed, strongholds, the spawn point, temples, villages and the rare biome variants (sunflower plains, ice spikes and the like) are placed as in that version; from 1.15, the biome of each block blends between biomes as in 1.15.
+*   **1.14's player poses** for the backports to use: a swimming player is 0.6 blocks tall with their eyes at 0.4, a player with no room to stand crawls flat until there is room, and other players see both. Swimmers and crawlers are drawn lying along the swim, armor included, and the camera eases down to the new eye height instead of jumping. Nothing changes until a backport that swims is installed.
+*   A small coremod of the library's own gives these the hooks 1.12.2 lacks. Each of its five patches does exactly what vanilla does unless a backport's swimming is on, and steps aside, keeping vanilla's behavior, when another mod has rewritten the same code.
+*   **Threaded chunk rebuilds** (patch P17): blocks the server changes near the camera, such as a kelp column breaking one block a tick, no longer rebuild their chunk on the render thread every tick; only your own placing and breaking does. It is current vanilla's "Chunk Builder" setting, `rendering.blockUpdates` in `backportcore.cfg`: `NONE` ("Threaded"), `PLAYER_AFFECTED` ("Semi Blocking", the default) or `NEARBY` ("Fully Blocking", 1.12.2's rule). Changing it in game takes effect at once. With OptiFine, Celeritas, Vintagium or Nothirium it does nothing; they thread rebuilds themselves.
+*   **Each version's look and feel**, following the newest installed backport as vanilla's did at that version: the title-screen panorama (sharp and turning, as 1.13 and later draw it), the world-loading screen (1.13's percentage, 1.14's colored chunk grid, 1.16's "Reading world data..."), the backports' options on the right options screens, 1.14's Accessibility Settings and Mouse Settings, the splash texts, the title-screen music, the F3 key combinations and the fog, built from every installed backport's additions and removals. A version's changed defaults are applied once and then left to you.
+*   `presentation.panorama` in `config/backportcore.cfg`: `LATEST` (the newest backport's panorama), a version such as `1.14`, or `ROTATE` for a different one each time the game starts.
+*   With Backport Core alone, the title screen and every other screen stay 1.12.2's.
+*   **The backports' items in vanilla's creative tabs**: no backport has a tab of its own any more. Each block and item is in the tab vanilla 1.19.2 gives it (Building Blocks, Decoration Blocks, Redstone, Transportation, Miscellaneous, Foodstuffs, Tools, Combat, Brewing), next to its vanilla neighbor: stripped logs after the logs, new walls after the cobblestone wall, bee nests and beehives where 1.19.2 shows them, each spawn egg among the others in alphabetical order. The places follow whichever backports are installed.
+*   Items newer than 1.19.2 are placed where today's game puts them (cherry wood after mangrove, the copper bulbs after the redstone lamp, the crafter after the dropper).
+*   The search tab, JEI and other mods' items in those tabs are unchanged.
 *   **An icon** in the mod list.
 *   **In eighteen languages**, config screen included: English, Spanish (Spain and Latin America, including Argentina, Uruguay and Venezuela), Brazilian Portuguese, French, German, Russian, Simplified and Traditional Chinese, Japanese, Korean, Italian, Polish, Turkish, Ukrainian and Dutch. Block and item names use Minecraft's own translations.
 *   The texture switch now shows its name, "1.14 Textures", in the config screen instead of `modernTextures`.
-*   **1.14's player poses** for the backports to use: a swimming player is 0.6 blocks tall with their eyes at 0.4, a player with no room to stand crawls flat until there is room, and other players see both. Swimmers and crawlers are drawn lying along the swim, armor included, and the camera eases down to the new eye height instead of jumping. Nothing changes until a backport that swims is installed.
-*   A small coremod of the library's own gives these the hooks 1.12.2 lacks. Each of its five patches does exactly what vanilla does unless a backport's swimming is on, and steps aside, keeping vanilla's behavior, when another mod has rewritten the same code.
+*   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
 
 # 1.0.0
 

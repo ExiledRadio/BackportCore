@@ -44,6 +44,8 @@ import org.apache.logging.log4j.Logger;
  * <li>{@code worldgen} - seed parity: the structure placement table each backport fills with its version's
  * numbers (newest wins), and the overworld rules 1.13 and later share (biome search, hills seeding, 1.15's
  * biome zoom, temples on four grids).</li>
+ * <li>{@code creative} - the backports' blocks and items in vanilla's creative tabs, each next to its vanilla
+ * neighbor.</li>
  * <li>{@code presentation} - each version's look and feel (panorama, world-loading screen, options screens,
  * splashes, menu music, F3 keys, fog), following the newest installed backport.</li>
  * </ul>
@@ -112,6 +114,8 @@ public final class BackportCore {
         DuplicateBlocks.hideFromCreative();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.initLate();
+            // The backports' items in vanilla's tabs, each by its vanilla neighbor (creative/).
+            com.exiledradio.backportcore.creative.client.CreativeTabsClient.install();
         }
         // Saved jigsaw pieces (bastions and the like) of every backport that uses Core's assembler.
         net.minecraft.world.gen.structure.MapGenStructureIO.registerStructureComponent(
@@ -131,6 +135,7 @@ public final class BackportCore {
     public void loadComplete(net.minecraftforge.fml.common.event.FMLLoadCompleteEvent event) {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
+            com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();
         }
     }
 

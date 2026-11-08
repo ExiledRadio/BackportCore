@@ -336,7 +336,7 @@ or passes an existing constant through a hook of the same type.
 *   **Class**: `net.minecraft.client.renderer.RenderGlobal`, `setupTerrain(Lnet/minecraft/entity/Entity;DLnet/minecraft/client/renderer/culling/ICamera;IZ)V`
     (`func_174970_a`) and `updateChunks(J)V` (`func_174967_a`). **Transformer**: `asm/ChunkRebuildsTransformer`.
     **Hooks**: `render/client/ChunkRebuildHooks.nearbyDistanceSq`, `needsImmediateUpdate`. **Config**:
-    `rendering.blockUpdates` ("Chunk Builder": `NONE`, `PLAYER_AFFECTED`, `NEARBY`; default `PLAYER_AFFECTED`). **Since**: 1.2.0.
+    `rendering.blockUpdates` ("Chunk Builder": `NONE`, `PLAYER_AFFECTED`, `NEARBY`; default `PLAYER_AFFECTED`). **Since**: 1.1.0.
 *   **Vanilla**: 1.12.2 rebuilds every changed render chunk whose center is within sqrt(768) blocks of the camera,
     and every chunk the player dirtied (`needsImmediateUpdate`, set by a block change with flag 8, which
     `PlayerControllerMP` uses for the player's own breaking and placing; a change the server sends uses flags 3),
@@ -367,4 +367,4 @@ or passes an existing constant through a hook of the same type.
     and thread the rebuilds themselves. Where the method no longer has vanilla's shape the patch is skipped. A
     mixin that overwrites the method later in the chain simply drops the hooks.
 *   **Tested**: transformer chain and SRG names (`PatchTests`); a dedicated-server boot; the client self-test
-    (P17 applied, the distance rule per mode). Frame rate by hand: see the 1.2.0 handover.
+    (P17 applied, the distance rule per mode). Frame rate by hand: see the 1.1.0 handover.
