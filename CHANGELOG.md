@@ -13,6 +13,10 @@
 *   Ruined portals in the nether have the nether's own spacing (25 chunks, not 40), as in 1.16.
 *   Structure pieces made of a single jigsaw block (a bastion's gold blocks) are placed; slabs in structures are the
     right half (or double), including the backports' own slabs and slabs a structure names without a type.
+*   **Overworld seed check** for the backports (a developer tool): started with
+    `-Dbackportcore.seeddump=<folder>`, a server writes its overworld's biome map, structure starts,
+    strongholds, spawn search and slime chunks, for comparing with vanilla 1.13.2's and 1.14.4's own code
+    (`tools/vanilla-oracle`). Without the setting nothing runs.
 *   Nothing changes until a backport uses these; with Backport Core alone, worlds generate as before.
 *   **Each version's look and feel**, following the newest installed backport as vanilla's did at that
     version: the title-screen panorama (sharp and turning, as 1.13 and later draw it), the world-loading

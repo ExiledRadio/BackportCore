@@ -130,8 +130,11 @@ public final class BackportCore {
         event.registerServerCommand(new FutureMcCommand());
     }
 
+    /** Also starts {@code -Dbackportcore.seeddump=<folder>}: the overworld's seed-parity dump (a dev tool). */
     @Mod.EventHandler
     public void serverStarted(FMLServerStartedEvent event) {
         SpawnProgress.finish();
+        com.exiledradio.backportcore.seedcheck.OverworldDump.serverStarted(
+                net.minecraftforge.fml.common.FMLCommonHandler.instance().getMinecraftServerInstance());
     }
 }

@@ -167,6 +167,21 @@ public abstract class ScatteredStructure extends MapGenStructure {
         }
     }
 
+    /** @return every registered kind, in registration order */
+    public static synchronized List<String> kinds() {
+        return new ArrayList<String>(FACTORIES.keySet());
+    }
+
+    /**
+     * The variant a start in this chunk would be, where the seed map tells variants apart (warm or cold
+     * ocean ruins), or null; only asked of a chunk that starts one. Core's {@code seedcheck.OverworldDump}
+     * names starts {@code <kind>_<variant>} with it.
+     */
+    @Nullable
+    public String variantAt(World world, int chunkX, int chunkZ) {
+        return null;
+    }
+
     /** @return this world's instance of a registered kind, or null where it has none */
     @Nullable
     public static synchronized ScatteredStructure of(World world, String kind) {
