@@ -67,6 +67,7 @@ final class WaterRuleTests {
             check("rules: a family stair that is not Waterloggable refuses water", !takes(world, p, dry, source));
             check("rules: ... and lava", !takes(world, p, dry, lava));
             check("rules: the family slab (not Waterloggable) refuses water", WaterRules.decide(TestBlocks.slab.getDefaultState(), source) == Boolean.FALSE);
+            check("rules: a family stair is one of Fluidlogged API's listed shapes", WaterRules.isShape(TestBlocks.dryStairs));
 
             IBlockState oak = Blocks.OAK_STAIRS.getDefaultState();
             world.setBlockState(p, oak, 2);

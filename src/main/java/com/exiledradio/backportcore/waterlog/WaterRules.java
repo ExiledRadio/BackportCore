@@ -44,8 +44,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *       IWaterLoggable.canPlaceLiquid}: {@code fluid == Fluids.WATER}, never {@code FLOWING_WATER}), unless it
  *       opts in to flowing water ({@link Waterloggable#acceptsFlowingWater}). Flowing water does not run into a
  *       stair; a block placed into flowing water replaces it; a bucket or a source still waterlogs.</li>
- *   <li>A family block of those shapes that is not {@link Waterloggable} holds no water at all (a fence gate, a
- *       door, a button: none of them waterlogs in vanilla). "Family" means a mod that requires Backport Core.</li>
+ *   <li>A family block that is not {@link Waterloggable} holds no fluid at all: every block the family's versions
+ *       made waterloggable implements {@link Waterloggable}, so the others (a fence gate, a door, a button, a torch,
+ *       a plant) are dry in vanilla too, whatever Fluidlogged API's list says about their vanilla superclass.
+ *       "Family" means a mod that requires Backport Core.</li>
  * </ul>
  * Every other block is left to Fluidlogged API and its config. The block's own {@link
  * Waterloggable#canHoldWater} (a double slab) is asked afterwards by Fluidlogged API as usual.
@@ -91,7 +93,7 @@ public final class WaterRules {
             }
             return null;
         }
-        return isShape(block) && isFamily(block) ? Boolean.FALSE : null;
+        return isFamily(block) ? Boolean.FALSE : null;
     }
 
     /** @return true for a block extending one of the vanilla shapes Fluidlogged API's list waterlogs */
