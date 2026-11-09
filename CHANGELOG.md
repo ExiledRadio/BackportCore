@@ -1,4 +1,6 @@
-# 1.1.1
+# 1.1.0
+
+Fluidlogged API (3.3.3 or later) comes with Backport Core on CurseForge and only adds waterlogging.
 
 *   **Fluidlogged API is optional** in code: Backport Core and the backports load and play without it, and their
     `Waterloggable` blocks are then as dry as before 1.13. `Waterloggable` no longer extends `IFluidloggable`;
@@ -6,11 +8,6 @@
     `Waterlogging.isAvailable()`. `WaterRules` moved to `waterlog.fluidlogged`. Without Fluidlogged API, older
     worlds' Fluidlogged API water is kept in their chunks for when it is installed again. The `@Mod` dependency is
     now `after:fluidlogged_api@[3.3.3,)`.
-
-# 1.1.0
-
-**Now requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
-
 *   **Third person in a tunnel** (patch P18): crawling or swimming through a one-block tunnel and pressing F5 no
     longer shows the sky through the stone. As in 1.14, the game works out which chunks to draw from the camera,
     not from the player's eyes, and again whenever the camera moves.
