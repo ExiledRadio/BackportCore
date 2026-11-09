@@ -36,7 +36,7 @@ Mod authors: the API the backports use is in [docs/API.md](https://github.com/Ex
 
 One settings screen for every installed backport, under Mod Options. Each backport has its own page. Features turn on and off with one switch, search finds any setting, and badges show which settings need a restart or only touch new chunks. On a server, operators can change server settings from it.
 
-![The settings screen](PENDING:settings-overview-new)
+![The settings screen](https://media.forgecdn.net/attachments/2174/565/core-settings-new-png.png)
 
 The files in `config/` stay as they were, so existing configs and modpack configs keep working.
 
