@@ -29,6 +29,7 @@ public final class SelfTestMod {
         PresentationTests.register();
         if (FMLCommonHandler.instance().getSide().isClient()) {
             ClientPresentationTests.register();
+            ClientLocateTests.register();
         }
     }
 

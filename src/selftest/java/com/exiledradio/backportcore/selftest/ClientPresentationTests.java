@@ -128,7 +128,10 @@ final class ClientPresentationTests {
                                 && com.exiledradio.backportcore.presentation.client.ChatRenderer.queued() == 1,
                                 first.isCanceled() + "/" + second.isCanceled() + " queued " + com.exiledradio.backportcore.presentation.client.ChatRenderer.queued());
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60) {
+                    if (mc.world != null && mc.player != null && this.worldTicks >= 10 && ClientLocateTests.instance != null) {
+                        ClientLocateTests.instance.tick(mc);
+                    }
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done()) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);

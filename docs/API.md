@@ -467,6 +467,11 @@ names what it found ("#minecraft:village (minecraft:village_desert)"). `Placemen
 candidate chunks and must not load or generate anything; `ScatteredStructure.locatableAt` gives a kind's answer,
 skipping a start already laid out empty.
 
+Tab completion follows today's matching (path, then after a `_`, then namespace) fitted to 1.12.2's client, which
+writes the common prefix of everything it gets back: `m` completes to `minecraft:m`, not `minecraft:`; `_` matches only
+when their common prefix keeps what was typed; tags only after `#`. Core's client self-test presses Tab through the
+real `GuiChat` in a world (`ClientLocateTests`).
+
 `locate.LocateChecks` is for the backports' self-tests: `checkRingOrder` walks the grids region by region to
 confirm a result is today's, `savedStart` reads a generator's laid-out start, `generateAround` loads chunks, and
 `run`/`complete` run the command or its tab completion as an operator.

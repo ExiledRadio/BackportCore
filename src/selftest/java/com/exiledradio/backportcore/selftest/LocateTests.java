@@ -178,7 +178,39 @@ final class LocateTests {
                     && first.contains("Temple"), first);
             check("Village is listed while no backport registers village types", first.contains("Village"), first);
             List<String> ids = LocateChecks.complete(server, world, spawn, "locate structure ");
-            check("completion lists every id and tag", ids.containsAll(StructureLocate.ids()) && ids.contains(BOTH), ids);
+            check("an empty word completes every id and no tag (1.12.2's client writes the first it sorts)",
+                    ids.equals(StructureLocate.ids()), ids);
+            // 1.12.2's client writes the common prefix of what comes back: a namespace match beside the path matches
+            // turned "m" into "minecraft:" and lost the word.
+            check("completion of m keeps to paths starting with m", LocateChecks.complete(server, world, spawn, "locate structure m")
+                    .equals(Arrays.asList("minecraft:mansion", "minecraft:mineshaft", "minecraft:monument")),
+                    LocateChecks.complete(server, world, spawn, "locate structure m"));
+            check("completion of mine is the mineshaft, not the minecraft namespace",
+                    LocateChecks.complete(server, world, spawn, "locate structure mine").equals(Arrays.asList("minecraft:mineshaft")),
+                    LocateChecks.complete(server, world, spawn, "locate structure mine"));
+            check("completion of minecraft:m", LocateChecks.complete(server, world, spawn, "locate structure minecraft:m")
+                    .equals(Arrays.asList("minecraft:mansion", "minecraft:mineshaft", "minecraft:monument")),
+                    LocateChecks.complete(server, world, spawn, "locate structure minecraft:m"));
+            check("completion of mon", LocateChecks.complete(server, world, spawn, "locate structure mon")
+                    .equals(Arrays.asList("minecraft:monument")), LocateChecks.complete(server, world, spawn, "locate structure mon"));
+            check("completion after a '_' when it is the only match (hut -> swamp_hut)", LocateChecks.complete(server, world, spawn,
+                    "locate structure hut").equals(Arrays.asList("minecraft:swamp_hut")),
+                    LocateChecks.complete(server, world, spawn, "locate structure hut"));
+            check("no completion for several '_' matches that would leave only minecraft: (pyramid)",
+                    LocateChecks.complete(server, world, spawn, "locate structure pyramid").isEmpty(),
+                    LocateChecks.complete(server, world, spawn, "locate structure pyramid"));
+            check("a namespace completes when no path matches", LocateChecks.complete(server, world, spawn, "locate structure backportcore")
+                    .equals(Arrays.asList(GRID, TEST)), LocateChecks.complete(server, world, spawn, "locate structure backportcore"));
+            check("# completes tags only", LocateChecks.complete(server, world, spawn, "locate structure #").equals(Arrays.asList(BOTH)),
+                    LocateChecks.complete(server, world, spawn, "locate structure #"));
+            check("a mistaken # on an id is today's invalid message", LocateChecks.run(server, world, spawn,
+                    "locate structure #minecraft:stronghold").equals(Arrays.asList("There is no structure with type \"#minecraft:stronghold\"")),
+                    LocateChecks.run(server, world, spawn, "locate structure #minecraft:stronghold"));
+            for (String id : new String[]{"monument", "minecraft:monument", "minecraft:stronghold", "minecraft:mineshaft"}) {
+                List<String> said = LocateChecks.run(server, world, spawn, "locate structure " + id);
+                check("typed " + id + " locates", said.size() == 1 && said.get(0).startsWith("The nearest " + StructureLocate.normalize(id)
+                        + " is at ["), said);
+            }
             List<String> byPath = LocateChecks.complete(server, world, spawn, "locate structure strong");
             check("completion matches a path without its namespace", byPath.equals(Arrays.asList("minecraft:stronghold")), byPath);
             List<String> tags = LocateChecks.complete(server, world, spawn, "locate structure #backportcore_selftest:b");
