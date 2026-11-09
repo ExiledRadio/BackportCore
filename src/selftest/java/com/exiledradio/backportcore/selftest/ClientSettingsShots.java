@@ -76,8 +76,10 @@ final class ClientSettingsShots {
                 search("spawn");
             });
         }
-        if (Loader.isModLoaded("trickytrialsbackport")) {
-            add("tr-features", () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), "trickytrialsbackport")));
+        for (com.exiledradio.backportcore.settings.Family.Member m : com.exiledradio.backportcore.settings.Family.MEMBERS) {
+            if (Loader.isModLoaded(m.modid) && !m.modid.equals(BackportCore.MOD_ID)) {
+                add(m.icon + "-features", () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), m.modid)));
+            }
         }
         add("mod-list", () -> mc.displayGuiScreen(new GuiModList(new GuiMainMenu())));
         add(null, this::checkApply);

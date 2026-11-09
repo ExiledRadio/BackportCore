@@ -229,6 +229,9 @@ final class ListEditScreen extends GuiScreen {
         if (rl == null) {
             return "backportcore.settings.list.invalid";
         }
+        if ("oredict".equals(rl.getNamespace())) {
+            return null; // an ore dictionary name, not a registry id
+        }
         if (!"minecraft".equals(rl.getNamespace()) && !Loader.isModLoaded(rl.getNamespace())) {
             return "backportcore.settings.list.notInstalled";
         }
