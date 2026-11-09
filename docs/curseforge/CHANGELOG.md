@@ -2,7 +2,7 @@
 
 Everything the update backports share for their next releases: waterlogging, today's structure files, seed parity, each version's look and feel, swimming and crawling poses, and the backports' items in vanilla's creative tabs.
 
-**Now requires Fluidlogged API 3.3.3 or newer**, installed beside Backport Core on the client and the server.
+Fluidlogged API 3.3.3 or newer comes with Backport Core and only adds waterlogging. Without it, the backports still load and their blocks stay dry.
 
 *   **Waterlogging** for the backports' blocks, as in 1.13: lanterns, sea pickles, kelp and the rest keep the water they are placed in, buckets fill and empty them, and water flows in and out of them. Vanilla's own blocks keep Fluidlogged API's settings.
 *   **Today's structure files**, Mojang's own, read into 1.12.2 blocks for the backports' structures: shipwrecks, ocean ruins and later ones. Structures are placed chunk by chunk without loading their neighbors, and wall torches stay up at chunk edges.

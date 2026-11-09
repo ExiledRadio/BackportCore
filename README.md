@@ -16,7 +16,7 @@ A Forge 1.12.2 library for the update backports. It adds no blocks or items. It 
   generators, ground and sea floor alike.
 - **Today's structure files** read into 1.12.2 blocks, structures scattered the way today's game scatters
   them, and finding the nearest of a kind.
-- **1.13's waterlogging** for the backports' blocks, through Fluidlogged API.
+- **1.13's waterlogging** for the backports' blocks, through Fluidlogged API when it is installed.
 - **1.14's player poses**: the swimming pose and crawling with their 0.6-block box and low eyes, sent to other
   players, drawn lying along the swim (armor included), with the camera easing to the new height; and the
   movement hooks a backport's swimming rules use.
@@ -25,9 +25,9 @@ A Forge 1.12.2 library for the update backports. It adds no blocks or items. It 
 - A **trade registry**, **smithing upgrades** and a table of which backport owns each shared block.
 
 A small coremod of its own for the pose engine's hooks (every patch in `docs/PATCHES.md`; each does what
-vanilla does until a backport turns its rules on). No Mixin. Required on the client and the server by every backport that uses it, and
-requires [Fluidlogged API](https://www.curseforge.com/minecraft/mc-mods/fluidlogged-api) 3.3.3 or later
-(installed beside it, never bundled).
+vanilla does until a backport turns its rules on). No Mixin. Required on the client and the server by every backport that uses it. Waterlogging needs
+[Fluidlogged API](https://www.curseforge.com/minecraft/mc-mods/fluidlogged-api) 3.3.3 or later (installed beside
+it, never bundled); without it everything else works and the backports' blocks stay dry.
 
 ## Building
 

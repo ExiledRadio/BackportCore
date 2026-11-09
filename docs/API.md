@@ -27,11 +27,12 @@ dependencies = "required-after:backportcore@[1.1.0,)"
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
 
-**Fluidlogged API** (3.3.3, CurseForge 485654) is Backport Core's one required dependency, for
-waterlogging. Players install it beside Backport Core, on client and server; it is never bundled or
-shaded (its license allows depending on it, not redistributing it). The dev jar does not carry it, so
-every backport adds it to its own build, both to compile against `Waterloggable` and so that `runServer`
-can load Core at all:
+**Fluidlogged API** (3.3.3, CurseForge 485654) gives waterlogging, and is optional. Backport Core's
+CurseForge page lists it as a required relation so the app installs it, but in code nothing requires it:
+Core and every backport load and play without it, and their `Waterloggable` blocks are then as dry as
+before 1.13. Never bundle or shade it (its license allows depending on it, not redistributing it). The dev
+jar does not carry it; every backport adds it to its own build so that `runServer` and the self-tests run
+with it:
 
 ```gradle
 repositories {
@@ -42,7 +43,9 @@ dependencies {
 }
 ```
 
-Keep `required-after:backportcore`; it brings Fluidlogged API with it.
+Keep `required-after:backportcore` and never name Fluidlogged API in your `@Mod` or `mcmod.info`. Main code
+never names a Fluidlogged API class either, except in a class only reached when
+`Waterlogging.isAvailable()` is true; self-test code may.
 
 Call the registration methods below from your mod's **pre-init** unless a section says otherwise.
 
@@ -168,9 +171,11 @@ NetherHeights base = NetherHeights.baseForWorld(world);  // 1.16's getBaseColumn
 
 ## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
 
-1.13's waterlogging for the family's blocks, through Fluidlogged API. A block that today's game makes
-waterloggable implements `Waterloggable` (it extends Fluidlogged API's `IFluidloggable`) and answers up to
-three questions. It never overrides the `IFluidloggable` methods and has no `waterlogged` property.
+1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed. A block that
+today's game makes waterloggable implements `Waterloggable` (a plain interface) and answers up to three
+questions. With Fluidlogged API installed, Core's patch P18 adds Fluidlogged API's `IFluidloggable`
+(answered from those three) to the block's class; the block never implements `IFluidloggable` itself and has
+no `waterlogged` property.
 
 ```java
 public class BlockLantern extends Block implements Waterloggable {
@@ -185,11 +190,16 @@ public class BlockLantern extends Block implements Waterloggable {
   water came or went (not when flowing water only changes level): buckets, flow, commands, the helpers below.
 - These answers win over the player's `allowDefaults` setting. A server's Fluidlogged API config files and
   other mods' `FluidloggableEvent` handlers win over them.
-- `shouldFluidRender` is client-only in Fluidlogged API: an override needs `@SideOnly(Side.CLIENT)`.
+- **Without Fluidlogged API** (`Waterlogging.isAvailable()` false): no block holds water, `onWaterChanged`
+  never runs, and the helpers answer as 1.12.2 would (water blocks only; `setWater` adds nothing,
+  `placeWithWater` places dry and returns false). Give a block its pre-1.13 behavior on that path, such as a
+  water bucket putting a campfire out. Older worlds' Fluidlogged API water is kept in their chunks for when it
+  is installed again, and `migrateStoredProperty` waits for it.
 
 ```java
 Waterlogging.hasWater(world, pos);                     // a water block, or water kept beside a block
 Waterlogging.hasWaterSource(world, pos);               // the same, still source water
+Waterlogging.isAvailable();                            // Fluidlogged API installed: blocks can hold water
 Waterlogging.canHoldWater(state, world, pos);          // asks Fluidlogged API, its configs included
 Waterlogging.setWater(world, pos, true, 3);            // add a source to the block there (false: remove its water)
 Waterlogging.placeKeepingWater(world, pos, state, 2);  // generation: kelp into the sea, a reef over seagrass

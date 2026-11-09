@@ -368,3 +368,19 @@ or passes an existing constant through a hook of the same type.
     mixin that overwrites the method later in the chain simply drops the hooks.
 *   **Tested**: transformer chain and SRG names (`PatchTests`); a dedicated-server boot; the client self-test
     (P17 applied, the distance rule per mode). Frame rate by hand: see the 1.1.0 handover.
+
+## P18. Waterloggable blocks become Fluidlogged API's
+
+*   **What**: with Fluidlogged API installed, every class that lists `waterlog.Waterloggable` among its
+    interfaces also gets `waterlog.fluidlogged.FluidloggedWaterloggable`, an `IFluidloggable` whose default
+    methods answer Fluidlogged API from the block's `waterNeed`, `canHoldWater` and `onWaterChanged`.
+    Subclasses inherit it. Without Fluidlogged API (its `IFluidloggable` class not on the class path) nothing
+    is changed.
+*   **Why a patch**: Fluidlogged API asks `instanceof IFluidloggable`. A block that implemented it in source
+    could not load without Fluidlogged API, and the user wants every backport to load and play without it.
+    Its `FluidloggableEvent` answers only whether a fluid may enter, not the fill/drain callbacks.
+*   **Shape**: only the class's interface list (and its generic signature, when it has one) changes. No
+    method, no frame. A class already listing the bridge is left alone.
+*   **Fails safe**: with no Fluidlogged API the blocks stay plain `Waterloggable` and dry.
+*   **Tested**: `WaterTests` checks that a `Waterloggable` test block and a subclass of one are
+    `IFluidloggable`, and every waterlogging test runs through the bridge.
