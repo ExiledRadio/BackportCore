@@ -40,6 +40,21 @@ Core reads the `@Config` classes Forge already knows (`ConfigManager.getModConfi
 A mod outside the family registers with `BackportSettings.register(modid)` (or names its classes) in
 pre-init or init.
 
+## Mods without `@Config`
+
+A mod that builds its own `Configuration` registers it: `BackportSettings.register(modid, config, "hearts",
+"items")`. Each named top-level category is a row, in that order (none named: all of them), with its
+subcategories after it. Properties keep the mod's order. A boolean named `enabled` is the row's switch.
+
+- Names: a property or category without a lang key of its own reads `modid.category.NAME` and `modid.category`,
+  with `.tooltip` and `.short` under them as above.
+- Hints stand in for the annotations: `BackportSettings.hint(modid, "items", "icon=minecraft:chest",
+  "toggle=ENABLE_ITEM_KEEPING")` for a row, `hint(modid, "items/KEEP_XP", "client")` for one setting. Words:
+  `client`, `server`, `newChunks`, `vanilla=<value>`, `list=block|item|entity|biome`, `icon=<id>`, `toggle=<key>`.
+- Done sets the properties, saves the file if anything changed, and posts the config-changed events.
+- Core only replaces Forge's default config button. A mod with its own `guiFactory` opens
+  `new SettingsScreen(parent, modid)` itself when `BackportSettings.page(modid)` is not null.
+
 ## Servers
 
 - Single player and LAN host: everything edits the local files, on the client thread, as Forge's own config
