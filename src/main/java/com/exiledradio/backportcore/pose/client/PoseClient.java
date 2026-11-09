@@ -5,8 +5,14 @@ import com.exiledradio.backportcore.pose.Pose;
 import com.exiledradio.backportcore.pose.PoseAccess;
 import com.exiledradio.backportcore.pose.Poses;
 
+import com.exiledradio.backportcore.BackportCore;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,6 +22,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -205,5 +212,66 @@ public final class PoseClient {
             return entity.getEyeHeight();
         }
         return prevCameraHeight + (cameraHeight - prevCameraHeight) * partialTicks;
+    }
+
+    /**
+     * Patch P18: the block 1.14's {@code WorldRenderer.setupTerrain} starts its visibility search from,
+     * {@code ActiveRenderInfo.getBlockPos()}: the camera's own block. 1.12.2 starts at the eyes, so in third person
+     * the chunk the camera sits in is skipped whenever the eyes' chunk opens only away from the view (a crawl or
+     * swim through a tunnel), and the camera looks out through solid blocks. First person keeps vanilla's block.
+     *
+     * <p>1.14 also redoes the search whenever the camera moves, where 1.12.2 waits for the entity to move or turn, so
+     * F5 pressed while lying still kept first person's search; a moved camera marks the terrain dirty here.
+     *
+     * <p>The camera is where this frame's modelview (read by {@code ActiveRenderInfo.updateRenderInfo} just before
+     * {@code setupTerrain}) puts its origin, relative to the view entity's interpolated position.
+     */
+    static BlockPos terrainStart(BlockPos eyes) {
+        Minecraft mc = Minecraft.getMinecraft();
+        Entity view = mc.getRenderViewEntity();
+        if (view == null || !Poses.active()) {
+            return eyes;
+        }
+        Vec3d offset = cameraOffset();
+        if (offset == null) {
+            return eyes;
+        }
+        double t = mc.getRenderPartialTicks();
+        Vec3d camera = new Vec3d(view.lastTickPosX + (view.posX - view.lastTickPosX) * t + offset.x,
+                view.lastTickPosY + (view.posY - view.lastTickPosY) * t + offset.y,
+                view.lastTickPosZ + (view.posZ - view.lastTickPosZ) * t + offset.z);
+        if (!camera.equals(lastCamera)) {
+            lastCamera = camera;
+            mc.renderGlobal.setDisplayListEntitiesDirty();
+        }
+        return mc.gameSettings.thirdPersonView == 0 ? eyes : new BlockPos(camera);
+    }
+
+    private static Vec3d lastCamera;
+
+    private static FloatBuffer modelview;
+    private static boolean modelviewMissing;
+
+    /** @return the camera relative to the view entity's interpolated position this frame, or null if unknown */
+    static Vec3d cameraOffset() {
+        if (modelview == null && !modelviewMissing) {
+            try {
+                modelview = ObfuscationReflectionHelper.getPrivateValue(ActiveRenderInfo.class, null, "field_178812_b");
+            } catch (RuntimeException e) {
+                modelviewMissing = true;
+                BackportCore.LOGGER.warn("Backport Core: no camera matrix; the third-person terrain search starts at the eyes", e);
+            }
+        }
+        if (modelview == null) {
+            return null;
+        }
+        FloatBuffer m = modelview;
+        // A rigid transform [R t] sends the camera to the origin: the camera is -R^T t.
+        double tx = m.get(12);
+        double ty = m.get(13);
+        double tz = m.get(14);
+        return new Vec3d(-(m.get(0) * tx + m.get(1) * ty + m.get(2) * tz),
+                -(m.get(4) * tx + m.get(5) * ty + m.get(6) * tz),
+                -(m.get(8) * tx + m.get(9) * ty + m.get(10) * tz));
     }
 }

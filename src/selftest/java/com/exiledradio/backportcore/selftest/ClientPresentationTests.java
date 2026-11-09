@@ -131,7 +131,10 @@ final class ClientPresentationTests {
                     if (mc.world != null && mc.player != null && this.worldTicks >= 10 && ClientLocateTests.instance != null) {
                         ClientLocateTests.instance.tick(mc);
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done()) {
+                    if (mc.world != null && mc.player != null && this.worldTicks > 5) {
+                        ClientCameraTests.tick(mc);
+                    }
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);
@@ -320,7 +323,7 @@ final class ClientPresentationTests {
     }
 
     private static void finishTitle(Minecraft mc) throws Exception {
-        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16", "P17"}) {
+        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16", "P17", "P18"}) {
             check("client: " + p + " applied", "applied".equals(Asm.state(p)), Asm.state(p));
         }
         com.exiledradio.backportcore.CoreConfig.BlockUpdates mode = com.exiledradio.backportcore.CoreConfig.rendering.blockUpdates;
