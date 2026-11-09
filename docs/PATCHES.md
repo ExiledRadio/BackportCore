@@ -368,3 +368,35 @@ or passes an existing constant through a hook of the same type.
     mixin that overwrites the method later in the chain simply drops the hooks.
 *   **Tested**: transformer chain and SRG names (`PatchTests`); a dedicated-server boot; the client self-test
     (P17 applied, the distance rule per mode). Frame rate by hand: see the 1.1.0 handover.
+
+## P18. Third person's terrain starts at the camera
+
+*   **Class**: `net.minecraft.client.renderer.RenderGlobal`, `setupTerrain(Lnet/minecraft/entity/Entity;DLnet/minecraft/client/renderer/culling/ICamera;IZ)V`
+    (`func_174970_a`). **Transformer**: `asm/CameraTerrainTransformer`. **Hook**:
+    `pose/client/ClientHooks.terrainStart`. **Since**: 1.1.0.
+*   **Vanilla 1.14**: `WorldRenderer.setupTerrain` starts its search for visible render chunks at the camera's
+    own block (`ActiveRenderInfo.getBlockPos()`), and redoes the search whenever the camera moves or turns.
+    1.12.2 starts at the view entity's eyes and redoes it only when the entity moves or turns. In third person in
+    a tunnel the two differ: when the eyes' chunk opens only behind the player and the player looks ahead,
+    1.12.2 draws that one chunk and nothing else, so the chunk the camera sits in (4 blocks back) is missing and
+    the camera looks out through the stone at the sky. Crawling and swimming through one-block tunnels hit this
+    all the time; the user's report was "F5 while prone, the camera is stuck in a block". The camera's own
+    distance check (`orientCamera`'s eight rays) was already right: it starts at the eased low eye height (P5),
+    and its numbers are 1.14's `ActiveRenderInfo.calcCameraDistance`.
+*   **Why a patch**: the start block is a local inside `setupTerrain`, built and used in the same few lines.
+*   **What changes**: the block built from the eye height (the method's one `getEyeHeight()` call, then
+    `new BlockPos(DDD)`) passes through `terrainStart(BlockPos)`. In third person it returns the camera's block;
+    the camera is the origin of the modelview `ActiveRenderInfo.updateRenderInfo` read just before (its private
+    `MODELVIEW`, `field_178812_b`), relative to the entity's interpolated position. In every view, a camera that
+    moved since the last frame marks the terrain dirty (`setDisplayListEntitiesDirty()`), so pressing F5 while
+    lying still redoes the search, as 1.14 does. First person keeps the eyes' block. The hook takes and returns
+    the value already on the stack: no local is read and no branch added, so the shipped frames stay valid.
+*   **Who it reaches**: the view entity, while a backport's pose rules are on (as P5); otherwise vanilla's block.
+*   **Fails safe**: method missing, or not exactly one `getEyeHeight` call followed by `BlockPos(DDD)`: skipped;
+    1.12.2's search. The matrix field missing: one warning, and the eyes' block. OptiFine, Celeritas, Vintagium and
+    Nothirium replace `setupTerrain`; where the method no longer has vanilla's shape the patch is skipped.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); the frame verifier over the SRG client class; the
+    client self-test (`ClientCameraTests`, `runClient -Pselftest`): crawling, then swimming, in a one-block
+    tunnel across a chunk border, back and front view at 56 looks each, the view never starts inside a block and
+    keeps its 4 blocks along the open tunnel; back view draws the camera's chunk (1.12.2's search drew 1 render
+    chunk there, P18's 95).

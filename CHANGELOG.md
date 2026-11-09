@@ -2,6 +2,9 @@
 
 **Now requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 
+*   **Third person in a tunnel** (patch P18): crawling or swimming through a one-block tunnel and pressing F5 no
+    longer shows the sky through the stone. As in 1.14, the game works out which chunks to draw from the camera,
+    not from the player's eyes, and again whenever the camera moves.
 *   **Threaded chunk rebuilds** (patch P17): blocks the server changes near the camera, such as a kelp column
     breaking one block a tick, no longer rebuild their chunk on the render thread every tick; only your own
     placing and breaking does. It is current vanilla's "Chunk Builder" setting, `rendering.blockUpdates` in
