@@ -88,6 +88,8 @@ final class ClientSettingsShots {
                 if (com.exiledradio.backportcore.settings.Family.get(id) == null && !id.endsWith("_selftest")) {
                     this.names.add(at, id + "-features");
                     this.steps.add(at++, () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), id)));
+                    this.names.add(at, id + "-all");
+                    this.steps.add(at++, () -> view(1));
                 }
             }
         });
