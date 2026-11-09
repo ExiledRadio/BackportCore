@@ -34,11 +34,11 @@ Mod authors: the API the backports use is in [docs/API.md](https://github.com/Ex
 
 ## Config
 
-`config/backportcore.cfg`, or Backport Core's in-game config screen.
+One settings screen for every installed backport, under Mod Options. Each backport has its own page. Features turn on and off with one switch, search finds any setting, and badges show which settings need a restart or only touch new chunks. On a server, operators can change server settings from it.
 
-*   `textures.modernTextures`: 1.14's vanilla textures, or 1.12.2's. A setting made in an earlier version of Village & Pillage Backport's config is carried over the first time the game starts.
+![The settings screen](PENDING:settings-overview-new)
 
-Each backport keeps its own config for its own content.
+The files in `config/` stay as they were, so existing configs and modpack configs keep working.
 
 ***
 
