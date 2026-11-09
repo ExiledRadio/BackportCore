@@ -73,6 +73,7 @@ public final class SelfTestRunner {
         PoseTests.schedule();
         NetherTests.schedule();
         LocateTests.schedule();
+        SettingsTests.schedule();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();
     }

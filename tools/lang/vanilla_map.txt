@@ -5,3 +5,6 @@ commands.locate.structure.not_found = commands.locate.structure.not_found
 commands.locate.structure.invalid = commands.locate.structure.invalid
 chat.coordinates = chat.coordinates
 chat.coordinates.tooltip = chat.coordinates.tooltip
+backportcore.general.rendering.blockupdates.none = options.prioritizeChunkUpdates.none
+backportcore.general.rendering.blockupdates.player_affected = options.prioritizeChunkUpdates.byPlayer
+backportcore.general.rendering.blockupdates.nearby = options.prioritizeChunkUpdates.nearby

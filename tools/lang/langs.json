@@ -3,7 +3,7 @@
   "lang_dir": "src/main/resources/assets/backportcore/lang",
   "mojang_versions": ["26.3", "1.16.5", "1.14.4"],
   "config_classes": ["src/main/java/com/exiledradio/backportcore/CoreConfig.java"],
-  "ours_prefixes": ["config.", "commands.", "gui.", "jei.", "itemGroup."],
+  "ours_prefixes": ["config.", "backportcore.settings.", "commands.", "gui.", "jei.", "itemGroup."],
   "banned_words": ["Future MC", "FutureMC", "Raids Backport", "RAIDS_BACKPORT", "Crossbows Backport", "Oceanic Expanse", "Deeper Depths", "Farmer's Future Delight", "Caves Not Cliffs"],
   "cache": "G:/MojangLang"
 }
