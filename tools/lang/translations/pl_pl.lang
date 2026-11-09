@@ -8,3 +8,5 @@ backportcore.general.presentation.panorama=Panorama
 config.backportcore.presentation.tooltip=Elementy wyglądu gry, które podążają za najnowszym zainstalowanym backportem, tak jak miała je wersja vanilla.
 backportcore.general.presentation.panorama.tooltip=Którą panoramę ekran tytułowy pokazuje za przyciskami:\nLATEST - najnowszego zainstalowanego backportu (wybór vanilla),\nwersja, np. 1.14 - panoramę tej wersji, jeśli jej backport jest zainstalowany (1.12.2 dla własnej panoramy 1.12.2),\nROTATE - panoramę innej zainstalowanej wersji przy każdym uruchomieniu gry.\n\nTylko po stronie klienta; serwer to ignoruje. Działa od następnego uruchomienia gry.
 commands.backportcore.locate.usage=/locate structure <budowla>
+backportcore.general.presentation.reportbugslink=Link „Zgłoś błędy”
+backportcore.general.presentation.reportbugslink.tooltip=Dokąd prowadzi przycisk „Zgłoś błędy” w menu pauzy. Domyślnie na Discorda backportów. Modpack może skierować go na własną stronę. Zostaw puste, aby ukryć przycisk.\n\nTylko po stronie klienta; serwer to ignoruje.

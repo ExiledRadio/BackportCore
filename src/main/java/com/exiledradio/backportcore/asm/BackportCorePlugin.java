@@ -33,6 +33,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             BipedAnglesTransformer.class.getName(),
             PlayerRotationsTransformer.class.getName(),
             CameraHeightTransformer.class.getName(),
+            CameraTerrainTransformer.class.getName(),
             TitlePanoramaTransformer.class.getName(),
             DebugKeysTransformer.class.getName(),
             BiomeSearchTransformer.class.getName(),

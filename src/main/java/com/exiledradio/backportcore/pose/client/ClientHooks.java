@@ -9,10 +9,11 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 
 /**
- * Called from vanilla's client code by patches P2-P5 (docs/PATCHES.md). Outside a third-person draw of a
+ * Called from vanilla's client code by patches P2-P5 and P18 (docs/PATCHES.md). Outside a third-person draw of a
  * player in a pose, each does exactly nothing (or returns vanilla's own value).
  *
  * <p>Public only because patched vanilla code calls it; not for backports to call. The numbers are 1.14.4's
@@ -33,6 +34,11 @@ public final class ClientHooks {
     /** P5: {@code EntityRenderer.orientCamera}'s eye height. */
     public static float cameraEyeHeight(Entity entity, float partialTicks) {
         return PoseClient.cameraEyeHeight(entity, partialTicks);
+    }
+
+    /** P18: {@code RenderGlobal.setupTerrain}'s start block for the visibility search (vanilla's: the eyes). */
+    public static BlockPos terrainStart(BlockPos eyes) {
+        return PoseClient.terrainStart(eyes);
     }
 
     /**

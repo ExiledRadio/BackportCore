@@ -72,6 +72,14 @@ public final class CoreConfig {
                 "Client only; a server ignores it. Takes effect the next time the game starts."
         })
         public String panorama = "LATEST";
+
+        @Config.Comment({
+                "Where the pause menu's Report Bugs button goes. By default, the backports' Discord.",
+                "A modpack can point it at its own page. Leave it empty to hide the button.",
+                "",
+                "Client only; a server ignores it."
+        })
+        public String reportBugsLink = "https://discord.gg/kxQvMDJBTN";
     }
 
     public static final class Textures {

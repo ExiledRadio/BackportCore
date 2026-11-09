@@ -57,6 +57,7 @@ final class PatchTests {
             {"net.minecraft.client.renderer.RenderGlobal", "P15", new String[] {"skyColor", "cloudHeight*2"}},
             {"net.minecraft.client.renderer.EntityRenderer", "P16", new String[] {"skyColor", "cloudLayer*2"}},
             {"net.minecraft.client.renderer.RenderGlobal", "P17", new String[] {"nearbyDistanceSq", "needsImmediateUpdate*2"}},
+            {"net.minecraft.client.renderer.RenderGlobal", "P18", new String[] {"terrainStart"}},
     };
 
     private PatchTests() {
@@ -141,6 +142,7 @@ final class PatchTests {
             case "P10": case "P11": cls = "LayerRulesTransformer"; break;
             case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
             case "P17": cls = "ChunkRebuildsTransformer"; break;
+            case "P18": cls = "CameraTerrainTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

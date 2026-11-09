@@ -75,11 +75,11 @@ final class WaterTests {
             TestBlocks.CHANGES.clear();
             check("boot: dedicated server started with Fluidlogged API and no client class",
                     net.minecraftforge.fml.common.Loader.isModLoaded("fluidlogged_api"));
-            check("P18: Waterlogging sees Fluidlogged API", Waterlogging.isAvailable());
-            check("P18: a Waterloggable block is Fluidlogged API's IFluidloggable through Core's coremod",
+            check("P19: Waterlogging sees Fluidlogged API", Waterlogging.isAvailable());
+            check("P19: a Waterloggable block is Fluidlogged API's IFluidloggable through Core's coremod",
                     (Object) TestBlocks.optional instanceof git.jbredwards.fluidlogged_api.api.block.IFluidloggable,
-                    com.exiledradio.backportcore.asm.Asm.state("P18"));
-            check("P18: a subclass of a Waterloggable block is one too (Legacy extends Post)",
+                    com.exiledradio.backportcore.asm.Asm.state("P19"));
+            check("P19: a subclass of a Waterloggable block is one too (Legacy extends Post)",
                     (Object) TestBlocks.legacy instanceof git.jbredwards.fluidlogged_api.api.block.IFluidloggable);
         });
 

@@ -3,6 +3,7 @@ config.backportcore.textures=Textures
 backportcore.general.textures.moderntextures=Textures de la 1.14
 config.backportcore.presentation=Apparence
 backportcore.general.presentation.panorama=Panorama
+backportcore.general.presentation.reportbugslink=Lien de « Signaler des bugs »
 
 menu.preparingSpawn=Préparation de la zone d'apparition : %s %%
 selectWorld.data_read=Lecture des données du monde...
@@ -45,4 +46,5 @@ config.backportcore.textures.tooltip=La mise à jour des textures de la 1.14 pou
 backportcore.general.textures.moderntextures.tooltip=Donner aux blocs, objets et créatures vanilla les textures que leur a données la mise à jour des textures de la 1.14, ainsi que le scintillement des enchantements de la 1.15. Désactivé, les textures de la 1.12.2 sont conservées, et l'apparence de la 1.12.2 est aussi rétablie pour les propres copies, ajoutées par les backports, de choses que la 1.12.2 avait déjà (les chats smoking, roux et siamois).\n\nCôté client uniquement ; un serveur l'ignore. Les packs de ressources que vous choisissez, et les autres mods qui modifient volontairement une texture vanilla, restent prioritaires. Les villageois, les chevaux et l'eau gardent les textures de la 1.12.2 dans tous les cas : celles de la 1.14 ne correspondent pas aux modèles ou aux couleurs de la 1.12.2.\n\nLe modifier en jeu recharge les ressources, comme le fait F3+T.
 config.backportcore.presentation.tooltip=Les éléments de l'apparence du jeu qui suivent le backport installé le plus récent, comme vanilla les avait à cette version.
 backportcore.general.presentation.panorama.tooltip=Le panorama que l'écran titre affiche derrière ses boutons :\nLATEST - celui du backport installé le plus récent (le choix de vanilla),\nune version, comme 1.14 - celui de cette version, si un backport de celle-ci est installé (1.12.2 pour celui de 1.12.2),\nROTATE - celui d'une autre version installée à chaque lancement du jeu.\n\nClient uniquement ; un serveur l'ignore. Prend effet au prochain lancement du jeu.
+backportcore.general.presentation.reportbugslink.tooltip=Où mène le bouton « Signaler des bugs » du menu pause. Par défaut, le Discord des backports. Un modpack peut le faire pointer vers sa propre page. Laissez vide pour masquer le bouton.\n\nCôté client uniquement ; un serveur l'ignore.
 # --- end config tooltips ---

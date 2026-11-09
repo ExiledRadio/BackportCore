@@ -3,6 +3,7 @@ config.backportcore.textures=텍스처
 backportcore.general.textures.moderntextures=1.14 텍스처
 config.backportcore.presentation=외관
 backportcore.general.presentation.panorama=파노라마
+backportcore.general.presentation.reportbugslink='버그 신고' 링크
 
 menu.preparingSpawn=스폰 영역 준비 중: %s%%
 selectWorld.data_read=세계 데이터 읽는 중...
@@ -45,4 +46,5 @@ config.backportcore.textures.tooltip=바닐라 블록, 아이템, 몹을 위한 
 backportcore.general.textures.moderntextures.tooltip=바닐라의 블록, 아이템, 몹에 1.14의 텍스처 업데이트가 준 텍스처와 1.15의 마법 부여 반짝임을 적용합니다. 끄면 1.12.2의 텍스처를 유지하며, 1.12.2에 이미 있던 것을 백포트가 따로 복제한 것(턱시도, 붉은색, 샴 고양이)도 1.12.2의 모습으로 되돌립니다.\n\n클라이언트 전용이며, 서버는 이 설정을 무시합니다. 직접 선택한 리소스 팩과 일부러 바닐라 텍스처를 바꾸는 다른 모드가 이 설정보다 우선합니다. 주민, 말, 물은 어느 쪽이든 1.12.2의 텍스처를 유지합니다. 1.14의 텍스처는 1.12.2의 모델이나 색상과 맞지 않기 때문입니다.\n\n게임 안에서 바꾸면 F3+T처럼 리소스를 다시 불러옵니다.
 config.backportcore.presentation.tooltip=설치된 가장 최신 백포트를 따르는 게임 외관 부분으로, 해당 버전의 바닐라와 같습니다.
 backportcore.general.presentation.panorama.tooltip=타이틀 화면의 버튼 뒤에 보이는 파노라마:\nLATEST - 설치된 가장 최신 백포트의 것 (바닐라와 같음)\n버전 (예: 1.14) - 그 버전의 백포트가 설치되어 있으면 그 버전의 것 (1.12.2이면 1.12.2 자체의 것)\nROTATE - 게임을 시작할 때마다 설치된 다른 버전의 것\n\n클라이언트 전용이며 서버는 무시합니다. 다음에 게임을 시작할 때 적용됩니다.
+backportcore.general.presentation.reportbugslink.tooltip=일시 정지 메뉴의 '버그 신고' 버튼이 여는 곳입니다. 기본값은 백포트의 Discord입니다. 모드팩은 자체 페이지로 바꿀 수 있습니다. 비워 두면 버튼이 숨겨집니다.\n\n클라이언트 전용이며 서버는 무시합니다.
 # --- end config tooltips ---

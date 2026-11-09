@@ -173,7 +173,7 @@ NetherHeights base = NetherHeights.baseForWorld(world);  // 1.16's getBaseColumn
 
 1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed. A block that
 today's game makes waterloggable implements `Waterloggable` (a plain interface) and answers up to three
-questions. With Fluidlogged API installed, Core's patch P18 adds Fluidlogged API's `IFluidloggable`
+questions. With Fluidlogged API installed, Core's patch P19 adds Fluidlogged API's `IFluidloggable`
 (answered from those three) to the block's class; the block never implements `IFluidloggable` itself and has
 no `waterlogged` property.
 
@@ -476,6 +476,11 @@ with the nearest of that ring's first starts. The reply names the start chunk's 
 names what it found ("#minecraft:village (minecraft:village_desert)"). `Placement.startAt` is asked only of
 candidate chunks and must not load or generate anything; `ScatteredStructure.locatableAt` gives a kind's answer,
 skipping a start already laid out empty.
+
+Tab completion follows today's matching (path, then after a `_`, then namespace) fitted to 1.12.2's client, which
+writes the common prefix of everything it gets back: `m` completes to `minecraft:m`, not `minecraft:`; `_` matches only
+when their common prefix keeps what was typed; tags only after `#`. Core's client self-test presses Tab through the
+real `GuiChat` in a world (`ClientLocateTests`).
 
 `locate.LocateChecks` is for the backports' self-tests: `checkRingOrder` walks the grids region by region to
 confirm a result is today's, `savedStart` reads a generator's laid-out start, `generateAround` loads chunks, and

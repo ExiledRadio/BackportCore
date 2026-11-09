@@ -8,3 +8,5 @@ backportcore.general.presentation.panorama=Панорама
 config.backportcore.presentation.tooltip=Части внешнего вида игры, которые следуют за самым новым установленным бэкпортом, как в ванильной игре этой версии.
 backportcore.general.presentation.panorama.tooltip=Какую панораму главное меню показывает за кнопками:\nLATEST - самого нового установленного бэкпорта (как в ванильной игре),\nверсия, например 1.14 - этой версии, если её бэкпорт установлен (1.12.2 - собственная панорама 1.12.2),\nROTATE - другой установленной версии при каждом запуске игры.\n\nТолько на клиенте; сервер это игнорирует. Действует со следующего запуска игры.
 commands.backportcore.locate.usage=/locate structure <сооружение>
+backportcore.general.presentation.reportbugslink=Ссылка «Сообщить об ошибке»
+backportcore.general.presentation.reportbugslink.tooltip=Куда ведёт кнопка «Сообщить об ошибке» в меню паузы. По умолчанию это Discord бэкпортов. Сборка может указать свою страницу. Оставьте пустым, чтобы скрыть кнопку.\n\nТолько для клиента; сервер это игнорирует.

@@ -11,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
- * Patch P18 (docs/PATCHES.md): with Fluidlogged API installed, every class that lists {@code waterlog.Waterloggable}
+ * Patch P19 (docs/PATCHES.md): with Fluidlogged API installed, every class that lists {@code waterlog.Waterloggable}
  * among its interfaces also gets {@code waterlog.fluidlogged.FluidloggedWaterloggable}, Fluidlogged API's {@code
  * IFluidloggable} answered from the block's own choices. A family block names no Fluidlogged API type, so it loads
  * without Fluidlogged API; with it, it is an {@code IFluidloggable} exactly as if it had said so.
@@ -22,7 +22,7 @@ import java.util.Arrays;
  */
 public final class WaterloggableTransformer implements IClassTransformer {
 
-    static final String PATCH = "P18";
+    static final String PATCH = "P19";
     private static final String WHAT = "Fluidlogged API waterlogging for Waterloggable blocks";
     static final String WATERLOGGABLE = "com/exiledradio/backportcore/waterlog/Waterloggable";
     static final String BRIDGE = "com/exiledradio/backportcore/waterlog/fluidlogged/FluidloggedWaterloggable";

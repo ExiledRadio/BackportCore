@@ -214,27 +214,66 @@ public final class LocateCommand extends CommandBase {
     }
 
     /**
-     * Today's resource-location completion: every id and tag whose full name, or whose path where no namespace
-     * is typed, starts with what is typed.
+     * Today's resource-location completion ({@code SharedSuggestionProvider.filterResources}), fitted to 1.12.2's Tab.
+     * Today's game shows a list to pick from; 1.12.2's client instead writes the common prefix of everything the
+     * server sends back (sorted), then cycles through it. So the matches are tiered, each tier only when the one
+     * before has none:
+     * <ol>
+     *   <li>ids whose path starts with what is typed ({@code mon} -> {@code minecraft:monument}), or with a ':'
+     *       typed, whose full name does;</li>
+     *   <li>ids it matches after a '_' ({@code plains} -> {@code minecraft:village_plains}), when their common prefix
+     *       still holds what was typed ({@code portal} -> {@code minecraft:ruined_portal}; {@code pyramid} would
+     *       become a bare {@code minecraft:}, so it gets nothing);</li>
+     *   <li>ids whose namespace starts with it.</li>
+     * </ol>
+     * Today's game lists namespace matches beside path matches, so {@code m} there lists every id; here that would
+     * turn {@code m} into {@code minecraft:}. Tags only once a '#' is typed: the client sorts what it gets, so on an
+     * empty word a tag would always be the first thing Tab writes.
      */
     static List<String> completeIds(String typed) {
-        List<String> options = new ArrayList<String>(StructureLocate.ids());
-        options.addAll(StructureLocate.tags());
         String lower = typed.toLowerCase(Locale.ROOT);
         boolean tag = lower.startsWith("#");
         String body = tag ? lower.substring(1) : lower;
-        List<String> out = new ArrayList<String>();
+        boolean full = body.indexOf(':') >= 0;
+        List<String> options = tag ? StructureLocate.tags() : StructureLocate.ids();
+        if (body.isEmpty()) {
+            return options;
+        }
+        List<String> start = new ArrayList<String>();
+        List<String> word = new ArrayList<String>();
+        List<String> namespace = new ArrayList<String>();
         for (String option : options) {
-            boolean optionTag = option.startsWith("#");
-            if (tag != optionTag && !lower.isEmpty()) {
-                continue;
-            }
-            String full = optionTag ? option.substring(1) : option;
-            String path = full.substring(full.indexOf(':') + 1);
-            if (full.startsWith(body) || (body.indexOf(':') < 0 && path.startsWith(body))) {
-                out.add(option);
+            String id = tag ? option.substring(1) : option;
+            int colon = id.indexOf(':');
+            String target = full ? id : "minecraft".equals(id.substring(0, colon)) ? id.substring(colon + 1) : null;
+            if (target != null && target.startsWith(body)) {
+                start.add(option);
+            } else if (target != null && matchesSubStr(body, target)) {
+                word.add(option);
+            } else if (!full && id.substring(0, colon).startsWith(body)) {
+                namespace.add(option);
             }
         }
-        return out;
+        if (!start.isEmpty()) {
+            return start;
+        }
+        if (!word.isEmpty()) {
+            String common = org.apache.commons.lang3.StringUtils.getCommonPrefix(word.toArray(new String[0]));
+            String commonId = tag ? common.substring(Math.min(1, common.length())) : common;
+            String commonTarget = full ? commonId : commonId.substring(commonId.indexOf(':') + 1);
+            return word.size() == 1 || matchesSubStr(body, commonTarget) ? word : new ArrayList<String>();
+        }
+        return namespace;
+    }
+
+    /** Today's {@code SharedSuggestionProvider.matchesSubStr}: at the start, or right after a '_'. */
+    static boolean matchesSubStr(String input, String s) {
+        for (int i = 0; !s.startsWith(input, i); i++) {
+            i = s.indexOf('_', i);
+            if (i < 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }

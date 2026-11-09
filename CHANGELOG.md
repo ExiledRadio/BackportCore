@@ -1,7 +1,19 @@
+# 1.1.1
+
+*   **Fluidlogged API is optional** in code: Backport Core and the backports load and play without it, and their
+    `Waterloggable` blocks are then as dry as before 1.13. `Waterloggable` no longer extends `IFluidloggable`;
+    with Fluidlogged API installed, patch P19 adds it to every class that implements `Waterloggable`. New
+    `Waterlogging.isAvailable()`. `WaterRules` moved to `waterlog.fluidlogged`. Without Fluidlogged API, older
+    worlds' Fluidlogged API water is kept in their chunks for when it is installed again. The `@Mod` dependency is
+    now `after:fluidlogged_api@[3.3.3,)`.
+
 # 1.1.0
 
 **Now requires Fluidlogged API** (3.3.3 or later), installed beside Backport Core on client and server.
 
+*   **Third person in a tunnel** (patch P18): crawling or swimming through a one-block tunnel and pressing F5 no
+    longer shows the sky through the stone. As in 1.14, the game works out which chunks to draw from the camera,
+    not from the player's eyes, and again whenever the camera moves.
 *   **Threaded chunk rebuilds** (patch P17): blocks the server changes near the camera, such as a kelp column
     breaking one block a tick, no longer rebuild their chunk on the render thread every tick; only your own
     placing and breaking does. It is current vanilla's "Chunk Builder" setting, `rendering.blockUpdates` in
