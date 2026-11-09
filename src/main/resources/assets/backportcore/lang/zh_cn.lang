@@ -3,6 +3,7 @@ config.backportcore.textures=材质
 backportcore.general.textures.moderntextures=1.14材质
 config.backportcore.presentation=外观
 backportcore.general.presentation.panorama=全景图
+backportcore.general.presentation.reportbugslink=“报告漏洞”链接
 
 menu.preparingSpawn=准备生成区域中：%s%%
 selectWorld.data_read=读取世界数据中…
@@ -45,4 +46,5 @@ config.backportcore.textures.tooltip=1.14对原版方块、物品和生物的材
 backportcore.general.textures.moderntextures.tooltip=为原版的方块、物品和生物换上1.14材质更新赋予它们的材质，外加1.15的附魔光效。关闭则保留1.12.2的材质，并且对于1.12.2本来就有的东西，各移植模组自带的版本也会恢复1.12.2的样子（燕尾服猫、红猫和暹罗猫）。\n\n仅限客户端；服务端会忽略此项。你选择的资源包，以及刻意修改原版材质的其他模组，仍然优先于此项。无论如何设置，村民、马和水都保留1.12.2的材质：1.14的材质与1.12.2的模型或颜色不相配。\n\n在游戏中更改此项会重新加载资源，效果与F3+T相同。
 config.backportcore.presentation.tooltip=游戏外观中跟随已安装的最新移植模组的部分，与该版本的原版相同。
 backportcore.general.presentation.panorama.tooltip=标题画面按钮后面显示的全景图：\nLATEST - 已安装的最新移植模组的全景图（原版的选择）\n某个版本，如1.14 - 若安装了该版本的移植模组，则显示该版本的（1.12.2为1.12.2自己的）\nROTATE - 每次启动游戏时显示另一个已安装版本的\n\n仅限客户端；服务端会忽略此项。下次启动游戏时生效。
+backportcore.general.presentation.reportbugslink.tooltip=暂停菜单中“报告漏洞”按钮打开的地址。默认为向后移植模组的 Discord。整合包可以改为自己的页面。留空则隐藏该按钮。\n\n仅客户端生效；服务器会忽略此项。
 # --- end config tooltips ---

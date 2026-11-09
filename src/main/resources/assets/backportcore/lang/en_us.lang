@@ -2,6 +2,7 @@ config.backportcore.textures=Textures
 backportcore.general.textures.moderntextures=1.14 Textures
 config.backportcore.presentation=Look and Feel
 backportcore.general.presentation.panorama=Panorama
+backportcore.general.presentation.reportbugslink=Report Bugs Link
 config.backportcore.rendering=Rendering
 backportcore.general.rendering.blockupdates=Chunk Builder
 
@@ -46,6 +47,7 @@ config.backportcore.textures.tooltip=1.14's Texture Update for vanilla blocks, i
 backportcore.general.textures.moderntextures.tooltip=Give vanilla's blocks, items and mobs the textures 1.14's Texture Update gave them, plus 1.15's enchantment glint. Off keeps 1.12.2's, and also puts back 1.12.2's look for the backports' own copies of things 1.12.2 already had (the tuxedo, red and Siamese cats).\n\nClient only; a server ignores it. Resource packs you pick, and other mods that change a vanilla texture on purpose, still win over it. Villagers, horses and water keep 1.12.2's textures either way: 1.14's don't fit 1.12.2's models or colors.\n\nChanging it in game reloads resources, as F3+T does.
 config.backportcore.presentation.tooltip=The parts of the game's look that follow the newest installed backport, as vanilla's did at that version.
 backportcore.general.presentation.panorama.tooltip=Which panorama the title screen shows behind its buttons:\nLATEST - the newest installed backport's (vanilla's choice),\na version, such as 1.14 - that version's, if a backport of it is installed (1.12.2 for 1.12.2's own),\nROTATE - a different installed version's each time the game starts.\n\nClient only; a server ignores it. Takes effect the next time the game starts.
+backportcore.general.presentation.reportbugslink.tooltip=Where the pause menu's Report Bugs button goes. By default, the backports' Discord. A modpack can point it at its own page. Leave it empty to hide the button.\n\nClient only; a server ignores it.
 config.backportcore.rendering.tooltip=How the world's chunks are rebuilt when blocks change, as later versions do it.
 backportcore.general.rendering.blockupdates.tooltip=Which changed chunks the game rebuilds at once, holding up the frame, instead of on the chunk builder threads. Current vanilla's "Chunk Builder" video setting (1.18.2 on):\nNONE - none; every rebuild is threaded ("Threaded", current vanilla's default; a block\nyou break can leave a hole for a frame),\nPLAYER_AFFECTED - only chunks you changed yourself, by placing or breaking a block\n("Semi Blocking"),\nNEARBY - also every changed chunk within about 28 blocks of the camera ("Fully Blocking",\nthe only rule before 1.18.2). Blocks the server changes nearby, such as a kelp or sugar\ncane column breaking, then cost a rebuild on the render thread every tick.\n\nClient only; a server ignores it. Takes effect at once. OptiFine, Celeritas, Vintagium and Nothirium replace this part of the game with their own threaded rebuilds; with them it does nothing.
 # --- end config tooltips ---

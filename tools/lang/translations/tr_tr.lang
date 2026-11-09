@@ -8,3 +8,5 @@ backportcore.general.presentation.panorama=Panorama
 config.backportcore.presentation.tooltip=Oyunun görünümünde, yüklü en yeni backport'u izleyen ve o sürümdeki vanilla gibi olan kısımlar.
 backportcore.general.presentation.panorama.tooltip=Başlık ekranının düğmelerinin arkasında gösterdiği panorama:\nLATEST - yüklü en yeni backport'unki (vanilla'nın seçimi),\nbir sürüm, örneğin 1.14 - o sürümün backport'u yüklüyse o sürümünkü (1.12.2'nin kendisininki için 1.12.2),\nROTATE - oyun her başladığında yüklü başka bir sürümünkü.\n\nYalnızca istemci tarafındadır; sunucu bunu yok sayar. Oyunun bir sonraki başlatılışında etkili olur.
 commands.backportcore.locate.usage=/locate structure <yapı>
+backportcore.general.presentation.reportbugslink="Hata Bildir" bağlantısı
+backportcore.general.presentation.reportbugslink.tooltip=Duraklatma menüsündeki "Hata Bildir" düğmesinin açtığı yer. Varsayılan olarak backport'ların Discord'u. Bir mod paketi bunu kendi sayfasına yönlendirebilir. Düğmeyi gizlemek için boş bırakın.\n\nYalnızca istemci; sunucu bunu yok sayar.
