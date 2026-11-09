@@ -910,7 +910,7 @@ public class SettingsScreen extends GuiScreen {
                 return;
             }
             drawName(name, dirty, tx, y + 3, left);
-            String desc = SettingsStyle.firstSentence(SettingsStyle.description(this.g));
+            String desc = SettingsStyle.shortLine(this.g);
             if (this.g.entries.isEmpty() || SettingsScreen.this.view == View.ALL || SettingsScreen.this.expanded.contains(this.g)) {
                 SettingsScreen.this.fontRenderer.drawString(SettingsStyle.trim(SettingsScreen.this.fontRenderer, desc, left - tx - 4), tx, y + 13, SettingsStyle.MUTED);
             } else {
@@ -1003,7 +1003,7 @@ public class SettingsScreen extends GuiScreen {
             }
             badges(this.e, end + 4, nameY, left - 4);
             if (this.crumb == null) {
-                String desc = SettingsStyle.firstSentence(SettingsStyle.description(this.e));
+                String desc = SettingsStyle.shortLine(this.e);
                 SettingsScreen.this.fontRenderer.drawString(SettingsStyle.trim(SettingsScreen.this.fontRenderer, desc, left - tx - 4), tx, y + 12, SettingsStyle.MUTED);
             }
         }

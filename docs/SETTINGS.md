@@ -20,7 +20,7 @@ Core reads the `@Config` classes Forge already knows (`ConfigManager.getModConfi
 - Enums cycle (Shift cycles back). Arrays open the list editor.
 - Names come from the field's lang key (Forge's `@Config.LangKey`, else `modid.category.field`). Without one,
   the field name is made readable: `rebuildUntradedVillagers` shows as "Rebuild untraded villagers".
-- Descriptions come from `<langKey>.tooltip` (what `build_langs.py config` writes), else the `@Config.Comment`.
+- The row line is `<langKey>.short` when the mod writes one. Descriptions come from `<langKey>.tooltip` (what `build_langs.py config` writes), else the `@Config.Comment`.
   The row shows the first sentence; the info line shows two lines; Shift shows all of it.
 - An enum value's words come from `<langKey>.<value in lower case>`, else the constant made readable.
 

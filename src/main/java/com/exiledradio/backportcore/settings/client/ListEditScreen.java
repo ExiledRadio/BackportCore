@@ -292,7 +292,7 @@ final class ListEditScreen extends GuiScreen {
         String title = SettingsClient.modName(this.entry.group.page.modid) + " › " + SettingsStyle.name(this.entry.group)
                 + " › " + SettingsStyle.name(this.entry);
         drawCenteredString(this.fontRenderer, SettingsStyle.trim(this.fontRenderer, title, this.width - 20), this.width / 2, 8, 0xFFFFFF);
-        String desc = SettingsStyle.firstSentence(SettingsStyle.description(this.entry));
+        String desc = SettingsStyle.shortLine(this.entry);
         drawCenteredString(this.fontRenderer, SettingsStyle.trim(this.fontRenderer, desc, this.width - 20), this.width / 2, 20, SettingsStyle.MUTED);
         String count = I18n.format(this.editable ? "backportcore.settings.list.count" : "backportcore.settings.list.readOnly", values().length);
         drawCenteredString(this.fontRenderer, count, this.width / 2, 31, SettingsStyle.DIM);

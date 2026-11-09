@@ -84,6 +84,17 @@ final class SettingsStyle {
         return text.replace("\\n", "\n");
     }
 
+    /** @return the row's one line: {@code <langKey>.short} if the mod wrote one, else the description's first sentence */
+    static String shortLine(SettingsModel.Entry e) {
+        String key = e.langKey() + ".short";
+        return I18n.hasKey(key) ? I18n.format(key) : firstSentence(description(e));
+    }
+
+    static String shortLine(SettingsModel.Group g) {
+        String key = g.langKey + ".short";
+        return g.langKey != null && I18n.hasKey(key) ? I18n.format(key) : firstSentence(description(g));
+    }
+
     /** @return the description's first sentence, on one line */
     static String firstSentence(String text) {
         String flat = text.replace('\n', ' ').trim();
