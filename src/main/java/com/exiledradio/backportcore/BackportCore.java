@@ -38,7 +38,7 @@ import org.apache.logging.log4j.Logger;
  * modded terrain: for laying out structures ahead of generation.</li>
  * <li>{@code structure} - today's structure files read into 1.12.2 blocks, structures scattered the
  * way today's game scatters them, and finding the nearest of a kind.</li>
- * <li>{@code waterlog} - 1.13's waterlogging for the family's blocks, through Fluidlogged API.</li>
+ * <li>{@code waterlog} - 1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed.</li>
  * <li>{@code pose} - 1.14's player poses: the swimming pose and crawling, their hitbox and eyes, sent to
  * other players and drawn; and the movement hooks a backport's swimming rules use.</li>
  * <li>{@code worldgen} - seed parity: the structure placement table each backport fills with its version's
@@ -52,16 +52,17 @@ import org.apache.logging.log4j.Logger;
  *
  * <p>Its own small coremod ({@code asm}, every patch in {@code docs/PATCHES.md}) gives the pose engine the
  * hooks 1.12.2 lacks; each patch does exactly what vanilla does until a backport turns its rules on. No
- * Mixin. The one mod it requires is Fluidlogged API; every other mod is reached by name, behind a
- * {@code Loader.isModLoaded} check.
+ * Mixin. It requires no other mod. Fluidlogged API, when installed, gives the backports' blocks their water;
+ * it and every other mod are reached by name, behind a {@code Loader.isModLoaded} check.
  */
 @Mod(
         modid = BackportCore.MOD_ID,
         name = BackportCore.MOD_NAME,
         version = BackportCore.VERSION,
         acceptedMinecraftVersions = "[1.12.2]",
-        // Waterlogging is Fluidlogged API's, on both sides (see waterlog/). Required, never bundled.
-        dependencies = "required-after:fluidlogged_api@[3.3.3,)",
+        // Waterlogging is Fluidlogged API's, on both sides, when it is installed (see waterlog/). Optional: this
+        // only orders it first. Never bundled.
+        dependencies = "after:fluidlogged_api@[3.3.3,)",
         // Its one channel carries only poses, and only while a backport has them on; that backport requires
         // itself on both sides. Without one, a client without the library can join a server that has it.
         acceptableRemoteVersions = "*"
@@ -100,8 +101,9 @@ public final class BackportCore {
         PoseNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
-        // Stored-waterlogged conversions: listening from here, never from inside a registry event (see there).
-        com.exiledradio.backportcore.waterlog.Waterlogging.initMigrations();
+        // Waterlogging, with Fluidlogged API or without it (waterlog/). Listening from here, never from inside a
+        // registry event (see WaterlogMigration).
+        com.exiledradio.backportcore.waterlog.Waterlogging.init();
         // The overworld rules 1.13 and later share, applied by the newest installed backport (worldgen/).
         com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
         if (event.getSide().isClient()) {

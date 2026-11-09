@@ -1,7 +1,7 @@
 package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.waterlog.SourceForming;
-import com.exiledradio.backportcore.waterlog.WaterRules;
+import com.exiledradio.backportcore.waterlog.fluidlogged.WaterRules;
 import com.exiledradio.backportcore.waterlog.Waterlogging;
 
 import git.jbredwards.fluidlogged_api.api.util.FluidState;

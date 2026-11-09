@@ -30,8 +30,8 @@ public final class Asm {
     static final String PRESENTATION_HOOKS = "com/exiledradio/backportcore/presentation/client/PresentationHooks";
     static final String WORLDGEN_HOOKS = "com/exiledradio/backportcore/worldgen/WorldgenHooks";
 
-    /** Each patch's state by its id ("P1".."P17"): "applied", or why it was skipped. Read by the self-tests. */
-    private static final Map<String, String> STATE = new ConcurrentHashMap<String, String>();
+    /** Each patch's state by its id ("P1".."P18"): "applied", or why it was skipped. Read by the self-tests. */
+    static final Map<String, String> STATE = new ConcurrentHashMap<String, String>();
 
     private Asm() {
     }

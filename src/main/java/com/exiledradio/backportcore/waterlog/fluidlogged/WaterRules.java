@@ -1,6 +1,7 @@
-package com.exiledradio.backportcore.waterlog;
+package com.exiledradio.backportcore.waterlog.fluidlogged;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.waterlog.Waterloggable;
 
 import git.jbredwards.fluidlogged_api.api.event.FluidloggableEvent;
 import git.jbredwards.fluidlogged_api.api.util.FluidState;
@@ -19,9 +20,10 @@ import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -51,8 +53,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  * Every other block is left to Fluidlogged API and its config. The block's own {@link
  * Waterloggable#canHoldWater} (a double slab) is asked afterwards by Fluidlogged API as usual.
+ *
+ * <p>Only loaded with Fluidlogged API installed: {@code Waterlogging.init} registers it by name.
  */
-@Mod.EventBusSubscriber(modid = BackportCore.MOD_ID)
 public final class WaterRules {
 
     /** The vanilla shapes Fluidlogged API's built-in list waterlogs, as the family requests name them. */
@@ -64,6 +67,11 @@ public final class WaterRules {
     private static final Map<String, Boolean> FAMILY = new ConcurrentHashMap<String, Boolean>();
 
     private WaterRules() {
+    }
+
+    /** Called once from {@code Waterlogging.init}, with Fluidlogged API installed. */
+    public static void register() {
+        MinecraftForge.EVENT_BUS.register(WaterRules.class);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

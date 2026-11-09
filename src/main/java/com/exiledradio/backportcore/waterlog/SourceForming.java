@@ -24,13 +24,14 @@ import java.util.WeakHashMap;
  * 1.13 and later form a water source in a dry waterloggable block between two sources, as they do in open
  * space (1.16.5's {@code FlowingFluid.getNewLiquid}: at least two horizontal neighbors are water sources whose
  * shared face has a hole, and the block below is solid or a water source). Fluidlogged API asks a waterloggable
- * block about the flowing water first, which {@link WaterRules} refuses as vanilla does, so the source would never
+ * block about the flowing water first, which Backport Core's rules ({@code fluidlogged.WaterRules}) refuse as vanilla does, so the source would never
  * form without this.
  *
  * <p>When a block tells its neighbors it changed, every dry {@link Waterloggable} block at that position or beside
  * it is checked again five ticks later (water's tick rate, as vanilla's spread is scheduled); one that meets the
  * rule gets a water source through {@link Waterlogging#setWater}, so Fluidlogged API's config still has its say.
- * Server worlds only; water that vaporizes (the Nether) never forms.
+ * Server worlds only; water that vaporizes (the Nether) never forms. Without Fluidlogged API nothing holds water, and
+ * nothing is checked.
  */
 @Mod.EventBusSubscriber(modid = BackportCore.MOD_ID)
 public final class SourceForming {
@@ -46,7 +47,7 @@ public final class SourceForming {
     @SubscribeEvent
     public static void neighborNotify(BlockEvent.NeighborNotifyEvent event) {
         World world = event.getWorld();
-        if (world.isRemote) {
+        if (world.isRemote || !Waterlogging.isAvailable()) {
             return;
         }
         BlockPos pos = event.getPos();
