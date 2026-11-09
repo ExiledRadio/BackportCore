@@ -62,6 +62,9 @@ final class SettingsTests {
     }
 
     static void register() {
+        if (System.getenv("BACKPORTCORE_SETTINGSSHOTS") != null) {
+            return; // the client shots show only real mods in the sidebar
+        }
         BackportSettings.register(SelfTestMod.MOD_ID, TestConfig.class);
     }
 

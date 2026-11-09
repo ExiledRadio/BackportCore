@@ -282,7 +282,7 @@ public final class SettingsModel {
         }
 
         /**
-         * @param words {@code client}, {@code server}, {@code newChunks}, {@code vanilla=2}, {@code list=block},
+         * @param words {@code client}, {@code server}, {@code hidden}, {@code newChunks}, {@code vanilla=2}, {@code list=block},
          *              and for a category {@code icon=minecraft:book} and {@code toggle=propertyName}
          */
         static Hints of(String[] words) {
@@ -300,6 +300,8 @@ public final class SettingsModel {
                     h.client = true;
                 } else if (k.equals("server")) {
                     h.client = false;
+                } else if (k.equals("hidden")) {
+                    continue; // read by rawCategory
                 } else if (k.equals("newchunks")) {
                     h.newChunks = true;
                 } else if (k.equals("vanilla")) {
@@ -369,7 +371,11 @@ public final class SettingsModel {
                     }
                     if (general == null) {
                         ConfigCategory cat = cfg.getCategory(root);
-                        general = new Group(page, root, cat.getLanguagekey(), cat.getComment(), null, "");
+                        String key = cat.getLanguagekey();
+                        if (key == null || key.isEmpty() || key.equals(root)) {
+                            key = modid + "." + root; // Forge's own key is the bare category name
+                        }
+                        general = new Group(page, root, key, cat.getComment(), null, "");
                         page.groups.add(general);
                     }
                     addEntry(general, cfg.getCategory(root), f);
@@ -441,6 +447,9 @@ public final class SettingsModel {
         String toggle = h.toggle.isEmpty() ? "enabled" : h.toggle;
         for (Property p : cat.getOrderedValues()) {
             String[] pw = hints.get(path + "/" + p.getName());
+            if (pw != null && Arrays.asList(pw).contains("hidden")) {
+                continue;
+            }
             String pk = p.getLanguageKey();
             if (pk == null || pk.isEmpty() || pk.equals(p.getName())) {
                 pk = key + "." + p.getName();

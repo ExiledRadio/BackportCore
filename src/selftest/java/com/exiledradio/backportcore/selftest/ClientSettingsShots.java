@@ -81,11 +81,16 @@ final class ClientSettingsShots {
                 add(m.icon + "-features", () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), m.modid)));
             }
         }
-        for (String id : BackportSettings.modids()) {
-            if (com.exiledradio.backportcore.settings.Family.get(id) == null) {
-                add(id + "-features", () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), id)));
+        // Pages of mods outside the family exist only once loading finishes, after this constructor.
+        add(null, () -> {
+            int at = this.step + 1;
+            for (String id : BackportSettings.modids()) {
+                if (com.exiledradio.backportcore.settings.Family.get(id) == null && !id.endsWith("_selftest")) {
+                    this.names.add(at, id + "-features");
+                    this.steps.add(at++, () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), id)));
+                }
             }
-        }
+        });
         add("mod-list", () -> mc.displayGuiScreen(new GuiModList(new GuiMainMenu())));
         add(null, this::checkApply);
     }

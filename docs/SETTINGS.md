@@ -19,7 +19,8 @@ Core reads the `@Config` classes Forge already knows (`ConfigManager.getModConfi
 - `@Config.RangeInt` with a span of 1000 or less is a slider. Other numbers and strings are text fields, red
   while invalid.
 - Enums cycle (Shift cycles back). Arrays open the list editor.
-- Names come from the field's lang key (Forge's `@Config.LangKey`, else `modid.category.field`). Without one,
+- Names come from the field's lang key (Forge's `@Config.LangKey`, else `modid.category.field`). Settings
+  directly in the `@Config` class sit on a row whose key is `modid.<category>` (`modid.general`). Without one,
   the field name is made readable: `rebuildUntradedVillagers` shows as "Rebuild untraded villagers".
 - The row line is `<langKey>.short` when the mod writes one. Descriptions come from `<langKey>.tooltip` (what `build_langs.py config` writes), else the `@Config.Comment`.
   The row shows the first sentence; the info line shows two lines; Shift shows all of it.
@@ -50,7 +51,7 @@ subcategories after it. Properties keep the mod's order. A boolean named `enable
   with `.tooltip` and `.short` under them as above.
 - Hints stand in for the annotations: `BackportSettings.hint(modid, "items", "icon=minecraft:chest",
   "toggle=ENABLE_ITEM_KEEPING")` for a row, `hint(modid, "items/KEEP_XP", "client")` for one setting. Words:
-  `client`, `server`, `newChunks`, `vanilla=<value>`, `list=block|item|entity|biome`, `icon=<id>`, `toggle=<key>`.
+  `client`, `server`, `hidden` (left off the screen), `newChunks`, `vanilla=<value>`, `list=block|item|entity|biome`, `icon=<id>`, `toggle=<key>`.
 - Done sets the properties, saves the file if anything changed, and posts the config-changed events.
 - Core only replaces Forge's default config button. A mod with its own `guiFactory` opens
   `new SettingsScreen(parent, modid)` itself when `BackportSettings.page(modid)` is not null.

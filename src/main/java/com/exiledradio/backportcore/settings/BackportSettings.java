@@ -72,7 +72,7 @@ public final class BackportSettings {
      * What {@link Setting}'s annotations say, for a mod registered with a {@link Configuration}.
      *
      * @param path  a category ({@code items}) or one property ({@code items/KEEP_ARMOR})
-     * @param hints for a property {@code client}, {@code newChunks}, {@code vanilla=<value>} or
+     * @param hints for a property {@code client}, {@code hidden} (not on the screen), {@code newChunks}, {@code vanilla=<value>} or
      *              {@code list=block|item|entity|biome}; for a category {@code icon=<item id>} and
      *              {@code toggle=<boolean property>}
      */
