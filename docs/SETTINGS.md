@@ -1,7 +1,8 @@
 # Settings screen
 
 One screen for every backport's settings: Mod Options › Backport Core › Config. Every installed family mod is
-on it with no code. The backports fold into Backport Core's entry in Forge's mod list.
+on it with no code. Each backport keeps its own row in Forge's mod list (so the list's search finds it), and its
+Config button opens this screen on its own page.
 
 Code: `settings/` (common) and `settings/client/`.
 

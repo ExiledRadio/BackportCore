@@ -141,9 +141,9 @@ public final class BackportCore {
     /** Every mod has loaded: the backports' vanilla text and assets go into the client's languages and textures. */
     @Mod.EventHandler
     public void loadComplete(net.minecraftforge.fml.common.event.FMLLoadCompleteEvent event) {
-        // Every backport's settings on Core's settings screen, and every backport under Core in the mod list.
+        // Every backport's settings on Core's settings screen. Each backport keeps its own row in the mod list, so
+        // Forge's mod-list search finds it; its Config button opens this screen on its own page.
         com.exiledradio.backportcore.settings.BackportSettings.build();
-        com.exiledradio.backportcore.settings.BackportSettings.foldModList();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();

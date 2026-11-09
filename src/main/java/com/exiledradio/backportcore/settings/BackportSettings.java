@@ -7,7 +7,6 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import java.util.ArrayList;
@@ -74,22 +73,6 @@ public final class BackportSettings {
             }
         }
         BackportCore.LOGGER.info("Settings: {} pages, {} settings", PAGES.size(), BY_ID.size());
-    }
-
-    /**
-     * Folds every installed backport into Backport Core's entry in Forge's mod list (Forge lists a mod whose
-     * metadata names a parent under that parent). Before the first mod list is built.
-     */
-    public static void foldModList() {
-        for (Family.Member m : Family.MEMBERS) {
-            if (m.modid.equals(BackportCore.MOD_ID)) {
-                continue;
-            }
-            ModContainer mc = Loader.instance().getIndexedModList().get(m.modid);
-            if (mc != null && mc.getMetadata() != null && (mc.getMetadata().parent == null || mc.getMetadata().parent.isEmpty())) {
-                mc.getMetadata().parent = BackportCore.MOD_ID;
-            }
-        }
     }
 
     static synchronized List<SettingsModel.Page> pages() {

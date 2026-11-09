@@ -246,7 +246,7 @@ final class ClientSettingsShots {
         check(total > 0, "pages were built");
         String parent = Loader.instance().getIndexedModList().containsKey("villagerbackport")
                 ? Loader.instance().getIndexedModList().get("villagerbackport").getMetadata().parent : BackportCore.MOD_ID;
-        check(BackportCore.MOD_ID.equals(parent), "backports fold under Core in the mod list");
+        check(!BackportCore.MOD_ID.equals(parent), "backports keep their own rows in the mod list");
     }
 
     private void check(boolean ok, String what) {
