@@ -1,5 +1,7 @@
 package com.exiledradio.backportcore;
 
+import com.exiledradio.backportcore.settings.Setting;
+
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -17,14 +19,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Config(modid = BackportCore.MOD_ID, name = BackportCore.MOD_ID)
 public final class CoreConfig {
 
+    @Setting.Feature(icon = "minecraft:painting")
     @Config.LangKey("config.backportcore.textures")
     @Config.Comment("1.14's Texture Update for vanilla blocks, items and mobs.")
     public static final Textures textures = new Textures();
 
+    @Setting.Feature(icon = "minecraft:map")
     @Config.LangKey("config.backportcore.presentation")
     @Config.Comment("The parts of the game's look that follow the newest installed backport, as vanilla's did at that version.")
     public static final PresentationSettings presentation = new PresentationSettings();
 
+    @Setting.Feature(icon = "minecraft:grass")
     @Config.LangKey("config.backportcore.rendering")
     @Config.Comment("How the world's chunks are rebuilt when blocks change, as later versions do it.")
     public static final Rendering rendering = new Rendering();
@@ -58,6 +63,7 @@ public final class CoreConfig {
                 "Client only; a server ignores it. Takes effect at once. OptiFine, Celeritas, Vintagium and",
                 "Nothirium replace this part of the game with their own threaded rebuilds; with them it does nothing."
         })
+        @Setting.Client
         public BlockUpdates blockUpdates = BlockUpdates.PLAYER_AFFECTED;
     }
 
@@ -71,6 +77,8 @@ public final class CoreConfig {
                 "",
                 "Client only; a server ignores it. Takes effect the next time the game starts."
         })
+        @Setting.Client
+        @Config.RequiresMcRestart
         public String panorama = "LATEST";
 
         @Config.Comment({
@@ -79,6 +87,7 @@ public final class CoreConfig {
                 "",
                 "Client only; a server ignores it."
         })
+        @Setting.Client
         public String reportBugsLink = "https://discord.gg/kxQvMDJBTN";
     }
 
@@ -96,6 +105,7 @@ public final class CoreConfig {
                 "",
                 "Changing it in game reloads resources, as F3+T does."
         })
+        @Setting.Client
         public boolean modernTextures = true;
     }
 

@@ -98,6 +98,7 @@ public final class BackportCore {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new CoreConfig.EventHandler());
         PoseNetwork.init();
+        com.exiledradio.backportcore.settings.SettingsNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         // Stored-waterlogged conversions: listening from here, never from inside a registry event (see there).
@@ -107,6 +108,7 @@ public final class BackportCore {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
+            com.exiledradio.backportcore.settings.client.SettingsClient.init();
         }
     }
 
@@ -137,6 +139,9 @@ public final class BackportCore {
     /** Every mod has loaded: the backports' vanilla text and assets go into the client's languages and textures. */
     @Mod.EventHandler
     public void loadComplete(net.minecraftforge.fml.common.event.FMLLoadCompleteEvent event) {
+        // Every backport's settings on Core's settings screen, and every backport under Core in the mod list.
+        com.exiledradio.backportcore.settings.BackportSettings.build();
+        com.exiledradio.backportcore.settings.BackportSettings.foldModList();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();

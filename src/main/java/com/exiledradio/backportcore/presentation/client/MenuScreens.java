@@ -128,7 +128,7 @@ public final class MenuScreens {
     }
 
     /** 1.14's {@code ConfirmLinkScreen} (trusted): open the link or not, then back to {@code back}. */
-    static void confirmLink(GuiScreen back, String url) {
+    public static void confirmLink(GuiScreen back, String url) {
         Minecraft mc = Minecraft.getMinecraft();
         mc.displayGuiScreen(new GuiConfirmOpenLink((result, id) -> {
             if (result) {
