@@ -25,8 +25,10 @@ import java.util.List;
  * text.
  * <ul>
  *   <li>Pause, 1.14 (18w43a): 1.14.4's {@code PauseScreen} grid, 204 wide (Back to Game; Advancements, Statistics;
- *       Give Feedback, Report Bugs; Options..., Open to LAN; Save and Quit to Title). Forge's own Mod Options button,
- *       which vanilla has no place for, moves below the grid.</li>
+ *       Mod Options, Report Bugs; Options..., Open to LAN; Save and Quit to Title). The user's choice: Forge's Mod
+ *       Options button takes Give Feedback's place, so it sits with the other menus instead of under Save and Quit,
+ *       and Report Bugs opens {@code presentation.reportBugsLink} (the backports' Discord by default), since bugs in
+ *       a backport are not Mojang's. Without a Mod Options button, Give Feedback keeps its place.</li>
  *   <li>Death, 1.15 (19w35a): a hardcore death screen's second button is "Title screen" instead of Delete World or
  *       Leave Server, and it leaves the world for the title screen, saving it (1.15's {@code exitToTitleScreen};
  *       1.12.2's only showed the title screen over a world still running).</li>
@@ -98,14 +100,25 @@ public final class MenuScreens {
                     place(b, w / 2 - 102, top + 120, 204);
                     break;
                 case MOD_OPTIONS:
-                    place(b, w / 2 - 102, top + 144, 204);
+                    place(b, w / 2 - 102, top + 72, 98);
                     break;
                 default:
                     break;
             }
         }
-        buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, FEEDBACK_URL)));
-        buttons.add(new OptionWidgets.Action(w / 2 + 4, top + 72, 98, I18n.format("menu.reportBugs"), () -> confirmLink(gui, BUGS_URL)));
+        if (find(buttons, MOD_OPTIONS) == null) {
+            buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, FEEDBACK_URL)));
+        }
+        String bugs = reportBugsLink();
+        if (!bugs.isEmpty()) {
+            buttons.add(new OptionWidgets.Action(w / 2 + 4, top + 72, 98, I18n.format("menu.reportBugs"), () -> confirmLink(gui, bugs)));
+        }
+    }
+
+    /** The configured Report Bugs link, or empty to leave the button out. */
+    static String reportBugsLink() {
+        String link = com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink;
+        return link == null ? "" : link.trim();
     }
 
     private static void place(GuiButton b, int x, int y, int width) {

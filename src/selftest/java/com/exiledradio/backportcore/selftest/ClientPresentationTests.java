@@ -425,9 +425,14 @@ final class ClientPresentationTests {
         }
         GuiButton back = find(pb, 4);
         GuiButton mods = find(pb, 12);
-        check("client: 1.14's pause menu: Give Feedback and Report Bugs at row 72, 204 wide grid", feedback != null && bugs != null
-                && back != null && back.width == 204 && back.x == pause.width / 2 - 102, describe(pb));
-        check("client: Forge's Mod Options moves below the grid", mods == null || mods.y == top + 144, mods == null ? "none" : mods.y);
+        GuiButton quit = find(pb, 1);
+        check("client: pause menu: Mod Options in Give Feedback's place, Report Bugs beside it, 204 wide grid",
+                mods != null && mods.y == top + 72 && mods.x == pause.width / 2 - 102 && mods.width == 98
+                        && feedback == null && bugs != null && back != null && back.width == 204 && back.x == pause.width / 2 - 102, describe(pb));
+        check("client: pause menu: nothing below Save and Quit", quit != null && quit.y == top + 120 && !below(pb, top + 120), describe(pb));
+        check("client: Report Bugs opens the configured link (Discord by default)",
+                "https://discord.gg/kxQvMDJBTN".equals(com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink),
+                com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink);
         mc.displayGuiScreen(null);
 
         java.lang.reflect.Method orderOf = com.exiledradio.backportcore.presentation.client.CreativeOrder.class.getDeclaredMethod("order", net.minecraft.util.ResourceLocation.class);
@@ -488,6 +493,15 @@ final class ClientPresentationTests {
     @SuppressWarnings("unchecked")
     private static List<GuiButton> buttons(GuiScreen screen) throws Exception {
         return (List<GuiButton>) ReflectionHelper.findField(GuiScreen.class, "buttonList", "field_146292_n").get(screen);
+    }
+
+    private static boolean below(List<GuiButton> buttons, int y) {
+        for (GuiButton b : buttons) {
+            if (b.visible && b.y > y) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static GuiButton find(List<GuiButton> buttons, int id) {

@@ -8,3 +8,5 @@ backportcore.general.presentation.panorama=Panorama
 config.backportcore.presentation.tooltip=Le parti dell'aspetto del gioco che seguono il backport installato più recente, come le aveva vanilla in quella versione.
 backportcore.general.presentation.panorama.tooltip=Quale panorama mostra la schermata del titolo dietro i suoi pulsanti:\nLATEST - quello del backport installato più recente (la scelta di vanilla),\nuna versione, come 1.14 - quello di quella versione, se ne è installato un backport (1.12.2 per quello di 1.12.2),\nROTATE - quello di una versione installata diversa a ogni avvio del gioco.\n\nSolo client; un server lo ignora. Ha effetto dal prossimo avvio del gioco.
 commands.backportcore.locate.usage=/locate structure <struttura>
+backportcore.general.presentation.reportbugslink=Link di "Segnala bug"
+backportcore.general.presentation.reportbugslink.tooltip=Dove porta il pulsante "Segnala bug" del menu di pausa. Per impostazione predefinita, il Discord dei backport. Un modpack può indirizzarlo alla propria pagina. Lascialo vuoto per nascondere il pulsante.\n\nSolo lato client; un server lo ignora.
