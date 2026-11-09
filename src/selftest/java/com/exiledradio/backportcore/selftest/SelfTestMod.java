@@ -27,9 +27,14 @@ public final class SelfTestMod {
         MinecraftForge.EVENT_BUS.register(this);
         PoseTests.register();
         PresentationTests.register();
+        SettingsTests.register();
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            ClientPresentationTests.register();
-            ClientLocateTests.register();
+            if (ClientSettingsShots.active()) {
+                ClientSettingsShots.register();
+            } else {
+                ClientPresentationTests.register();
+                ClientLocateTests.register();
+            }
         }
     }
 
@@ -45,6 +50,13 @@ public final class SelfTestMod {
         TestBlocks.waterStairs = new TestBlocks.WaterStairs();
         event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy,
                 TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
+    }
+
+    @SubscribeEvent
+    public void onConfigChanged(net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent event) {
+        if (MOD_ID.equals(event.getModID())) {
+            SettingsTests.changedEvents++;
+        }
     }
 
     @Mod.EventHandler

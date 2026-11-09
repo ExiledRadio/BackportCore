@@ -82,6 +82,7 @@ public class SettingsScreen extends GuiScreen {
     private int listBottom;
     private int infoY;
     private GuiButton done;
+    private GuiButton resetPage;
     private GuiButton getIt;
     private final GuiButton[] chips = new GuiButton[3];
 
@@ -197,7 +198,8 @@ public class SettingsScreen extends GuiScreen {
         this.done = new GuiButton(ID_DONE, bx, by, bw, 20, "");
         this.buttonList.add(this.done);
         this.buttonList.add(new GuiButton(ID_UNDO, bx - bw - 4, by, bw, 20, I18n.format("backportcore.settings.undo")));
-        this.buttonList.add(new GuiButton(ID_RESET_PAGE, bx - 2 * (bw + 4), by, bw, 20, I18n.format("backportcore.settings.resetPage")));
+        this.resetPage = new GuiButton(ID_RESET_PAGE, bx - 2 * (bw + 4), by, bw, 20, I18n.format("backportcore.settings.resetPage"));
+        this.buttonList.add(this.resetPage);
         String[] views = {"backportcore.settings.view.features", "backportcore.settings.view.all", "backportcore.settings.view.changed"};
         int cw = 54;
         int cx = this.headerH == 26 ? this.mainX + this.mainW - 6 - 3 * cw - 4 : this.mainX + 4;
@@ -234,6 +236,7 @@ public class SettingsScreen extends GuiScreen {
             this.chips[i].enabled = this.view.ordinal() != i;
         }
         this.getIt.visible = !installed && !searching && Family.get(this.selected) != null;
+        this.resetPage.visible = installed || searching;
         this.done.displayString = this.staged.isEmpty() ? I18n.format("gui.done")
                 : I18n.format("backportcore.settings.doneCount", this.staged.size());
     }
@@ -503,6 +506,13 @@ public class SettingsScreen extends GuiScreen {
     private void drawInfo() {
         Gui.drawRect(this.mainX, this.infoY - 2, this.mainX + this.mainW, this.infoY - 1, SettingsStyle.LINE);
         int y = this.infoY + 1;
+        if (this.hoverLines.isEmpty() && (page() != null || !this.query.isEmpty())) {
+            List<String> hint = this.fontRenderer.listFormattedStringToWidth(I18n.format("backportcore.settings.hint"), this.mainW - 12);
+            for (int i = 0; i < Math.min(2, hint.size()); i++) {
+                this.fontRenderer.drawString(hint.get(i), this.mainX + 6, y + i * 10, SettingsStyle.DIM);
+            }
+            return;
+        }
         for (int i = 0; i < Math.min(2, this.hoverLines.size()); i++) {
             String line = this.hoverLines.get(i);
             if (i == 1 && this.hoverLines.size() > 2) {
@@ -518,7 +528,7 @@ public class SettingsScreen extends GuiScreen {
         int n = SettingsClient.waitingForRestart();
         if (n > 0) {
             String text = I18n.format(n == 1 ? "backportcore.settings.restart.one" : "backportcore.settings.restart.many", n);
-            int w = this.buttonList.get(2).x - this.sideX - 6;
+            int w = this.resetPage.x - this.sideX - 6;
             List<String> lines = this.fontRenderer.listFormattedStringToWidth(text, Math.max(40, w));
             int y = lines.size() > 1 ? this.height - 25 : this.height - 19;
             for (int i = 0; i < Math.min(2, lines.size()); i++) {
@@ -904,7 +914,8 @@ public class SettingsScreen extends GuiScreen {
             if (this.g.entries.isEmpty() || SettingsScreen.this.view == View.ALL || SettingsScreen.this.expanded.contains(this.g)) {
                 SettingsScreen.this.fontRenderer.drawString(SettingsStyle.trim(SettingsScreen.this.fontRenderer, desc, left - tx - 4), tx, y + 13, SettingsStyle.MUTED);
             } else {
-                String more = I18n.format("backportcore.settings.more", this.g.entries.size());
+                String more = this.g.entries.size() == 1 ? I18n.format("backportcore.settings.more.one")
+                        : I18n.format("backportcore.settings.more", this.g.entries.size());
                 int mw = SettingsScreen.this.fontRenderer.getStringWidth(more);
                 SettingsScreen.this.fontRenderer.drawString(SettingsStyle.trim(SettingsScreen.this.fontRenderer, desc, left - tx - 10 - mw), tx, y + 13, SettingsStyle.MUTED);
                 SettingsScreen.this.fontRenderer.drawString(more, left - 4 - mw, y + 13, SettingsStyle.DIM);
@@ -943,7 +954,8 @@ public class SettingsScreen extends GuiScreen {
         @Override
         void hover() {
             if (this.g.toggle != null) {
-                infoFor(this.g.toggle, SettingsStyle.description(this.g));
+                String own = SettingsStyle.description(this.g.toggle);
+                infoFor(this.g.toggle, this.g.toggle.name.equals("enabled") || own.isEmpty() ? SettingsStyle.description(this.g) : own);
             } else {
                 info(SettingsStyle.description(this.g), SettingsStyle.TEXT);
             }
@@ -1067,8 +1079,12 @@ public class SettingsScreen extends GuiScreen {
         final GuiButton button;
 
         ButtonControl(Entry e, int w) {
+            this(e, w, new GuiButton(-1, 0, 0, w, 20, ""));
+        }
+
+        ButtonControl(Entry e, int w, GuiButton button) {
             super(e, w);
-            this.button = new GuiButton(-1, 0, 0, w, 20, "");
+            this.button = button;
         }
 
         abstract String label();
@@ -1159,15 +1175,16 @@ public class SettingsScreen extends GuiScreen {
         }
     }
 
-    /** "Reset to default", shown only while the value is not the default. */
+    /** "Reset to default", shown only while the value is not the default: Forge's undo arrow, as its config screen draws it. */
     final class ResetControl extends ButtonControl {
         ResetControl(Entry e) {
-            super(e, 20);
+            super(e, 20, new net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton(-1, 0, 0, 20, 20, "",
+                    net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR, 2.0F));
         }
 
         @Override
         String label() {
-            return "↶";
+            return "";
         }
 
         @Override

@@ -58,7 +58,10 @@ public final class SettingsModel {
         /** The parent group's lang key for a nested category, else null. */
         public final String parentLangKey;
         public final String icon;
-        /** Its on/off switch, or null. Not in {@link #entries}. */
+        /**
+         * The control on the feature's own row, or null: its on/off switch (or {@code @Feature.toggle}'s), or the one
+         * setting of a category that has nothing else. Not in {@link #entries}.
+         */
         public Entry toggle;
         public final List<Entry> entries = new ArrayList<Entry>();
 
@@ -309,6 +312,10 @@ public final class SettingsModel {
             }
         }
         for (Group g : page.groups) {
+            // A category of one setting and no switch: that setting is the row's control.
+            if (g.toggle == null && g.entries.size() == 1 && g.entries.get(0).type != Type.LIST) {
+                g.toggle = g.entries.remove(0);
+            }
             page.entries.addAll(g.all());
         }
         return page;
