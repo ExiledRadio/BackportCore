@@ -55,6 +55,21 @@ final class ClientSettingsShots {
 
     private ClientSettingsShots() {
         Minecraft mc = Minecraft.getMinecraft();
+        // Another mod's own copy of the screen: BACKPORTCORE_SHOT_SCREEN=<class>:<modid> shoots only that.
+        String other = System.getenv("BACKPORTCORE_SHOT_SCREEN");
+        if (other != null && other.indexOf(':') > 0) {
+            String cls = other.substring(0, other.indexOf(':'));
+            String modid = other.substring(other.indexOf(':') + 1);
+            add("shot", () -> {
+                try {
+                    Constructor<?> c = Class.forName(cls).getConstructor(GuiScreen.class, String.class);
+                    mc.displayGuiScreen((GuiScreen) c.newInstance(new GuiMainMenu(), modid));
+                } catch (ReflectiveOperationException | RuntimeException e) {
+                    failed("shot " + other, e);
+                }
+            });
+            return;
+        }
         add("core-features", () -> mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), BackportCore.MOD_ID)));
         add("core-all", () -> view(1));
         add("core-search-chunk", () -> search("chunk"));
