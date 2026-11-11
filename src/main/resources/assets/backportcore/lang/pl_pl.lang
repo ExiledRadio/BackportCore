@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=Tekstury z 1.14
 config.backportcore.presentation=Wygląd
 backportcore.general.presentation.panorama=Panorama
 backportcore.general.presentation.reportbugslink=Link „Zgłoś błędy”
+config.backportcore.recipes=Receptury
+backportcore.general.recipes.unlockrecipes=Odblokowywanie receptur
 config.backportcore.rendering=Renderowanie
 backportcore.general.rendering.blockupdates=Kreator chunk.
 backportcore.general.rendering.blockupdates.none=Wątkowy
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=Którą panoramę ekran tytu�
 backportcore.general.presentation.reportbugslink.tooltip=Dokąd prowadzi przycisk „Zgłoś błędy” w menu pauzy. Domyślnie na Discorda backportów. Modpack może skierować go na własną stronę. Zostaw puste, aby ukryć przycisk.\n\nTylko po stronie klienta; serwer to ignoruje.
 config.backportcore.rendering.tooltip=Jak chunki świata są przebudowywane, gdy zmieniają się bloki, tak jak w późniejszych wersjach.
 backportcore.general.rendering.blockupdates.tooltip=Które zmienione chunki gra przebudowuje od razu, wstrzymując klatkę, zamiast w wątkach kreatora chunków. Ustawienie graficzne „Kreator chunk.” z obecnej wersji vanilla (od 1.18.2):\nNONE - żadne; każda przebudowa idzie w wątkach („Wątkowy”, domyślne w obecnej wersji vanilla; zniszczony\nblok może na jedną klatkę zostawić dziurę),\nPLAYER_AFFECTED - tylko chunki zmienione przez ciebie, przez postawienie lub zniszczenie bloku\n(„Blok. części”),\nNEARBY - także każdy zmieniony chunk w promieniu około 28 bloków od kamery („Blok. całości”,\njedyna zasada przed 1.18.2). Bloki zmieniane przez serwer w pobliżu, na przykład niszczona kolumna wodorostów lub trzciny\ncukrowej, kosztują wtedy przebudowę w wątku renderowania w każdym ticku.\n\nTylko klient; serwer to ignoruje. Działa od razu. OptiFine, Celeritas, Vintagium i Nothirium zastępują tę część gry własnymi przebudowami w wątkach; z nimi to nic nie robi.
+config.backportcore.recipes.tooltip=Receptury wytwarzania z backportów w księdze receptur, odblokowywane tak, jak vanilla odblokowuje własne.
+backportcore.general.recipes.unlockrecipes.tooltip=Odblokowuje receptury wytwarzania z backportów tak, jak vanilla odblokowuje własne: posiadanie sztabki żelaza daje recepturę stołu kowalskiego, a patyka lub węgla recepturę ogniska. Pojawia się powiadomienie o recepturze, a receptura trafia do księgi receptur. Wyłączone: z receptur nadal można wytwarzać, ale nigdy nie pojawiają się w księdze receptur.\n\nJuż odblokowane receptury pozostają odblokowane.
 # --- end config tooltips ---

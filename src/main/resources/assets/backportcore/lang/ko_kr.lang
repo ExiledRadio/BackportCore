@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=1.14 텍스처
 config.backportcore.presentation=외관
 backportcore.general.presentation.panorama=파노라마
 backportcore.general.presentation.reportbugslink='버그 신고' 링크
+config.backportcore.recipes=제작법
+backportcore.general.recipes.unlockrecipes=제작법 해금
 config.backportcore.rendering=렌더링
 backportcore.general.rendering.blockupdates=청크 구성기
 backportcore.general.rendering.blockupdates.none=스레드 활용
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=타이틀 화면의 버튼 �
 backportcore.general.presentation.reportbugslink.tooltip=일시 정지 메뉴의 '버그 신고' 버튼이 여는 곳입니다. 기본값은 백포트의 Discord입니다. 모드팩은 자체 페이지로 바꿀 수 있습니다. 비워 두면 버튼이 숨겨집니다.\n\n클라이언트 전용이며 서버는 무시합니다.
 config.backportcore.rendering.tooltip=블록이 바뀔 때 세계의 청크를 다시 만드는 방식입니다. 이후 버전과 같습니다.
 backportcore.general.rendering.blockupdates.tooltip=바뀐 청크 중 어느 것을 청크 구성기 스레드에 맡기지 않고 프레임을 멈춰서라도 즉시 다시 만들지 정합니다. 현재 바닐라의 '청크 구성기' 비디오 설정입니다(1.18.2부터):\nNONE - 없음. 모든 재구성을 스레드에서 합니다('스레드 활용', 현재 바닐라의 기본값. 부순 블록\n자리에 한 프레임 동안 구멍이 보일 수 있습니다),\nPLAYER_AFFECTED - 블록을 설치하거나 부숴서 직접 바꾼 청크만\n('부분 차단형'),\nNEARBY - 카메라에서 약 28블록 안의 바뀐 청크도 모두('완전 차단형',\n1.18.2 이전의 유일한 규칙). 이 경우 켈프나 사탕수수 기둥이 부서지는 것처럼 서버가 근처에서 바꾼 블록은\n매 틱 렌더 스레드에서 재구성을 일으킵니다.\n\n클라이언트 전용이며 서버는 무시합니다. 즉시 적용됩니다. OptiFine, Celeritas, Vintagium, Nothirium은 게임의 이 부분을 자체 스레드 재구성으로 대체하므로, 이들이 있으면 아무 효과가 없습니다.
+config.backportcore.recipes.tooltip=백포트의 제작법을 제작법 책에 표시하며, 바닐라가 자체 제작법을 해금하는 방식으로 해금합니다.
+backportcore.general.recipes.unlockrecipes.tooltip=백포트의 제작법을 바닐라가 자체 제작법을 해금하는 방식으로 해금합니다. 철 주괴를 가지면 대장장이 작업대의 제작법을, 막대기나 석탄을 가지면 모닥불의 제작법을 얻습니다. 제작법 알림이 표시되고 제작법 책에 제작법이 나타납니다. 끄면 제작법으로 여전히 제작할 수 있지만 제작법 책에는 나타나지 않습니다.\n\n이미 해금한 제작법은 그대로 유지됩니다.
 # --- end config tooltips ---

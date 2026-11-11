@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=1.14材质
 config.backportcore.presentation=外观
 backportcore.general.presentation.panorama=全景图
 backportcore.general.presentation.reportbugslink=“报告漏洞”链接
+config.backportcore.recipes=配方
+backportcore.general.recipes.unlockrecipes=解锁配方
 config.backportcore.rendering=渲染
 backportcore.general.rendering.blockupdates=区块构建器
 backportcore.general.rendering.blockupdates.none=线程化
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=标题画面按钮后面显�
 backportcore.general.presentation.reportbugslink.tooltip=暂停菜单中“报告漏洞”按钮打开的地址。默认为向后移植模组的 Discord。整合包可以改为自己的页面。留空则隐藏该按钮。\n\n仅客户端生效；服务器会忽略此项。
 config.backportcore.rendering.tooltip=方块变化时世界区块的重建方式，与后续版本的做法相同。
 backportcore.general.rendering.blockupdates.tooltip=哪些发生变化的区块由游戏立即重建（会拖住当前帧），而不是交给区块构建器线程。即当前原版的“区块构建器”视频设置（1.18.2起）：\nNONE - 无；所有重建都在线程中进行（“线程化”，当前原版的默认值；破坏的方块\n可能会留下一帧的空洞），\nPLAYER_AFFECTED - 仅限你自己放置或破坏方块而改变的区块\n（“半阻塞”），\nNEARBY - 另外还包括摄像机周围约28格内所有发生变化的区块（“全阻塞”，\n1.18.2之前唯一的规则）。此时服务器在附近改变的方块，例如一列海带或甘蔗\n断裂，每刻都会在渲染线程上引发一次重建。\n\n仅限客户端；服务端会忽略此项。立即生效。OptiFine、Celeritas、Vintagium和Nothirium会用它们自己的线程化重建取代游戏的这一部分；装有它们时此项无效。
+config.backportcore.recipes.tooltip=将向后移植模组的合成配方加入配方书，并按原版解锁自身配方的方式解锁。
+backportcore.general.recipes.unlockrecipes.tooltip=按原版解锁自身配方的方式解锁向后移植模组的合成配方：持有铁锭会获得锻造台的配方，持有木棍或煤炭会获得营火的配方。此时会显示配方提示，配方也会出现在配方书中。关闭：这些配方仍可合成，但不会出现在配方书中。\n\n已解锁的配方保持解锁。
 # --- end config tooltips ---

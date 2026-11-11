@@ -1,3 +1,13 @@
+# 1.2.0
+
+*   **Recipe unlocking** (`recipe.RecipeUnlocks`): every crafting recipe of a mod that requires Backport Core
+    unlocks the way vanilla unlocks the same recipe, with 1.12.2's recipe toast, and then shows in the recipe
+    book. The rules are current Java's (`assets/backportcore/recipes/unlocks.txt`, built by
+    `tools/recipes/build_unlocks.py` from Minecraft 26.3's recipe advancements): a recipe is matched by its
+    result, takes vanilla's trigger items that are ingredients of it, and falls back to any ingredient. No
+    advancement files; a backport does nothing. `RecipeUnlocks.addMod(modid)` adds a mod that does not require
+    Core. Setting `recipes.unlockRecipes` (server), in all 18 languages.
+
 # 1.1.0
 
 Fluidlogged API (3.3.3 or later) comes with Backport Core on CurseForge and only adds waterlogging.

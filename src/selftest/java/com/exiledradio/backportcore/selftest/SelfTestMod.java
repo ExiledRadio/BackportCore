@@ -53,6 +53,16 @@ public final class SelfTestMod {
     }
 
     @SubscribeEvent
+    public void onItems(RegistryEvent.Register<net.minecraft.item.Item> event) {
+        RecipeTests.items(event.getRegistry());
+    }
+
+    @SubscribeEvent
+    public void onRecipes(RegistryEvent.Register<net.minecraft.item.crafting.IRecipe> event) {
+        RecipeTests.recipes(event.getRegistry());
+    }
+
+    @SubscribeEvent
     public void onConfigChanged(net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent event) {
         if (MOD_ID.equals(event.getModID())) {
             SettingsTests.changedEvents++;

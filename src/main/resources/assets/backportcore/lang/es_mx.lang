@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=Texturas de la 1.14
 config.backportcore.presentation=Aspecto
 backportcore.general.presentation.panorama=Panorama
 backportcore.general.presentation.reportbugslink=Enlace de «Reportar errores»
+config.backportcore.recipes=Recetas
+backportcore.general.recipes.unlockrecipes=Desbloquear recetas
 config.backportcore.rendering=Renderizado
 backportcore.general.rendering.blockupdates=Generar chunks
 backportcore.general.rendering.blockupdates.none=Por hilos
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=Qué panorama muestra la pant
 backportcore.general.presentation.reportbugslink.tooltip=A dónde lleva el botón «Reportar errores» del menú de pausa. De forma predeterminada, al Discord de los backports. Un modpack puede dirigirlo a su propia página. Déjalo vacío para ocultar el botón.\n\nSolo en el cliente; un servidor lo ignora.
 config.backportcore.rendering.tooltip=Cómo se recompilan los chunks del mundo cuando cambian los bloques, como en versiones posteriores.
 backportcore.general.rendering.blockupdates.tooltip=Qué chunks modificados recompila el juego de inmediato, deteniendo el fotograma, en lugar de hacerlo en los hilos de compilación de chunks. La opción de gráficos "Generar chunks" del vanilla actual (desde la 1.18.2):\nNONE - ninguno; cada recompilación va por hilos ("Por hilos", el valor predeterminado del vanilla actual; un bloque\nque destruyas puede dejar un agujero durante un fotograma),\nPLAYER_AFFECTED - solo los chunks que cambiaste tú, al colocar o destruir un bloque\n("Por acción"),\nNEARBY - también cada chunk modificado a unos 28 bloques de la cámara ("Siempre",\nla única regla antes de la 1.18.2). Los bloques que el servidor cambia cerca, como una columna de algas o de caña\nde azúcar que se rompe, cuestan entonces una recompilación en el hilo de renderizado cada tick.\n\nSolo cliente; un servidor lo ignora. Surte efecto de inmediato. OptiFine, Celeritas, Vintagium y Nothirium reemplazan esta parte del juego con sus propias recompilaciones por hilos; con ellos no hace nada.
+config.backportcore.recipes.tooltip=Las recetas de fabricación de los backports en el libro de recetas, desbloqueadas como vanilla desbloquea las suyas.
+backportcore.general.recipes.unlockrecipes.tooltip=Desbloquea las recetas de fabricación de los backports como vanilla desbloquea las suyas: tener un lingote de hierro da la receta de la mesa de herrería, y un palo o carbón la de la fogata. Aparece el aviso de receta y la receta se muestra en el libro de recetas. Desactivado: las recetas se pueden fabricar igual, pero nunca aparecen en el libro de recetas.\n\nLas recetas ya desbloqueadas siguen desbloqueadas.
 # --- end config tooltips ---

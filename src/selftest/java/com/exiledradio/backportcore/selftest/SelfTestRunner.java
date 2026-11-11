@@ -74,6 +74,7 @@ public final class SelfTestRunner {
         NetherTests.schedule();
         LocateTests.schedule();
         SettingsTests.schedule();
+        RecipeTests.schedule();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();
     }

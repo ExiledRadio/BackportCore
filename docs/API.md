@@ -598,6 +598,22 @@ CreativePlacement.addEnchantmentType(CreativeTabs.COMBAT, type);        // books
     tab, for its own tab object and (if installed) in JEI. `-Dbackportcore.creativeDump.exit=true` then closes the
     game. With Gradle, an init script can set both on `runClient` (see `docs/CREATIVE_TABS.md`).
 
+## Recipe unlocking (`recipe.RecipeUnlocks`, 1.2.0)
+
+Nothing to call. Every crafting recipe registered under the id of a mod that requires `backportcore` unlocks for a
+player the way vanilla unlocks the same recipe, through 1.12.2's own recipe book (toast included). Core checks each
+player's inventory once a second, when the items in it have changed.
+
+- The rule for a recipe comes from `assets/backportcore/recipes/unlocks.txt` (current Java's recipe advancements;
+  rebuild with `python -I tools/recipes/build_unlocks.py <client.jar> <out file>`). The recipe is matched by its
+  **result's** id as today's game names it, so name items as vanilla does (`modid:smithing_table`).
+- Of vanilla's trigger items, those that are ingredients of the recipe count (and the result itself, where
+  vanilla lists it). With none, any one ingredient unlocks it. Dynamic recipes are left alone.
+- Items compare by today's id: vanilla's through `VanillaOrder.modernId`, a family mod's by its registry path. A
+  tag also takes the ore name 1.12.2 mods use for it (`#planks` is `plankWood`).
+- `RecipeUnlocks.addMod(modId)`: include a mod that does not require Core. `RecipeUnlocks.triggersOf(recipeId)`:
+  what unlocks a recipe (for tests). Setting: `recipes.unlockRecipes`.
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

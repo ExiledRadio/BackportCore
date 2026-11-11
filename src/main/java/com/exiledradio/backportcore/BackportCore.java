@@ -102,6 +102,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.settings.SettingsNetwork.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
+        // Vanilla's recipe unlocking for the backports' recipes (recipe/).
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.recipe.RecipeUnlocks.Events());
         // Waterlogging, with Fluidlogged API or without it (waterlog/). Listening from here, never from inside a
         // registry event (see WaterlogMigration).
         com.exiledradio.backportcore.waterlog.Waterlogging.init();
@@ -163,6 +165,7 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverStarting(FMLServerStartingEvent event) {
         event.registerServerCommand(new FutureMcCommand());
+        com.exiledradio.backportcore.recipe.RecipeUnlocks.serverStarting();
         // Today's /locate, in place of 1.12.2's (same name, so it replaces vanilla's).
         event.registerServerCommand(new com.exiledradio.backportcore.locate.LocateCommand());
     }

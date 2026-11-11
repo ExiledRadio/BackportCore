@@ -1,3 +1,8 @@
+# 1.2.0
+
+*   **The backports' recipes unlock like vanilla's.** Pick up an iron ingot and the smithing table's recipe unlocks; a stick or coal gives the campfire's. The recipe toast shows and the recipe appears in the recipe book. Each recipe unlocks on the items current Java unlocks it on. This covers every crafting recipe of every backport installed (Village & Pillage, Update Aquatic, Buzzy Bees, Nether Update), with no update to them needed. Before, none of their recipes ever showed in the recipe book.
+*   New setting **Recipes > Unlock Recipes** (on by default, server side) to turn it off.
+
 # 1.1.0
 
 Everything the update backports share for their next releases: waterlogging, today's structure files, seed parity, each version's look and feel, swimming and crawling poses, and the backports' items in vanilla's creative tabs.

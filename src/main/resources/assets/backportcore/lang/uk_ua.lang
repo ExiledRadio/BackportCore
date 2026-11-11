@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=Текстури 1.14
 config.backportcore.presentation=Зовнішній вигляд
 backportcore.general.presentation.panorama=Панорама
 backportcore.general.presentation.reportbugslink=Посилання «Повідомити про помилку»
+config.backportcore.recipes=Рецепти
+backportcore.general.recipes.unlockrecipes=Відкривати рецепти
 config.backportcore.rendering=Промальовування
 backportcore.general.rendering.blockupdates=Будівник чанків
 backportcore.general.rendering.blockupdates.none=Потоковий
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=Яку панораму го�
 backportcore.general.presentation.reportbugslink.tooltip=Куди веде кнопка «Повідомити про помилку» в меню паузи. Типово це Discord бекпортів. Збірка може вказати власну сторінку. Залиште порожнім, щоб приховати кнопку.\n\nЛише для клієнта; сервер це ігнорує.
 config.backportcore.rendering.tooltip=Як чанки світу перебудовуються, коли змінюються блоки, як у пізніших версіях.
 backportcore.general.rendering.blockupdates.tooltip=Які змінені чанки гра перебудовує одразу, затримуючи кадр, а не в потоках будівника чанків. Налаштування відео «Будівник чанків» у сучасній ванільній грі (з 1.18.2):\nNONE - жодні; кожна перебудова йде в потоках («Потоковий», типово в сучасній ванільній грі; зламаний\nблок може на один кадр залишити діру),\nPLAYER_AFFECTED - лише чанки, які ви змінили самі, поставивши чи зламавши блок\n(«Напівблок.»),\nNEARBY - також кожен змінений чанк приблизно в межах 28 блоків від камери («Повне блок.»,\nєдине правило до 1.18.2). Тоді блоки, які сервер змінює поблизу, як-от стовп ламінарії чи цукрової\nтростини, що ламається, щотакту коштують перебудови в потоці промальовування.\n\nЛише клієнт; сервер це ігнорує. Діє одразу. OptiFine, Celeritas, Vintagium і Nothirium замінюють цю частину гри своїми потоковими перебудовами; з ними це нічого не робить.
+config.backportcore.recipes.tooltip=Рецепти майстрування з бекпортів у книзі рецептів, які відкриваються так само, як ваніль відкриває свої.
+backportcore.general.recipes.unlockrecipes.tooltip=Відкриває рецепти майстрування з бекпортів так само, як ваніль відкриває свої: залізний зливок в інвентарі дає рецепт ковальського стола, палиця або вугілля — рецепт багаття. З’являється сповіщення про рецепт, і рецепт з’являється в книзі рецептів. Вимкнено: за рецептами й далі можна майструвати, але в книзі рецептів вони не з’являються.\n\nУже відкриті рецепти залишаються відкритими.
 # --- end config tooltips ---

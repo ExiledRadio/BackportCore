@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=Текстуры 1.14
 config.backportcore.presentation=Внешний вид
 backportcore.general.presentation.panorama=Панорама
 backportcore.general.presentation.reportbugslink=Ссылка «Сообщить об ошибке»
+config.backportcore.recipes=Рецепты
+backportcore.general.recipes.unlockrecipes=Открывать рецепты
 config.backportcore.rendering=Отрисовка
 backportcore.general.rendering.blockupdates=Сборка чанков
 backportcore.general.rendering.blockupdates.none=Потоковая
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=Какую панораму �
 backportcore.general.presentation.reportbugslink.tooltip=Куда ведёт кнопка «Сообщить об ошибке» в меню паузы. По умолчанию это Discord бэкпортов. Сборка может указать свою страницу. Оставьте пустым, чтобы скрыть кнопку.\n\nТолько для клиента; сервер это игнорирует.
 config.backportcore.rendering.tooltip=Как чанки мира перестраиваются при изменении блоков, как в поздних версиях.
 backportcore.general.rendering.blockupdates.tooltip=Какие изменённые чанки игра перестраивает сразу, задерживая кадр, а не в потоках сборки чанков. Настройка графики «Сборка чанков» в текущей ванильной игре (с 1.18.2):\nNONE - никакие; все перестройки идут в потоках («Потоковая», по умолчанию в текущей ванильной игре; сломанный\nблок может на один кадр оставить дыру),\nPLAYER_AFFECTED - только чанки, которые вы изменили сами, поставив или сломав блок\n(«По событию»),\nNEARBY - также все изменённые чанки примерно в 28 блоках от камеры («Блокирующая»,\nединственное правило до 1.18.2). Тогда блоки, которые сервер меняет поблизости, например ломающийся столб ламинарии или сахарного\nтростника, каждый такт стоят перестройки в потоке отрисовки.\n\nТолько для клиента; сервер это игнорирует. Действует сразу. OptiFine, Celeritas, Vintagium и Nothirium заменяют эту часть игры своими потоковыми перестройками; с ними настройка ничего не делает.
+config.backportcore.recipes.tooltip=Рецепты крафта из бэкпортов в книге рецептов, открываемые так же, как ваниль открывает свои.
+backportcore.general.recipes.unlockrecipes.tooltip=Открывает рецепты крафта из бэкпортов так же, как ваниль открывает свои: железный слиток в инвентаре даёт рецепт стола кузнеца, палка или уголь — рецепт костра. Появляется уведомление о рецепте, и рецепт появляется в книге рецептов. Выключено: по рецептам по-прежнему можно крафтить, но в книге рецептов они не появляются.\n\nУже открытые рецепты остаются открытыми.
 # --- end config tooltips ---

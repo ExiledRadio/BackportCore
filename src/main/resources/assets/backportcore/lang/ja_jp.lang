@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=1.14のテクスチャ
 config.backportcore.presentation=見た目
 backportcore.general.presentation.panorama=パノラマ
 backportcore.general.presentation.reportbugslink=「バグを報告」のリンク
+config.backportcore.recipes=レシピ
+backportcore.general.recipes.unlockrecipes=レシピの解除
 config.backportcore.rendering=描画
 backportcore.general.rendering.blockupdates=チャンク構築
 backportcore.general.rendering.blockupdates.none=スレッド
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=タイトル画面のボタ�
 backportcore.general.presentation.reportbugslink.tooltip=ポーズメニューの「バグを報告」ボタンの移動先。初期設定ではバックポートのDiscord。Modパックは独自のページに変更できます。空にするとボタンを非表示にします。\n\nクライアント専用。サーバーでは無視されます。
 config.backportcore.rendering.tooltip=ブロックが変化したときに、ワールドのチャンクをどう再構築するか。後のバージョンと同じ方式です。
 backportcore.general.rendering.blockupdates.tooltip=変化したチャンクのうち、チャンク構築スレッドに任せず、フレームを止めてでもすぐに再構築するもの。現在のバニラのビデオ設定「チャンク構築」(1.18.2以降) にあたります:\nNONE - なし。すべての再構築をスレッドで行います (「スレッド」、現在のバニラのデフォルト。壊したブロックの\n跡に1フレームだけ穴が見えることがあります)、\nPLAYER_AFFECTED - ブロックの設置や破壊で自分が変化させたチャンクのみ\n(「仮ブロック化」)、\nNEARBY - さらにカメラから約28ブロック以内の変化したすべてのチャンク (「フルブロック化」、\n1.18.2より前の唯一のルール)。この場合、コンブやサトウキビの柱が壊れるなど、サーバーが近くで変化させたブロックは、\n毎ティック描画スレッドでの再構築を発生させます。\n\nクライアントのみ。サーバーでは無視されます。すぐに反映されます。OptiFine、Celeritas、Vintagium、Nothiriumはゲームのこの部分を独自のスレッド再構築に置き換えるため、これらがある場合は何も起こりません。
+config.backportcore.recipes.tooltip=バックポートのクラフトレシピをレシピ本に表示し、バニラが自身のレシピを解除するのと同じ方法で解除します。
+backportcore.general.recipes.unlockrecipes.tooltip=バックポートのクラフトレシピを、バニラが自身のレシピを解除するのと同じ方法で解除します。鉄インゴットを持つと鍛冶台のレシピ、棒か石炭を持つと焚き火のレシピが手に入ります。レシピの通知が表示され、レシピ本にレシピが載ります。オフ：レシピは引き続きクラフトできますが、レシピ本には表示されません。\n\nすでに解除したレシピは解除されたままです。
 # --- end config tooltips ---

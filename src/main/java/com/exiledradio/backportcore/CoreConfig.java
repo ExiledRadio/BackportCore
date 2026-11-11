@@ -34,7 +34,26 @@ public final class CoreConfig {
     @Config.Comment("How the world's chunks are rebuilt when blocks change, as later versions do it.")
     public static final Rendering rendering = new Rendering();
 
+    @Setting.Feature(icon = "minecraft:knowledge_book", toggle = "unlockRecipes")
+    @Config.LangKey("config.backportcore.recipes")
+    @Config.Comment("The backports' crafting recipes in the recipe book, unlocked the way vanilla unlocks its own.")
+    public static final Recipes recipes = new Recipes();
+
     private CoreConfig() {
+    }
+
+    public static final class Recipes {
+
+        @Config.Comment({
+                "Unlock the backports' crafting recipes the way vanilla unlocks its own: holding an iron",
+                "ingot gives the smithing table's recipe, a stick or coal the campfire's. The recipe toast",
+                "shows and the recipe appears in the recipe book. Off: the recipes still craft but never",
+                "show in the recipe book.",
+                "",
+                "Recipes already unlocked stay unlocked."
+        })
+        @Setting.Server
+        public boolean unlockRecipes = true;
     }
 
     /** Current vanilla's "Chunk Builder" video setting ({@code prioritizeChunkUpdates}, from 1.18.2), by its own value names. */

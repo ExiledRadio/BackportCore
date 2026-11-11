@@ -4,6 +4,8 @@ backportcore.general.textures.moderntextures=Texturas da 1.14
 config.backportcore.presentation=Aparência
 backportcore.general.presentation.panorama=Panorama
 backportcore.general.presentation.reportbugslink=Link de "Relatar bugs"
+config.backportcore.recipes=Receitas
+backportcore.general.recipes.unlockrecipes=Desbloquear receitas
 config.backportcore.rendering=Renderização
 backportcore.general.rendering.blockupdates=Compilador de chunks
 backportcore.general.rendering.blockupdates.none=Paralelo
@@ -123,4 +125,6 @@ backportcore.general.presentation.panorama.tooltip=Qual panorama a tela de títu
 backportcore.general.presentation.reportbugslink.tooltip=Para onde o botão "Relatar bugs" do menu de pausa leva. Por padrão, o Discord dos backports. Um modpack pode apontá-lo para a própria página. Deixe vazio para ocultar o botão.\n\nApenas no cliente; um servidor ignora isto.
 config.backportcore.rendering.tooltip=Como os chunks do mundo são reconstruídos quando blocos mudam, como nas versões mais recentes.
 backportcore.general.rendering.blockupdates.tooltip=Quais chunks alterados o jogo reconstrói na hora, segurando o quadro, em vez de nas threads do compilador de chunks. A opção gráfica "Compilador de chunks" do vanilla atual (1.18.2 em diante):\nNONE - nenhum; toda reconstrução é feita em paralelo ("Paralelo", o padrão do vanilla atual; um bloco\nque você quebra pode deixar um buraco por um quadro),\nPLAYER_AFFECTED - só os chunks que você mesmo alterou, colocando ou quebrando um bloco\n("Parcial"),\nNEARBY - também todo chunk alterado a cerca de 28 blocos da câmera ("Total",\na única regra antes da 1.18.2). Blocos que o servidor altera por perto, como uma coluna de algas ou de cana-de-açúcar\nse quebrando, passam então a custar uma reconstrução na thread de renderização a cada tick.\n\nSó no cliente; o servidor ignora isto. Tem efeito na hora. OptiFine, Celeritas, Vintagium e Nothirium substituem esta parte do jogo por suas próprias reconstruções em paralelo; com eles isto não faz nada.
+config.backportcore.recipes.tooltip=As receitas de fabricação dos backports no livro de receitas, desbloqueadas como o vanilla desbloqueia as suas.
+backportcore.general.recipes.unlockrecipes.tooltip=Desbloqueia as receitas de fabricação dos backports como o vanilla desbloqueia as suas: ter uma barra de ferro dá a receita da bancada de ferraria, e um graveto ou carvão a da fogueira. O aviso de receita aparece e a receita passa a constar no livro de receitas. Desligado: as receitas continuam funcionando, mas nunca aparecem no livro de receitas.\n\nReceitas já desbloqueadas continuam desbloqueadas.
 # --- end config tooltips ---
