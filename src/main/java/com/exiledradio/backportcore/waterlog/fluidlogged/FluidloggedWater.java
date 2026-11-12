@@ -116,6 +116,11 @@ public final class FluidloggedWater implements WaterBackend {
 
     @Override
     public void setWater(ChunkPrimer primer, int x, int y, int z, boolean water) {
+        if (y < 0 || y > 255) {
+            // Fluidlogged API's primer indexes like ChunkPrimer (x << 12 | z << 8 | y): another y would land on
+            // another column, or outside the array. It only carries y 0-255 into the chunk anyway.
+            return;
+        }
         IFluidStatePrimer.of(primer).setFluidState(x, y, z, water ? FluidState.of(FluidRegistry.WATER) : FluidState.EMPTY);
     }
 }

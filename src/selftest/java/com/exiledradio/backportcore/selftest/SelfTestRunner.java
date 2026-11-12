@@ -65,8 +65,23 @@ public final class SelfTestRunner {
 
     SelfTestRunner() {
         STEPS.clear();
+        // -Dbackportcore.selftest.only=deepwater,patches runs only those groups (an extended-world run with another
+        // mod installed checks what that world changes, not the whole suite).
+        String only = System.getProperty("backportcore.selftest.only", "");
+        if (!only.isEmpty()) {
+            for (String group : only.split(",")) {
+                switch (group.trim()) {
+                    case "deepwater": DeepWaterTests.schedule(); break;
+                    case "water": WaterTests.schedule(); WaterRuleTests.schedule(); break;
+                    case "patches": PatchTests.schedule(); break;
+                    default: fail("unknown self-test group", group); break;
+                }
+            }
+            return;
+        }
         WaterTests.schedule();
         WaterRuleTests.schedule();
+        DeepWaterTests.schedule();
         DuplicateTests.schedule();
         StructureTests.schedule();
         PatchTests.schedule();

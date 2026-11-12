@@ -220,6 +220,11 @@ Waterlogging.migrateStoredProperty(block, WATERLOGGED); // a released block's ow
 - A block that shipped its own `waterlogged` property keeps the property and its meta bit while old worlds
   may hold it, stops setting it, and calls `migrateStoredProperty` in init. Each chunk is checked once,
   when it loads, and records that in its data (`backportcore:waterlogChecked`).
+- **Every height** (1.2.0): in Caves & Cliffs Backport's extended worlds (y -64 to 319) Core keeps the water
+  outside y 0-255 itself, one store per section (patch P20), saved with the chunk and sent to clients, so every
+  method above works there. Other worlds keep Fluidlogged API's own store. A backport does nothing for it. The
+  `ChunkPrimer` form only takes y 0-255 (Fluidlogged API's primer has no other heights): set deeper water once the
+  chunk exists.
 - Vanilla blocks get waterlogging from Fluidlogged API itself; with its defaults, vanilla slabs and stairs
   both hold water.
 

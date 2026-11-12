@@ -42,6 +42,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             ScreenPatchesTransformer.class.getName(),
             ChunkRebuildsTransformer.class.getName(),
             WaterloggableTransformer.class.getName(),
+            ExtendedFluidStatesTransformer.class.getName(),
     };
 
     @Override

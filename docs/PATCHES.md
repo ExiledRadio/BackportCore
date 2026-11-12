@@ -416,3 +416,36 @@ or passes an existing constant through a hook of the same type.
 *   **Fails safe**: with no Fluidlogged API the blocks stay plain `Waterloggable` and dry.
 *   **Tested**: `WaterTests` checks that a `Waterloggable` test block and a subclass of one are
     `IFluidloggable`, and every waterlogging test runs through the bridge.
+
+## P20. Fluidlogged API water outside y 0-255
+
+*   **What**: before each return of `net.minecraft.world.chunk.Chunk(World, int, int)`, a call to
+    `waterlog/fluidlogged/SectionFluidStates.install(this)`. In a Caves & Cliffs Backport extended world
+    (`WorldHeights.isCavesAndCliffsExtended`, y -64 to 319) it replaces the chunk's Fluidlogged API store, still
+    empty, with Core's: one Fluidlogged API container per 16-block section, keyed by signed section y (y packed in
+    4 bits at the section's base, as Fluidlogged API's own Cubic Chunks cubes). Every other world keeps
+    Fluidlogged API's store. Only applied when Fluidlogged API and Caves & Cliffs Backport are both installed.
+*   **Why a patch**: Fluidlogged API 3.3.3's chunk store (`FluidStateCapabilityVanilla`) packs a position into
+    a char with y in eight bits, so water below 0 or above 255 lands on another height or nowhere. Its store is
+    made by `PluginChunk$Hooks.createCapabilityInstance`, which it calls right after the constructor's
+    `super()`, before `this.world` is set, so a patch there cannot tell which world the chunk is in; the end of
+    the constructor is the first place that can. No event comes between.
+*   **Saving and sync**: the store writes Fluidlogged API's own save format (version 2), y 0-255 in its `data`
+    list (so the world opened without extended height keeps that water) and the rest under
+    `backportcore:extended`; it reads Fluidlogged API's own saves too. Fluidlogged API's chunk-watch packet
+    carries only `getContainer(0)`, so Core sends every other non-empty section in the same packet type (with its
+    section y, as for Cubic Chunks) on `ChunkWatchEvent.Watch`. Per-position updates already go by y.
+*   **Shape**: two instructions (`aload 0`, `invokestatic`) before a `RETURN`: nothing on the stack, no new
+    branch, so the frames stay valid.
+*   **Fails safe**: constructor not found, or no return: skipped, Fluidlogged API's store everywhere (water
+    outside 0-255 is then lost, as before). A chunk whose store is not Fluidlogged API's plain one (Cubic
+    Chunks), or that already holds water, is left alone.
+*   **Tested**: `PatchTests` (dev and SRG `Chunk`: one call before each return, the class verifies);
+    `DeepWaterTests`: the store, its save in both formats and the sync packets in every run; in an extended world
+    (`runServer -Pselftest -PwithMods=<Caves & Cliffs Backport dev jar> -PselftestOnly=deepwater,water,patches`,
+    level-type `cavesandcliffs`) waterlogged blocks at y -60 and 300, the `Waterlogging` helpers there, the
+    chunk's capability NBT into a new chunk, and over two runs a save and reload. `selftest/deepwater/DeepWater`
+    (`gradlew deepWaterJar -Pselftest`) runs the place / reload check on another mod's dev server.
+*   **Not covered**: generation in a `ChunkPrimer`. Fluidlogged API's primer indexes as `ChunkPrimer` does and
+    its `generateFluidStates` copies y 0-255 only, so `Waterlogging.setWater(primer, ...)` ignores any other y
+    (it used to write another column's water); set such water after the chunk exists.

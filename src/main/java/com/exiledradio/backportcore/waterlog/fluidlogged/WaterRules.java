@@ -72,6 +72,8 @@ public final class WaterRules {
     /** Called once from {@code Waterlogging.init}, with Fluidlogged API installed. */
     public static void register() {
         MinecraftForge.EVENT_BUS.register(WaterRules.class);
+        // Water outside y 0-255 in Caves & Cliffs Backport's extended worlds (patch P20): sync its sections.
+        SectionFluidStates.register();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.asm.Asm;
+import com.exiledradio.backportcore.asm.ExtendedFluidStatesTransformer;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -92,6 +93,25 @@ final class PatchTests {
                 }
             }
         });
+        then(1, "P20 on Chunk (dev and SRG names)", world -> {
+            String state = Asm.state("P20");
+            boolean cc = Launch.classLoader.findResource("com/exiledradio/cavesandcliffsbackport/height/Heights.class") != null;
+            check("P20 " + (cc ? "applied with" : "left out without") + " Caves & Cliffs Backport",
+                    cc ? "applied".equals(state) : "Caves & Cliffs Backport not installed".equals(state), state);
+            byte[] dev = Launch.classLoader.getClassBytes("net.minecraft.world.chunk.Chunk");
+            if (check("dev bytes of Chunk", dev != null)) {
+                verifyP20("dev P20", ExtendedFluidStatesTransformer.patch(dev));
+            }
+            File jar = new File(SRG_JAR);
+            if (jar.isFile()) {
+                try (ZipFile zip = new ZipFile(jar)) {
+                    ZipEntry entry = zip.getEntry("net/minecraft/world/chunk/Chunk.class");
+                    if (check("SRG bytes of Chunk", entry != null)) {
+                        verifyP20("SRG P20", ExtendedFluidStatesTransformer.patch(readAll(zip.getInputStream(entry))));
+                    }
+                }
+            }
+        });
         then(1, "patches on SRG names", world -> {
             File jar = new File(SRG_JAR);
             if (!check("Forge's SRG jar in the Gradle cache", jar.isFile(), SRG_JAR)) {
@@ -167,6 +187,43 @@ final class PatchTests {
             }
         }
         check(label + ": every method of " + name + " verifies", bad == null, bad);
+    }
+
+    /** Every return of Chunk(World, int, int) calls SectionFluidStates.install first, and the class verifies. */
+    private static void verifyP20(String label, byte[] out) {
+        ClassNode node = read(out);
+        int returns = 0;
+        int calls = 0;
+        for (MethodNode m : node.methods) {
+            if (!m.name.equals("<init>") || !m.desc.equals("(Lnet/minecraft/world/World;II)V")) {
+                continue;
+            }
+            for (AbstractInsnNode insn : m.instructions.toArray()) {
+                if (insn.getOpcode() == org.objectweb.asm.Opcodes.RETURN) {
+                    returns++;
+                    AbstractInsnNode before = insn.getPrevious();
+                    while (before != null && before.getOpcode() < 0) {
+                        before = before.getPrevious();
+                    }
+                    if (before instanceof MethodInsnNode && ((MethodInsnNode) before).name.equals("install")
+                            && ((MethodInsnNode) before).owner.endsWith("waterlog/fluidlogged/SectionFluidStates")) {
+                        calls++;
+                    }
+                }
+            }
+        }
+        check(label + ": install before each of Chunk(World, int, int)'s returns", returns > 0 && calls == returns,
+                calls + "/" + returns);
+        String bad = null;
+        for (MethodNode m : node.methods) {
+            try {
+                new Analyzer<BasicValue>(new BasicVerifier()).analyze(node.name, m);
+            } catch (Exception e) {
+                bad = m.name + m.desc + ": " + e.getMessage();
+                break;
+            }
+        }
+        check(label + ": every method of Chunk verifies", bad == null, bad);
     }
 
     private static ClassNode read(byte[] bytes) {

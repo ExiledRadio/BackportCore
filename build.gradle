@@ -96,8 +96,21 @@ jar {
 // The run tasks always run (a dev server is how the library is tested). Never cleanRunServer to force
 // one: it deletes eclipse/.
 [runServer, runClient].each { task ->
-	task.systemProperty 'fml.coreMods.load', coremod
+	// -PwithCoremods=<class>[,<class>...]: the coremods of the -PwithMods jars, when their manifests do not name them.
+	task.systemProperty 'fml.coreMods.load', project.hasProperty('withCoremods') ? "${coremod},${project.property('withCoremods')}" : coremod
 	task.outputs.upToDateWhen { false }
+	// -PselftestOnly=deepwater,patches: only those self-test groups (SelfTestRunner).
+	if (project.hasProperty('selftestOnly')) {
+		task.systemProperty 'backportcore.selftest.only', project.property('selftestOnly')
+	}
+}
+
+// -PwithMods=<jar>[;<jar>...]: other mods' dev jars on the run classpath, for a self-test in their worlds (Caves &
+// Cliffs Backport's extended height for DeepWaterTests). GradleStart finds a coremod in such a jar by its manifest.
+if (project.hasProperty('withMods')) {
+	dependencies {
+		runtime files(project.property('withMods').toString().split(';'))
+	}
 }
 
 // Headless self-tests: `gradlew runServer -Pselftest` compiles src/selftest in (FG2's runServer runs
@@ -105,6 +118,15 @@ jar {
 if (project.hasProperty('selftest')) {
 	sourceSets.main.java.srcDir 'src/selftest/java'
 	sourceSets.main.resources.srcDir 'src/selftest/resources'
+
+	// The deep water check on its own, for another mod's dev server (its eclipse/mods): see
+	// selftest/deepwater/DeepWater. `gradlew deepWaterJar -Pselftest`.
+	task deepWaterJar(type: Jar) {
+		classifier = 'deepwater'
+		from(sourceSets.main.output) {
+			include 'com/exiledradio/backportcore/selftest/deepwater/**'
+		}
+	}
 } else {
 	// Gradle's copy into build/resources keeps files a selftest run left there, so the jars leave
 	// them out by name as well.
