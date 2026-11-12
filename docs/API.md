@@ -144,7 +144,11 @@ int bed = heights.floor(x, z);   // 1.14's OCEAN_FLOOR_WG: one above the sea bed
 Handles vanilla (and subclasses that keep vanilla noise), superflat, OTG, Biomes O' Plenty, RTG, Caves Not
 Cliffs and Farmer's Future Delight. `floor` reads the same terrain as `height`, so it is as exact (Farmer's
 Future Delight's surface-estimate fallback is the one approximation). Call `forWorld` once per structure start on the server thread: it drops
-the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods.
+the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods,
+Caves & Cliffs Backport's extended height among them (1.2.0; `isCavesAndCliffsExtended(world)`).
+
+A chunk generator that knows its own surface implements `TerrainSource` (1.2.0): `forWorld` asks its
+`columnTerrain(world)` before any other adapter.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
 ### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.1.0)

@@ -1,5 +1,9 @@
 # 1.2.0
 
+*   **Caves & Cliffs Backport's extended height**: `WorldHeights` answers its y -64 to 319 worlds (and their
+    section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
+    generator that says where its own surface is, asked first by `TerrainHeights.forWorld`.
+
 *   **Recipe unlocking** (`recipe.RecipeUnlocks`): every crafting recipe of a mod that requires Backport Core
     unlocks the way vanilla unlocks the same recipe, with 1.12.2's recipe toast, and then shows in the recipe
     book. The rules are current Java's (`assets/backportcore/recipes/unlocks.txt`, built by

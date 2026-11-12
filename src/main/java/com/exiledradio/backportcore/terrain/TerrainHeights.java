@@ -34,7 +34,8 @@ import java.util.WeakHashMap;
  * using them when a village is laid out.
  *
  * <p>Only possible when the world uses the vanilla overworld generator (or a subclass that can be
- * built the same way), or a 1.18 terrain mod this can read: Farmer's Future Delight's Caves &amp;
+ * built the same way), a generator that says where its surface is ({@link TerrainSource}), or a 1.18 terrain mod
+ * this can read: Farmer's Future Delight's Caves &amp;
  * Cliffs world type ({@link FfdTerrain}), Caves Not Cliffs ({@link CncTerrain}), OTG ({@link OtgTerrain}) or
  * Realistic Terrain Generation ({@link RtgTerrain}). Anywhere else there
  * is no sampler, and villages there stay 1.12.2's.
@@ -87,6 +88,16 @@ public final class TerrainHeights {
         }
 
         IChunkGenerator live = ((WorldServer) world).getChunkProvider().chunkGenerator;
+
+        // A generator that answers for itself (Caves & Cliffs Backport's 1.18 terrain) comes first.
+        if (live instanceof TerrainSource) {
+            ColumnTerrain own = ((TerrainSource) live).columnTerrain(world);
+            if (own != null) {
+                sampler = new TerrainHeights(null, own);
+                SAMPLERS.put(world, sampler);
+                return sampler;
+            }
+        }
 
         CncTerrain cnc = CncTerrain.of(world);
         if (cnc != null) {
