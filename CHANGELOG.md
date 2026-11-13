@@ -2,7 +2,10 @@
 
 *   **Caves & Cliffs Backport's extended height**: `WorldHeights` answers its y -64 to 319 worlds (and their
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
-    generator that says where its own surface is, asked first by `TerrainHeights.forWorld`.
+    generator that says where its own surface is, asked first by `TerrainHeights.forWorld`. New
+    `ModernGeneration`: a chunk generator that runs a newer version's world generation in full (its placed
+    features and 3D biomes), so the backports' own coral, kelp and seagrass generators step aside in its worlds
+    and their spawn rules read its biomes.
 
 *   **Structures where a world's generator starts them**: `StructureSource` / `StartRules`. A chunk generator can
     decide where today's structures start, whichever backport builds them; every `ScatteredStructure` (and its
