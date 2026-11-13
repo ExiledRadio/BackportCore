@@ -4,6 +4,15 @@
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
     generator that says where its own surface is, asked first by `TerrainHeights.forWorld`.
 
+*   **Structures where a world's generator starts them**: `StructureSource` / `StartRules`. A chunk generator can
+    decide where today's structures start, whichever backport builds them; every `ScatteredStructure` (and its
+    `/locate`) follows it, and `ruledStart` names the variant. Caves & Cliffs Backport's 1.18 generator answers
+    for shipwrecks, ocean ruins, buried treasure, ruined portals and pillager outposts with 1.18's placement.
+
+*   **Terrain adaptation** (`TerrainAdaptation`): a structure kind registers how its pieces meet the ground
+    (today's `terrain_adaptation`) and lays them out ahead, so a generator with 1.18 terrain shapes the ground
+    around them before the chunk exists.
+
 *   **Waterlogging at every height** (patch P20): in Caves & Cliffs Backport's extended worlds, blocks below y 0
     and above y 255 hold water like any other. Fluidlogged API keeps a chunk's water in one store that only has
     room for y 0-255; in those worlds Core gives each chunk one store per 16-block section instead, saved with the
