@@ -104,6 +104,7 @@ final class ClientPresentationTests {
                         finishTitle(mc);
                         optionScreens(mc);
                         debugKeys(mc);
+                        ClientLookFeelTests.title(mc);
                         multiplayerWarning(mc);
                         this.stage = 2;
                     }

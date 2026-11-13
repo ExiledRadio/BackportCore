@@ -63,8 +63,20 @@ Since Core 1.2.0:
 | Music toast sprites | `v.replaceAsset("textures/gui/sprites/toast/now_playing.png", rl)`, `icon/music_notes.png` | The toast shows once they are supplied; names from `music.<path>` lang keys (1.12.2's tracks by their 1.20.5 names, in Core's lang). |
 
 Core's own options from 1.21.x (shown from the version that added them): Music Frequency, Music Toast and UI
-(Music and Sounds, 1.21.6), Attack/Destroy and Use Item/Place Block Hold or Toggle (Controls, 1.21.9). Menus
-without a world run at 60 frames a second from 1.21.2 (P22).
+(Music and Sounds, 1.21.6), Attack/Destroy and Use Item/Place Block Hold or Toggle (Controls, 1.21.9), Cloud Distance
+(Video Settings, 1.21.6), and 1.21.11's Preset, See-Through Leaves, Weather Effect Radius, Texture Filtering,
+Anisotropic Filtering, Show Vignette and Chunk Fade Time (below). Menus without a world run at 60 frames a second
+from 1.21.2 (P22).
+
+| Piece | Call | Notes |
+|---|---|---|
+| A vanilla asset's version | `contribution.replacedAssets()` | The assets that version replaces, by path. |
+| A slider's value text | `slider.valueText(v -> ...)` | 1.21.11's "Anisotropic Filtering: 4x" shows 2 to the saved value. |
+| An option's name | `option.path()` | The id without its namespace. Options named after vanilla's (`toggle_crouch`) follow vanilla's moves between screens, and the presets set them. |
+
+A backport that copies one of vanilla's options names it after vanilla's own (`<modid>:inactivity_fps_limit`,
+`<modid>:toggle_crouch`, `<modid>:entity_distance_scaling`): Core places it by that name on 1.21.11's Video Settings,
+moves it as vanilla moved it, and the graphics presets set it.
 
 ## How each piece resolves
 
@@ -130,9 +142,58 @@ change one version made stays made when only a later backport is installed:
   and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.
 * **Accessibility Guide** (1.16.4): at the bottom of Accessibility Settings, beside Done.
 * **World list** (1.13): Edit World's Make Backup (a zip in `.minecraft/backups`) and Open Backups Folder.
+* **Controls** (1.18): Options' "Controls..." opens Core's Controls screen (Mouse Settings... and Key Binds..., then
+  Toggle Crouch, Toggle Sprint, Attack/Destroy, Use Item/Place Block and Auto-Jump in 1.21.11's order, then the
+  backports' Controls options); "Key Binds..." is 1.12.2's key list with its top rows gone, titled Key Binds, the list
+  from y 20. Toggle Crouch and Toggle Sprint (any mod's option of that name) show on Accessibility and Controls.
+* **Accessibility** (1.21.9): Auto-Jump, Toggle Crouch and Toggle Sprint are on Controls only, and "Controls..." sits
+  beside Narrator. 1.21.11: View Bobbing joins it from Video Settings.
+* **Video Settings** (1.21.11, `VideoLayout`, `VideoSections`): three sections under their headers (Display: Max
+  Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, Brightness; Quality & Performance: the Preset across the
+  top, then Render Distance, Smooth Lighting, Clouds, Particles, Mipmap Levels, Entity Shadows, Entity Distance, Menu
+  Background Blurriness, Cloud Distance, See-Through Leaves, Texture Filtering, Anisotropic Filtering, Weather Effect
+  Radius; Preferences: Autosave Indicator, Show Vignette, Attack Indicator, Chunk Fade Time; any other entry after
+  them). Backport options with those names land in their places; 1.12.2's list draws every row 25 pixels tall, so
+  the headers sit on rows of their own. Graphics is gone: **See-Through Leaves** is 1.12.2's Fancy graphics (what draws
+  leaves see-through; taken from Graphics the first time), and the rest of what Fancy did has its own option.
+  * **Preset** (`GraphicsPreset`): a 310-wide slider over Fast, Fancy, Fabulous! and Custom; letting go on one of
+    the first three sets 1.21.11's values for the section (render distance 8/16/32, cloud distance 32/64/128, mipmaps
+    2/4/4, weather radius 5/10/10, ...), the backports' options of those names included. Changing any of them makes it
+    Custom.
+  * **Cloud Distance** (from 1.21.6, P26): the clouds reach 2 to 128 chunks and fade out by that distance.
+  * **Weather Effect Radius** (P27): rain and snow within 3 to 10 blocks.
+  * **Texture Filtering**: None or Anisotropic, and **Anisotropic Filtering** 2x, 4x or 8x (on with Anisotropic only),
+    set on the block atlas with OpenGL's anisotropic filtering. 1.21.11's RGSS is a shader 1.12.2 cannot run.
+  * **Show Vignette**: off removes it; on draws it with See-Through Leaves off too.
+  * **Chunk Fade Time** (P28): chunks drawn for the first time fade in from the fog color, 0 to 2 seconds.
+* **F3** (1.21.9, `DebugEntries`, `DebugScreen`): each part of the debug screen is Off, In F3 (In Overlay from 1.21.11)
+  or Always, on **Debug Options** (F3 + F6, `DebugOptionsScreen`) with its search box and the Default and Performance
+  profiles. 1.12.2's lines are sorted into vanilla's parts (game_version, fps, chunk_render_stats,
+  entity_render_stats, particle_render_stats, chunk_source_stats, player_position, player_section_position,
+  light_levels, biome, local_difficulty, looking_at_block, memory, system_specs, post_effect; a line no part claims
+  belongs to the one above it, or shows with F3 like other mods' lines), keeping 1.12.2's order. The default profile
+  shows what 1.21.9's does: version, fps, memory, system specs and position. Always parts show with F3 hidden. The
+  renderers are parts too: 3d_crosshair, entity_hitboxes (F3 + B), chunk_borders (F3 + G) and 1.12.2's water,
+  heightmap, collision box and solid face renderers. F3's combinations work in menus (not while typing), and the left
+  column ends with "To edit: press [F3+F6]". Saved in Core's options file (`backportcore:debug_profile`,
+  `backportcore:debug/<part>`).
+* **Debug key binds** (1.21.11, `DebugBindings`, P30): F3 (as the modifier and as the screen's toggle), the crash's C
+  and each F3 combination of the newest map are key binds in the Key Binds screen's "Debug" category.
+* **Title logo** (`VanillaRevisions.TitleLogo`, P29): 1.20's layout when the newest backport that replaces
+  `minecraft.png` is 1.20 or later and replaces `edition.png` too (so its textures are 1.20's): `minecraft.png` as one
+  256 by 44 piece, `edition.png` 128 by 14 under it, Minceraft from `minceraft.png`, the splash at width / 2 + 123, 69.
+  A backport of 1.20 or later registers `replaceAsset` for `textures/gui/title/minecraft.png`, `edition.png` and
+  `minceraft.png` with vanilla's own files, and draws nothing itself.
 ## What is not covered yet
 
-* The 1.20 title logo layout (its logo file can be replaced; the 1.20 layout is not drawn).
+* 1.21.11's Fullscreen Resolution (1.12.2 goes fullscreen at the desktop's mode), Biome Blend, Prioritize Chunk
+  Updates, Simulation Distance and Improved Transparency (no 1.12.2 counterpart; a backport's option of that name is
+  placed and set by the presets), RGSS texture filtering.
+* The debug parts 1.12.2's screen has no lines for (tps, gpu_utilization, simple_performance_impactors,
+  looking_at_fluid, looking_at_entity, heightmap, sound_mood, entity_spawn_counts, chunk_generation_stats, the
+  other visualizers), and 1.21.9's arrangement of the parts into the two columns: 1.12.2's order stays.
+* Allow Cursor Changes (LWJGL 2 has no system cursors), and slider arrow keys (1.12.2's screens have no keyboard
+  focus).
 * Forge's own loading screen during the game's start stays Forge's; Core's startup screen shows as each load
   ends. 1.12.2 loads resources in one blocking call, so the bar cannot move during a reload.
 * The world list's search bar (1.13.1): its list, title and focus are private to `GuiWorldSelection`, so it

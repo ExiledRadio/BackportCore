@@ -1,6 +1,8 @@
 package com.exiledradio.backportcore.presentation.client;
 
+import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.option.OptionScreen;
 import com.exiledradio.backportcore.presentation.option.PresentationOption;
 
@@ -53,6 +55,21 @@ public class OptionsListScreen extends GuiScreen {
         return new OptionsListScreen(parent, "options.accessibility.title", OptionScreen.ACCESSIBILITY, ACCESSIBILITY);
     }
 
+    /** 1.18's Controls (after Mouse Settings... and Key Binds...): Auto-Jump, with the toggles before it. */
+    public static final GameSettings.Options[] CONTROLS = {GameSettings.Options.AUTO_JUMP};
+
+    /**
+     * 1.21.11's order of Controls' options ({@code ControlsScreen.options}) by name: vanilla's settings and the
+     * options named after them, whichever mod registers them; others follow.
+     */
+    static final String[] CONTROLS_ORDER = {"toggle_crouch", "toggle_sprint", "toggle_attack", "toggle_use", "AUTO_JUMP",
+            "sprint_window", "operator_items_tab"};
+
+    /** @return Core's Controls screen (1.18 and later; before, Options opens 1.12.2's own) */
+    public static OptionsListScreen controls(GuiScreen parent) {
+        return new OptionsListScreen(parent, "controls.title", OptionScreen.CONTROLS, CONTROLS);
+    }
+
     /** @return Core's Mouse Settings screen */
     public static OptionsListScreen mouse(GuiScreen parent) {
         return new OptionsListScreen(parent, "options.mouse_settings.title", OptionScreen.MOUSE, MOUSE);
@@ -68,11 +85,33 @@ public class OptionsListScreen extends GuiScreen {
         this.buttonList.clear();
         List<GuiButton> entries = new ArrayList<GuiButton>();
         List<String> keys = new ArrayList<String>();
+        GameVersion newest = Presentation.newest();
         for (GameSettings.Options o : this.vanilla) {
+            if (o == GameSettings.Options.AUTO_JUMP && this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.controlsLeaveAccessibility(newest)) {
+                continue;
+            }
             entries.add(vanillaButton(o));
             keys.add(o.name());
         }
+        if (this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.videoSections(newest)) {
+            // 1.21.11: View Bobbing left Video Settings for Accessibility.
+            entries.add(vanillaButton(GameSettings.Options.VIEW_BOBBING));
+            keys.add(GameSettings.Options.VIEW_BOBBING.name());
+        }
         OptionsInjector.insertAfterAnchors(entries, keys, Presentation.optionsOn(this.screen));
+        if (this.screen == OptionScreen.CONTROLS) {
+            order(entries, keys, CONTROLS_ORDER);
+            // 1.18's ControlsScreen: Mouse Settings... and Key Binds... first.
+            entries.add(0, new OptionWidgets.Action(0, 0, 150, I18n.format("options.mouse_settings"),
+                    () -> this.mc.displayGuiScreen(mouse(this))));
+            entries.add(1, new OptionWidgets.Action(0, 0, 150, I18n.format("controls.keybinds"),
+                    () -> this.mc.displayGuiScreen(new net.minecraft.client.gui.GuiControls(this, this.mc.gameSettings))));
+        } else if (this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.controlsLeaveAccessibility(newest)) {
+            // 1.21.9: "Controls..." beside Narrator.
+            int at = keys.indexOf(GameSettings.Options.NARRATOR.name());
+            entries.add(at + 1, new OptionWidgets.Action(0, 0, 150, I18n.format("options.controls"),
+                    () -> this.mc.displayGuiScreen(controls(this))));
+        }
         int i = 0;
         int lastY = this.height / 6;
         for (GuiButton b : entries) {
@@ -91,6 +130,31 @@ public class OptionsListScreen extends GuiScreen {
         }
         int doneY = Math.max(this.height / 6 + 144, lastY + 24);
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, doneY, I18n.format("gui.done")));
+    }
+
+    /**
+     * Puts the entries named in {@code order} (a vanilla name, or an option id's path) first, in that order; the rest
+     * keep theirs after them. {@code entries} and {@code keys} run in step.
+     */
+    static void order(List<GuiButton> entries, List<String> keys, String[] order) {
+        List<GuiButton> e = new ArrayList<GuiButton>();
+        List<String> k = new ArrayList<String>();
+        for (String name : order) {
+            for (int i = 0; i < keys.size(); i++) {
+                String key = keys.get(i);
+                if (key.equals(name) || key.indexOf(':') > 0 && key.substring(key.indexOf(':') + 1).equals(name)) {
+                    e.add(entries.remove(i));
+                    k.add(keys.remove(i));
+                    break;
+                }
+            }
+        }
+        e.addAll(entries);
+        k.addAll(keys);
+        entries.clear();
+        keys.clear();
+        entries.addAll(e);
+        keys.addAll(k);
     }
 
     /** 1.16.4's Accessibility Guide. */

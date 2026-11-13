@@ -91,6 +91,11 @@ public final class PresentationHooks {
      * @return true when the key was handled (vanilla then does not also press that key's binding)
      */
     public static boolean processKeyF3(Minecraft mc, int key) {
+        // 1.21.11's Debug key binds: a rebound combination's key stands for its default.
+        key = DebugBindings.translate(key);
+        if (key < 0) {
+            return false;
+        }
         List<Contribution> installed = Presentation.installed();
         if (!DebugKeys.changed(installed)) {
             return vanillaF3(mc, key);
@@ -123,6 +128,73 @@ public final class PresentationHooks {
             BackportCore.LOGGER.error("F3 keys: vanilla's processKeyF3 failed", e);
             return false;
         }
+    }
+
+    // ---- P26 to P30 (since Core 1.2.0) ----
+
+    /** P26: at the head of {@code RenderGlobal.renderClouds}. */
+    public static void cloudsBegin() {
+        RenderOptions.cloudsBegin();
+    }
+
+    /** P26: the fast clouds' -256 and 256. */
+    public static int cloudFast(int vanilla) {
+        return RenderOptions.cloudFast(vanilla);
+    }
+
+    /** P26: the fancy clouds' cell bounds, -3 and 4. */
+    public static int cloudFancy(int vanilla) {
+        return RenderOptions.cloudFancy(vanilla);
+    }
+
+    /** P27: {@code renderRainSnow}'s 5 and 10. */
+    public static int weatherRadius(int vanilla) {
+        return RenderOptions.weatherRadius(vanilla);
+    }
+
+    /** P28: each chunk as {@code ChunkRenderContainer.preRenderChunk} draws it. */
+    public static void chunkFadePre(net.minecraft.client.renderer.chunk.RenderChunk chunk) {
+        RenderOptions.chunkPre(chunk);
+    }
+
+    /** P28: after each layer's chunks. */
+    public static void chunkFadeEnd() {
+        RenderOptions.chunkLayerEnd();
+    }
+
+    /** P29: {@code GuiMainMenu.drawScreen}'s logo pieces. */
+    public static void titleLogoRect(Gui gui, int x, int y, int u, int v, int w, int h) {
+        TitleLogo.rect(gui, x, y, u, v, w, h);
+    }
+
+    /** P29: {@code GuiMainMenu.drawScreen}'s "Java Edition". */
+    public static void titleEdition(int x, int y, float u, float v, int w, int h, float tw, float th) {
+        TitleLogo.edition(x, y, u, v, w, h, tw, th);
+    }
+
+    /** P29: the splash's offset from the middle. */
+    public static int splashX(int vanilla) {
+        return TitleLogo.splashX(vanilla);
+    }
+
+    /** P29: the splash's height. */
+    public static float splashY(float vanilla) {
+        return TitleLogo.splashY(vanilla);
+    }
+
+    /** P30: F3 as the modifier. */
+    public static int debugModifierKey(int vanilla) {
+        return DebugBindings.modifierKey(vanilla);
+    }
+
+    /** P30: F3 as the debug screen's toggle. */
+    public static int debugOverlayKey(int vanilla) {
+        return DebugBindings.overlayKey(vanilla);
+    }
+
+    /** P30: C in F3 + C's crash. */
+    public static int debugCrashKey(int vanilla) {
+        return DebugBindings.crashKey(vanilla);
     }
 
     // ---- P24, P25: the sky ----

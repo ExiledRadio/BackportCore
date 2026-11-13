@@ -83,6 +83,61 @@ public final class Presentation {
     public static final CycleOption TOGGLE_USE = new CycleOption("backportcore:toggle_use", "key.use", OptionScreen.CONTROLS,
             new String[] {"hold", "toggle"}, new String[] {"options.key.hold", "options.key.toggle"}, "hold");
 
+    // ---- 1.21.6 to 1.21.11's Video Settings (Core owns the screen, the clouds and the rendering they change) ----
+
+    /** 1.21.11's Preset (Quality &amp; Performance): Fast, Fancy and Fabulous! set the section's settings; Custom once changed. */
+    public static final CycleOption GRAPHICS_PRESET = new CycleOption("backportcore:graphics_preset", "options.graphics.preset",
+            OptionScreen.VIDEO, new String[] {"fast", "fancy", "fabulous", "custom"}, new String[] {"options.graphics.fast",
+            "options.graphics.fancy", "options.graphics.fabulous", "options.graphics.custom"}, "fancy");
+    /** 1.21.6's Cloud Distance, 2 to 128 chunks. */
+    public static final SliderOption CLOUD_RANGE = new SliderOption("backportcore:cloud_range", "options.renderCloudsDistance",
+            OptionScreen.VIDEO, 2.0, 128.0, 1.0, 128.0);
+    /** 1.21.11's See-Through Leaves: 1.12.2's Fancy graphics, which is what draws leaves see-through. */
+    public static final ToggleOption CUTOUT_LEAVES = new ToggleOption("backportcore:cutout_leaves", "options.cutoutLeaves",
+            OptionScreen.VIDEO, true);
+    /** 1.21.11's Weather Effect Radius, 3 to 10 blocks (1.12.2: 10 with Fancy graphics, 5 with Fast). */
+    public static final SliderOption WEATHER_RADIUS = new SliderOption("backportcore:weather_radius", "options.weatherRadius",
+            OptionScreen.VIDEO, 3.0, 10.0, 1.0, 10.0);
+    /** 1.21.11's Texture Filtering: None or Anisotropic (RGSS is a shader of 1.21.11's terrain, which 1.12.2 cannot run). */
+    public static final CycleOption TEXTURE_FILTERING = new CycleOption("backportcore:texture_filtering", "options.textureFiltering",
+            OptionScreen.VIDEO, new String[] {"none", "anisotropic"}, new String[] {"options.textureFiltering.none",
+            "options.textureFiltering.anisotropic"}, "none");
+    /** 1.21.11's Anisotropic Filtering, 2x, 4x or 8x (saved as the power of two, as vanilla's {@code maxAnisotropyBit}). */
+    public static final SliderOption MAX_ANISOTROPY = new SliderOption("backportcore:max_anisotropy", "options.maxAnisotropy",
+            OptionScreen.VIDEO, 1.0, 3.0, 1.0, 2.0);
+    /** 1.21.11's Show Vignette (Preferences; 1.12.2 draws it only with Fancy graphics). */
+    public static final ToggleOption VIGNETTE = new ToggleOption("backportcore:vignette", "options.vignette", OptionScreen.VIDEO, true);
+    /** 1.21.11's Chunk Fade Time, 0 to 2 seconds in twentieths: newly drawn chunks fade in from the fog color. */
+    public static final SliderOption CHUNK_FADE = new SliderOption("backportcore:chunk_fade", "options.chunkFade", OptionScreen.VIDEO,
+            0.0, 2.0, 0.05, 0.75);
+
+    static {
+        GRAPHICS_PRESET.since("1.21.11");
+        GRAPHICS_PRESET.tooltip("options.graphics.preset.tooltip");
+        CLOUD_RANGE.since("1.21.6");
+        CLOUD_RANGE.after("RENDER_CLOUDS");
+        CLOUD_RANGE.decimals(0).valueKey("options.chunks");
+        CUTOUT_LEAVES.since("1.21.11");
+        CUTOUT_LEAVES.tooltip("options.cutoutLeaves.tooltip");
+        WEATHER_RADIUS.since("1.21.11");
+        WEATHER_RADIUS.tooltip("options.weatherRadius.tooltip");
+        WEATHER_RADIUS.decimals(0).valueKey("options.blocks");
+        TEXTURE_FILTERING.since("1.21.11");
+        TEXTURE_FILTERING.valueTooltips("options.textureFiltering.none.tooltip", "options.textureFiltering.anisotropic.tooltip");
+        MAX_ANISOTROPY.since("1.21.11");
+        MAX_ANISOTROPY.tooltip("options.maxAnisotropy.tooltip");
+        MAX_ANISOTROPY.valueKey("options.multiplier").valueText(v -> Integer.toString(1 << (int) Math.round(v)));
+        VIGNETTE.since("1.21.11");
+        VIGNETTE.tooltip("options.vignette.tooltip");
+        CHUNK_FADE.since("1.21.11");
+        CHUNK_FADE.tooltip("options.chunkFade.tooltip");
+        CHUNK_FADE.wholeLabel("options.chunkFade.seconds", "options.chunkFade.none").decimals(2);
+        for (PresentationOption o : new PresentationOption[] {GRAPHICS_PRESET, CLOUD_RANGE, CUTOUT_LEAVES, WEATHER_RADIUS, TEXTURE_FILTERING,
+                MAX_ANISOTROPY, VIGNETTE, CHUNK_FADE}) {
+            registerOption(o);
+        }
+    }
+
     static {
         TOGGLE_ATTACK.since("1.21.9");
         TOGGLE_USE.since("1.21.9");

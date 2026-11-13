@@ -35,6 +35,10 @@ public final class PresentationClient {
         com.exiledradio.backportcore.presentation.Presentation.MUSIC_FREQUENCY.onChange(f -> GameMusic.frequencyChanged());
         MinecraftForge.EVENT_BUS.register(new OptionTooltips());
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
+        MinecraftForge.EVENT_BUS.register(new RenderOptions.Events());
+        MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
+        DebugScreen.init();
+        RenderOptions.init();
     }
 
     /** From Core's load-complete event: the backports' vanilla text and assets take effect. */
@@ -53,7 +57,12 @@ public final class PresentationClient {
         net.minecraft.client.resources.IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
         if (rm instanceof net.minecraft.client.resources.IReloadableResourceManager) {
             ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(StartupScreen.INSTANCE);
+            ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(m -> TitleLogo.invalidate());
         }
+        // Every backport has said its version by now: 1.21.11's leaves, debug key binds and texture filtering.
+        VideoLayout.initLeaves(Minecraft.getMinecraft());
+        DebugBindings.register();
+        RenderOptions.applyAnisotropy();
         VideoOptions.applyForced(Minecraft.getMinecraft());
     }
 

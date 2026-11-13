@@ -514,3 +514,74 @@ or passes an existing constant through a hook of the same type.
     call included).
 *   **Fails safe**: fewer than two reads found: skipped.
 *   **Tested**: client self-test (`P25 applied`).
+
+## P26. Cloud Distance
+
+*   **What**: `RenderGlobal.renderClouds` starts with `PresentationHooks.cloudsBegin()`; the fast clouds' loop bounds
+    (`-256` and `256`, both axes) go through `cloudFast(int)` and `renderCloudsFancy`'s cell loops (`-3` to `4`, both
+    axes, cells of 96 blocks) through `cloudFancy(int)`. From 1.21.6 (Cloud Distance, 2 to 128 chunks, default 128),
+    the clouds reach the cloud distance, their far plane is moved out to 1.5 times it, and they fade from the camera
+    to it (1.21.6's `FogCloudsEnd`: linear fog from 0 to the distance in place of the render distance's), except under
+    water, in lava, while blind, or in a world with its own cloud renderer. Before 1.21.6 every hook returns 1.12.2's
+    numbers.
+*   **Why a patch**: the bounds are constants in the loops and the far plane is set by `EntityRenderer.renderCloudsCheck`;
+    no event comes between.
+*   **Shape**: an `invokestatic ()V` at the head, `invokestatic (I)I` after four `sipush` and four loop constants.
+*   **Fails safe**: methods not found or not exactly four of each constant: skipped, 1.12.2's clouds.
+*   **Cost**: 1.12.2 builds its clouds on the CPU each frame. Fancy clouds at 128 chunks are 45 by 45 cells (1.12.2: 8
+    by 8); the Fast and Fancy presets set 32 and 64.
+*   **Tested**: client self-test (`P26 applied`, the hooks keep 1.12.2's numbers below 1.21.6). How it looks: not seen.
+
+## P27. Weather Effect Radius
+
+*   **What**: `EntityRenderer.renderRainSnow` sets its radius to 5 and to 10 with Fancy graphics; both constants go
+    through `PresentationHooks.weatherRadius(int)`, which gives 1.21.11's Weather Effect Radius (3 to 10 blocks).
+*   **Why a patch**: the radius is a local of the method.
+*   **Shape**: `invokestatic (I)I` after the `iconst_5` and the `bipush 10` stored into the same local.
+*   **Fails safe**: not exactly one of each into one local: skipped.
+*   **Tested**: client self-test (`P27 applied`). How it looks: not seen.
+
+## P28. Chunk Fade
+
+*   **What**: `ChunkRenderContainer.preRenderChunk` starts with `PresentationHooks.chunkFadePre(chunk)`, and
+    `RenderGlobal.renderBlockLayer(BlockRenderLayer)` calls `chunkFadeEnd()` right after its
+    `renderContainer.renderChunkLayer(layer)`. 1.21.11's terrain shader mixes a section with the fog color by its
+    visibility (`ChunkVisibility`, 0 to 1 over Chunk Fade Time after it is first drawn). 1.12.2's fixed pipeline has no
+    such input, so a chunk still fading gets one fog coordinate for the frame (`GL_FOG_COORDINATE_SOURCE` set to
+    `GL_FOG_COORDINATE`): the fog it would have at its center times its visibility, for linear, exp and exp2 fog alike.
+    Chunks that are done, and everything after the layer, use depth fog again.
+*   **Why a patch**: the chunks are drawn one by one inside `VboRenderList`/`RenderList`; no event per chunk.
+*   **Shape**: `aload 1; invokestatic` at the head of `preRenderChunk`; one `invokestatic ()V` after the one call.
+*   **Fails safe**: per class, skipped when the method or the call is not found. The hook does nothing without OpenGL
+    1.4, with OptiFine (its shaders own the terrain), with fog off, or with Chunk Fade at None.
+*   **Tested**: client self-test (`P28 applied`, the fog-coordinate math). How it looks: not seen.
+
+## P29. The 1.20 title logo layout
+
+*   **What**: in `GuiMainMenu.drawScreen`, the logo's seven `drawTexturedModalRect` calls become
+    `PresentationHooks.titleLogoRect(menu, ...)`, the edition's `drawModalRectWithCustomSizedTexture` becomes
+    `titleEdition(...)`, and the splash's `90` (added to half the width) and `70.0F` go through `splashX(int)` and
+    `splashY(float)`. In 1.20's layout (`VanillaRevisions.TitleLogo.LOGO_1_20`, below) the first piece draws
+    `minecraft.png` as one 256 by 44 piece of 256 by 64 at width / 2 - 128, the other pieces draw nothing, `edition.png`
+    is 128 by 14 of 128 by 16 at width / 2 - 64, y 67, and the splash is at width / 2 + 123, 69. Minceraft (1.12.2's
+    one-in-ten-thousand roll) is `minceraft.png` when the same backports supply it.
+*   **When**: the newest installed version that replaces `textures/gui/title/minecraft.png` is 1.20 or later, so is the
+    newest that replaces `textures/gui/title/edition.png`, and `minecraft.png` is served by Core's pack (a resource
+    pack of the player's is drawn 1.12.2's way). Otherwise every hook draws what 1.12.2 draws.
+*   **Why a patch**: the logo is drawn in the middle of `drawScreen` between the panorama and the splash.
+*   **Shape**: seven `invokevirtual` swapped for `invokestatic` with the receiver first, one static call's owner
+    changed, `invokestatic` after the two constants.
+*   **Fails safe**: not exactly seven pieces, one edition, one `bipush 90; iadd` and one `70.0F`: skipped.
+*   **Tested**: client self-test (`P29 applied`, 1.12.2's layout kept without 1.20 textures). The 1.20 layout: not seen.
+
+## P30. Debug key binds
+
+*   **What**: `Minecraft.runTickKeyboard` names F3 and C by number. Its three `Keyboard.isKeyDown(61)` (the modifier),
+    its `key == 61` (the debug screen's toggle, on release) and its two `Keyboard.isKeyDown(46)` (the crash) go
+    through `PresentationHooks.debugModifierKey`, `debugOverlayKey` and `debugCrashKey`. From 1.21.11 they are key
+    binds on the Key Binds screen (category "Debug", `DebugBindings`), as are each of the F3 map's combinations;
+    P7's hook turns a rebound combination's key back into the one the map knows.
+*   **Why a patch**: the numbers are constants in the keyboard loop.
+*   **Shape**: `invokestatic (I)I` after six `bipush` constants.
+*   **Fails safe**: not exactly three, one and two: skipped, F3 and C fixed as in 1.12.2.
+*   **Tested**: client self-test (`P30 applied`, keys pass through before 1.21.11).

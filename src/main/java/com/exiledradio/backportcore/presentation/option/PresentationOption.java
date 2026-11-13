@@ -53,6 +53,11 @@ public abstract class PresentationOption {
         return this.id;
     }
 
+    /** @return the id without its namespace: vanilla's option name for the backports' copies ({@code toggle_crouch}) */
+    public final String path() {
+        return this.id.substring(this.id.indexOf(':') + 1);
+    }
+
     public final String labelKey() {
         return this.labelKey;
     }
@@ -138,6 +143,16 @@ public abstract class PresentationOption {
 
     /** @return true when, with {@code newest} the newest installed version, it shows on {@code target} */
     public final boolean isOn(OptionScreen target, GameVersion newest) {
+        // A vanilla option a later version moved (Toggle Crouch and Toggle Sprint): its screens at that version.
+        java.util.List<OptionScreen> moved = com.exiledradio.backportcore.presentation.VanillaRevisions.vanillaScreens(path(), newest);
+        if (moved != null) {
+            for (OptionScreen s : moved) {
+                if (s.resolve(newest) == target) {
+                    return true;
+                }
+            }
+            return false;
+        }
         if (this.screen.resolve(newest) == target) {
             return true;
         }

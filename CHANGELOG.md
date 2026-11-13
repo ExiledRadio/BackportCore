@@ -20,6 +20,18 @@
     *   `PanoramaRenderer.renderBlurred(screen, radius)`: 1.20.5's blurred panorama, by 1.12.2's own blur shader.
     *   Patches P22 (menus at 60 frames a second from 1.21.2), P23 (1.21.2's slot highlight), P24 (the sunrise glow
         through `FogPipeline.Step.sunrise`) and P25 (clouds by world time, `Step.cloudsFollowWorldTime`).
+    *   1.21.11's Video Settings: Display, Quality & Performance and Preferences sections, the Preset slider (Fast,
+        Fancy and Fabulous! set the section's settings; Custom once one changes), See-Through Leaves (1.12.2's Fancy
+        graphics), Weather Effect Radius (P27), Texture Filtering and Anisotropic Filtering (None or Anisotropic, 2x to
+        8x), Show Vignette and Chunk Fade Time (P28); View Bobbing moves to Accessibility. 1.21.6's Cloud Distance, 2 to
+        128 chunks (P26). A backport's option named after vanilla's lands in vanilla's place and follows the presets.
+    *   1.18's Controls screen (Mouse Settings..., Key Binds..., the toggles and Auto-Jump) with 1.12.2's key list as Key
+        Binds; from 1.21.9 Auto-Jump, Toggle Crouch and Toggle Sprint leave Accessibility, which gains "Controls...".
+    *   1.21.9's F3: every part of the debug screen Off, In F3 or Always on Debug Options (F3 + F6, with its search
+        and profiles), Always parts shown with F3 hidden, the renderers and the 3D crosshair as parts, F3's
+        combinations in menus. 1.21.11's Debug key binds (P30).
+    *   The 1.20 title logo layout (P29), drawn when a backport of 1.20 or later supplies `minecraft.png` and
+        `edition.png`. New: `Contribution.replacedAssets()`, `SliderOption.valueText(...)`, `PresentationOption.path()`.
 
 *   **Caves & Cliffs Backport's extended height**: `WorldHeights` answers its y -64 to 319 worlds (and their
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk

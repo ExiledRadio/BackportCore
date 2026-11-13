@@ -48,6 +48,11 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             SlotHighlightTransformer.class.getName(),
             SunriseTransformer.class.getName(),
             CloudTimeTransformer.class.getName(),
+            CloudDistanceTransformer.class.getName(),
+            WeatherRadiusTransformer.class.getName(),
+            ChunkFadeTransformer.class.getName(),
+            TitleLogoTransformer.class.getName(),
+            DebugBindsTransformer.class.getName(),
     };
 
     @Override

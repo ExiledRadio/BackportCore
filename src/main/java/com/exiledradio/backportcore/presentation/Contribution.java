@@ -241,6 +241,11 @@ public final class Contribution {
 
     // ---- Vanilla assets and text ----
 
+    /** @return the vanilla assets this version replaces, by path under {@code assets/minecraft/} (since Core 1.2.0) */
+    public java.util.Map<String, ResourceLocation> replacedAssets() {
+        return java.util.Collections.unmodifiableMap(this.assets);
+    }
+
     /**
      * One of vanilla's own assets as this version shipped it: {@code replaceAsset("textures/gui/title/minecraft.png",
      * new ResourceLocation("netherupdatebackport", "textures/gui/title/minecraft.png"))}. Core serves {@code
