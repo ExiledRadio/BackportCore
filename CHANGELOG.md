@@ -4,6 +4,10 @@
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
     generator that says where its own surface is, asked first by `TerrainHeights.forWorld`.
 
+*   **Generators that decorate their own worlds** (`DecorationSource`): a chunk generator that places today's
+    features itself says which, so a backport's 1.12 hook does not add the same feature twice (bee nests on
+    trees Caves & Cliffs Backport's 1.18 generator already gave nests, for one).
+
 *   **Structures where a world's generator starts them**: `StructureSource` / `StartRules`. A chunk generator can
     decide where today's structures start, whichever backport builds them; every `ScatteredStructure` (and its
     `/locate`) follows it, and `ruledStart` names the variant. Caves & Cliffs Backport's 1.18 generator answers

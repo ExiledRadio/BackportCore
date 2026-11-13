@@ -149,6 +149,10 @@ Caves & Cliffs Backport's extended height among them (1.2.0; `isCavesAndCliffsEx
 
 A chunk generator that knows its own surface implements `TerrainSource` (1.2.0): `forWorld` asks its
 `columnTerrain(world)` before any other adapter.
+A chunk generator that places today's features itself (1.12's biome decorator does not run in its worlds)
+implements `DecorationSource` (1.2.0). A backport whose 1.12 hook adds a feature the generator already places steps
+aside: `if (DecorationSource.places(world, "bee_nest")) return;` (or `places(world, event.getGenerator(), name)` in
+a populate handler). Names are today's vanilla features or the block they place, without a namespace.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
 ### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.1.0)
