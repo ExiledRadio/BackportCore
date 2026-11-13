@@ -147,7 +147,10 @@ public final class DebugBindings {
     static final IKeyConflictContext DEBUG = new IKeyConflictContext() {
         @Override
         public boolean isActive() {
-            return true;
+            // Never active: Forge's KeyBindingMap hands a press to the first active bind on that key, so an active F3 + 2
+            // bind on 2 took the press from Hotbar Slot 2 (and F3 + 1 from slot 1). The binds are only read for their key
+            // codes (P7, P30), never for being pressed, so they lose nothing.
+            return false;
         }
 
         @Override
