@@ -241,8 +241,13 @@ public final class NetherHeights {
     }
 
     private byte kind(int x, int y, int z) {
-        if (y < 0 || y >= this.height) {
+        if (y >= this.height) {
             return AIR;
+        }
+        if (y < 0) {
+            // A world with terrain below 0 (Caves & Cliffs Backport's extended height): columns hold y 0 up only, so
+            // what is below is not known. Elsewhere there is nothing there.
+            return WorldHeights.minY(this.world) < 0 ? (byte) -1 : AIR;
         }
         byte[] c = column(x >> 4, z >> 4);
         return c == null ? -1 : c[index(x, z) + y];
