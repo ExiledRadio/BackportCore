@@ -75,6 +75,8 @@ public abstract class ScatteredStructure extends MapGenStructure {
     private static boolean driving;
 
     private final String saveName;
+    /** The kind {@link #of} made this instance for (its world's factory); null for one made elsewhere. */
+    private String kind;
     protected final ScatteredPlacement placement;
 
     /**
@@ -91,19 +93,59 @@ public abstract class ScatteredStructure extends MapGenStructure {
         return this.saveName;
     }
 
+    /**
+     * The grid this kind's candidates lie on in this instance's world: the world generator's when it decides where
+     * the kind starts ({@link StructureSource}), else the kind's own.
+     */
     public ScatteredPlacement placement() {
-        return this.placement;
+        StartRule rule = rule();
+        return rule != null ? rule.grid() : this.placement;
+    }
+
+    /**
+     * The world generator's rule for this kind in this instance's world, or null where the kind keeps its own
+     * ({@link StartRules}).
+     */
+    @Nullable
+    protected final StartRule rule() {
+        if (this.world == null || this.kind == null) {
+            return null;
+        }
+        return StartRules.of(this.world, this.kind);
+    }
+
+    /**
+     * Today's id of the structure the world generator starts in this chunk ({@code "ocean_ruin_warm"},
+     * {@code "ruined_portal_desert"}), or null where none starts or the kind keeps its own rule. A kind with
+     * variants picks the one this names, so the variant is the generator's too.
+     */
+    @Nullable
+    public final String ruledStart(World world, int chunkX, int chunkZ) {
+        this.world = world;
+        StartRule rule = rule();
+        return rule == null ? null : rule.startAt(chunkX, chunkZ);
+    }
+
+    /** @return true if this instance's world generator decides where this kind starts ({@link StructureSource}) */
+    public final boolean ruled(World world) {
+        this.world = world;
+        return rule() != null;
     }
 
     /**
      * Whether the region's candidate chunk may start one: the biome check, today's extra rolls. Asked
      * by locators too, so it must not load or generate chunks; read biomes through
-     * {@code world.getBiomeProvider()}.
+     * {@code world.getBiomeProvider()}. Not asked in a world whose generator decides where the kind
+     * starts ({@link StructureSource}); there {@link #ruledStart} names the start and its variant.
      */
     protected abstract boolean canStartAt(World world, int chunkX, int chunkZ);
 
     @Override
     protected boolean canSpawnStructureAtCoords(int chunkX, int chunkZ) {
+        StartRule rule = rule();
+        if (rule != null) {
+            return rule.startAt(chunkX, chunkZ) != null;
+        }
         return this.placement.isCandidate(this.world.getSeed(), chunkX, chunkZ) && canStartAt(this.world, chunkX, chunkZ);
     }
 
@@ -121,7 +163,7 @@ public abstract class ScatteredStructure extends MapGenStructure {
     public BlockPos nearest(World world, BlockPos from, int radiusChunks) {
         this.world = world;
         initializeStructureData(world);
-        ChunkPos found = this.placement.nearest(world.getSeed(), from, radiusChunks, c -> locatableAt(world, c.x, c.z));
+        ChunkPos found = placement().nearest(world.getSeed(), from, radiusChunks, c -> locatableAt(world, c.x, c.z));
         if (found == null) {
             return null;
         }
@@ -140,7 +182,8 @@ public abstract class ScatteredStructure extends MapGenStructure {
      */
     public boolean locatableAt(World world, int chunkX, int chunkZ) {
         this.world = world;
-        if (!canStartAt(world, chunkX, chunkZ)) {
+        StartRule rule = rule();
+        if (rule != null ? rule.startAt(chunkX, chunkZ) == null : !canStartAt(world, chunkX, chunkZ)) {
             return false;
         }
         initializeStructureData(world);
@@ -151,7 +194,8 @@ public abstract class ScatteredStructure extends MapGenStructure {
     @Nullable
     @Override
     public BlockPos getNearestStructurePos(World world, BlockPos pos, boolean findUnexplored) {
-        return nearest(world, pos, this.placement.spacing() * 100);
+        this.world = world;
+        return nearest(world, pos, placement().spacing() * 100);
     }
 
     // ---- driving
@@ -210,6 +254,7 @@ public abstract class ScatteredStructure extends MapGenStructure {
                 structure = NONE;
             } else {
                 structure.world = world;
+                structure.kind = kind;
             }
             known.put(kind, structure);
         }

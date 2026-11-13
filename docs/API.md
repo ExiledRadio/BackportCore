@@ -350,6 +350,51 @@ ocean_ruin, buried_treasure, ruined_portal, bastion_remnant, nether_fossil, anci
 trial_chambers, village, pillager_outpost). A locator runs on the server thread, generates nothing and
 loads no chunk it does not need. This is Update Aquatic's dolphin-stream `StructureLocator` API, unchanged.
 
+### Where a world's generator starts structures (`StructureSource`, `StartRule`, `StartRules`, 1.2.0)
+
+A chunk generator can decide where today's structures start in its worlds, whichever backport builds them. Caves &
+Cliffs Backport's 1.18 generator does for shipwrecks, ocean ruins, buried treasure, ruined portals and pillager
+outposts: 1.18.2's structure sets, its biome checks at the start's height, its choice between a set's structures.
+
+```java
+public class MyGenerator implements IChunkGenerator, StructureSource {
+    @Override public StartRule startRule(World world, String kind) { ... }   // null: the kind keeps its own rule
+}
+public interface StartRule {
+    ScatteredPlacement grid();                   // the candidates' grid, for locators and /locate
+    @Nullable String startAt(int chunkX, int chunkZ);   // today's id ("ocean_ruin_warm"), or null: none starts
+}
+StartRule rule = StartRules.of(world, Structures.PILLAGER_OUTPOST);   // null where the kind keeps its own rule
+```
+
+- A `ScatteredStructure` follows the rule with no change: `canSpawnStructureAtCoords`, `locatableAt`, `nearest` and
+  `placement()` (so `/locate`) use it, and `canStartAt` is not asked. A kind with variants picks the one
+  `ruledStart(world, x, z)` names (warm or cold ruins, a ruined portal's type, a beached shipwreck).
+- A structure on a `MapGenStructure` of its own (Village & Pillage's outposts) asks `StartRules.of` in its start
+  check, its nearest search and its `/locate` grid.
+- Both methods are pure arithmetic on the seed and the generator's noise: never load or generate chunks. Asked on the
+  server thread; a world's answer per kind is kept for the world's life.
+
+### Terrain adaptation (`TerrainAdaptation`, 1.2.0)
+
+Structures today's terrain shapes itself around (`terrain_adaptation`; 1.18.2's `adapt_noise`), for a generator that
+can do it (Caves & Cliffs Backport's 1.18 generator adds the beardifier around their pieces before it fills a chunk).
+
+```java
+TerrainAdaptation.register(Structures.PILLAGER_OUTPOST, TerrainAdaptation.Kind.BEARD_THIN,
+        (world, chunkX, chunkZ, out) -> outposts(world).startsNear(world, chunkX, chunkZ, out));   // init
+public class MyPiece extends StructureComponent implements TerrainAdaptation.AdaptingPiece {
+    public boolean rigid() { ... }   public int groundLevelDelta() { ... }   public int[] junctions() { ... }
+}
+```
+
+- The planner gives every start whose box, grown by 12 blocks, reaches the chunk, laying out any not laid out yet as
+  its populate step would (and keeping it, so the populate step builds the same layout). The layout must not depend
+  on blocks in the world: lay out on `TerrainHeights`.
+- Pieces that are not `AdaptingPiece`s are rigid, their ground at the box's floor. `Kind`s are today's
+  `TerrainAdjustment`s; 1.18.2's terrain knows `BEARD_THIN` (its beard) and `BURY` (its strongholds).
+- Kinds are summed in registration order, after the generator's own structures.
+
 ### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.1.0)
 
 1.16.5's jigsaw assembly (`JigsawPlacement.addPieces`), read from Mojang's own files. Given the same random, it lays
