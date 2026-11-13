@@ -13,6 +13,12 @@
     (today's `terrain_adaptation`) and lays them out ahead, so a generator with 1.18 terrain shapes the ground
     around them before the chunk exists.
 
+*   **A backport's structure generator in a world generator's place** (`StructureGenerators`): a chunk generator
+    that does not build its structure generators through Forge's `InitMapGenEvent` offers them here, and the
+    backport that builds the kind puts its own in place (Village & Pillage's 1.14 villages in Caves & Cliffs
+    Backport's 1.18 worlds). New `FeatureSource`: a generator that places a later version's features itself, so a
+    backport's own feature generators step aside there.
+
 *   **Waterlogging at every height** (patch P20): in Caves & Cliffs Backport's extended worlds, blocks below y 0
     and above y 255 hold water like any other. Fluidlogged API keeps a chunk's water in one store that only has
     room for y 0-255; in those worlds Core gives each chunk one store per 16-block section instead, saved with the

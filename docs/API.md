@@ -395,6 +395,33 @@ public class MyPiece extends StructureComponent implements TerrainAdaptation.Ada
   `TerrainAdjustment`s; 1.18.2's terrain knows `BEARD_THIN` (its beard) and `BURY` (its strongholds).
 - Kinds are summed in registration order, after the generator's own structures.
 
+### A backport's generator in a world generator's place (`StructureGenerators`, 1.2.0)
+
+For a chunk generator that builds its 1.12.2 structure generators itself, without Forge's `InitMapGenEvent` (Caves
+& Cliffs Backport's 1.18 generator): it offers each one, and the backport that builds the kind returns its own.
+
+```java
+StructureGenerators.register(Structures.VILLAGE, (world, standIn) -> new MyVillages(standIn));   // init; null keeps it
+MapGenStructure villages = StructureGenerators.replace(world, Structures.VILLAGE, ownVillages);   // the generator
+```
+
+- The replacement does everything the stand-in did (starts, populating, `/locate`, `isInsideStructure`); the world
+  generator no longer lays out the stand-in's starts or adapts its terrain to them. Register the replacement's kind
+  with `TerrainAdaptation` for that, and ask `StartRules.of` for its starts where the generator rules them.
+- Asked once per world while its chunk generator is built, so `world.getChunkProvider()` may not be set yet.
+
+### Features a world generator places itself (`worldgen.FeatureSource`, 1.2.0)
+
+```java
+public class MyGenerator implements IChunkGenerator, FeatureSource {
+    @Override public String featureVersion(World world) { return "1.18.2"; }   // null: none of its own
+}
+if (FeatureSource.places(world, "1.14")) return;   // an IWorldGenerator for a 1.14 feature steps aside
+```
+
+Caves & Cliffs Backport's 1.18 generator places every 1.18.2 feature, with the backports' blocks where they are
+installed (Village & Pillage's sweet berry bushes, bamboo and flowers): their own generators for those step aside.
+
 ### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.1.0)
 
 1.16.5's jigsaw assembly (`JigsawPlacement.addPieces`), read from Mojang's own files. Given the same random, it lays
