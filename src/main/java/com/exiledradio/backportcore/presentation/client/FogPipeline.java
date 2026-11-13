@@ -55,6 +55,59 @@ public final class FogPipeline {
         /** The height the clouds draw at ({@code WorldProvider.getCloudHeight}, 128 in 1.12.2's overworld). */
         default void clouds(Clouds clouds) {
         }
+
+        /** P24 (since Core 1.2.0): the sunrise and sunset glow ({@code WorldProvider.calcSunriseSunsetColors}). */
+        default void sunrise(Sunrise sunrise) {
+        }
+
+        /** P25 (since Core 1.2.0): true when the clouds drift by world time, the same for every player (1.21.11). */
+        default boolean cloudsFollowWorldTime() {
+            return false;
+        }
+    }
+
+    /** The sunrise glow as vanilla (and the steps before) left it; {@code rgba} is null when there is none now. */
+    public static final class Sunrise {
+        public final net.minecraft.world.WorldProvider provider;
+        public final float celestialAngle;
+        public final float partialTicks;
+        /** Red, green, blue and alpha (0 to 1), a copy: change it in place, or set it null for no glow. */
+        @javax.annotation.Nullable
+        public float[] rgba;
+
+        Sunrise(net.minecraft.world.WorldProvider provider, float celestialAngle, float partialTicks, @javax.annotation.Nullable float[] rgba) {
+            this.provider = provider;
+            this.celestialAngle = celestialAngle;
+            this.partialTicks = partialTicks;
+            this.rgba = rgba;
+        }
+    }
+
+    /** P24: the sunrise glow after every step's {@link Step#sunrise}; vanilla's own array when no step changes it. */
+    @javax.annotation.Nullable
+    public static float[] sunriseColors(net.minecraft.world.WorldProvider provider, float angle, float partialTicks,
+                                        @javax.annotation.Nullable float[] vanilla) {
+        List<Step> steps = STEPS.steps();
+        if (steps.isEmpty()) {
+            return vanilla;
+        }
+        // 1.12.2 returns one shared array; the steps get their own copy.
+        Sunrise s = new Sunrise(provider, angle, partialTicks, vanilla == null ? null : vanilla.clone());
+        for (Step step : steps) {
+            step.sunrise(s);
+        }
+        return s.rgba;
+    }
+
+    /** P25: the tick count the clouds drift by: world time once a step at the newest version asks for it. */
+    public static int cloudTicks(int vanilla) {
+        for (Step step : STEPS.steps()) {
+            if (step.cloudsFollowWorldTime()) {
+                net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+                return mc.world == null ? vanilla : (int) (mc.world.getTotalWorldTime() % 2147483647L);
+            }
+        }
+        return vanilla;
     }
 
     /** The sky color as vanilla (and the steps before) left it. */

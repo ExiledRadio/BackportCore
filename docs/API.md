@@ -102,9 +102,49 @@ BlockOwnership.provides("yourmod", () -> config.blocksEnabled); // if yours can 
 
 Village & Pillage's 1.13 blocks (stripped logs and wood, the five wood trapdoors, buttons and pressure plates,
 blue ice) are in the table already. Sea pickles are Update Aquatic's: when two backports need a block, it
-belongs to the one it fits best, and Village & Pillage uses Update Aquatic's pickles when it is installed. Ask from your block registry event or later. Not done yet:
-the owner remapping another mod's copies when it is added to a world later (use `RegistryEvent.MissingMappings`
-plus the chunk conversion in `migrate.FutureMcRemoved` as the model).
+belongs to the one it fits best, and Village & Pillage uses Update Aquatic's pickles when it is installed. Ask from your block registry event or later. Caves & Cliffs' tuff, copper ore, raw copper block and
+every copper block (four stages, waxed or not: block, cut, cut stairs, cut slab, cut double slab) are in the table
+too (1.2.0).
+
+```java
+BlockOwnership.provides("yourmod", () -> config.copperEnabled, "copper_block", "cut_copper");  // one switch per name
+BlockOwnership.declare("yourmod:switched_off", "tuff");   // the owner itself: "not provided in this game"
+
+// Items and effects (1.2.0): copper ingot and raw copper (Caves & Cliffs), honeycomb (Buzzy Bees),
+// the ominous bottle and Bad Omen (Village & Pillage).
+Item ingot = ItemOwnership.item("copper_ingot", "yourmod");     // the owner's if provided, else yours, else null
+boolean copy = ItemOwnership.shouldRegisterItem("yourmod", "copper_ingot");
+Potion omen = ItemOwnership.effect("bad_omen", "yourmod");
+ItemOwnership.declareItems("yourmod", "your_item");
+```
+
+**Copies become the owner's** (`ownership.CopyRemapping`, 1.2.0, nothing to call): when an owner is added to a
+world that holds a family mod's copies (`copier:name`, registered while the owner was absent), each missing name is
+remapped onto `owner:name` as the world loads, for blocks, items (block items too) and effects. Only names under a
+family mod's id, only when the owner owns that name, provides it and has it registered.
+
+## Copper (`copper.Oxidation`, 1.2.0)
+
+One table for every mod's copper, so axes, honeycomb and lightning treat all of it alike and copper waits for the
+least oxidized copper near it whichever mod it comes from.
+
+```java
+Oxidation.chain(bulb, exposedBulb, weatheredBulb, oxidizedBulb);   // unaffected first
+Oxidation.waxed(bulb, waxedBulb);                                  // each stage
+Oxidation.randomTick(world, pos, state, rand);                     // from the block's randomTick: current Java's rule
+Block scraped = Oxidation.previous(block);  Oxidation.change(world, pos, state, scraped);   // keeps the state; doors whole
+Oxidation.next(b); Oxidation.waxedOf(b); Oxidation.unwaxed(b); Oxidation.first(b); Oxidation.stage(b); Oxidation.isCopper(b);
+```
+
+## Walls (`block.ModernWall`, 1.2.0)
+
+The family's one 1.16+ wall: each side none, low or tall, the post dropped on a straight run, joining 1.12.2's walls,
+panes, fence gates and solid faces; metadata 0, so a `BlockWall` moved onto it keeps its saved blocks. Use vanilla's
+`<name>_wall.json` multipart blockstate. Implements `Waterloggable`.
+
+```java
+Block wall = new ModernWall(base.getDefaultState()).setRegistryName("yourmod", "tuff_wall");
+```
 
 ## Smithing upgrades (`smithing.SmithingUpgrades`)
 

@@ -93,11 +93,14 @@ public final class DebugText {
         @SubscribeEvent(priority = EventPriority.HIGHEST)
         public void onText(RenderGameOverlayEvent.Text event) {
             Minecraft mc = Minecraft.getMinecraft();
-            if (!mc.gameSettings.showDebugInfo || STEPS.steps().isEmpty()) {
-                return;
+            if (mc.gameSettings.showDebugInfo && !STEPS.steps().isEmpty()) {
+                apply(new Lines(event.getLeft(), event.getRight(), mc, event.getPartialTicks()));
+                frames++;
             }
-            apply(new Lines(event.getLeft(), event.getRight(), mc, event.getPartialTicks()));
-            frames++;
+            // 1.21.9: only the parts that are on (and the Always ones with F3 hidden), before other mods add theirs.
+            if (DebugEntries.active()) {
+                DebugScreen.text(event);
+            }
         }
     }
 }

@@ -69,8 +69,36 @@ public final class DebugKeys {
         return out;
     }
 
+    /** Core's own combinations, each with the version vanilla's gained it (1.21.9's F3 + F6). */
+    private static final List<Object[]> CORE = new ArrayList<Object[]>();
+
+    /**
+     * A combination of Core's own (Core owns the debug screen): it is in the map while the newest installed version is
+     * {@code since} or later, before the backports' changes. From Core's client init.
+     */
+    public static synchronized void coreKey(String since, Key key) {
+        CORE.add(new Object[] {GameVersion.parse(since), key});
+    }
+
+    private static GameVersion newest(List<Contribution> installed) {
+        return installed.isEmpty() ? GameVersion.BASE : installed.get(installed.size() - 1).version();
+    }
+
+    private static synchronized List<Key> coreKeys(GameVersion newest) {
+        List<Key> out = new ArrayList<Key>();
+        for (Object[] k : CORE) {
+            if (newest.isAtLeast((GameVersion) k[0])) {
+                out.add((Key) k[1]);
+            }
+        }
+        return out;
+    }
+
     /** @return true when any installed version adds, changes or removes an F3 combination */
     public static boolean changed(List<Contribution> installed) {
+        if (!coreKeys(newest(installed)).isEmpty()) {
+            return true;
+        }
         for (Contribution c : installed) {
             if (!c.debugAdds.isEmpty() || !c.debugRemoves.isEmpty()) {
                 return true;
@@ -83,6 +111,9 @@ public final class DebugKeys {
     public static Map<Integer, Key> map(List<Contribution> installed) {
         Map<Integer, Key> map = new LinkedHashMap<Integer, Key>();
         for (Key k : BASE) {
+            map.put(k.keyCode, k);
+        }
+        for (Key k : coreKeys(newest(installed))) {
             map.put(k.keyCode, k);
         }
         for (Contribution c : installed) {

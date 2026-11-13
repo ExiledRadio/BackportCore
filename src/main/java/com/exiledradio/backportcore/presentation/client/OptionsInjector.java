@@ -2,6 +2,7 @@ package com.exiledradio.backportcore.presentation.client;
 
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.option.OptionScreen;
 import com.exiledradio.backportcore.presentation.option.PresentationOption;
 
@@ -52,7 +53,12 @@ public final class OptionsInjector {
     private static final int SNOOPER_BUTTON = 104;
     private static final int DONE_BUTTON = 200;
 
+    private static final int CONTROLS_BUTTON = 100;
+
     private static Field videoList;
+    private static Field controlsTitle;
+    private static Field controlsList;
+    private static Field scrolledField;
     private static Field rowOptions;
     private static Field rowA;
     private static Field rowB;
@@ -97,6 +103,15 @@ public final class OptionsInjector {
     }
 
     private static void options(GuiScreen gui, List<GuiButton> buttons) {
+        if (VanillaRevisions.keyBindsScreen(Presentation.newest())) {
+            // 1.18: "Controls..." opens the Controls screen; 1.12.2's key list is Key Binds behind it.
+            GuiButton controls = find(buttons, CONTROLS_BUTTON);
+            if (controls != null) {
+                buttons.remove(controls);
+                buttons.add(new OptionWidgets.Action(controls.x, controls.y, controls.width, controls.displayString,
+                        () -> Minecraft.getMinecraft().displayGuiScreen(OptionsListScreen.controls(gui))));
+            }
+        }
         if (Presentation.isAtLeast("1.14")) {
             GuiButton snooper = find(buttons, SNOOPER_BUTTON);
             if (snooper != null) {
@@ -108,7 +123,11 @@ public final class OptionsInjector {
         appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.OPTIONS));
     }
 
-    private static void controls(GuiScreen gui, List<GuiButton> buttons) {
+    private static void controls(GuiScreen gui, List<GuiButton> buttons) throws Exception {
+        if (VanillaRevisions.keyBindsScreen(Presentation.newest())) {
+            keyBinds((GuiControls) gui, buttons);
+            return;
+        }
         int left = gui.width / 2 - 155;
         int right = gui.width / 2 + 5;
         if (Presentation.isAtLeast("1.14")) {
@@ -143,6 +162,93 @@ public final class OptionsInjector {
             BackportCore.LOGGER.warn("Presentation: no room on Controls for {} option(s), starting with {}",
                     options.size() - placed, options.get(placed).id());
         }
+    }
+
+    /**
+     * 1.18's Key Binds (1.12.2's Controls with its top rows gone): the title "Key Binds" and the list from y 20, as
+     * 1.18's {@code KeyBindsList}. Mouse Settings, Auto-Jump and the options are on Core's Controls screen.
+     */
+    private static void keyBinds(GuiControls gui, List<GuiButton> buttons) throws Exception {
+        for (java.util.Iterator<GuiButton> it = buttons.iterator(); it.hasNext(); ) {
+            GuiButton b = it.next();
+            if (b instanceof GuiOptionButton || b instanceof GuiOptionSlider) {
+                it.remove();
+            }
+        }
+        if (controlsTitle == null) {
+            controlsTitle = ReflectionHelper.findField(GuiControls.class, "screenTitle", "field_146495_a");
+            controlsList = ReflectionHelper.findField(GuiControls.class, "keyBindingList", "field_146494_r");
+        }
+        controlsTitle.set(gui, I18n.format("controls.keybinds.title"));
+        Object list = controlsList.get(gui);
+        if (list instanceof net.minecraft.client.gui.GuiSlot) {
+            ((net.minecraft.client.gui.GuiSlot) list).top = 20;
+        }
+    }
+
+    /** Lays a screen out again (its rows show new values), keeping where Video Settings' list was scrolled. */
+    static void relayout(GuiScreen screen) {
+        Minecraft mc = Minecraft.getMinecraft();
+        try {
+            Float scrolled = null;
+            if (screen instanceof GuiVideoSettings && videoList != null) {
+                Object list = videoList.get(screen);
+                if (list instanceof net.minecraft.client.gui.GuiSlot) {
+                    scrolled = (Float) scrollField().get(list);
+                }
+            }
+            screen.setWorldAndResolution(mc, screen.width, screen.height);
+            if (scrolled != null) {
+                Object list = videoList.get(screen);
+                if (list instanceof net.minecraft.client.gui.GuiSlot) {
+                    scrollField().set(list, scrolled);
+                }
+            }
+        } catch (Exception e) {
+            BackportCore.LOGGER.error("Presentation: could not lay out {} again", screen.getClass().getName(), e);
+        }
+    }
+
+    private static Field scrollField() {
+        if (scrolledField == null) {
+            scrolledField = ReflectionHelper.findField(net.minecraft.client.gui.GuiSlot.class, "amountScrolled", "field_148169_q");
+        }
+        return scrolledField;
+    }
+
+    /** Each frame of Video Settings from 1.21.11: the preset turns Custom on a change; Anisotropic Filtering's state. */
+    @SubscribeEvent
+    public void onDraw(GuiScreenEvent.DrawScreenEvent.Pre event) {
+        if (!(event.getGui() instanceof GuiVideoSettings) || !VideoLayout.active() || videoList == null) {
+            return;
+        }
+        try {
+            List<GuiButton> all = rowButtons(event.getGui());
+            if (all != null) {
+                VideoLayout.tick(event.getGui(), all);
+            }
+        } catch (Exception e) {
+            BackportCore.LOGGER.debug("Presentation: Video Settings rows unreadable", e);
+        }
+    }
+
+    /** @return every button in Video Settings' rows, or null when its list is another mod's */
+    @Nullable
+    static List<GuiButton> rowButtons(GuiScreen gui) throws Exception {
+        Object list = videoList.get(gui);
+        if (!(list instanceof GuiOptionsRowList)) {
+            return null;
+        }
+        List<GuiButton> out = new ArrayList<GuiButton>();
+        for (Object row : (List<?>) rowOptions.get(list)) {
+            for (Field f : new Field[] {rowA, rowB}) {
+                GuiButton b = (GuiButton) f.get(row);
+                if (b != null) {
+                    out.add(b);
+                }
+            }
+        }
+        return out;
     }
 
     private static void video(GuiScreen gui, List<GuiButton> buttons) throws Exception {
@@ -180,6 +286,10 @@ public final class OptionsInjector {
         VideoOptions.edit(gui, entries, keys);
         insertAfterAnchors(entries, keys, options);
         rows.clear();
+        if (VideoLayout.active()) {
+            rows.addAll(VideoLayout.rows(gui, entries, keys));
+            return;
+        }
         for (int i = 0; i < entries.size(); i += 2) {
             GuiButton a = entries.get(i);
             GuiButton b = i + 1 < entries.size() ? entries.get(i + 1) : null;

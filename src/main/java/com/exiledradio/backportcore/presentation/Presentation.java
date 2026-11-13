@@ -64,7 +64,96 @@ public final class Presentation {
     public static final ToggleOption MONOCHROME_LOGO = new ToggleOption("backportcore:monochrome_logo",
             "options.darkMojangStudiosBackgroundColor", OptionScreen.ACCESSIBILITY, false);
 
+    /** 1.21.6's Music Frequency (Music and Sounds): how long the in-game music waits between tracks. */
+    public static final CycleOption MUSIC_FREQUENCY = new CycleOption("backportcore:music_frequency", "options.music_frequency",
+            OptionScreen.SOUNDS, new String[] {"default", "frequent", "constant"}, new String[] {"options.music_frequency.default",
+            "options.music_frequency.frequent", "options.music_frequency.constant"}, "default");
+    /** 1.21.6's Music Toast (Music and Sounds; 1.21.11's three values): the playing track's name. */
+    public static final CycleOption MUSIC_TOAST = new CycleOption("backportcore:music_toast", "options.musicToast",
+            OptionScreen.SOUNDS, new String[] {"never", "pause_menu", "pause_menu_and_toast"}, new String[] {"options.musicToast.never",
+            "options.musicToast.pauseMenu", "options.musicToast.pauseMenuAndToast"}, "never");
+    /** 1.21.6's UI volume (Music and Sounds): button clicks and other interface sounds, 0 to 100%. */
+    public static final SliderOption UI_VOLUME = new SliderOption("backportcore:ui_volume", "soundCategory.ui", OptionScreen.SOUNDS,
+            0.0, 1.0, 0.0, 1.0);
+
+    /** 1.21.9's Attack/Destroy (Controls): Hold or Toggle. */
+    public static final CycleOption TOGGLE_ATTACK = new CycleOption("backportcore:toggle_attack", "key.attack", OptionScreen.CONTROLS,
+            new String[] {"hold", "toggle"}, new String[] {"options.key.hold", "options.key.toggle"}, "hold");
+    /** 1.21.9's Use Item/Place Block (Controls): Hold or Toggle. */
+    public static final CycleOption TOGGLE_USE = new CycleOption("backportcore:toggle_use", "key.use", OptionScreen.CONTROLS,
+            new String[] {"hold", "toggle"}, new String[] {"options.key.hold", "options.key.toggle"}, "hold");
+
+    // ---- 1.21.6 to 1.21.11's Video Settings (Core owns the screen, the clouds and the rendering they change) ----
+
+    /** 1.21.11's Preset (Quality &amp; Performance): Fast, Fancy and Fabulous! set the section's settings; Custom once changed. */
+    public static final CycleOption GRAPHICS_PRESET = new CycleOption("backportcore:graphics_preset", "options.graphics.preset",
+            OptionScreen.VIDEO, new String[] {"fast", "fancy", "fabulous", "custom"}, new String[] {"options.graphics.fast",
+            "options.graphics.fancy", "options.graphics.fabulous", "options.graphics.custom"}, "fancy");
+    /** 1.21.6's Cloud Distance, 2 to 128 chunks. */
+    public static final SliderOption CLOUD_RANGE = new SliderOption("backportcore:cloud_range", "options.renderCloudsDistance",
+            OptionScreen.VIDEO, 2.0, 128.0, 1.0, 128.0);
+    /** 1.21.11's See-Through Leaves: 1.12.2's Fancy graphics, which is what draws leaves see-through. */
+    public static final ToggleOption CUTOUT_LEAVES = new ToggleOption("backportcore:cutout_leaves", "options.cutoutLeaves",
+            OptionScreen.VIDEO, true);
+    /** 1.21.11's Weather Effect Radius, 3 to 10 blocks (1.12.2: 10 with Fancy graphics, 5 with Fast). */
+    public static final SliderOption WEATHER_RADIUS = new SliderOption("backportcore:weather_radius", "options.weatherRadius",
+            OptionScreen.VIDEO, 3.0, 10.0, 1.0, 10.0);
+    /** 1.21.11's Texture Filtering: None or Anisotropic (RGSS is a shader of 1.21.11's terrain, which 1.12.2 cannot run). */
+    public static final CycleOption TEXTURE_FILTERING = new CycleOption("backportcore:texture_filtering", "options.textureFiltering",
+            OptionScreen.VIDEO, new String[] {"none", "anisotropic"}, new String[] {"options.textureFiltering.none",
+            "options.textureFiltering.anisotropic"}, "none");
+    /** 1.21.11's Anisotropic Filtering, 2x, 4x or 8x (saved as the power of two, as vanilla's {@code maxAnisotropyBit}). */
+    public static final SliderOption MAX_ANISOTROPY = new SliderOption("backportcore:max_anisotropy", "options.maxAnisotropy",
+            OptionScreen.VIDEO, 1.0, 3.0, 1.0, 2.0);
+    /** 1.21.11's Show Vignette (Preferences; 1.12.2 draws it only with Fancy graphics). */
+    public static final ToggleOption VIGNETTE = new ToggleOption("backportcore:vignette", "options.vignette", OptionScreen.VIDEO, true);
+    /** 1.21.11's Chunk Fade Time, 0 to 2 seconds in twentieths: newly drawn chunks fade in from the fog color. */
+    public static final SliderOption CHUNK_FADE = new SliderOption("backportcore:chunk_fade", "options.chunkFade", OptionScreen.VIDEO,
+            0.0, 2.0, 0.05, 0.75);
+
     static {
+        GRAPHICS_PRESET.since("1.21.11");
+        GRAPHICS_PRESET.tooltip("options.graphics.preset.tooltip");
+        CLOUD_RANGE.since("1.21.6");
+        CLOUD_RANGE.after("RENDER_CLOUDS");
+        CLOUD_RANGE.decimals(0).valueKey("options.chunks");
+        CUTOUT_LEAVES.since("1.21.11");
+        CUTOUT_LEAVES.tooltip("options.cutoutLeaves.tooltip");
+        WEATHER_RADIUS.since("1.21.11");
+        WEATHER_RADIUS.tooltip("options.weatherRadius.tooltip");
+        WEATHER_RADIUS.decimals(0).valueKey("options.blocks");
+        TEXTURE_FILTERING.since("1.21.11");
+        TEXTURE_FILTERING.valueTooltips("options.textureFiltering.none.tooltip", "options.textureFiltering.anisotropic.tooltip");
+        MAX_ANISOTROPY.since("1.21.11");
+        MAX_ANISOTROPY.tooltip("options.maxAnisotropy.tooltip");
+        MAX_ANISOTROPY.valueKey("options.multiplier").valueText(v -> Integer.toString(1 << (int) Math.round(v)));
+        VIGNETTE.since("1.21.11");
+        VIGNETTE.tooltip("options.vignette.tooltip");
+        CHUNK_FADE.since("1.21.11");
+        CHUNK_FADE.tooltip("options.chunkFade.tooltip");
+        CHUNK_FADE.wholeLabel("options.chunkFade.seconds", "options.chunkFade.none").decimals(2);
+        for (PresentationOption o : new PresentationOption[] {GRAPHICS_PRESET, CLOUD_RANGE, CUTOUT_LEAVES, WEATHER_RADIUS, TEXTURE_FILTERING,
+                MAX_ANISOTROPY, VIGNETTE, CHUNK_FADE}) {
+            registerOption(o);
+        }
+    }
+
+    static {
+        TOGGLE_ATTACK.since("1.21.9");
+        TOGGLE_USE.since("1.21.9");
+        registerOption(TOGGLE_ATTACK);
+        registerOption(TOGGLE_USE);
+        MUSIC_FREQUENCY.since("1.21.6");
+        MUSIC_FREQUENCY.tooltip("options.music_frequency.tooltip");
+        MUSIC_TOAST.since("1.21.6");
+        MUSIC_TOAST.valueTooltips("options.musicToast.never.tooltip", "options.musicToast.pauseMenu.tooltip",
+                "options.musicToast.pauseMenuAndToast.tooltip");
+        UI_VOLUME.since("1.21.6");
+        UI_VOLUME.decimals(-1);
+        UI_VOLUME.zeroKey("options.off");
+        registerOption(UI_VOLUME);
+        registerOption(MUSIC_FREQUENCY);
+        registerOption(MUSIC_TOAST);
         PANORAMA_SPEED.since("1.19.3");
         HIDE_SPLASH_TEXTS.since("1.20.3");
         registerOption(PANORAMA_SPEED);

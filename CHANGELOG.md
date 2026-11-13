@@ -1,5 +1,38 @@
 # 1.2.0
 
+*   **The backports' requests** (Tricky Trials Backport's `CORE_REQUESTS.md`, and the same asks from others):
+    *   Ownership: Caves & Cliffs Backport's tuff and copper set are in `BlockOwnership`'s table; a per-name
+        `provides` switch; an owner may hand its own block to a pseudo-owner (`modid:switched_off`). New
+        `ItemOwnership` for items and effects (copper ingot, raw copper, honeycomb, the ominous bottle, Bad Omen).
+    *   `CopyRemapping`: a family mod's copies of another's blocks, items and effects become the owner's when the
+        owner is added to a world (Rule 1's third bullet).
+    *   `copper.Oxidation`: one oxidation and waxing table, and current Java's aging rule, for every mod's copper.
+    *   `block.ModernWall`: the family's 1.16+ wall (none, low and tall sides), moved from Caves & Cliffs Backport.
+*   **Look and feel for 1.21.x**:
+    *   Menu tracks with a volume (`addMenuMusic(name, weight, volume)`); `removeMenuMusic("music/game/x")` without a
+        namespace removes that path whichever mod plays it.
+    *   Music Frequency, Music Toast and UI volume (Music and Sounds, from 1.21.6): Core's ticker waits by Music
+        Frequency, music keeps playing while paused, the playing track's name shows at the top left (1.21.6's
+        sprites, supplied by the backport), button clicks follow the UI slider. From 1.21.9, letting go of a volume
+        slider outside a world plays a sample of that sound.
+    *   Attack/Destroy and Use Item/Place Block can be Toggle (Controls, from 1.21.9).
+    *   `CycleOption.valueTooltips(...)`; from 1.21.11 a slider's knob follows the mouse and snaps when let go.
+    *   `PanoramaRenderer.renderBlurred(screen, radius)`: 1.20.5's blurred panorama, by 1.12.2's own blur shader.
+    *   Patches P22 (menus at 60 frames a second from 1.21.2), P23 (1.21.2's slot highlight), P24 (the sunrise glow
+        through `FogPipeline.Step.sunrise`) and P25 (clouds by world time, `Step.cloudsFollowWorldTime`).
+    *   1.21.11's Video Settings: Display, Quality & Performance and Preferences sections, the Preset slider (Fast,
+        Fancy and Fabulous! set the section's settings; Custom once one changes), See-Through Leaves (1.12.2's Fancy
+        graphics), Weather Effect Radius (P27), Texture Filtering and Anisotropic Filtering (None or Anisotropic, 2x to
+        8x), Show Vignette and Chunk Fade Time (P28); View Bobbing moves to Accessibility. 1.21.6's Cloud Distance, 2 to
+        128 chunks (P26). A backport's option named after vanilla's lands in vanilla's place and follows the presets.
+    *   1.18's Controls screen (Mouse Settings..., Key Binds..., the toggles and Auto-Jump) with 1.12.2's key list as Key
+        Binds; from 1.21.9 Auto-Jump, Toggle Crouch and Toggle Sprint leave Accessibility, which gains "Controls...".
+    *   1.21.9's F3: every part of the debug screen Off, In F3 or Always on Debug Options (F3 + F6, with its search
+        and profiles), Always parts shown with F3 hidden, the renderers and the 3D crosshair as parts, F3's
+        combinations in menus. 1.21.11's Debug key binds (P30).
+    *   The 1.20 title logo layout (P29), drawn when a backport of 1.20 or later supplies `minecraft.png` and
+        `edition.png`. New: `Contribution.replacedAssets()`, `SliderOption.valueText(...)`, `PresentationOption.path()`.
+
 *   **Caves & Cliffs Backport's extended height**: `WorldHeights` answers its y -64 to 319 worlds (and their
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
     generator that says where its own surface is, asked first by `TerrainHeights.forWorld`. New

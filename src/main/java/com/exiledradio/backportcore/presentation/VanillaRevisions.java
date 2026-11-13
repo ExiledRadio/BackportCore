@@ -71,6 +71,80 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast("1.15");
     }
 
+    // ---- Since Core 1.2.0: 1.18 to 1.21.11's options screens, F3 and the title logo ----
+
+    /**
+     * 1.18 (21w37a): Controls is a screen of options (Mouse Settings... and Key Binds..., then Toggle Crouch, Toggle
+     * Sprint and Auto-Jump); 1.12.2's key list is the Key Binds screen behind it.
+     */
+    public static boolean keyBindsScreen(GameVersion v) {
+        return v.isAtLeast("1.18");
+    }
+
+    /**
+     * 1.21.9 (25w31a): Auto-Jump, Toggle Crouch and Toggle Sprint are on Controls only, and Accessibility Settings has
+     * a "Controls..." button beside Narrator.
+     */
+    public static boolean controlsLeaveAccessibility(GameVersion v) {
+        return v.isAtLeast("1.21.9");
+    }
+
+    /**
+     * 1.21.9: the F3 rework. Each part of the debug screen is off, shown with F3, or always shown (the Debug Options
+     * screen on F3 + F6), and F3's combinations work in menus.
+     */
+    public static boolean debugOptions(GameVersion v) {
+        return v.isAtLeast("1.21.9");
+    }
+
+    /** 1.21.11: the F3 combinations are key binds of their own, in the Key Binds screen's "Debug" category. */
+    public static boolean debugKeyBinds(GameVersion v) {
+        return v.isAtLeast("1.21.11");
+    }
+
+    /**
+     * 1.21.11 (25w41a): Video Settings in three sections (Display, Quality &amp; Performance, Preferences) with the
+     * Preset slider; Graphics is gone (its leaves are See-Through Leaves) and View Bobbing is on Accessibility.
+     */
+    public static boolean videoSections(GameVersion v) {
+        return v.isAtLeast("1.21.11");
+    }
+
+    /**
+     * Where vanilla's own option of this name (an option id's path, as {@code toggle_crouch}) shows at {@code v}, when
+     * a version moved it: Toggle Crouch and Toggle Sprint are on Accessibility and Controls from 1.18 and on Controls
+     * only from 1.21.9. Null when the option stays where it was registered.
+     */
+    @javax.annotation.Nullable
+    public static java.util.List<com.exiledradio.backportcore.presentation.option.OptionScreen> vanillaScreens(String name, GameVersion v) {
+        if ("toggle_crouch".equals(name) || "toggle_sprint".equals(name)) {
+            if (controlsLeaveAccessibility(v)) {
+                return java.util.Collections.singletonList(com.exiledradio.backportcore.presentation.option.OptionScreen.CONTROLS);
+            }
+            if (keyBindsScreen(v)) {
+                return java.util.Arrays.asList(com.exiledradio.backportcore.presentation.option.OptionScreen.ACCESSIBILITY,
+                        com.exiledradio.backportcore.presentation.option.OptionScreen.CONTROLS);
+            }
+        }
+        return null;
+    }
+
+    /** The title screen's logo layout. */
+    public enum TitleLogo {
+        /** 1.12.2 to 1.19: {@code minecraft.png} in two 155 by 44 pieces, "Java Edition" (98 by 14) below. */
+        CLASSIC,
+        /**
+         * 1.20 (23w17a, {@code LogoRenderer}): {@code minecraft.png} as one 256 by 44 piece of a 256 by 64 texture at
+         * width / 2 - 128, {@code edition.png} (128 by 14 of 128 by 16) at width / 2 - 64, 37 below the logo's top,
+         * Minceraft from its own {@code minceraft.png}, and the splash at width / 2 + 123, 69.
+         */
+        LOGO_1_20;
+
+        public static TitleLogo forVersion(GameVersion v) {
+            return v.isAtLeast("1.20") ? LOGO_1_20 : CLASSIC;
+        }
+    }
+
     /** @return the color a button's label is drawn in, given 1.12.2's ({@code GuiButton.drawButton}) */
     public static int buttonTextColor(int vanilla) {
         if ((vanilla == 0xE0E0E0 || vanilla == 0xFFFFA0) && whiteButtonText()) {

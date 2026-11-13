@@ -152,7 +152,8 @@ public final class GameMusic {
                 return;
             }
             tried = true;
-            if (STEPS.steps().isEmpty()) {
+            // 1.21.6's Music Frequency and Music Toast need Core's ticker too.
+            if (STEPS.steps().isEmpty() && !MusicClient.active()) {
                 return;
             }
             install(Minecraft.getMinecraft());
@@ -196,6 +197,10 @@ public final class GameMusic {
 
         @Override
         public void update() {
+            if (MusicClient.active()) {
+                update1216();
+                return;
+            }
             Track music = situational(this.mc, this);
             if (this.current != null) {
                 if (!music.name().equals(this.current.getSoundLocation()) && music.replaceCurrent) {
@@ -211,6 +216,31 @@ public final class GameMusic {
             if (this.current == null && this.nextSongDelay-- <= 0) {
                 play(music);
             }
+        }
+
+        /** 1.21.6's {@code MusicManager.tick}: each wait is Music Frequency's ({@link MusicClient#delay}). */
+        private void update1216() {
+            Track music = situational(this.mc, this);
+            if (this.current != null) {
+                if (!music.name().equals(this.current.getSoundLocation()) && music.replaceCurrent) {
+                    this.mc.getSoundHandler().stopSound(this.current);
+                    this.nextSongDelay = MathHelper.getInt(this.random, 0, music.minDelay / 2);
+                }
+                if (!this.mc.getSoundHandler().isSoundPlaying(this.current)) {
+                    this.current = null;
+                    this.nextSongDelay = Math.min(this.nextSongDelay, MusicClient.delay(music.minDelay, music.maxDelay, this.random));
+                }
+            }
+            this.nextSongDelay = Math.min(this.nextSongDelay, MusicClient.delay(music.minDelay, music.maxDelay, this.random));
+            if (this.current == null && this.nextSongDelay-- <= 0) {
+                play(music);
+            }
+        }
+
+        /** Music Frequency changed: the next wait is drawn again ({@code MusicManager.setMinutesBetweenSongs}). */
+        void frequencyChanged() {
+            Track music = situational(this.mc, this);
+            this.nextSongDelay = MusicClient.delay(music.minDelay, music.maxDelay, this.random);
         }
 
         private void play(Track music) {
@@ -247,6 +277,25 @@ public final class GameMusic {
         /** The menu-music swap ({@link MenuMusicPlayer}) tells the ticker which sound it is really playing. */
         void setCurrent(ISound sound) {
             this.current = sound;
+        }
+    }
+
+    /** @return the track Core's ticker is playing now, or null (none, or vanilla's ticker is in place) */
+    @Nullable
+    public static ISound currentTrack(Minecraft mc) {
+        MusicTicker ticker = mc.getMusicTicker();
+        if (ticker instanceof CoreTicker) {
+            ISound s = ((CoreTicker) ticker).current();
+            return s != null && mc.getSoundHandler().isSoundPlaying(s) ? s : null;
+        }
+        return null;
+    }
+
+    /** Music Frequency's listener: a running ticker draws its next wait again. */
+    static void frequencyChanged() {
+        MusicTicker ticker = Minecraft.getMinecraft().getMusicTicker();
+        if (ticker instanceof CoreTicker) {
+            ((CoreTicker) ticker).frequencyChanged();
         }
     }
 

@@ -91,6 +91,11 @@ public final class PresentationHooks {
      * @return true when the key was handled (vanilla then does not also press that key's binding)
      */
     public static boolean processKeyF3(Minecraft mc, int key) {
+        // 1.21.11's Debug key binds: a rebound combination's key stands for its default.
+        key = DebugBindings.translate(key);
+        if (key < 0) {
+            return false;
+        }
         List<Contribution> installed = Presentation.installed();
         if (!DebugKeys.changed(installed)) {
             return vanillaF3(mc, key);
@@ -123,6 +128,129 @@ public final class PresentationHooks {
             BackportCore.LOGGER.error("F3 keys: vanilla's processKeyF3 failed", e);
             return false;
         }
+    }
+
+    // ---- P26 to P30 (since Core 1.2.0) ----
+
+    /** P26: at the head of {@code RenderGlobal.renderClouds}. */
+    public static void cloudsBegin() {
+        RenderOptions.cloudsBegin();
+    }
+
+    /** P26: the fast clouds' -256 and 256. */
+    public static int cloudFast(int vanilla) {
+        return RenderOptions.cloudFast(vanilla);
+    }
+
+    /** P26: the fancy clouds' cell bounds, -3 and 4. */
+    public static int cloudFancy(int vanilla) {
+        return RenderOptions.cloudFancy(vanilla);
+    }
+
+    /** P27: {@code renderRainSnow}'s 5 and 10. */
+    public static int weatherRadius(int vanilla) {
+        return RenderOptions.weatherRadius(vanilla);
+    }
+
+    /** P28: each chunk as {@code ChunkRenderContainer.preRenderChunk} draws it. */
+    public static void chunkFadePre(net.minecraft.client.renderer.chunk.RenderChunk chunk) {
+        RenderOptions.chunkPre(chunk);
+    }
+
+    /** P28: after each layer's chunks. */
+    public static void chunkFadeEnd() {
+        RenderOptions.chunkLayerEnd();
+    }
+
+    /** P29: {@code GuiMainMenu.drawScreen}'s logo pieces. */
+    public static void titleLogoRect(Gui gui, int x, int y, int u, int v, int w, int h) {
+        TitleLogo.rect(gui, x, y, u, v, w, h);
+    }
+
+    /** P29: {@code GuiMainMenu.drawScreen}'s "Java Edition". */
+    public static void titleEdition(int x, int y, float u, float v, int w, int h, float tw, float th) {
+        TitleLogo.edition(x, y, u, v, w, h, tw, th);
+    }
+
+    /** P29: the splash's offset from the middle. */
+    public static int splashX(int vanilla) {
+        return TitleLogo.splashX(vanilla);
+    }
+
+    /** P29: the splash's height. */
+    public static float splashY(float vanilla) {
+        return TitleLogo.splashY(vanilla);
+    }
+
+    /** P30: F3 as the modifier. */
+    public static int debugModifierKey(int vanilla) {
+        return DebugBindings.modifierKey(vanilla);
+    }
+
+    /** P30: F3 as the debug screen's toggle. */
+    public static int debugOverlayKey(int vanilla) {
+        return DebugBindings.overlayKey(vanilla);
+    }
+
+    /** P30: C in F3 + C's crash. */
+    public static int debugCrashKey(int vanilla) {
+        return DebugBindings.crashKey(vanilla);
+    }
+
+    // ---- P24, P25: the sky ----
+
+    /** P24: {@code WorldProvider.calcSunriseSunsetColors}, through the fog pipeline's sunrise steps. */
+    public static float[] sunriseColors(net.minecraft.world.WorldProvider provider, float angle, float partialTicks) {
+        return FogPipeline.sunriseColors(provider, angle, partialTicks, provider.calcSunriseSunsetColors(angle, partialTicks));
+    }
+
+    /** P25: {@code RenderGlobal.cloudTickCounter} as the clouds read it. */
+    public static int cloudTicks(int vanilla) {
+        return FogPipeline.cloudTicks(vanilla);
+    }
+
+    // ---- P22: menus without a world ----
+
+    /** P22: the frame rate of a menu without a world: 1.21.2's 60 once a backport of 1.21.2 or later is installed. */
+    public static int menuFramerate(int vanilla) {
+        return Presentation.isAtLeast("1.21.2") ? 60 : vanilla;
+    }
+
+    // ---- P23: the slot highlight ----
+
+    /** For the client self-test: highlights drawn with 1.21.2's sprites. */
+    public static volatile int spriteHighlights;
+
+    /**
+     * P23: {@code GuiContainer.drawScreen}'s hovered-slot square. From 1.21.2, when a backport supplies its sprites
+     * ({@code textures/gui/sprites/container/slot_highlight_back.png} and {@code _front.png}, 24 by 24, drawn 4 pixels
+     * out from the slot): the back one behind the item already drawn (depth-tested under it), the front one over it.
+     * Otherwise 1.12.2's white square.
+     */
+    public static void slotHighlight(net.minecraft.client.gui.inventory.GuiContainer gui, int left, int top, int right, int bottom,
+                                     int startColor, int endColor) {
+        String back = "textures/gui/sprites/container/slot_highlight_back.png";
+        String front = "textures/gui/sprites/container/slot_highlight_front.png";
+        if (!Presentation.isAtLeast("1.21.2") || Presentation.asset(back) == null || Presentation.asset(front) == null) {
+            net.minecraftforge.fml.client.config.GuiUtils.drawGradientRect(0, left, top, right, bottom, startColor, endColor);
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        net.minecraft.client.renderer.GlStateManager.enableBlend();
+        net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        // vanilla turned depth testing off for its square; the back sprite is drawn at z 0, under the item's depth.
+        net.minecraft.client.renderer.GlStateManager.enableDepth();
+        net.minecraft.client.renderer.GlStateManager.depthMask(false);
+        mc.getTextureManager().bindTexture(new ResourceLocation(back));
+        Gui.drawModalRectWithCustomSizedTexture(left - 4, top - 4, 0.0F, 0.0F, 24, 24, 24.0F, 24.0F);
+        net.minecraft.client.renderer.GlStateManager.depthMask(true);
+        net.minecraft.client.renderer.GlStateManager.disableDepth();
+        net.minecraft.client.renderer.GlStateManager.pushMatrix();
+        net.minecraft.client.renderer.GlStateManager.translate(0.0F, 0.0F, 300.0F);
+        mc.getTextureManager().bindTexture(new ResourceLocation(front));
+        Gui.drawModalRectWithCustomSizedTexture(left - 4, top - 4, 0.0F, 0.0F, 24, 24, 24.0F, 24.0F);
+        net.minecraft.client.renderer.GlStateManager.popMatrix();
+        spriteHighlights++;
     }
 
     // ---- P12: button labels ----

@@ -8,3 +8,18 @@ chat.coordinates.tooltip = chat.coordinates.tooltip
 backportcore.general.rendering.blockupdates.none = options.prioritizeChunkUpdates.none
 backportcore.general.rendering.blockupdates.player_affected = options.prioritizeChunkUpdates.byPlayer
 backportcore.general.rendering.blockupdates.nearby = options.prioritizeChunkUpdates.nearby
+# 1.21.6 music options: vanilla tooltips.
+options.music_frequency.tooltip = options.music_frequency.tooltip
+options.musicToast.never.tooltip = options.musicToast.never.tooltip
+options.musicToast.pauseMenu.tooltip = options.musicToast.pauseMenu.tooltip
+options.musicToast.pauseMenuAndToast.tooltip = options.musicToast.pauseMenuAndToast.tooltip
+# 1.21.9 to 1.21.11 video and debug options: vanilla tooltips.
+options.graphics.preset.tooltip = options.graphics.preset.tooltip
+options.cutoutLeaves.tooltip = options.cutoutLeaves.tooltip
+options.weatherRadius.tooltip = options.weatherRadius.tooltip
+options.textureFiltering.none.tooltip = options.textureFiltering.none.tooltip
+options.textureFiltering.anisotropic.tooltip = options.textureFiltering.anisotropic.tooltip
+options.maxAnisotropy.tooltip = options.maxAnisotropy.tooltip
+options.vignette.tooltip = options.vignette.tooltip
+options.chunkFade.tooltip = options.chunkFade.tooltip
+debug.options.notAllowed.tooltip = debug.options.notAllowed.tooltip

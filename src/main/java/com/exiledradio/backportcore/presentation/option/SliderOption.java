@@ -150,10 +150,25 @@ public final class SliderOption extends PresentationOption {
     /** @return the value as shown after the label, before any {@link #valueKey}: "50%" or "2.5" */
     public String valueText() {
         double v = get();
+        if (this.text != null) {
+            return this.text.apply(v);
+        }
         if (this.decimals < 0) {
             return Math.round(v * 100) + "%";
         }
         return String.format(Locale.ROOT, "%." + this.decimals + "f", v);
+    }
+
+    @Nullable
+    private java.util.function.DoubleFunction<String> text;
+
+    /**
+     * Shows the value as this function writes it (before any {@link #valueKey}): 1.21.11's Anisotropic Filtering shows
+     * 2 to the value ("4x"). Since Core 1.2.0.
+     */
+    public SliderOption valueText(java.util.function.DoubleFunction<String> text) {
+        this.text = text;
+        return this;
     }
 
     /** Called with the new value whenever it changes. */

@@ -94,6 +94,81 @@ public final class PanoramaRenderer {
         frames++;
     }
 
+    /** 1.20.5's Menu Background Blurriness default (5), the blur's radius. */
+    public static final float MENU_BLUR = 5.0F;
+
+    @Nullable
+    private static net.minecraft.client.shader.Framebuffer blurTarget;
+    @Nullable
+    private static net.minecraft.client.shader.ShaderGroup blur;
+    private static boolean blurFailed;
+    /** For the client self-test: frames drawn blurred. */
+    public static volatile int blurredFrames;
+
+    /**
+     * 1.20.5's menu panorama ({@code Screen.renderPanorama} then {@code renderBlurredBackground}): {@link #render} into a
+     * buffer of its own, blurred by 1.12.2's own {@code shaders/post/blur.json} at {@code radius}, then drawn over the
+     * whole screen. Wherever the blur cannot run (no shader support, or an error once), the sharp panorama is drawn.
+     * Since Core 1.2.0.
+     */
+    public static void renderBlurred(@Nullable GuiScreen menu, float radius) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (blurFailed || !net.minecraft.client.renderer.OpenGlHelper.shadersSupported || !net.minecraft.client.renderer.OpenGlHelper.isFramebufferEnabled()) {
+            render(menu);
+            return;
+        }
+        int previous = org.lwjgl.opengl.GL11.glGetInteger(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_BINDING);
+        int w = mc.displayWidth;
+        int h = mc.displayHeight;
+        try {
+            if (blurTarget == null || blurTarget.framebufferWidth != w || blurTarget.framebufferHeight != h) {
+                if (blurTarget == null) {
+                    blurTarget = new net.minecraft.client.shader.Framebuffer(w, h, true);
+                } else {
+                    blurTarget.createBindFramebuffer(w, h);
+                }
+                if (blur != null) {
+                    blur.deleteShaderGroup();
+                }
+                blur = new net.minecraft.client.shader.ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), blurTarget,
+                        new ResourceLocation("shaders/post/blur.json"));
+                blur.createBindFramebuffers(w, h);
+            }
+            java.util.List<net.minecraft.client.shader.Shader> passes = net.minecraftforge.fml.common.ObfuscationReflectionHelper
+                    .getPrivateValue(net.minecraft.client.shader.ShaderGroup.class, blur, "field_148031_d");
+            for (net.minecraft.client.shader.Shader pass : passes) {
+                net.minecraft.client.shader.ShaderUniform r = pass.getShaderManager().getShaderUniform("Radius");
+                if (r != null) {
+                    r.set(radius);
+                }
+            }
+            blurTarget.framebufferClear();
+            blurTarget.bindFramebuffer(true);
+            render(menu);
+            GlStateManager.matrixMode(5889);
+            GlStateManager.pushMatrix();
+            GlStateManager.matrixMode(5888);
+            GlStateManager.pushMatrix();
+            blur.render(mc.getRenderPartialTicks());
+            net.minecraft.client.renderer.OpenGlHelper.glBindFramebuffer(net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER, previous);
+            GlStateManager.viewport(0, 0, w, h);
+            blurTarget.framebufferRenderExt(w, h, true);
+            GlStateManager.matrixMode(5889);
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(5888);
+            GlStateManager.popMatrix();
+            GlStateManager.enableTexture2D();
+            GlStateManager.disableDepth();
+            blurredFrames++;
+        } catch (Exception e) {
+            blurFailed = true;
+            com.exiledradio.backportcore.BackportCore.LOGGER.warn("Presentation: the blurred panorama is not available; drawn sharp.", e);
+            net.minecraft.client.renderer.OpenGlHelper.glBindFramebuffer(net.minecraft.client.renderer.OpenGlHelper.GL_FRAMEBUFFER, previous);
+            GlStateManager.viewport(0, 0, w, h);
+            render(menu);
+        }
+    }
+
     /**
      * Draws this frame's panorama (and the newest overlay) again over the finished screen, covering it by
      * {@code cover} (0 to 1): the title screen's 1.13 fade-in. The clock does not advance.
