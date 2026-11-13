@@ -109,6 +109,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.waterlog.Waterlogging.init();
         // The overworld rules 1.13 and later share, applied by the newest installed backport (worldgen/).
         com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
+        // Blocks another installed mod adds under its own names that the backports add too (duplicate/).
+        com.exiledradio.backportcore.duplicate.QuarkPairs.preInit();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
