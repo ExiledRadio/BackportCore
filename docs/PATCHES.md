@@ -449,3 +449,24 @@ or passes an existing constant through a hook of the same type.
 *   **Not covered**: generation in a `ChunkPrimer`. Fluidlogged API's primer indexes as `ChunkPrimer` does and
     its `generateFluidStates` copies y 0-255 only, so `Waterlogging.setWater(primer, ...)` ignores any other y
     (it used to write another column's water); set such water after the chunk exists.
+
+## P21. Dyed candles influence Quark's matrix enchanting
+
+*   **What**: at the start of `vazkii.quark.oddities.tile.TileMatrixEnchanter.getEnchantPowerAt(World, BlockPos)`
+    (Quark, with its Oddities add-on), a call to `compat/QuarkCandles.influence(this.influences, world, pos)`. A
+    block named `<color>_candle` by any mod but Quark adds the influences Quark's config gives that color, up to its
+    "Influencing Max", only while "Influencing Enabled" is on: what Quark does for its own candle.
+*   **Why a patch**: Quark compares the block with its own candle by identity and has no API for others. Backport
+    Core hides Quark's candle beside the backports' candles (`duplicate/QuarkPairs`), so without this the feature
+    is lost.
+*   **Rest of the stand-in** (no patch): the backports' candles give Quark's "Enchantment Power" (0.5 by default)
+    through `getEnchantPowerBonus` while Quark's candles are on, 0 without Quark as in 1.18; with Quark's tallow on,
+    string over two tallow makes "Candles Crafted" plain candles; the candles carry the ore name `blockCandle`.
+*   **Shape**: five instructions at the head (`aload 0`, `getfield influences`, `aload 1`, `aload 2`,
+    `invokestatic`), nothing left on the stack, no new branch.
+*   **Fails safe**: method or field not found: skipped, Quark unchanged. Any reflection failure in the hook turns it
+    off for the session.
+*   **Tested**: G:/VBPTest/family-all (`FamilyProbe -Dfamilyprobe.candles`), all backports + Quark r1.6-179 and
+    QuarkRotN r1.6-192 + Quark Oddities: patched; a red and a blue candle by the table add Fire Aspect, Flame,
+    Efficiency, Sharpness, Lure and Power; power counts; without Quark power is 0 and there is no tallow recipe.
+    RLCraft and Dregora ship Quark without Oddities, so there only the power and the recipe apply.
