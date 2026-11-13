@@ -151,6 +151,18 @@ A chunk generator that knows its own surface implements `TerrainSource` (1.2.0):
 `columnTerrain(world)` before any other adapter.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
+A generator that runs a newer version's world generation in full (its 3D biomes and every placed feature: coral,
+kelp, seagrass, icebergs ...) implements `ModernGeneration` (1.2.0). Caves & Cliffs Backport's 1.18 generator does,
+for 1.18.2. In its worlds a backport's own generator of such a feature steps aside, and biome rules read its biome:
+
+```java
+ModernGeneration modern = ModernGeneration.of(world);          // or .of(generator) in an IWorldGenerator; null: none
+if (modern != null) return;                                    // the world's generator already placed this feature
+String id = ModernGeneration.biomeId(world, pos);              // "minecraft:lush_caves" under an ocean; null: none
+```
+
+`biomeId` loads and generates nothing (server thread).
+
 ### Whole columns and the nether's floors (`terrain.NetherHeights`, 1.1.0)
 
 ```java
