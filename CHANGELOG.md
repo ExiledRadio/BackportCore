@@ -1,5 +1,26 @@
 # 1.2.0
 
+*   **The backports' requests** (Tricky Trials Backport's `CORE_REQUESTS.md`, and the same asks from others):
+    *   Ownership: Caves & Cliffs Backport's tuff and copper set are in `BlockOwnership`'s table; a per-name
+        `provides` switch; an owner may hand its own block to a pseudo-owner (`modid:switched_off`). New
+        `ItemOwnership` for items and effects (copper ingot, raw copper, honeycomb, the ominous bottle, Bad Omen).
+    *   `CopyRemapping`: a family mod's copies of another's blocks, items and effects become the owner's when the
+        owner is added to a world (Rule 1's third bullet).
+    *   `copper.Oxidation`: one oxidation and waxing table, and current Java's aging rule, for every mod's copper.
+    *   `block.ModernWall`: the family's 1.16+ wall (none, low and tall sides), moved from Caves & Cliffs Backport.
+*   **Look and feel for 1.21.x**:
+    *   Menu tracks with a volume (`addMenuMusic(name, weight, volume)`); `removeMenuMusic("music/game/x")` without a
+        namespace removes that path whichever mod plays it.
+    *   Music Frequency, Music Toast and UI volume (Music and Sounds, from 1.21.6): Core's ticker waits by Music
+        Frequency, music keeps playing while paused, the playing track's name shows at the top left (1.21.6's
+        sprites, supplied by the backport), button clicks follow the UI slider. From 1.21.9, letting go of a volume
+        slider outside a world plays a sample of that sound.
+    *   Attack/Destroy and Use Item/Place Block can be Toggle (Controls, from 1.21.9).
+    *   `CycleOption.valueTooltips(...)`; from 1.21.11 a slider's knob follows the mouse and snaps when let go.
+    *   `PanoramaRenderer.renderBlurred(screen, radius)`: 1.20.5's blurred panorama, by 1.12.2's own blur shader.
+    *   Patches P22 (menus at 60 frames a second from 1.21.2), P23 (1.21.2's slot highlight), P24 (the sunrise glow
+        through `FogPipeline.Step.sunrise`) and P25 (clouds by world time, `Step.cloudsFollowWorldTime`).
+
 *   **Caves & Cliffs Backport's extended height**: `WorldHeights` answers its y -64 to 319 worlds (and their
     section slots), so structures and villages build at the right heights there. New `TerrainSource`: a chunk
     generator that says where its own surface is, asked first by `TerrainHeights.forWorld`.

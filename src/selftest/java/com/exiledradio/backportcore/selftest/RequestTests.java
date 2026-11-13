@@ -147,6 +147,27 @@ final class RequestTests {
         });
     }
 
+    static void schedulePresentation() {
+        then(1, "1.21 presentation options", world -> {
+            java.util.Random r = new java.util.Random(1);
+            int game = MenuMusic.frequencyDelay("default", 12000, 24000, r);
+            check("frequency: Default keeps 1.12.2's game wait", game >= 12000 && game <= 24000, game);
+            check("frequency: Frequent caps at 10 minutes", MenuMusic.frequencyDelay("frequent", 12000, 24000, r) == 12000);
+            check("frequency: Constant is 5 seconds", MenuMusic.frequencyDelay("constant", 12000, 24000, r) == 100);
+            int menu = MenuMusic.frequencyDelay("frequent", 20, 600, r);
+            check("frequency: a short wait stays its own", menu >= 20 && menu <= 600, menu);
+            check("options: Music Frequency since 1.21.6", "1.21.6".equals(String.valueOf(Presentation.MUSIC_FREQUENCY.since())));
+            check("options: Music Toast tooltip per value", "options.musicToast.never.tooltip".equals(Presentation.MUSIC_TOAST.tooltipKey()),
+                    Presentation.MUSIC_TOAST.tooltipKey());
+            Presentation.MUSIC_TOAST.set("pause_menu");
+            check("options: Music Toast tooltip follows its value", "options.musicToast.pauseMenu.tooltip".equals(Presentation.MUSIC_TOAST.tooltipKey()));
+            Presentation.MUSIC_TOAST.set("never");
+            check("options: toggles since 1.21.9", "1.21.9".equals(String.valueOf(Presentation.TOGGLE_ATTACK.since()))
+                    && "hold".equals(Presentation.TOGGLE_USE.get()));
+            check("options: UI volume registered", Presentation.option("backportcore:ui_volume") == Presentation.UI_VOLUME);
+        });
+    }
+
     private static int countOwned(String owner) {
         int n = 0;
         for (String o : BlockOwnership.table().values()) {

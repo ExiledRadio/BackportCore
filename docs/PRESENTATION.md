@@ -27,7 +27,7 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Options | `v.option(new ToggleOption("modid:name", "options.key", OptionScreen.VIDEO, true))` | Also `SliderOption(id, label, screen, min, max, step, default)` and `CycleOption(id, label, screen, names, valueKeys, default)`. `since` defaults to your version; `.until("1.17")` hides it from that version; `.after("RENDER_CLOUDS")` places it after a vanilla entry (its `GameSettings.Options` name) or another option's id. Read the value with `get()`; `onChange(...)` hears changes. |
 | Changed defaults | `v.gameOptionDefault("autoJump", "false")`, `v.optionDefault(option, "0.5")`, `v.defaultAction("key", runnable)` | Applied once per instance, then the player's (below). |
 | Loading screen | `v.loadingScreen(LoadingRevision.X)` | Only for a revision Core's table does not put at your version; Core already knows vanilla's. |
-| Menu music | `v.addMenuMusic("modid:music/menu/track", 1)`, `v.removeMenuMusic("minecraft:music/menu/menu1")` | Sound names as sounds.json writes them; the `.ogg` sits under `assets/<modid>/sounds/`. Streamed, full volume, weighted. |
+| Menu music | `v.addMenuMusic("modid:music/menu/track", 1)`, `v.addMenuMusic(name, 1, 0.4F)`, `v.removeMenuMusic("minecraft:music/menu/menu1")`, `v.removeMenuMusic("music/game/wending")` | Sound names as sounds.json writes them; the `.ogg` sits under `assets/<modid>/sounds/`. Streamed, weighted, at the volume given (1.2.0; full by default). A removal without a namespace removes that path whichever mod plays it (1.2.0). |
 | F3 keys | `v.debugKey(Keyboard.KEY_C, "debug.copy_location.help", () -> {...; return true;})`, `v.removeDebugKey(Keyboard.KEY_F)` | LWJGL 2 key codes. Register the action from client code (it runs on the client thread, no screen open). `PresentationHooks.debugFeedback("key", args)` prints vanilla's yellow "[Debug]:" line. |
 
 | Vanilla assets | `v.replaceAsset("textures/gui/widgets.png", new ResourceLocation("modid", "textures/gui/widgets.png"))`, and the shorthands `v.titleLogo(rl)` (`minecraft.png`) and `v.startupLogo("textures/gui/title/mojangstudios.png", rl)` | Core's own resource pack serves `minecraft:<path>` from the newest version that replaces it, above vanilla's default pack (a player's resource packs still win). Read from the backport's jar. |
@@ -50,6 +50,21 @@ Core resolves everything lazily, so the order backports load in does not matter.
 startup runs before the backports' pre-init, so Core reads the languages again (and any replaced texture already
 loaded) once every mod has loaded. The version that ships 1.13's underwater music hands Core its event
 (`GameMusic.setUnderWater`), so later versions' music rules can ask for it.
+
+Since Core 1.2.0:
+
+| Piece | Call | Notes |
+|---|---|---|
+| Per-value tooltips | `cycle.valueTooltips("key.a.tooltip", "key.b.tooltip")` | One per value; null falls back to `tooltip`. |
+| Blurred panorama | `PanoramaRenderer.renderBlurred(screen, PanoramaRenderer.MENU_BLUR)` (client) | 1.20.5's menu panorama, by 1.12.2's `shaders/post/blur.json`; sharp where shaders cannot run. |
+| Sunrise | `FogPipeline.add(version, name, step)` with `sunrise(Sunrise)` | Patch P24: the glow's RGBA (a copy), or null for none. |
+| Cloud timing | a step returning true from `cloudsFollowWorldTime()` | Patch P25: clouds drift by world time. |
+| Slot highlight sprites | `v.replaceAsset("textures/gui/sprites/container/slot_highlight_back.png", rl)` and `_front` | Patch P23 draws them from 1.21.2 once both are supplied. |
+| Music toast sprites | `v.replaceAsset("textures/gui/sprites/toast/now_playing.png", rl)`, `icon/music_notes.png` | The toast shows once they are supplied; names from `music.<path>` lang keys (1.12.2's tracks by their 1.20.5 names, in Core's lang). |
+
+Core's own options from 1.21.x (shown from the version that added them): Music Frequency, Music Toast and UI
+(Music and Sounds, 1.21.6), Attack/Destroy and Use Item/Place Block Hold or Toggle (Controls, 1.21.9). Menus
+without a world run at 60 frames a second from 1.21.2 (P22).
 
 ## How each piece resolves
 

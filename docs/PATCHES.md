@@ -470,3 +470,47 @@ or passes an existing constant through a hook of the same type.
     QuarkRotN r1.6-192 + Quark Oddities: patched; a red and a blue candle by the table add Fire Aspect, Flame,
     Efficiency, Sharpness, Lure and Power; power counts; without Quark power is 0 and there is no tallow recipe.
     RLCraft and Dregora ship Quark without Oddities, so there only the power and the recipe apply.
+
+## P22. Menus without a world at 60 frames a second
+
+*   **What**: in `Minecraft.getLimitFramerate`, the constant 30 (a menu with no world open) goes through
+    `PresentationHooks.menuFramerate(int)`: 60 once a backport of 1.21.2 or later is installed (its
+    `FramerateLimitTracker` limit for out-of-level menus), 30 otherwise.
+*   **Why a patch**: 1.12.2 holds the frame rate inside `runGameLoop` with no event; a mod can only slow it further.
+*   **Shape**: one `invokestatic (I)I` after the single `bipush 30`.
+*   **Fails safe**: method not found or not exactly one constant 30: skipped, 1.12.2's 30.
+*   **Tested**: client self-test (`P22 applied`).
+
+## P23. 1.21.2's slot highlight
+
+*   **What**: `GuiContainer.drawScreen`'s `drawGradientRect` (the white square over the hovered slot) becomes
+    `PresentationHooks.slotHighlight(gui, ...)`. From 1.21.2, when a backport supplies the two sprites
+    (`textures/gui/sprites/container/slot_highlight_back.png` and `_front.png` through `replaceAsset`), it draws the
+    back one behind the item already drawn (depth-tested at z 0) and the front one over it, 4 pixels out from the
+    slot; otherwise 1.12.2's square (Forge's `GuiUtils.drawGradientRect`).
+*   **Why a patch**: the square is drawn inside `drawScreen`'s slot loop after the item; no event comes between.
+*   **Shape**: the one `invokevirtual drawGradientRect` swapped for an `invokestatic` with the receiver first.
+*   **Fails safe**: not exactly one call: skipped, vanilla's square.
+*   **Tested**: client self-test (`P23 applied`). How it looks: not seen.
+
+## P24. The sunrise glow through the fog pipeline
+
+*   **What**: both readers of `WorldProvider.calcSunriseSunsetColors` (`EntityRenderer.updateFogColor` and
+    `RenderGlobal.renderSky`) call `PresentationHooks.sunriseColors`, which runs `FogPipeline.Step.sunrise` on a
+    copy of the array (1.12.2 shares one). Tricky Trials Backport's 1.21.11 step dims it in rain and thunder.
+*   **Why a patch**: the color is read straight from the provider; a provider replacement would fight every mod
+    that replaces providers.
+*   **Shape**: one `invokevirtual` swapped in each method; the hook returns vanilla's own array when no step exists.
+*   **Fails safe**: per class, skipped when the call is not found once.
+*   **Tested**: client self-test (`P24 applied`); the 1.21.11 math in Tricky Trials' self-test.
+
+## P25. Clouds drift by world time
+
+*   **What**: every read of `RenderGlobal.cloudTickCounter` in `renderClouds` and `renderCloudsFancy` goes through
+    `PresentationHooks.cloudTicks(int)`: the world's total time once a step at the newest version asks for it
+    (`FogPipeline.Step.cloudsFollowWorldTime`, 1.21.11), else the client's own count. Every player then sees the
+    same clouds.
+*   **Shape**: `invokestatic (I)I` after each `getfield cloudTickCounter` (three reads, Forge's `IRenderHandler`
+    call included).
+*   **Fails safe**: fewer than two reads found: skipped.
+*   **Tested**: client self-test (`P25 applied`).

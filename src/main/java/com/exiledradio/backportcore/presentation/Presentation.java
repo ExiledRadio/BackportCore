@@ -76,7 +76,18 @@ public final class Presentation {
     public static final SliderOption UI_VOLUME = new SliderOption("backportcore:ui_volume", "soundCategory.ui", OptionScreen.SOUNDS,
             0.0, 1.0, 0.0, 1.0);
 
+    /** 1.21.9's Attack/Destroy (Controls): Hold or Toggle. */
+    public static final CycleOption TOGGLE_ATTACK = new CycleOption("backportcore:toggle_attack", "key.attack", OptionScreen.CONTROLS,
+            new String[] {"hold", "toggle"}, new String[] {"options.key.hold", "options.key.toggle"}, "hold");
+    /** 1.21.9's Use Item/Place Block (Controls): Hold or Toggle. */
+    public static final CycleOption TOGGLE_USE = new CycleOption("backportcore:toggle_use", "key.use", OptionScreen.CONTROLS,
+            new String[] {"hold", "toggle"}, new String[] {"options.key.hold", "options.key.toggle"}, "hold");
+
     static {
+        TOGGLE_ATTACK.since("1.21.9");
+        TOGGLE_USE.since("1.21.9");
+        registerOption(TOGGLE_ATTACK);
+        registerOption(TOGGLE_USE);
         MUSIC_FREQUENCY.since("1.21.6");
         MUSIC_FREQUENCY.tooltip("options.music_frequency.tooltip");
         MUSIC_TOAST.since("1.21.6");

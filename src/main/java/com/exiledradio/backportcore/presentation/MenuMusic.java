@@ -78,6 +78,20 @@ public final class MenuMusic {
         return (colon >= 0 ? soundName.substring(colon + 1) : soundName).equals(removed);
     }
 
+    /**
+     * 1.21.6's {@code MusicFrequency.getNextSongDelay}: "default" waits at most 20 minutes, "frequent" 10, "constant"
+     * 5 seconds, within the track's own wait (ticks). Since Core 1.2.0.
+     */
+    public static int frequencyDelay(String frequency, int minDelay, int maxDelay, Random random) {
+        if ("constant".equals(frequency)) {
+            return 100;
+        }
+        int cap = ("frequent".equals(frequency) ? 10 : 20) * 1200;
+        int lo = Math.min(minDelay, cap);
+        int hi = Math.min(maxDelay, cap);
+        return hi <= lo ? lo : lo + random.nextInt(hi - lo + 1);
+    }
+
     /** @return a track picked by weight, or null from an empty pool */
     public static Track pick(List<Track> pool, Random random) {
         int total = 0;

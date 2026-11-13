@@ -323,7 +323,8 @@ final class ClientPresentationTests {
     }
 
     private static void finishTitle(Minecraft mc) throws Exception {
-        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16", "P17", "P18"}) {
+        Class.forName("net.minecraft.client.gui.inventory.GuiContainer");
+        for (String p : new String[] {"P12", "P13", "P14", "P15", "P16", "P17", "P18", "P22", "P23", "P24", "P25"}) {
             check("client: " + p + " applied", "applied".equals(Asm.state(p)), Asm.state(p));
         }
         com.exiledradio.backportcore.CoreConfig.BlockUpdates mode = com.exiledradio.backportcore.CoreConfig.rendering.blockUpdates;

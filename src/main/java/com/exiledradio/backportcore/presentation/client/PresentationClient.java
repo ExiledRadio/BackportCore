@@ -30,6 +30,9 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new CreativeOrder());
         MinecraftForge.EVENT_BUS.register(new DebugText.Events());
         MinecraftForge.EVENT_BUS.register(new GameMusic.Events());
+        MinecraftForge.EVENT_BUS.register(new MusicClient());
+        MinecraftForge.EVENT_BUS.register(new ControlToggles());
+        com.exiledradio.backportcore.presentation.Presentation.MUSIC_FREQUENCY.onChange(f -> GameMusic.frequencyChanged());
         MinecraftForge.EVENT_BUS.register(new OptionTooltips());
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
     }

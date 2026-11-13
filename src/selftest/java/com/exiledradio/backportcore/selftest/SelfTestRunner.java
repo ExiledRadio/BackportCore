@@ -92,6 +92,7 @@ public final class SelfTestRunner {
         SettingsTests.schedule();
         RecipeTests.schedule();
         RequestTests.schedule();
+        RequestTests.schedulePresentation();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();
     }
