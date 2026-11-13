@@ -125,6 +125,62 @@ public final class PresentationHooks {
         }
     }
 
+    // ---- P24, P25: the sky ----
+
+    /** P24: {@code WorldProvider.calcSunriseSunsetColors}, through the fog pipeline's sunrise steps. */
+    public static float[] sunriseColors(net.minecraft.world.WorldProvider provider, float angle, float partialTicks) {
+        return FogPipeline.sunriseColors(provider, angle, partialTicks, provider.calcSunriseSunsetColors(angle, partialTicks));
+    }
+
+    /** P25: {@code RenderGlobal.cloudTickCounter} as the clouds read it. */
+    public static int cloudTicks(int vanilla) {
+        return FogPipeline.cloudTicks(vanilla);
+    }
+
+    // ---- P22: menus without a world ----
+
+    /** P22: the frame rate of a menu without a world: 1.21.2's 60 once a backport of 1.21.2 or later is installed. */
+    public static int menuFramerate(int vanilla) {
+        return Presentation.isAtLeast("1.21.2") ? 60 : vanilla;
+    }
+
+    // ---- P23: the slot highlight ----
+
+    /** For the client self-test: highlights drawn with 1.21.2's sprites. */
+    public static volatile int spriteHighlights;
+
+    /**
+     * P23: {@code GuiContainer.drawScreen}'s hovered-slot square. From 1.21.2, when a backport supplies its sprites
+     * ({@code textures/gui/sprites/container/slot_highlight_back.png} and {@code _front.png}, 24 by 24, drawn 4 pixels
+     * out from the slot): the back one behind the item already drawn (depth-tested under it), the front one over it.
+     * Otherwise 1.12.2's white square.
+     */
+    public static void slotHighlight(net.minecraft.client.gui.inventory.GuiContainer gui, int left, int top, int right, int bottom,
+                                     int startColor, int endColor) {
+        String back = "textures/gui/sprites/container/slot_highlight_back.png";
+        String front = "textures/gui/sprites/container/slot_highlight_front.png";
+        if (!Presentation.isAtLeast("1.21.2") || Presentation.asset(back) == null || Presentation.asset(front) == null) {
+            net.minecraftforge.fml.client.config.GuiUtils.drawGradientRect(0, left, top, right, bottom, startColor, endColor);
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        net.minecraft.client.renderer.GlStateManager.enableBlend();
+        net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        // vanilla turned depth testing off for its square; the back sprite is drawn at z 0, under the item's depth.
+        net.minecraft.client.renderer.GlStateManager.enableDepth();
+        net.minecraft.client.renderer.GlStateManager.depthMask(false);
+        mc.getTextureManager().bindTexture(new ResourceLocation(back));
+        Gui.drawModalRectWithCustomSizedTexture(left - 4, top - 4, 0.0F, 0.0F, 24, 24, 24.0F, 24.0F);
+        net.minecraft.client.renderer.GlStateManager.depthMask(true);
+        net.minecraft.client.renderer.GlStateManager.disableDepth();
+        net.minecraft.client.renderer.GlStateManager.pushMatrix();
+        net.minecraft.client.renderer.GlStateManager.translate(0.0F, 0.0F, 300.0F);
+        mc.getTextureManager().bindTexture(new ResourceLocation(front));
+        Gui.drawModalRectWithCustomSizedTexture(left - 4, top - 4, 0.0F, 0.0F, 24, 24, 24.0F, 24.0F);
+        net.minecraft.client.renderer.GlStateManager.popMatrix();
+        spriteHighlights++;
+    }
+
     // ---- P12: button labels ----
 
     /** P12: a button label color 1.12.2's {@code GuiButton.drawButton} uses (normal or hovered). */

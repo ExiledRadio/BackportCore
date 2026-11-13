@@ -50,6 +50,7 @@ public final class SelfTestMod {
         TestBlocks.waterStairs = new TestBlocks.WaterStairs();
         event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy,
                 TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
+        RequestTests.blocks(event.getRegistry());
     }
 
     @SubscribeEvent

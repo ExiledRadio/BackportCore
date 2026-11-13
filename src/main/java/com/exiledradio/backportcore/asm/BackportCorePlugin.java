@@ -44,6 +44,10 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             WaterloggableTransformer.class.getName(),
             ExtendedFluidStatesTransformer.class.getName(),
             QuarkCandlesTransformer.class.getName(),
+            MenuFramerateTransformer.class.getName(),
+            SlotHighlightTransformer.class.getName(),
+            SunriseTransformer.class.getName(),
+            CloudTimeTransformer.class.getName(),
     };
 
     @Override

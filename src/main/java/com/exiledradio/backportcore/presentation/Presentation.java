@@ -64,7 +64,30 @@ public final class Presentation {
     public static final ToggleOption MONOCHROME_LOGO = new ToggleOption("backportcore:monochrome_logo",
             "options.darkMojangStudiosBackgroundColor", OptionScreen.ACCESSIBILITY, false);
 
+    /** 1.21.6's Music Frequency (Music and Sounds): how long the in-game music waits between tracks. */
+    public static final CycleOption MUSIC_FREQUENCY = new CycleOption("backportcore:music_frequency", "options.music_frequency",
+            OptionScreen.SOUNDS, new String[] {"default", "frequent", "constant"}, new String[] {"options.music_frequency.default",
+            "options.music_frequency.frequent", "options.music_frequency.constant"}, "default");
+    /** 1.21.6's Music Toast (Music and Sounds; 1.21.11's three values): the playing track's name. */
+    public static final CycleOption MUSIC_TOAST = new CycleOption("backportcore:music_toast", "options.musicToast",
+            OptionScreen.SOUNDS, new String[] {"never", "pause_menu", "pause_menu_and_toast"}, new String[] {"options.musicToast.never",
+            "options.musicToast.pauseMenu", "options.musicToast.pauseMenuAndToast"}, "never");
+    /** 1.21.6's UI volume (Music and Sounds): button clicks and other interface sounds, 0 to 100%. */
+    public static final SliderOption UI_VOLUME = new SliderOption("backportcore:ui_volume", "soundCategory.ui", OptionScreen.SOUNDS,
+            0.0, 1.0, 0.0, 1.0);
+
     static {
+        MUSIC_FREQUENCY.since("1.21.6");
+        MUSIC_FREQUENCY.tooltip("options.music_frequency.tooltip");
+        MUSIC_TOAST.since("1.21.6");
+        MUSIC_TOAST.valueTooltips("options.musicToast.never.tooltip", "options.musicToast.pauseMenu.tooltip",
+                "options.musicToast.pauseMenuAndToast.tooltip");
+        UI_VOLUME.since("1.21.6");
+        UI_VOLUME.decimals(-1);
+        UI_VOLUME.zeroKey("options.off");
+        registerOption(UI_VOLUME);
+        registerOption(MUSIC_FREQUENCY);
+        registerOption(MUSIC_TOAST);
         PANORAMA_SPEED.since("1.19.3");
         HIDE_SPLASH_TEXTS.since("1.20.3");
         registerOption(PANORAMA_SPEED);

@@ -22,10 +22,17 @@ public final class MenuMusic {
     public static final class Track {
         public final String soundName;
         public final int weight;
+        /** 0 to 1 (since Core 1.2.0). */
+        public final float volume;
 
         public Track(String soundName, int weight) {
+            this(soundName, weight, 1.0F);
+        }
+
+        public Track(String soundName, int weight, float volume) {
             this.soundName = soundName;
             this.weight = weight;
+            this.volume = volume;
         }
 
         @Override
@@ -52,14 +59,23 @@ public final class MenuMusic {
         List<Track> pool = new ArrayList<Track>(base);
         for (Contribution c : installed) {
             for (String removed : c.musicRemoves) {
-                pool.removeIf(t -> t.soundName.equals(removed));
+                pool.removeIf(t -> matches(t.soundName, removed));
             }
             for (Contribution.MenuTrack added : c.musicAdds) {
                 pool.removeIf(t -> t.soundName.equals(added.soundName));
-                pool.add(new Track(added.soundName, added.weight));
+                pool.add(new Track(added.soundName, added.weight, added.volume));
             }
         }
         return pool;
+    }
+
+    /** @return true when a removal names this track: its whole name, or (without a namespace) its path */
+    static boolean matches(String soundName, String removed) {
+        if (removed.indexOf(':') >= 0) {
+            return soundName.equals(removed);
+        }
+        int colon = soundName.indexOf(':');
+        return (colon >= 0 ? soundName.substring(colon + 1) : soundName).equals(removed);
     }
 
     /** @return a track picked by weight, or null from an empty pool */

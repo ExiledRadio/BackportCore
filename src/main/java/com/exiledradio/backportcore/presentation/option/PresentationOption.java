@@ -110,9 +110,9 @@ public abstract class PresentationOption {
         return this;
     }
 
-    /** @return its tooltip's lang key, or null */
+    /** @return its tooltip's lang key now (a cycle option's may follow its value), or null */
     @Nullable
-    public final String tooltipKey() {
+    public String tooltipKey() {
         return this.tooltipKey;
     }
 

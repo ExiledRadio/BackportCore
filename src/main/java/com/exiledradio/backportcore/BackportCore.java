@@ -104,6 +104,8 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.recipe.RecipeUnlocks.Events());
+        // Rule 1: another backport's copies become their owner's when the owner is added to a world (ownership/).
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.ownership.CopyRemapping());
         // Waterlogging, with Fluidlogged API or without it (waterlog/). Listening from here, never from inside a
         // registry event (see WaterlogMigration).
         com.exiledradio.backportcore.waterlog.Waterlogging.init();

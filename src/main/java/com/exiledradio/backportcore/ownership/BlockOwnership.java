@@ -44,6 +44,9 @@ public final class BlockOwnership {
     /** Owner mod id to whether it is registering its blocks in this game. */
     private static final Map<String, BooleanSupplier> PROVIDES = new HashMap<String, BooleanSupplier>();
 
+    /** Block path to whether its owner registers that one block (an owner whose parts switch off one by one). */
+    private static final Map<String, BooleanSupplier> PROVIDES_NAME = new HashMap<String, BooleanSupplier>();
+
     static {
         // Village & Pillage Backport (1.14) - 1.13's blocks its villages are built from.
         String vp = "villagerbackport";
@@ -60,6 +63,17 @@ public final class BlockOwnership {
         // fits best: sea pickles are an ocean block, moved here from Village & Pillage on 2026-11-08. V&P's
         // villages and wandering trader use Update Aquatic's when it is installed.
         own("updateaquaticbackport", "sea_pickle");
+
+        // Caves & Cliffs Backport (1.17): tuff and the copper set, which Tricky Trials (1.21) copies.
+        String cc = "cavesandcliffsbackport";
+        own(cc, "tuff", "copper_ore", "raw_copper_block");
+        for (String stage : new String[] {"", "exposed_", "weathered_", "oxidized_"}) {
+            String block = stage.isEmpty() ? "copper_block" : stage + "copper";
+            for (String waxed : new String[] {"", "waxed_"}) {
+                own(cc, waxed + block, waxed + stage + "cut_copper", waxed + stage + "cut_copper_stairs",
+                        waxed + stage + "cut_copper_slab", waxed + stage + "cut_copper_double_slab");
+            }
+        }
     }
 
     private BlockOwnership() {
@@ -81,7 +95,9 @@ public final class BlockOwnership {
         boolean all = true;
         for (String path : paths) {
             String owner = OWNERS.get(path);
-            if (owner == null) {
+            if (owner == null || ownerModId.startsWith(owner + ":")) {
+                // An owner may hand its own block to a pseudo-owner of its own ("modid:switched_off", never a
+                // loaded mod) to say it does not register it in this game.
                 OWNERS.put(path, ownerModId);
             } else if (!owner.equals(ownerModId)) {
                 all = false;
@@ -98,6 +114,16 @@ public final class BlockOwnership {
         PROVIDES.put(ownerModId, registering);
     }
 
+    /**
+     * For an owner whose blocks switch off one part at a time: whether it registers these blocks in this game.
+     * Read when another mod asks; wins over {@link #provides} for these names.
+     */
+    public static synchronized void provides(String ownerModId, BooleanSupplier registering, String... paths) {
+        for (String path : paths) {
+            PROVIDES_NAME.put(path, registering);
+        }
+    }
+
     /** @return the mod that owns this block, or null if no backport claims it */
     @Nullable
     public static synchronized String owner(String path) {
@@ -109,6 +135,10 @@ public final class BlockOwnership {
         String owner = OWNERS.get(path);
         if (owner == null || !Loader.isModLoaded(owner)) {
             return false;
+        }
+        BooleanSupplier one = PROVIDES_NAME.get(path);
+        if (one != null) {
+            return one.getAsBoolean();
         }
         BooleanSupplier registering = PROVIDES.get(owner);
         return registering == null || registering.getAsBoolean();

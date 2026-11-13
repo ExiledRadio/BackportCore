@@ -74,6 +74,7 @@ public final class SelfTestRunner {
                     case "deepwater": DeepWaterTests.schedule(); break;
                     case "water": WaterTests.schedule(); WaterRuleTests.schedule(); break;
                     case "patches": PatchTests.schedule(); break;
+                    case "requests": RequestTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -90,6 +91,7 @@ public final class SelfTestRunner {
         LocateTests.schedule();
         SettingsTests.schedule();
         RecipeTests.schedule();
+        RequestTests.schedule();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();
     }

@@ -199,11 +199,23 @@ public final class Contribution {
      * Streamed, at full volume, with this weight among the pool (vanilla's tracks weigh 1 each).
      */
     public Contribution addMenuMusic(String soundName, int weight) {
-        this.musicAdds.add(new MenuTrack(soundName, weight));
+        return addMenuMusic(soundName, weight, 1.0F);
+    }
+
+    /**
+     * As {@link #addMenuMusic(String, int)}, at a volume (0 to 1) as sounds.json gives it: 1.21.6's menu tracks are
+     * {@code music.menu} entries at 0.4. Since Core 1.2.0.
+     */
+    public Contribution addMenuMusic(String soundName, int weight, float volume) {
+        this.musicAdds.add(new MenuTrack(soundName, weight, volume));
         return this;
     }
 
-    /** A title-screen track this version removed, by its sound name ({@code "minecraft:music/menu/menu1"}). */
+    /**
+     * A title-screen track this version removed, by its sound name ({@code "minecraft:music/menu/menu1"}). A name
+     * without a namespace ({@code "music/game/wending"}, since Core 1.2.0) removes that path whichever mod plays it,
+     * so a version can drop a track another backport added under its own id.
+     */
     public Contribution removeMenuMusic(String soundName) {
         this.musicRemoves.add(soundName);
         return this;
@@ -314,13 +326,16 @@ public final class Contribution {
     public static final class MenuTrack {
         public final String soundName;
         public final int weight;
+        /** 0 to 1, as sounds.json's {@code volume} (since Core 1.2.0). */
+        public final float volume;
 
-        MenuTrack(String soundName, int weight) {
+        MenuTrack(String soundName, int weight, float volume) {
             if (weight <= 0) {
                 throw new IllegalArgumentException(soundName + ": weight must be positive");
             }
             this.soundName = soundName;
             this.weight = weight;
+            this.volume = Math.max(0.0F, Math.min(1.0F, volume));
         }
     }
 }

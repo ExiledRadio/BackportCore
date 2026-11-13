@@ -77,7 +77,7 @@ public final class MenuMusicPlayer {
             }
             Sound chosen = vanilla.get(pick.soundName);
             if (chosen == null) {
-                chosen = new Sound(pick.soundName, 1.0F, 1.0F, pick.weight, Sound.Type.FILE, true);
+                chosen = new Sound(pick.soundName, pick.volume, 1.0F, pick.weight, Sound.Type.FILE, true);
             }
             Track replacement = new Track(chosen);
             if (core != null) {
@@ -105,7 +105,7 @@ public final class MenuMusicPlayer {
                 Sound s = (Sound) entry;
                 String name = s.getSoundLocation().toString();
                 vanilla.put(name, s);
-                out.add(new MenuMusic.Track(name, s.getWeight()));
+                out.add(new MenuMusic.Track(name, s.getWeight(), s.getVolume()));
             }
         }
         return out;

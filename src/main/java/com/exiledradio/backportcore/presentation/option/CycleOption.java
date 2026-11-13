@@ -34,6 +34,34 @@ public final class CycleOption extends PresentationOption {
         this.index = this.defaultIndex;
     }
 
+    @Nullable
+    private String[] valueTooltips;
+
+    /**
+     * One tooltip per value, in the order of the values (1.21.2's "Reduce FPS when" explains each); a null entry
+     * falls back to {@link #tooltip}. Since Core 1.2.0.
+     */
+    public CycleOption valueTooltips(String... keys) {
+        if (keys.length != this.names.length) {
+            throw new IllegalArgumentException(id() + ": one tooltip per value");
+        }
+        this.valueTooltips = keys.clone();
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public String tooltipKey() {
+        if (this.valueTooltips != null) {
+            ensureLoaded();
+            String key = this.valueTooltips[this.index];
+            if (key != null) {
+                return key;
+            }
+        }
+        return super.tooltipKey();
+    }
+
     /** @return the current value's saved name */
     public String get() {
         ensureLoaded();

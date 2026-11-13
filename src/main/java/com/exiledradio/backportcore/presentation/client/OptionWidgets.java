@@ -148,6 +148,8 @@ public final class OptionWidgets {
     static final class Slider extends GuiButton implements OptionButton {
         private final SliderOption option;
         private boolean dragging;
+        /** 1.21.11: where the knob is while dragged; it snaps to the nearest value on release. */
+        private double dragFraction;
 
         Slider(SliderOption option, int x, int y) {
             super(nextId(), x, y, 150, 20, "");
@@ -174,12 +176,14 @@ public final class OptionWidgets {
         protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
             if (this.visible) {
                 if (this.dragging) {
-                    this.option.setFraction((double) (mouseX - (this.x + 4)) / (double) (this.width - 8));
+                    this.dragFraction = Math.max(0.0, Math.min(1.0, (double) (mouseX - (this.x + 4)) / (double) (this.width - 8)));
+                    this.option.setFraction(this.dragFraction);
                     refresh();
                 }
                 mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                int knob = this.x + (int) (this.option.fraction() * (double) (this.width - 8));
+                double at = this.dragging && snapsOnRelease() ? this.dragFraction : this.option.fraction();
+                int knob = this.x + (int) (at * (double) (this.width - 8));
                 drawTexturedModalRect(knob, this.y, 0, 66, 4, 20);
                 drawTexturedModalRect(knob + 4, this.y, 196, 66, 4, 20);
             }
@@ -188,7 +192,8 @@ public final class OptionWidgets {
         @Override
         public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
             if (super.mousePressed(mc, mouseX, mouseY)) {
-                this.option.setFraction((double) (mouseX - (this.x + 4)) / (double) (this.width - 8));
+                this.dragFraction = Math.max(0.0, Math.min(1.0, (double) (mouseX - (this.x + 4)) / (double) (this.width - 8)));
+                this.option.setFraction(this.dragFraction);
                 refresh();
                 this.dragging = true;
                 return true;
@@ -199,6 +204,11 @@ public final class OptionWidgets {
         @Override
         public void mouseReleased(int mouseX, int mouseY) {
             this.dragging = false;
+        }
+
+        /** 1.21.11 (25w41a): the knob follows the mouse and snaps to the nearest value when let go. */
+        static boolean snapsOnRelease() {
+            return com.exiledradio.backportcore.presentation.Presentation.isAtLeast("1.21.11");
         }
     }
 }
