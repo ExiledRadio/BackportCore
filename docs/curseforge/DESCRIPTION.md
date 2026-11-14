@@ -12,7 +12,7 @@ It adds no blocks or items of its own. What it adds is what the backports have i
 
 ## What it does
 
-*   **1.14's Texture Update** for vanilla's blocks, items and mobs, and 1.15's enchantment glint. Prefer 1.12.2's look? Turn off `textures.modernTextures`. Resource packs you pick, and mods that change a vanilla texture on purpose, still win over it.
+*   **Vanilla's textures follow the newest installed backport**: 1.14's Texture Update to begin with, then each later version's retextures up to that one, such as 1.17's ores with Caves & Cliffs Backport. Prefer 1.12.2's look? Turn off `textures.modernTextures`. Resource packs you pick, and mods that change a vanilla texture on purpose, still win over it.
 *   **Waterlogging**, as in 1.13, for the backports' blocks: lanterns, sea pickles, kelp and the rest keep the water they are placed in, buckets fill and empty them, and water flows in and out of them. This comes from Fluidlogged API, which installs with Backport Core. Without it, everything else still works and the blocks stay dry.
 *   **Today's structure files**, Mojang's own, read into 1.12.2 blocks, so the backports' shipwrecks, ocean ruins and later structures are built from the real game's own. They are scattered the way today's game scatters them, placed chunk by chunk without loading neighbors, and the backports can find the nearest of a kind.
 *   **1.14's player poses**: swimming players are 0.6 blocks tall, players with no room to stand crawl until there is room, and other players see both. A small coremod of the library's own adds the hooks 1.12.2 lacks, and does nothing until a backport that swims is installed.

@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
  *
  * <p>It adds no blocks, items or entities. What it holds (see {@code docs/API.md}):
  * <ul>
- * <li>{@code client.ModernTextures} - 1.14's Texture Update for vanilla, and the switch back to
+ * <li>{@code client.ModernTextures} - vanilla's textures as the newest installed backport's version has them, and the switch back to
  * 1.12.2's look ({@code textures.modernTextures}).</li>
  * <li>{@code duplicate.DuplicateBlocks} - hiding one half of each block pair two mods both add.</li>
  * <li>{@code migrate} - turning another mod's blocks and items into the backports' own, in a world

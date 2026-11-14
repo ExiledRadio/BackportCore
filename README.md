@@ -2,8 +2,9 @@
 
 A Forge 1.12.2 library for the update backports. It adds no blocks or items. It holds what they share:
 
-- **1.14's Texture Update** for vanilla's blocks, items and mobs, plus 1.15's enchantment glint, with a switch
-  back to 1.12.2's look (`textures.modernTextures` in `config/backportcore.cfg`). Resource packs you pick,
+- **Vanilla's textures as the newest installed backport's version has them**: 1.14's Texture Update to begin
+  with, then each later version's retextures up to that one (1.17's ores with Caves & Cliffs Backport, and so
+  on), with a switch back to 1.12.2's look (`textures.modernTextures` in `config/backportcore.cfg`). Resource packs you pick,
   and mods that change a vanilla texture on purpose, still win over it.
 - **Threaded chunk rebuilds**: blocks the server changes near you (a kelp column breaking, crops, pistons)
   are rebuilt on the chunk builder threads instead of stalling the frame, as current vanilla's "Chunk

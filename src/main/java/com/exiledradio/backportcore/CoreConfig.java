@@ -21,7 +21,7 @@ public final class CoreConfig {
 
     @Setting.Feature(icon = "minecraft:painting")
     @Config.LangKey("config.backportcore.textures")
-    @Config.Comment("1.14's Texture Update for vanilla blocks, items and mobs.")
+    @Config.Comment("Vanilla's textures as the newest installed backport's version has them.")
     public static final Textures textures = new Textures();
 
     @Setting.Feature(icon = "minecraft:map")
@@ -113,14 +113,16 @@ public final class CoreConfig {
     public static final class Textures {
 
         @Config.Comment({
-                "Give vanilla's blocks, items and mobs the textures 1.14's Texture Update gave them,",
-                "plus 1.15's enchantment glint. Off keeps 1.12.2's, and also puts back 1.12.2's look",
-                "for the backports' own copies of things 1.12.2 already had (the tuxedo, red and",
-                "Siamese cats).",
+                "Give vanilla's blocks, items and mobs the textures of the newest installed backport's",
+                "version: 1.14's Texture Update to begin with, then every later version's retextures up",
+                "to that one, such as 1.17's ores with Caves & Cliffs Backport. Off keeps 1.12.2's, and",
+                "also puts back 1.12.2's look for the backports' own copies of things 1.12.2 already had",
+                "(the tuxedo, red and Siamese cats).",
                 "",
                 "Client only; a server ignores it. Resource packs you pick, and other mods that change a",
                 "vanilla texture on purpose, still win over it. Villagers, horses and water keep 1.12.2's",
-                "textures either way: 1.14's don't fit 1.12.2's models or colors.",
+                "textures either way, and a texture a later version redrew for a new model keeps its older",
+                "look: those don't fit 1.12.2's models or colors.",
                 "",
                 "Changing it in game reloads resources, as F3+T does."
         })

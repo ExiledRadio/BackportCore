@@ -1,0 +1,17 @@
+assets/minecraft/textures/blocks/nether_wart_block.png
+assets/minecraft/textures/blocks/observer_back_lit.png
+assets/minecraft/textures/blocks/purpur_pillar_top.png
+assets/minecraft/textures/gui/container/beacon.png
+assets/minecraft/textures/gui/toasts.png
+assets/minecraft/textures/items/diamond_axe.png
+assets/minecraft/textures/items/diamond_boots.png
+assets/minecraft/textures/items/diamond_helmet.png
+assets/minecraft/textures/items/diamond_hoe.png
+assets/minecraft/textures/items/diamond_leggings.png
+assets/minecraft/textures/items/diamond_pickaxe.png
+assets/minecraft/textures/items/diamond_shovel.png
+assets/minecraft/textures/items/diamond_sword.png
+assets/minecraft/textures/items/gold_hoe.png
+assets/minecraft/textures/items/gold_pickaxe.png
+assets/minecraft/textures/items/wood_hoe.png
+assets/minecraft/textures/items/wood_pickaxe.png

@@ -45,6 +45,7 @@ public final class PresentationClient {
     public static void loadComplete() {
         Minecraft mc = Minecraft.getMinecraft();
         VanillaAssetPack.afterLoading(mc);
+        com.exiledradio.backportcore.client.ModernTextures.afterLoading(mc);
         // The game's last resource load ran before the mods: the startup screen fades from here into the title.
         StartupScreen.INSTANCE.onResourceManagerReload(mc.getResourceManager());
     }

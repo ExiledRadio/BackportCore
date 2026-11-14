@@ -1,5 +1,10 @@
 # 1.3.0
 
+*   **Texture layers**: the modern pack is now one layer per release line (`backportcore_packs/modern` for 1.14,
+    `modern-1.15` to `modern-26.3`), applied up to `Presentation.newest()` (`client.TextureLayers`,
+    `client.LayeredPack`). Built from Mojang's client jars by `tools/textures/build.py`, which keeps only textures that
+    still fit 1.12.2's models and UVs and lists the rest in `tools/textures/report.txt`. Self-tests: `textures` (server)
+    and `BACKPORTCORE_TEXTURES=<version>` with `runClient -Pselftest`, which reads the block atlas back.
 *   **`/locate biome`**: today's biome form of `/locate` (`locate.BiomeLocate`), by today's ids (1.12.2's biomes as
     an upgraded world names them, the backports' biomes by their modern names), with 26.x's search, reply and
     tab completion; tags and a generator's own biomes through `BiomeLocate.tag` and `source`.

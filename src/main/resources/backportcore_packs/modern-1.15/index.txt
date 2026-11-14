@@ -1,0 +1,8 @@
+assets/minecraft/textures/gui/advancements/backgrounds/adventure.png
+assets/minecraft/textures/gui/advancements/backgrounds/end.png
+assets/minecraft/textures/gui/advancements/backgrounds/husbandry.png
+assets/minecraft/textures/gui/advancements/backgrounds/nether.png
+assets/minecraft/textures/gui/advancements/backgrounds/stone.png
+assets/minecraft/textures/gui/container/horse.png
+assets/minecraft/textures/gui/recipe_book.png
+assets/minecraft/textures/misc/unknown_pack.png

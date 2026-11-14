@@ -1,0 +1,688 @@
+# Written by build.py. Layers: 1.15: 8 textures, 1.16: 17 textures, 1.17: 117 textures, 1.18: 36 textures, 1.19: 29 textures, 1.20: 9 textures, 1.21: 18 textures, 26.1: 0 textures, 26.2: 0 textures, 26.3: 5 textures
+
+## In the layers
+1.15  gui/advancements/backgrounds/adventure           <- 1.15.2 gui/advancements/backgrounds/adventure
+1.15  gui/advancements/backgrounds/end                 <- 1.15.2 gui/advancements/backgrounds/end
+1.15  gui/advancements/backgrounds/husbandry           <- 1.15.2 gui/advancements/backgrounds/husbandry
+1.15  gui/advancements/backgrounds/nether              <- 1.15.2 gui/advancements/backgrounds/nether
+1.15  gui/advancements/backgrounds/stone               <- 1.15.2 gui/advancements/backgrounds/stone
+1.15  gui/container/horse                              <- 1.15.2 gui/container/horse
+1.15  gui/recipe_book                                  <- 1.15.2 gui/recipe_book
+1.15  misc/unknown_pack                                <- 1.15.2 misc/unknown_pack
+1.16  blocks/nether_wart_block                         <- 1.16.5 block/nether_wart_block
+1.16  blocks/observer_back_lit                         <- 1.16.5 block/observer_back_on
+1.16  blocks/purpur_pillar_top                         <- 1.16.5 block/purpur_pillar_top
+1.16  gui/container/beacon                             <- 1.16.5 gui/container/beacon
+1.16  gui/toasts                                       <- 1.16.5 gui/toasts
+1.16  items/diamond_axe                                <- 1.16.5 item/diamond_axe
+1.16  items/diamond_boots                              <- 1.16.5 item/diamond_boots
+1.16  items/diamond_helmet                             <- 1.16.5 item/diamond_helmet
+1.16  items/diamond_hoe                                <- 1.16.5 item/diamond_hoe
+1.16  items/diamond_leggings                           <- 1.16.5 item/diamond_leggings
+1.16  items/diamond_pickaxe                            <- 1.16.5 item/diamond_pickaxe
+1.16  items/diamond_shovel                             <- 1.16.5 item/diamond_shovel
+1.16  items/diamond_sword                              <- 1.16.5 item/diamond_sword
+1.16  items/gold_hoe                                   <- 1.16.5 item/golden_hoe
+1.16  items/gold_pickaxe                               <- 1.16.5 item/golden_pickaxe
+1.16  items/wood_hoe                                   <- 1.16.5 item/wooden_hoe
+1.16  items/wood_pickaxe                               <- 1.16.5 item/wooden_pickaxe
+1.17  blocks/coal_ore                                  <- 1.17.1 block/coal_ore
+1.17  blocks/diamond_ore                               <- 1.17.1 block/diamond_ore
+1.17  blocks/emerald_ore                               <- 1.17.1 block/emerald_ore
+1.17  blocks/gold_ore                                  <- 1.17.1 block/gold_ore
+1.17  blocks/grass_side_snowed                         <- 1.17.1 block/grass_block_snow
+1.17  blocks/iron_ore                                  <- 1.17.1 block/iron_ore
+1.17  blocks/lapis_ore                                 <- 1.17.1 block/lapis_ore
+1.17  blocks/pumpkin_top                               <- 1.17.1 block/pumpkin_top
+1.17  blocks/redstone_ore                              <- 1.17.1 block/redstone_ore
+1.17  entity/cat/siamese                               <- 1.17.1 entity/cat/siamese
+1.17  entity/guardian                                  <- 1.17.1 entity/guardian
+1.17  entity/guardian_elder                            <- 1.17.1 entity/guardian_elder
+1.17  entity/projectiles/spectral_arrow                <- 1.17.1 entity/projectiles/spectral_arrow
+1.17  entity/sign                                      <- 1.17.1 entity/signs/oak
+1.17  font/ascii_sga                                   <- 1.17.1 font/ascii_sga
+1.17  gui/container/brewing_stand                      <- 1.17.1 gui/container/brewing_stand
+1.17  gui/container/shulker_box                        <- 1.17.1 gui/container/shulker_box
+1.17  gui/icons                                        <- 1.17.1 gui/icons
+1.17  gui/toasts                                       <- 1.17.1 gui/toasts
+1.17  items/clock_00                                   <- 1.17.1 item/clock_00
+1.17  items/clock_01                                   <- 1.17.1 item/clock_01
+1.17  items/clock_02                                   <- 1.17.1 item/clock_02
+1.17  items/clock_03                                   <- 1.17.1 item/clock_03
+1.17  items/clock_04                                   <- 1.17.1 item/clock_04
+1.17  items/clock_05                                   <- 1.17.1 item/clock_05
+1.17  items/clock_06                                   <- 1.17.1 item/clock_06
+1.17  items/clock_07                                   <- 1.17.1 item/clock_07
+1.17  items/clock_08                                   <- 1.17.1 item/clock_08
+1.17  items/clock_09                                   <- 1.17.1 item/clock_09
+1.17  items/clock_10                                   <- 1.17.1 item/clock_10
+1.17  items/clock_11                                   <- 1.17.1 item/clock_11
+1.17  items/clock_12                                   <- 1.17.1 item/clock_12
+1.17  items/clock_13                                   <- 1.17.1 item/clock_13
+1.17  items/clock_14                                   <- 1.17.1 item/clock_14
+1.17  items/clock_15                                   <- 1.17.1 item/clock_15
+1.17  items/clock_16                                   <- 1.17.1 item/clock_16
+1.17  items/clock_17                                   <- 1.17.1 item/clock_17
+1.17  items/clock_18                                   <- 1.17.1 item/clock_18
+1.17  items/clock_19                                   <- 1.17.1 item/clock_19
+1.17  items/clock_20                                   <- 1.17.1 item/clock_20
+1.17  items/clock_21                                   <- 1.17.1 item/clock_21
+1.17  items/clock_22                                   <- 1.17.1 item/clock_22
+1.17  items/clock_23                                   <- 1.17.1 item/clock_23
+1.17  items/clock_24                                   <- 1.17.1 item/clock_24
+1.17  items/clock_25                                   <- 1.17.1 item/clock_25
+1.17  items/clock_26                                   <- 1.17.1 item/clock_26
+1.17  items/clock_27                                   <- 1.17.1 item/clock_27
+1.17  items/clock_28                                   <- 1.17.1 item/clock_28
+1.17  items/clock_29                                   <- 1.17.1 item/clock_29
+1.17  items/clock_30                                   <- 1.17.1 item/clock_30
+1.17  items/clock_31                                   <- 1.17.1 item/clock_31
+1.17  items/clock_32                                   <- 1.17.1 item/clock_32
+1.17  items/clock_33                                   <- 1.17.1 item/clock_33
+1.17  items/clock_34                                   <- 1.17.1 item/clock_34
+1.17  items/clock_35                                   <- 1.17.1 item/clock_35
+1.17  items/clock_36                                   <- 1.17.1 item/clock_36
+1.17  items/clock_37                                   <- 1.17.1 item/clock_37
+1.17  items/clock_38                                   <- 1.17.1 item/clock_38
+1.17  items/clock_39                                   <- 1.17.1 item/clock_39
+1.17  items/clock_40                                   <- 1.17.1 item/clock_40
+1.17  items/clock_41                                   <- 1.17.1 item/clock_41
+1.17  items/clock_42                                   <- 1.17.1 item/clock_42
+1.17  items/clock_43                                   <- 1.17.1 item/clock_43
+1.17  items/clock_44                                   <- 1.17.1 item/clock_44
+1.17  items/clock_45                                   <- 1.17.1 item/clock_45
+1.17  items/clock_46                                   <- 1.17.1 item/clock_46
+1.17  items/clock_47                                   <- 1.17.1 item/clock_47
+1.17  items/clock_48                                   <- 1.17.1 item/clock_48
+1.17  items/clock_49                                   <- 1.17.1 item/clock_49
+1.17  items/clock_50                                   <- 1.17.1 item/clock_50
+1.17  items/clock_51                                   <- 1.17.1 item/clock_51
+1.17  items/clock_52                                   <- 1.17.1 item/clock_52
+1.17  items/clock_53                                   <- 1.17.1 item/clock_53
+1.17  items/clock_54                                   <- 1.17.1 item/clock_54
+1.17  items/clock_55                                   <- 1.17.1 item/clock_55
+1.17  items/clock_56                                   <- 1.17.1 item/clock_56
+1.17  items/clock_57                                   <- 1.17.1 item/clock_57
+1.17  items/clock_58                                   <- 1.17.1 item/clock_58
+1.17  items/clock_59                                   <- 1.17.1 item/clock_59
+1.17  items/clock_60                                   <- 1.17.1 item/clock_60
+1.17  items/clock_61                                   <- 1.17.1 item/clock_61
+1.17  items/clock_62                                   <- 1.17.1 item/clock_62
+1.17  items/clock_63                                   <- 1.17.1 item/clock_63
+1.17  items/compass_00                                 <- 1.17.1 item/compass_00
+1.17  items/compass_01                                 <- 1.17.1 item/compass_01
+1.17  items/compass_02                                 <- 1.17.1 item/compass_02
+1.17  items/compass_03                                 <- 1.17.1 item/compass_03
+1.17  items/compass_04                                 <- 1.17.1 item/compass_04
+1.17  items/compass_05                                 <- 1.17.1 item/compass_05
+1.17  items/compass_06                                 <- 1.17.1 item/compass_06
+1.17  items/compass_07                                 <- 1.17.1 item/compass_07
+1.17  items/compass_08                                 <- 1.17.1 item/compass_08
+1.17  items/compass_09                                 <- 1.17.1 item/compass_09
+1.17  items/compass_10                                 <- 1.17.1 item/compass_10
+1.17  items/compass_11                                 <- 1.17.1 item/compass_11
+1.17  items/compass_12                                 <- 1.17.1 item/compass_12
+1.17  items/compass_13                                 <- 1.17.1 item/compass_13
+1.17  items/compass_14                                 <- 1.17.1 item/compass_14
+1.17  items/compass_15                                 <- 1.17.1 item/compass_15
+1.17  items/compass_16                                 <- 1.17.1 item/compass_16
+1.17  items/compass_17                                 <- 1.17.1 item/compass_17
+1.17  items/compass_18                                 <- 1.17.1 item/compass_18
+1.17  items/compass_19                                 <- 1.17.1 item/compass_19
+1.17  items/compass_20                                 <- 1.17.1 item/compass_20
+1.17  items/compass_21                                 <- 1.17.1 item/compass_21
+1.17  items/compass_22                                 <- 1.17.1 item/compass_22
+1.17  items/compass_23                                 <- 1.17.1 item/compass_23
+1.17  items/compass_24                                 <- 1.17.1 item/compass_24
+1.17  items/compass_25                                 <- 1.17.1 item/compass_25
+1.17  items/compass_26                                 <- 1.17.1 item/compass_26
+1.17  items/compass_27                                 <- 1.17.1 item/compass_27
+1.17  items/compass_28                                 <- 1.17.1 item/compass_28
+1.17  items/compass_29                                 <- 1.17.1 item/compass_29
+1.17  items/compass_30                                 <- 1.17.1 item/compass_30
+1.17  items/compass_31                                 <- 1.17.1 item/compass_31
+1.17  items/door_jungle                                <- 1.17.1 item/jungle_door
+1.17  items/reeds                                      <- 1.17.1 item/sugar_cane
+1.18  blocks/carrots_stage_3                           <- 1.18.2 block/carrots_stage3
+1.18  blocks/cocoa_stage_0                             <- 1.18.2 block/cocoa_stage0
+1.18  blocks/cocoa_stage_1                             <- 1.18.2 block/cocoa_stage1
+1.18  blocks/comparator_on                             <- 1.18.2 block/comparator_on
+1.18  blocks/door_iron_upper                           <- 1.18.2 block/iron_door_top
+1.18  blocks/door_wood_upper                           <- 1.18.2 block/oak_door_top
+1.18  blocks/glass_blue                                <- 1.18.2 block/blue_stained_glass
+1.18  blocks/glass_pane_top                            <- 1.18.2 block/glass_pane_top
+1.18  blocks/glass_red                                 <- 1.18.2 block/red_stained_glass
+1.18  blocks/grass_path_side                           <- 1.18.2 block/dirt_path_side
+1.18  blocks/log_big_oak_top                           <- 1.18.2 block/dark_oak_log_top
+1.18  blocks/planks_spruce                             <- 1.18.2 block/spruce_planks
+1.18  entity/armorstand/wood                           <- 1.18.2 entity/armorstand/wood
+1.18  entity/illager/illusionist                       <- 1.18.2 entity/illager/illusioner
+1.18  entity/parrot/parrot_blue                        <- 1.18.2 entity/parrot/parrot_blue
+1.18  entity/parrot/parrot_green                       <- 1.18.2 entity/parrot/parrot_green
+1.18  entity/parrot/parrot_grey                        <- 1.18.2 entity/parrot/parrot_grey
+1.18  entity/parrot/parrot_red_blue                    <- 1.18.2 entity/parrot/parrot_red_blue
+1.18  entity/parrot/parrot_yellow_blue                 <- 1.18.2 entity/parrot/parrot_yellow_blue
+1.18  gui/container/anvil                              <- 1.18.2 gui/container/anvil
+1.18  gui/container/enchanting_table                   <- 1.18.2 gui/container/enchanting_table
+1.18  items/beetroot_seeds                             <- 1.18.2 item/beetroot_seeds
+1.18  items/door_acacia                                <- 1.18.2 item/acacia_door
+1.18  items/door_birch                                 <- 1.18.2 item/birch_door
+1.18  items/door_dark_oak                              <- 1.18.2 item/dark_oak_door
+1.18  items/door_iron                                  <- 1.18.2 item/iron_door
+1.18  items/door_jungle                                <- 1.18.2 item/jungle_door
+1.18  items/door_spruce                                <- 1.18.2 item/spruce_door
+1.18  items/door_wood                                  <- 1.18.2 item/oak_door
+1.18  items/item_frame                                 <- 1.18.2 item/item_frame
+1.18  items/seeds_melon                                <- 1.18.2 item/melon_seeds
+1.18  items/sign                                       <- 1.18.2 item/oak_sign
+1.18  models/armor/diamond_layer_1                     <- 1.18.2 models/armor/diamond_layer_1
+1.18  models/armor/diamond_layer_2                     <- 1.18.2 models/armor/diamond_layer_2
+1.18  models/armor/gold_layer_1                        <- 1.18.2 models/armor/gold_layer_1
+1.18  models/armor/gold_layer_2                        <- 1.18.2 models/armor/gold_layer_2
+1.19  blocks/brewing_stand                             <- 1.19.4 block/brewing_stand
+1.19  blocks/brewing_stand_base                        <- 1.19.4 block/brewing_stand_base
+1.19  blocks/cocoa_stage_2                             <- 1.19.4 block/cocoa_stage2
+1.19  blocks/end_rod                                   <- 1.19.4 block/end_rod
+1.19  blocks/endframe_side                             <- 1.19.4 block/end_portal_frame_side
+1.19  blocks/mycelium_side                             <- 1.19.4 block/mycelium_side
+1.19  blocks/piston_side                               <- 1.19.4 block/piston_side
+1.19  blocks/piston_top_normal                         <- 1.19.4 block/piston_top
+1.19  blocks/piston_top_sticky                         <- 1.19.4 block/piston_top_sticky
+1.19  entity/alex                                      <- 1.19.4 entity/player/slim/alex
+1.19  entity/llama/llama_brown                         <- 1.19.4 entity/llama/brown
+1.19  entity/llama/llama_creamy                        <- 1.19.4 entity/llama/creamy
+1.19  entity/llama/llama_gray                          <- 1.19.4 entity/llama/gray
+1.19  entity/llama/llama_white                         <- 1.19.4 entity/llama/white
+1.19  entity/steve                                     <- 1.19.4 entity/player/wide/steve
+1.19  gui/icons                                        <- 1.19.4 gui/icons
+1.19  gui/recipe_book                                  <- 1.19.4 gui/recipe_book
+1.19  gui/toasts                                       <- 1.19.4 gui/toasts
+1.19  items/acacia_boat                                <- 1.19.4 item/acacia_boat
+1.19  items/birch_boat                                 <- 1.19.4 item/birch_boat
+1.19  items/dark_oak_boat                              <- 1.19.4 item/dark_oak_boat
+1.19  items/empty_armor_slot_boots                     <- 1.19.4 item/empty_armor_slot_boots
+1.19  items/empty_armor_slot_chestplate                <- 1.19.4 item/empty_armor_slot_chestplate
+1.19  items/empty_armor_slot_helmet                    <- 1.19.4 item/empty_armor_slot_helmet
+1.19  items/empty_armor_slot_leggings                  <- 1.19.4 item/empty_armor_slot_leggings
+1.19  items/empty_armor_slot_shield                    <- 1.19.4 item/empty_armor_slot_shield
+1.19  items/jungle_boat                                <- 1.19.4 item/jungle_boat
+1.19  items/oak_boat                                   <- 1.19.4 item/oak_boat
+1.19  items/spruce_boat                                <- 1.19.4 item/spruce_boat
+1.20  blocks/glazed_terracotta_purple                  <- 1.20.6 block/purple_glazed_terracotta
+1.20  entity/cat/black                                 <- 1.20.6 entity/cat/black
+1.20  entity/cow/cow                                   <- 1.20.6 entity/cow/cow
+1.20  entity/cow/mooshroom                             <- 1.20.6 entity/cow/red_mooshroom
+1.20  entity/illager/illusionist                       <- 1.20.6 entity/illager/illusioner
+1.20  entity/llama/llama_brown                         <- 1.20.6 entity/llama/brown
+1.20  entity/llama/llama_creamy                        <- 1.20.6 entity/llama/creamy
+1.20  entity/llama/llama_white                         <- 1.20.6 entity/llama/white
+1.20  entity/wolf/wolf_collar                          <- 1.20.6 entity/wolf/wolf_collar
+1.21  blocks/nether_brick                              <- 1.21.11 block/nether_bricks
+1.21  blocks/red_nether_brick                          <- 1.21.11 block/red_nether_bricks
+1.21  blocks/redstone_torch_on                         <- 1.21.11 block/redstone_torch
+1.21  entity/projectiles/arrow                         <- 1.21.11 entity/projectiles/arrow
+1.21  entity/projectiles/spectral_arrow                <- 1.21.11 entity/projectiles/spectral_arrow
+1.21  entity/projectiles/tipped_arrow                  <- 1.21.11 entity/projectiles/tipped_arrow
+1.21  items/dye_powder_cyan                            <- 1.21.11 item/cyan_dye
+1.21  items/dye_powder_gray                            <- 1.21.11 item/gray_dye
+1.21  items/dye_powder_green                           <- 1.21.11 item/green_dye
+1.21  items/dye_powder_light_blue                      <- 1.21.11 item/light_blue_dye
+1.21  items/dye_powder_lime                            <- 1.21.11 item/lime_dye
+1.21  items/dye_powder_magenta                         <- 1.21.11 item/magenta_dye
+1.21  items/dye_powder_orange                          <- 1.21.11 item/orange_dye
+1.21  items/dye_powder_pink                            <- 1.21.11 item/pink_dye
+1.21  items/dye_powder_purple                          <- 1.21.11 item/purple_dye
+1.21  items/dye_powder_red                             <- 1.21.11 item/red_dye
+1.21  items/dye_powder_silver                          <- 1.21.11 item/light_gray_dye
+1.21  items/dye_powder_yellow                          <- 1.21.11 item/yellow_dye
+26.3  blocks/hay_block_side                            <- 26.3 block/hay_block_side
+26.3  entity/llama/decor/decor_black                   <- 26.3 entity/equipment/llama_body/black
+26.3  gui/container/creative_inventory/tab_inventory   <- 26.3 gui/container/creative_inventory/tab_inventory
+26.3  items/map_empty                                  <- 26.3 item/map
+26.3  items/map_filled                                 <- 26.3 item/filled_map
+
+## Left out
+1.15  blocks/water_flow                                block/water_flow: water: grayscale since 1.13, tinted by a per-biome water color 1.12.2 does not have
+1.15  blocks/water_overlay                             block/water_overlay: water: grayscale since 1.13, tinted by a per-biome water color 1.12.2 does not have
+1.15  blocks/water_still                               block/water_still: water: grayscale since 1.13, tinted by a per-biome water color 1.12.2 does not have
+1.15  entity/banner/base                               entity/banner/base: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/border                             entity/banner/border: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/bricks                             entity/banner/bricks: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/circle                             entity/banner/circle: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/creeper                            entity/banner/creeper: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/cross                              entity/banner/cross: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/curly_border                       entity/banner/curly_border: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/diagonal_left                      entity/banner/diagonal_left: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/diagonal_right                     entity/banner/diagonal_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/diagonal_up_left                   entity/banner/diagonal_up_left: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/diagonal_up_right                  entity/banner/diagonal_up_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/flower                             entity/banner/flower: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/gradient                           entity/banner/gradient: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/gradient_up                        entity/banner/gradient_up: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/half_horizontal                    entity/banner/half_horizontal: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/half_horizontal_bottom             entity/banner/half_horizontal_bottom: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/half_vertical                      entity/banner/half_vertical: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/half_vertical_right                entity/banner/half_vertical_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/mojang                             entity/banner/mojang: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/rhombus                            entity/banner/rhombus: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/skull                              entity/banner/skull: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/small_stripes                      entity/banner/small_stripes: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/square_bottom_left                 entity/banner/square_bottom_left: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/square_bottom_right                entity/banner/square_bottom_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/square_top_left                    entity/banner/square_top_left: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/square_top_right                   entity/banner/square_top_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/straight_cross                     entity/banner/straight_cross: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_bottom                      entity/banner/stripe_bottom: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_center                      entity/banner/stripe_center: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_downleft                    entity/banner/stripe_downleft: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_downright                   entity/banner/stripe_downright: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_left                        entity/banner/stripe_left: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_middle                      entity/banner/stripe_middle: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_right                       entity/banner/stripe_right: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/stripe_top                         entity/banner/stripe_top: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/triangle_bottom                    entity/banner/triangle_bottom: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/triangle_top                       entity/banner/triangle_top: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/triangles_bottom                   entity/banner/triangles_bottom: banner patterns: white masks for 1.15's renderer
+1.15  entity/banner/triangles_top                      entity/banner/triangles_top: banner patterns: white masks for 1.15's renderer
+1.15  entity/chest/christmas                           entity/chest/christmas: chests: re-laid-out for 1.15's renderer (the parts are flipped)
+1.15  entity/chest/ender                               entity/chest/ender: chests: re-laid-out for 1.15's renderer (the parts are flipped)
+1.15  entity/chest/normal                              entity/chest/normal: chests: re-laid-out for 1.15's renderer (the parts are flipped)
+1.15  entity/chest/trapped                             entity/chest/trapped: chests: re-laid-out for 1.15's renderer (the parts are flipped)
+1.15  entity/enderdragon/dragon                        entity/enderdragon/dragon: the dragon: its wings re-laid-out for 1.15's renderer
+1.15  entity/enderdragon/dragon_exploding              entity/enderdragon/dragon_exploding: the dragon: its wings re-laid-out for 1.15's renderer
+1.15  entity/enderdragon/dragon_fireball               entity/enderdragon/dragon_fireball: the dragon: its wings re-laid-out for 1.15's renderer
+1.15  entity/horse/armor/horse_armor_diamond           entity/horse/armor/horse_armor_diamond: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/armor/horse_armor_gold              entity/horse/armor/horse_armor_gold: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/armor/horse_armor_iron              entity/horse/armor/horse_armor_iron: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/donkey                              entity/horse/donkey: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_black                         entity/horse/horse_black: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_brown                         entity/horse/horse_brown: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_chestnut                      entity/horse/horse_chestnut: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_creamy                        entity/horse/horse_creamy: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_darkbrown                     entity/horse/horse_darkbrown: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_gray                          entity/horse/horse_gray: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_markings_blackdots            entity/horse/horse_markings_blackdots: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_markings_white                entity/horse/horse_markings_white: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_markings_whitedots            entity/horse/horse_markings_whitedots: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_markings_whitefield           entity/horse/horse_markings_whitefield: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_skeleton                      entity/horse/horse_skeleton: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_white                         entity/horse/horse_white: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/horse_zombie                        entity/horse/horse_zombie: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/horse/mule                                entity/horse/mule: horses: 1.14 remade the model; its 64x64 textures do not fit 1.12.2's 128x128 UVs
+1.15  entity/shield/base                               entity/shield/base: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/border                             entity/shield/border: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/bricks                             entity/shield/bricks: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/circle                             entity/shield/circle: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/creeper                            entity/shield/creeper: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/cross                              entity/shield/cross: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/curly_border                       entity/shield/curly_border: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/diagonal_left                      entity/shield/diagonal_left: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/diagonal_right                     entity/shield/diagonal_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/diagonal_up_left                   entity/shield/diagonal_up_left: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/diagonal_up_right                  entity/shield/diagonal_up_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/flower                             entity/shield/flower: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/gradient                           entity/shield/gradient: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/gradient_up                        entity/shield/gradient_up: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/half_horizontal                    entity/shield/half_horizontal: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/half_horizontal_bottom             entity/shield/half_horizontal_bottom: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/half_vertical                      entity/shield/half_vertical: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/half_vertical_right                entity/shield/half_vertical_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/mojang                             entity/shield/mojang: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/rhombus                            entity/shield/rhombus: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/skull                              entity/shield/skull: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/small_stripes                      entity/shield/small_stripes: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/square_bottom_left                 entity/shield/square_bottom_left: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/square_bottom_right                entity/shield/square_bottom_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/square_top_left                    entity/shield/square_top_left: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/square_top_right                   entity/shield/square_top_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/straight_cross                     entity/shield/straight_cross: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_bottom                      entity/shield/stripe_bottom: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_center                      entity/shield/stripe_center: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_downleft                    entity/shield/stripe_downleft: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_downright                   entity/shield/stripe_downright: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_left                        entity/shield/stripe_left: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_middle                      entity/shield/stripe_middle: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_right                       entity/shield/stripe_right: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/stripe_top                         entity/shield/stripe_top: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/triangle_bottom                    entity/shield/triangle_bottom: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/triangle_top                       entity/shield/triangle_top: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/triangles_bottom                   entity/shield/triangles_bottom: shield patterns: white masks for 1.15's renderer
+1.15  entity/shield/triangles_top                      entity/shield/triangles_top: shield patterns: white masks for 1.15's renderer
+1.15  entity/villager/villager                         entity/villager/villager: villagers: 1.14 split them into biome and profession layers; Village & Pillage draws its own
+1.15  entity/zombie/zombie_villager                    entity/zombie/zombie_villager: zombie villagers: as villagers
+1.15  entity/zombie_villager/zombie_villager           entity/zombie_villager/zombie_villager: zombie villagers: as villagers
+1.15  font/ascii                                       font/ascii: 6% of what 1.12.2's image paints is blank now (parts moved)
+1.15  gui/container/inventory                          gui/container/inventory: 10% of what 1.12.2's image paints is blank now (parts moved)
+1.15  gui/title/background/panorama_0                  gui/title/background/panorama_0: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/background/panorama_1                  gui/title/background/panorama_1: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/background/panorama_2                  gui/title/background/panorama_2: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/background/panorama_3                  gui/title/background/panorama_3: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/background/panorama_4                  gui/title/background/panorama_4: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/background/panorama_5                  gui/title/background/panorama_5: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/title/mojang                                 gui/title/mojang: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.15  gui/widgets                                      gui/widgets: the buttons: the presentation module's (the backports' replaceAsset)
+1.15  map/map_icons                                    map/map_icons: 98% of what 1.12.2's image paints is blank now (parts moved)
+1.15  gui/presets/chaos                                gui/presets/chaos: gone (split up or removed); stays as 1.12.2
+1.15  gui/presets/delight                              gui/presets/delight: gone (split up or removed); stays as 1.12.2
+1.15  gui/presets/drought                              gui/presets/drought: gone (split up or removed); stays as 1.12.2
+1.15  gui/presets/luck                                 gui/presets/luck: gone (split up or removed); stays as 1.12.2
+1.15  gui/presets/madness                              gui/presets/madness: gone (split up or removed); stays as 1.12.2
+1.15  gui/presets/water                                gui/presets/water: gone (split up or removed); stays as 1.12.2
+1.16  entity/zombie_pigman                             entity/piglin/zombified_piglin: 16% of what 1.12.2's image paints is blank now (parts moved)
+1.16  font/ascii                                       font/ascii: 39% of what 1.12.2's image paints is blank now (parts moved)
+1.16  gui/title/minecraft                              gui/title/minecraft: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.17  entity/arrow                                     entity/projectiles/arrow: 50% of what 1.12.2's image paints is blank now (parts moved)
+1.17  items/ruby                                       item/ruby: gone (split up or removed); stays as 1.12.2
+1.17  particle/footprint                               particle/footprint: gone (split up or removed); stays as 1.12.2
+1.18  entity/illager/evoker                            entity/illager/evoker: 13% of what 1.12.2's image paints is blank now (parts moved)
+1.18  entity/illager/vindicator                        entity/illager/vindicator: 14% of what 1.12.2's image paints is blank now (parts moved)
+1.18  entity/minecart                                  entity/minecart: 15% of what 1.12.2's image paints is blank now (parts moved)
+1.18  entity/witch                                     entity/witch: 11% of what 1.12.2's image paints is blank now (parts moved)
+1.18  entity/wither/wither                             entity/wither/wither: 55% of what 1.12.2's image paints is blank now (parts moved)
+1.18  gui/container/inventory                          gui/container/inventory: 8% of what 1.12.2's image paints is blank now (parts moved)
+1.19  entity/illager/vex                               entity/illager/vex: 51% of what 1.12.2's image paints is blank now (parts moved)
+1.19  entity/illager/vex_charging                      entity/illager/vex_charging: 51% of what 1.12.2's image paints is blank now (parts moved)
+1.19  entity/illager/vindicator                        entity/illager/vindicator: 14% of what 1.12.2's image paints is blank now (parts moved)
+1.19  entity/iron_golem                                entity/iron_golem/iron_golem: 5% of what 1.12.2's image paints is blank now (parts moved)
+1.19  gui/container/creative_inventory/tabs            gui/container/creative_inventory/tabs: 1% of what 1.12.2's image paints is blank now (parts moved)
+1.19  gui/container/inventory                          gui/container/inventory: 8% of what 1.12.2's image paints is blank now (parts moved)
+1.19  models/armor/leather_layer_1_overlay             models/armor/leather_layer_1_overlay: 8% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/armorstand/wood                           entity/armorstand/wood: 12% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/bat                                       entity/bat: 34% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/bear/polarbear                            entity/bear/polarbear: 1% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/blaze                                     entity/blaze: 11% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/llama/llama_gray                          entity/llama/gray: 1% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/sheep/sheep                               entity/sheep/sheep: 1% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/sheep/sheep_fur                           entity/sheep/sheep_fur: 11% of what 1.12.2's image paints is blank now (parts moved)
+1.20  entity/slime/magmacube                           entity/slime/magmacube: 22% of what 1.12.2's image paints is blank now (parts moved)
+1.20  environment/clouds                               environment/clouds: 80% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/book                                         gui/book: 2% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/anvil                              gui/container/anvil: 12% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/beacon                             gui/container/beacon: 4% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/brewing_stand                      gui/container/brewing_stand: 3% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/crafting_table                     gui/container/crafting_table: 2% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/enchanting_table                   gui/container/enchanting_table: 19% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/furnace                            gui/container/furnace: 2% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/horse                              gui/container/horse: 17% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/container/inventory                          gui/container/inventory: 24% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/recipe_book                                  gui/recipe_book: 28% of what 1.12.2's image paints is blank now (parts moved)
+1.20  gui/title/edition                                gui/title/edition: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
+1.20  font/unicode_page_00                             font/unicode_page_00: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_01                             font/unicode_page_01: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_02                             font/unicode_page_02: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_03                             font/unicode_page_03: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_04                             font/unicode_page_04: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_05                             font/unicode_page_05: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_06                             font/unicode_page_06: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_07                             font/unicode_page_07: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_09                             font/unicode_page_09: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0a                             font/unicode_page_0a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0b                             font/unicode_page_0b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0c                             font/unicode_page_0c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0d                             font/unicode_page_0d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0e                             font/unicode_page_0e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_0f                             font/unicode_page_0f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_10                             font/unicode_page_10: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_11                             font/unicode_page_11: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_12                             font/unicode_page_12: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_13                             font/unicode_page_13: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_14                             font/unicode_page_14: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_15                             font/unicode_page_15: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_16                             font/unicode_page_16: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_17                             font/unicode_page_17: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_18                             font/unicode_page_18: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_19                             font/unicode_page_19: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1a                             font/unicode_page_1a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1b                             font/unicode_page_1b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1c                             font/unicode_page_1c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1d                             font/unicode_page_1d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1e                             font/unicode_page_1e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_1f                             font/unicode_page_1f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_20                             font/unicode_page_20: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_21                             font/unicode_page_21: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_22                             font/unicode_page_22: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_23                             font/unicode_page_23: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_24                             font/unicode_page_24: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_25                             font/unicode_page_25: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_26                             font/unicode_page_26: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_27                             font/unicode_page_27: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_28                             font/unicode_page_28: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_29                             font/unicode_page_29: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2a                             font/unicode_page_2a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2b                             font/unicode_page_2b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2c                             font/unicode_page_2c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2d                             font/unicode_page_2d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2e                             font/unicode_page_2e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_2f                             font/unicode_page_2f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_30                             font/unicode_page_30: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_31                             font/unicode_page_31: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_32                             font/unicode_page_32: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_33                             font/unicode_page_33: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_34                             font/unicode_page_34: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_35                             font/unicode_page_35: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_36                             font/unicode_page_36: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_37                             font/unicode_page_37: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_38                             font/unicode_page_38: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_39                             font/unicode_page_39: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3a                             font/unicode_page_3a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3b                             font/unicode_page_3b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3c                             font/unicode_page_3c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3d                             font/unicode_page_3d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3e                             font/unicode_page_3e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_3f                             font/unicode_page_3f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_40                             font/unicode_page_40: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_41                             font/unicode_page_41: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_42                             font/unicode_page_42: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_43                             font/unicode_page_43: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_44                             font/unicode_page_44: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_45                             font/unicode_page_45: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_46                             font/unicode_page_46: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_47                             font/unicode_page_47: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_48                             font/unicode_page_48: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_49                             font/unicode_page_49: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4a                             font/unicode_page_4a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4b                             font/unicode_page_4b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4c                             font/unicode_page_4c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4d                             font/unicode_page_4d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4e                             font/unicode_page_4e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_4f                             font/unicode_page_4f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_50                             font/unicode_page_50: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_51                             font/unicode_page_51: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_52                             font/unicode_page_52: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_53                             font/unicode_page_53: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_54                             font/unicode_page_54: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_55                             font/unicode_page_55: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_56                             font/unicode_page_56: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_57                             font/unicode_page_57: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_58                             font/unicode_page_58: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_59                             font/unicode_page_59: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5a                             font/unicode_page_5a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5b                             font/unicode_page_5b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5c                             font/unicode_page_5c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5d                             font/unicode_page_5d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5e                             font/unicode_page_5e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_5f                             font/unicode_page_5f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_60                             font/unicode_page_60: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_61                             font/unicode_page_61: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_62                             font/unicode_page_62: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_63                             font/unicode_page_63: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_64                             font/unicode_page_64: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_65                             font/unicode_page_65: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_66                             font/unicode_page_66: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_67                             font/unicode_page_67: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_68                             font/unicode_page_68: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_69                             font/unicode_page_69: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6a                             font/unicode_page_6a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6b                             font/unicode_page_6b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6c                             font/unicode_page_6c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6d                             font/unicode_page_6d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6e                             font/unicode_page_6e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_6f                             font/unicode_page_6f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_70                             font/unicode_page_70: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_71                             font/unicode_page_71: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_72                             font/unicode_page_72: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_73                             font/unicode_page_73: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_74                             font/unicode_page_74: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_75                             font/unicode_page_75: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_76                             font/unicode_page_76: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_77                             font/unicode_page_77: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_78                             font/unicode_page_78: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_79                             font/unicode_page_79: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7a                             font/unicode_page_7a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7b                             font/unicode_page_7b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7c                             font/unicode_page_7c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7d                             font/unicode_page_7d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7e                             font/unicode_page_7e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_7f                             font/unicode_page_7f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_80                             font/unicode_page_80: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_81                             font/unicode_page_81: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_82                             font/unicode_page_82: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_83                             font/unicode_page_83: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_84                             font/unicode_page_84: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_85                             font/unicode_page_85: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_86                             font/unicode_page_86: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_87                             font/unicode_page_87: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_88                             font/unicode_page_88: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_89                             font/unicode_page_89: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8a                             font/unicode_page_8a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8b                             font/unicode_page_8b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8c                             font/unicode_page_8c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8d                             font/unicode_page_8d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8e                             font/unicode_page_8e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_8f                             font/unicode_page_8f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_90                             font/unicode_page_90: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_91                             font/unicode_page_91: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_92                             font/unicode_page_92: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_93                             font/unicode_page_93: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_94                             font/unicode_page_94: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_95                             font/unicode_page_95: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_96                             font/unicode_page_96: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_97                             font/unicode_page_97: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_98                             font/unicode_page_98: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_99                             font/unicode_page_99: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9a                             font/unicode_page_9a: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9b                             font/unicode_page_9b: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9c                             font/unicode_page_9c: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9d                             font/unicode_page_9d: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9e                             font/unicode_page_9e: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_9f                             font/unicode_page_9f: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a0                             font/unicode_page_a0: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a1                             font/unicode_page_a1: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a2                             font/unicode_page_a2: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a3                             font/unicode_page_a3: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a4                             font/unicode_page_a4: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a5                             font/unicode_page_a5: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a6                             font/unicode_page_a6: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a7                             font/unicode_page_a7: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a8                             font/unicode_page_a8: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_a9                             font/unicode_page_a9: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_aa                             font/unicode_page_aa: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ab                             font/unicode_page_ab: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ac                             font/unicode_page_ac: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ad                             font/unicode_page_ad: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ae                             font/unicode_page_ae: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_af                             font/unicode_page_af: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b0                             font/unicode_page_b0: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b1                             font/unicode_page_b1: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b2                             font/unicode_page_b2: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b3                             font/unicode_page_b3: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b4                             font/unicode_page_b4: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b5                             font/unicode_page_b5: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b6                             font/unicode_page_b6: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b7                             font/unicode_page_b7: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b8                             font/unicode_page_b8: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_b9                             font/unicode_page_b9: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ba                             font/unicode_page_ba: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_bb                             font/unicode_page_bb: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_bc                             font/unicode_page_bc: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_bd                             font/unicode_page_bd: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_be                             font/unicode_page_be: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_bf                             font/unicode_page_bf: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c0                             font/unicode_page_c0: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c1                             font/unicode_page_c1: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c2                             font/unicode_page_c2: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c3                             font/unicode_page_c3: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c4                             font/unicode_page_c4: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c5                             font/unicode_page_c5: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c6                             font/unicode_page_c6: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c7                             font/unicode_page_c7: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c8                             font/unicode_page_c8: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_c9                             font/unicode_page_c9: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ca                             font/unicode_page_ca: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_cb                             font/unicode_page_cb: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_cc                             font/unicode_page_cc: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_cd                             font/unicode_page_cd: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ce                             font/unicode_page_ce: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_cf                             font/unicode_page_cf: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d0                             font/unicode_page_d0: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d1                             font/unicode_page_d1: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d2                             font/unicode_page_d2: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d3                             font/unicode_page_d3: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d4                             font/unicode_page_d4: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d5                             font/unicode_page_d5: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d6                             font/unicode_page_d6: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_d7                             font/unicode_page_d7: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_f9                             font/unicode_page_f9: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_fa                             font/unicode_page_fa: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_fb                             font/unicode_page_fb: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_fc                             font/unicode_page_fc: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_fd                             font/unicode_page_fd: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_fe                             font/unicode_page_fe: gone (split up or removed); stays as 1.12.2
+1.20  font/unicode_page_ff                             font/unicode_page_ff: gone (split up or removed); stays as 1.12.2
+1.20  gui/advancements/tabs                            gui/advancements/tabs: gone (split up or removed); stays as 1.12.2
+1.20  gui/advancements/widgets                         gui/advancements/widgets: gone (split up or removed); stays as 1.12.2
+1.20  gui/bars                                         gui/bars: gone (split up or removed); stays as 1.12.2
+1.20  gui/container/creative_inventory/tabs            gui/container/creative_inventory/tabs: gone (split up or removed); stays as 1.12.2
+1.20  gui/container/stats_icons                        gui/container/stats_icons: gone (split up or removed); stays as 1.12.2
+1.20  gui/icons                                        gui/icons: gone (split up or removed); stays as 1.19
+1.20  gui/options_background                           gui/options_background: gone (split up or removed); stays as 1.12.2
+1.20  gui/resource_packs                               gui/resource_packs: gone (split up or removed); stays as 1.12.2
+1.20  gui/server_selection                             gui/server_selection: gone (split up or removed); stays as 1.12.2
+1.20  gui/spectator_widgets                            gui/spectator_widgets: gone (split up or removed); stays as 1.12.2
+1.20  gui/stream_indicator                             gui/stream_indicator: gone (split up or removed); stays as 1.12.2
+1.20  gui/toasts                                       gui/toasts: gone (split up or removed); stays as 1.19
+1.20  gui/world_selection                              gui/world_selection: gone (split up or removed); stays as 1.12.2
+1.20  map/map_icons                                    map/map_icons: gone (split up or removed); stays as 1.12.2
+1.21  entity/arrow                                     entity/projectiles/arrow: 50% of what 1.12.2's image paints is blank now (parts moved)
+1.21  entity/blaze                                     entity/blaze: 11% of what 1.12.2's image paints is blank now (parts moved)
+1.21  entity/cow/cow                                   entity/cow/temperate_cow: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+1.21  entity/cow/mooshroom                             entity/cow/red_mooshroom: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+1.21  entity/ghast/ghast                               entity/ghast/ghast: ghasts: the presentation module's (Tricky Trials' replaceAsset)
+1.21  entity/ghast/ghast_shooting                      entity/ghast/ghast_shooting: ghasts: the presentation module's (Tricky Trials' replaceAsset)
+1.21  entity/pig/pig                                   entity/pig/temperate_pig: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+1.21  entity/pig/pig_saddle                            entity/equipment/pig_saddle/saddle: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+1.21  entity/sheep/sheep_fur                           entity/sheep/sheep_wool: 11% of what 1.12.2's image paints is blank now (parts moved)
+1.21  entity/slime/magmacube                           entity/slime/magmacube: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+1.21  environment/clouds                               environment/clouds: 72% of what 1.12.2's image paints is blank now (parts moved)
+1.21  gui/container/brewing_stand                      gui/container/brewing_stand: 3% of what 1.12.2's image paints is blank now (parts moved)
+1.21  environment/moon_phases                          environment/moon_phases: gone (split up or removed); stays as 1.12.2
+1.21  items/spawn_egg                                  item/spawn_egg: gone (split up or removed); stays as 1.12.2
+1.21  items/spawn_egg_overlay                          item/spawn_egg_overlay: gone (split up or removed); stays as 1.12.2
+26.1  entity/rabbit/black                              entity/rabbit/rabbit_black: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/brown                              entity/rabbit/rabbit_brown: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/caerbannog                         entity/rabbit/rabbit_caerbannog: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/gold                               entity/rabbit/rabbit_gold: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/salt                               entity/rabbit/rabbit_salt: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/toast                              entity/rabbit/rabbit_toast: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/white                              entity/rabbit/rabbit_white: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  entity/rabbit/white_splotched                    entity/rabbit/rabbit_white_splotched: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
+26.1  gui/demo_background                              gui/demo_background: gone (split up or removed); stays as 1.12.2
+26.2  entity/sign                                      block/oak_sign: size 32x32 does not scale to 1.12.2's 64x32 (new UV layout)
+26.2  entity/bed/black                                 entity/bed/black: gone (split up or removed); stays as 1.14
+26.2  entity/bed/blue                                  entity/bed/blue: gone (split up or removed); stays as 1.14
+26.2  entity/bed/brown                                 entity/bed/brown: gone (split up or removed); stays as 1.14
+26.2  entity/bed/cyan                                  entity/bed/cyan: gone (split up or removed); stays as 1.14
+26.2  entity/bed/gray                                  entity/bed/gray: gone (split up or removed); stays as 1.14
+26.2  entity/bed/green                                 entity/bed/green: gone (split up or removed); stays as 1.14
+26.2  entity/bed/light_blue                            entity/bed/light_blue: gone (split up or removed); stays as 1.14
+26.2  entity/bed/lime                                  entity/bed/lime: gone (split up or removed); stays as 1.14
+26.2  entity/bed/magenta                               entity/bed/magenta: gone (split up or removed); stays as 1.14
+26.2  entity/bed/orange                                entity/bed/orange: gone (split up or removed); stays as 1.14
+26.2  entity/bed/pink                                  entity/bed/pink: gone (split up or removed); stays as 1.14
+26.2  entity/bed/purple                                entity/bed/purple: gone (split up or removed); stays as 1.14
+26.2  entity/bed/red                                   entity/bed/red: gone (split up or removed); stays as 1.14
+26.2  entity/bed/silver                                entity/bed/light_gray: gone (split up or removed); stays as 1.14
+26.2  entity/bed/white                                 entity/bed/white: gone (split up or removed); stays as 1.14
+26.2  entity/bed/yellow                                entity/bed/yellow: gone (split up or removed); stays as 1.14
+26.3  gui/container/enchanting_table                   gui/container/enchanting_table: 19% of what 1.12.2's image paints is blank now (parts moved)
+26.3  items/map_filled_markings                        item/filled_map_markings: gone (split up or removed); stays as 1.12.2

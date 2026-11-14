@@ -51,12 +51,39 @@ Call the registration methods below from your mod's **pre-init** unless a sectio
 
 ## Textures (`client.ModernTextures`)
 
-Nothing to call. The `modern` pack (1.14+ vanilla textures under 1.12.2 names) and the `classic` pack
-(1.12.2 looks for the backports' own copies of old textures) live in `src/main/resources/backportcore_packs`,
-built by `tools/modern-textures/generate.py`. The switch is `textures.modernTextures` in `backportcore.cfg`.
-To add a later update's retextures, extend `manual_map.py` and regenerate; to give your own mod's
-texture a classic look, add `'yourmod:path': 'vanilla path'` to `CLASSIC_MOD` (and your repository to
-`MOD_REPOS` in `generate.py` so the name is checked).
+Nothing to call. Vanilla's textures look as they do at the newest installed backport's version
+(`Presentation.newest()`), as long as `textures.modernTextures` in `backportcore.cfg` is on (the default). Off, they
+are 1.12.2's. Both packs live in `src/main/resources/backportcore_packs`:
+
+- **modern**: one layer per release line that changed vanilla's textures, saved under 1.12.2's file names. Each
+  layer holds only the files that changed since the layers below it:
+  - `modern/` is 1.14's Texture Update (plus 1.15's enchantment glint). It always applies, because Village & Pillage
+    registers no version. Written by `tools/modern-textures/generate.py`.
+  - `modern-1.15/`, `modern-1.16/`, ... `modern-26.3/` (listed in `layers.txt`) hold each line's last release:
+    1.15.2, 1.16.5, 1.17.1, 1.18.2, 1.19.4, 1.20.6, 1.21.11, 26.1.2, 26.2 and 26.3. A layer applies when the newest
+    installed version is that version or later, so Caves & Cliffs (1.18.2) gets 1.17's ores and everything through
+    1.18.2. Written by `tools/textures/build.py`, which also writes `tools/textures/report.txt`: what each layer
+    took, and every texture left out with the reason.
+
+  A file comes from the newest layer that applies and has it, and its `.mcmeta` only from that same layer
+  (`client.TextureLayers`, served by `client.LayeredPack`). The pack decides at each lookup, so the versions the
+  backports register in pre-init reach the block atlas, which is stitched after pre-init.
+- **classic**: the 1.12.2 look for the backports' own copies of old textures. Only used with the switch off.
+
+**To add a release**: put its client jar in `tools/textures/tables.py` (`JARS`, and `LINES` for a new line), name
+what it renamed in `RENAMES`, run `generate.py` and then `build.py`, and read `report.txt`. Later layers take only
+textures that still fit 1.12.2. Block and item sprites always fit. A mob, armor, GUI or sky texture must keep 1.12.2's
+aspect ratio and must not blank more than 1% of what 1.12.2's image paints, since a moved part or a new model
+leaves 1.12.2's UVs on nothing. `EXCLUDE` and `LAYOUT` hold the changes this check cannot see, and `ACCEPT` the few it
+refuses after a look shows only unused parts are blank. Keyed-transparency PNGs are rewritten as RGBA
+(`tools/textures/png_rgba.py`). To give your own mod's texture a classic look, add `'yourmod:path': 'vanilla path'` to
+`CLASSIC_MOD` in `tools/modern-textures/manual_map.py` (and your repository to `MOD_REPOS` in `generate.py` so the
+name is checked).
+
+Textures that never changed, or changed only in a way 1.12.2 can't show, stay as the layers below have them.
+Examples: the GUI sheets 1.20.2 split into sprites, 1.21.5's cow, pig and chicken models, the horses, villagers,
+water, banner and shield patterns, chests and the dragon. The title screen's textures, the buttons and the ghast are
+the presentation module's (`Contribution.replaceAsset`), so they are never in these layers.
 
 ## Duplicate blocks (`duplicate.DuplicateBlocks`)
 

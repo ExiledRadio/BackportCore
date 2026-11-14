@@ -9,6 +9,8 @@ Writes src/main/resources/backportcore_packs/:
             of something 1.12.2 already had (manual_map.CLASSIC_MOD, by mod). Only used with the
             option off.
 Each pack gets an index.txt listing its files, so the game never has to probe the classpath.
+modern/ is the 1.14 layer. tools/textures/build.py adds the later ones (modern-1.15/ ...) on top of it, so run
+that after this.
 
 How a 1.12.2 name finds its 1.13+ name, most trusted first:
   1. manual_map.py
@@ -155,8 +157,10 @@ def main(jar112, jar114, jar115):
     mapping = build_map(old, new)
     mapping.update(EXTRA_115)
 
-    if os.path.isdir(OUT):
-        shutil.rmtree(OUT)
+    # Only this script's two packs: the later layers next to them are tools/textures/build.py's.
+    for d in ('modern', 'classic'):
+        if os.path.isdir(os.path.join(OUT, d)):
+            shutil.rmtree(os.path.join(OUT, d))
     modern = os.path.join(OUT, 'modern')
     files, report = [], []
     # 1.15 moved a few files; look its version up by the 1.14 name, then the 1.15 folder-per-mob name

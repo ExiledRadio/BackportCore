@@ -1,0 +1,9 @@
+# The texture layers after 1.14's (modern/), by version. Written by tools/textures/build.py.
+1.15
+1.16
+1.17
+1.18
+1.19
+1.20
+1.21
+26.3

@@ -1,8 +1,8 @@
 # 繁體中文（台灣） - our own text; vanilla names come from Mojang (tools/lang/build_langs.py)
 config.backportcore.textures=材質
-backportcore.general.textures.moderntextures=1.14 材質
-config.backportcore.textures.tooltip=1.14 對原版方塊、物品和生物的材質更新。
-backportcore.general.textures.moderntextures.tooltip=讓原版的方塊、物品和生物換上 1.14 材質更新給它們的材質，再加上 1.15 的附魔光效。停用則保留 1.12.2 的材質，而且對於 1.12.2 原本就有的東西，各移植模組自帶的版本也會恢復 1.12.2 的樣子（燕尾服貓、紅貓和暹羅貓）。\n\n僅限用戶端；伺服器會忽略這一項。你選擇的資源包，以及刻意修改原版材質的其他模組，仍然優先於這一項。無論如何設定，村民、馬和水都會保留 1.12.2 的材質：1.14 的材質與 1.12.2 的模型或顏色不搭。\n\n在遊戲中變更這一項會重新載入資源，效果與 F3+T 相同。
+backportcore.general.textures.moderntextures=現代材質
+config.backportcore.textures.tooltip=原版材質，與已安裝的最新移植模組所對應版本中的樣子一致。
+backportcore.general.textures.moderntextures.tooltip=讓原版的方塊、物品和生物換上已安裝的最新移植模組所對應版本的材質：先是 1.14 材質更新，再是之後直到該版本的每個版本的新材質，例如裝有 Caves & Cliffs Backport 時的 1.17 礦石。停用則保留 1.12.2 的材質，而且對於 1.12.2 原本就有的東西，各移植模組自帶的版本也會恢復 1.12.2 的樣子（燕尾服貓、紅貓和暹羅貓）。\n\n僅限用戶端；伺服器會忽略這一項。你選擇的資源包，以及刻意修改原版材質的其他模組，仍然優先於這一項。無論如何設定，村民、馬和水都會保留 1.12.2 的材質；之後的版本為新模型重新繪製的材質也會保留較早的樣子：這些材質與 1.12.2 的模型或顏色不搭。\n\n在遊戲中變更這一項會重新載入資源，效果與 F3+T 相同。
 config.backportcore.presentation=外觀
 backportcore.general.presentation.panorama=全景圖
 config.backportcore.presentation.tooltip=遊戲外觀中跟隨已安裝的最新移植模組的部分，與該版本的原版相同。

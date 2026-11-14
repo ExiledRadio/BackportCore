@@ -31,6 +31,8 @@ public final class SelfTestMod {
         if (FMLCommonHandler.instance().getSide().isClient()) {
             if (ClientSettingsShots.active()) {
                 ClientSettingsShots.register();
+            } else if (ClientTextureTests.version() != null) {
+                ClientTextureTests.register();
             } else {
                 ClientPresentationTests.register();
                 ClientLocateTests.register();

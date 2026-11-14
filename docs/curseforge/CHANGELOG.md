@@ -9,6 +9,7 @@ What Caves & Cliffs Backport needs, and the 1.18 to 1.21.11 menus and settings t
 *   **Music and Sounds**: Music Frequency, the Music Toast and a UI volume.
 *   **F3** as in 1.21.9: every part of the debug screen can be Off, In F3 or Always (F3 + F6).
 *   Copper from different backports ages and waxes the same way.
+*   **Vanilla's textures follow the newest installed backport**: with Caves & Cliffs Backport, 1.17's new ores and every other retexture through 1.18.2; with Tricky Trials Backport, through 1.21.11. Only Village & Pillage gives 1.14's textures, as before. Textures that newer versions changed in a way 1.12.2 can't show keep their older look. The Texture Update switch still brings back 1.12.2's.
 
 # 1.2.0
 
