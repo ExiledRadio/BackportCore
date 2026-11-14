@@ -56,11 +56,11 @@ public final class FogPipeline {
         default void clouds(Clouds clouds) {
         }
 
-        /** P24 (since Core 1.2.0): the sunrise and sunset glow ({@code WorldProvider.calcSunriseSunsetColors}). */
+        /** P24 (since Core 1.3.0): the sunrise and sunset glow ({@code WorldProvider.calcSunriseSunsetColors}). */
         default void sunrise(Sunrise sunrise) {
         }
 
-        /** P25 (since Core 1.2.0): true when the clouds drift by world time, the same for every player (1.21.11). */
+        /** P25 (since Core 1.3.0): true when the clouds drift by world time, the same for every player (1.21.11). */
         default boolean cloudsFollowWorldTime() {
             return false;
         }

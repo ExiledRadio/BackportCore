@@ -1,3 +1,15 @@
+# 1.3.0
+
+What Caves & Cliffs Backport needs, and the 1.18 to 1.21.11 menus and settings that newer backports use.
+
+*   **1.18 worlds**: villages, outposts, shipwrecks, ocean ruins, buried treasure and ruined portals start where 1.18 puts them in Caves & Cliffs worlds, and the ground is shaped around them. Blocks below y 0 and above y 255 hold water. Features a world's generator already placed are not added twice.
+*   **`/locate biome`**, as in current Java, for vanilla's biomes and every backport's.
+*   **Video Settings** as in 1.21.11: Display, Quality & Performance and Preferences sections, a Fast/Fancy/Fabulous! preset, Cloud Distance, Weather Effect Radius, Texture Filtering, Show Vignette and Chunk Fade Time.
+*   **Controls** as in 1.18, with Toggle for Attack and Use Item.
+*   **Music and Sounds**: Music Frequency, the Music Toast and a UI volume.
+*   **F3** as in 1.21.9: every part of the debug screen can be Off, In F3 or Always (F3 + F6).
+*   Copper from different backports ages and waxes the same way.
+
 # 1.2.0
 
 *   **The backports' recipes unlock like vanilla's.** Pick up an iron ingot and the smithing table's recipe unlocks; a stick or coal gives the campfire's. The recipe toast shows and the recipe appears in the recipe book. Each recipe unlocks on the items current Java unlocks it on. This covers every crafting recipe of every backport installed (Village & Pillage, Update Aquatic, Buzzy Bees, Nether Update), with no update to them needed. Before, none of their recipes ever showed in the recipe book.

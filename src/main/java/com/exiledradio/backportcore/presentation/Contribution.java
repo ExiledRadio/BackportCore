@@ -204,7 +204,7 @@ public final class Contribution {
 
     /**
      * As {@link #addMenuMusic(String, int)}, at a volume (0 to 1) as sounds.json gives it: 1.21.6's menu tracks are
-     * {@code music.menu} entries at 0.4. Since Core 1.2.0.
+     * {@code music.menu} entries at 0.4. Since Core 1.3.0.
      */
     public Contribution addMenuMusic(String soundName, int weight, float volume) {
         this.musicAdds.add(new MenuTrack(soundName, weight, volume));
@@ -213,7 +213,7 @@ public final class Contribution {
 
     /**
      * A title-screen track this version removed, by its sound name ({@code "minecraft:music/menu/menu1"}). A name
-     * without a namespace ({@code "music/game/wending"}, since Core 1.2.0) removes that path whichever mod plays it,
+     * without a namespace ({@code "music/game/wending"}, since Core 1.3.0) removes that path whichever mod plays it,
      * so a version can drop a track another backport added under its own id.
      */
     public Contribution removeMenuMusic(String soundName) {
@@ -241,7 +241,7 @@ public final class Contribution {
 
     // ---- Vanilla assets and text ----
 
-    /** @return the vanilla assets this version replaces, by path under {@code assets/minecraft/} (since Core 1.2.0) */
+    /** @return the vanilla assets this version replaces, by path under {@code assets/minecraft/} (since Core 1.3.0) */
     public java.util.Map<String, ResourceLocation> replacedAssets() {
         return java.util.Collections.unmodifiableMap(this.assets);
     }
@@ -331,7 +331,7 @@ public final class Contribution {
     public static final class MenuTrack {
         public final String soundName;
         public final int weight;
-        /** 0 to 1, as sounds.json's {@code volume} (since Core 1.2.0). */
+        /** 0 to 1, as sounds.json's {@code volume} (since Core 1.3.0). */
         public final float volume;
 
         MenuTrack(String soundName, int weight, float volume) {

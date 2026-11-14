@@ -39,7 +39,7 @@ public final class CycleOption extends PresentationOption {
 
     /**
      * One tooltip per value, in the order of the values (1.21.2's "Reduce FPS when" explains each); a null entry
-     * falls back to {@link #tooltip}. Since Core 1.2.0.
+     * falls back to {@link #tooltip}. Since Core 1.3.0.
      */
     public CycleOption valueTooltips(String... keys) {
         if (keys.length != this.names.length) {

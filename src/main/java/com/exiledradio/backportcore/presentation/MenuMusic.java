@@ -22,7 +22,7 @@ public final class MenuMusic {
     public static final class Track {
         public final String soundName;
         public final int weight;
-        /** 0 to 1 (since Core 1.2.0). */
+        /** 0 to 1 (since Core 1.3.0). */
         public final float volume;
 
         public Track(String soundName, int weight) {
@@ -80,7 +80,7 @@ public final class MenuMusic {
 
     /**
      * 1.21.6's {@code MusicFrequency.getNextSongDelay}: "default" waits at most 20 minutes, "frequent" 10, "constant"
-     * 5 seconds, within the track's own wait (ticks). Since Core 1.2.0.
+     * 5 seconds, within the track's own wait (ticks). Since Core 1.3.0.
      */
     public static int frequencyDelay(String frequency, int minDelay, int maxDelay, Random random) {
         if ("constant".equals(frequency)) {

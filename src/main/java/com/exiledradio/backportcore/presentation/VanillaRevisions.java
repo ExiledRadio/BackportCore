@@ -71,7 +71,7 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast("1.15");
     }
 
-    // ---- Since Core 1.2.0: 1.18 to 1.21.11's options screens, F3 and the title logo ----
+    // ---- Since Core 1.3.0: 1.18 to 1.21.11's options screens, F3 and the title logo ----
 
     /**
      * 1.18 (21w37a): Controls is a screen of options (Mouse Settings... and Key Binds..., then Toggle Crouch, Toggle

@@ -109,7 +109,7 @@ public final class PanoramaRenderer {
      * 1.20.5's menu panorama ({@code Screen.renderPanorama} then {@code renderBlurredBackground}): {@link #render} into a
      * buffer of its own, blurred by 1.12.2's own {@code shaders/post/blur.json} at {@code radius}, then drawn over the
      * whole screen. Wherever the blur cannot run (no shader support, or an error once), the sharp panorama is drawn.
-     * Since Core 1.2.0.
+     * Since Core 1.3.0.
      */
     public static void renderBlurred(@Nullable GuiScreen menu, float radius) {
         Minecraft mc = Minecraft.getMinecraft();

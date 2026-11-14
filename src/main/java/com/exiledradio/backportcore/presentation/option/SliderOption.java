@@ -164,7 +164,7 @@ public final class SliderOption extends PresentationOption {
 
     /**
      * Shows the value as this function writes it (before any {@link #valueKey}): 1.21.11's Anisotropic Filtering shows
-     * 2 to the value ("4x"). Since Core 1.2.0.
+     * 2 to the value ("4x"). Since Core 1.3.0.
      */
     public SliderOption valueText(java.util.function.DoubleFunction<String> text) {
         this.text = text;

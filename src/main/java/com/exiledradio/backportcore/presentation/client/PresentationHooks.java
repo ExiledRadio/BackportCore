@@ -130,7 +130,7 @@ public final class PresentationHooks {
         }
     }
 
-    // ---- P26 to P30 (since Core 1.2.0) ----
+    // ---- P26 to P30 (since Core 1.3.0) ----
 
     /** P26: at the head of {@code RenderGlobal.renderClouds}. */
     public static void cloudsBegin() {

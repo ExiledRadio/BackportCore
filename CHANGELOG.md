@@ -1,4 +1,4 @@
-# 1.2.0
+# 1.3.0
 
 *   **`/locate biome`**: today's biome form of `/locate` (`locate.BiomeLocate`), by today's ids (1.12.2's biomes as
     an upgraded world names them, the backports' biomes by their modern names), with 26.x's search, reply and
@@ -68,6 +68,8 @@
     chunk (y 0-255 still where Fluidlogged API reads it) and sent to players section by section. Every other world
     keeps Fluidlogged API's store. `Waterlogging.setWater(primer, ...)` now ignores y outside 0-255 rather than
     writing another column's water.
+
+# 1.2.0
 
 *   **Recipe unlocking** (`recipe.RecipeUnlocks`): every crafting recipe of a mod that requires Backport Core
     unlocks the way vanilla unlocks the same recipe, with 1.12.2's recipe toast, and then shows in the recipe
