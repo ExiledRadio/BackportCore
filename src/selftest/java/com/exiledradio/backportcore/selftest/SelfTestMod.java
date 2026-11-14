@@ -78,6 +78,7 @@ public final class SelfTestMod {
         StructureTests.init();
         NetherTests.init();
         LocateTests.init();
+        FlatTests.init();
         BiomeLocateTests.init();
     }
 

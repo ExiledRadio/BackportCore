@@ -5,6 +5,10 @@
     `client.LayeredPack`). Built from Mojang's client jars by `tools/textures/build.py`, which keeps only textures that
     still fit 1.12.2's models and UVs and lists the rest in `tools/textures/report.txt`. Self-tests: `textures` (server)
     and `BACKPORTCORE_TEXTURES=<version>` with `runClient -Pselftest`, which reads the block atlas back.
+*   **Superflat worlds** (`worldgen.FlatWorlds`): what a superflat preset lists, and nothing else. `decoration(world)`,
+    `structure(world, kind)` and `allows(world, option)` read the world's preset; no structure newer than 1.12 (pillager
+    outposts included) generates in superflat. `ScatteredStructure` kinds, `Structures` locators and
+    `/locate structure` follow it on their own.
 *   **`/locate biome`**: today's biome form of `/locate` (`locate.BiomeLocate`), by today's ids (1.12.2's biomes as
     an upgraded world names them, the backports' biomes by their modern names), with 26.x's search, reply and
     tab completion; tags and a generator's own biomes through `BiomeLocate.tag` and `source`.

@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.structure;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.worldgen.FlatWorlds;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
@@ -72,14 +73,18 @@ public final class Structures {
         return LOCATORS.containsKey(kind);
     }
 
-    /** @return a position in the nearest structure of this kind within the radius, or null */
+    /**
+     * @return a position in the nearest structure of this kind within the radius, or null; always null in a superflat
+     * world whose preset cannot have the kind ({@link FlatWorlds#structure})
+     */
     @Nullable
     public static BlockPos nearest(WorldServer world, String kind, BlockPos from, int radiusChunks) {
         Locator locator;
         synchronized (Structures.class) {
             locator = LOCATORS.get(kind);
         }
-        if (locator == null) {
+        if (locator == null || !FlatWorlds.structure(world, kind)) {
+            // A superflat world without the kind in its preset has none, whoever registered a locator.
             return null;
         }
         try {

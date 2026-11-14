@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.structure;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.worldgen.FlatWorlds;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -249,7 +250,8 @@ public abstract class ScatteredStructure extends MapGenStructure {
         ScatteredStructure structure = known.get(kind);
         if (structure == null) {
             Function<World, ? extends ScatteredStructure> factory = FACTORIES.get(kind);
-            structure = factory == null ? null : factory.apply(world);
+            // A superflat world has only what its preset lists, and no preset lists a structure newer than 1.12.
+            structure = factory == null || !FlatWorlds.structure(world, kind) ? null : factory.apply(world);
             if (structure == null) {
                 structure = NONE;
             } else {

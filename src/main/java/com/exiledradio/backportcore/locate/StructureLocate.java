@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.locate;
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.structure.ScatteredPlacement;
 import com.exiledradio.backportcore.structure.ScatteredStructure;
+import com.exiledradio.backportcore.worldgen.FlatWorlds;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -340,6 +341,19 @@ public final class StructureLocate {
     public static Found nearest(WorldServer world, BlockPos from, String idOrTag) throws Unavailable {
         String key = normalize(idOrTag);
         Collection<String> wanted = key.startsWith("#") ? members(key) : Collections.singleton(key);
+        if (FlatWorlds.isFlat(world)) {
+            // A superflat world has only the structures its preset lists: none newer than 1.12.
+            if (!FlatWorlds.structureId(world, key)) {
+                return null;
+            }
+            List<String> allowed = new ArrayList<String>();
+            for (String id : wanted) {
+                if (FlatWorlds.structureId(world, id)) {
+                    allowed.add(id);
+                }
+            }
+            wanted = allowed;
+        }
 
         Map<SetEntry, Set<String>> bySet = new LinkedHashMap<SetEntry, Set<String>>();
         List<String> byFinder = new ArrayList<String>();
