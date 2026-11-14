@@ -160,6 +160,9 @@ public final class DebugScreen {
             }
             GuiScreen screen = event.getGui();
             int known = DebugBindings.translate(key);
+            if (PresentationHooks.ownedByOpenedScreen(screen, known)) {
+                return;
+            }
             boolean options = known == DebugBindings.OPTIONS;
             if (!options && (typing(screen) || mc.world == null && known != Keyboard.KEY_T || mc.player == null && known != Keyboard.KEY_T)) {
                 return;

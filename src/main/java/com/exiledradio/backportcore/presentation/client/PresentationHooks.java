@@ -33,6 +33,9 @@ public final class PresentationHooks {
     private static Method renderSkybox;
     private static Method drawGradientRect;
     private static Method processKeyF3;
+    /** The screen the last F3 combination opened (1.16's game mode switcher), and that combination's key. */
+    private static Object openedScreen;
+    private static int openedKey = -1;
     private static boolean loggedClassic;
 
     private PresentationHooks() {
@@ -106,7 +109,13 @@ public final class PresentationHooks {
             return false;
         }
         if (k.action != null) {
-            return k.action.run();
+            Object before = mc.currentScreen;
+            boolean handled = k.action.run();
+            if (mc.currentScreen != null && mc.currentScreen != before) {
+                openedScreen = mc.currentScreen;
+                openedKey = key;
+            }
+            return handled;
         }
         if (key == DebugKeys.KEY_Q) {
             debugFeedback("debug.help.message");
@@ -116,6 +125,15 @@ public final class PresentationHooks {
             return true;
         }
         return vanillaF3(mc, key);
+    }
+
+    /**
+     * @return true when {@code screen} was opened by the F3 combination on {@code key} (after translation) and is
+     *         still open: that key belongs to the screen then (F4 cycles 1.16's game mode switcher), so the in-menu
+     *         combinations leave it alone instead of opening the screen again
+     */
+    static boolean ownedByOpenedScreen(Object screen, int key) {
+        return screen != null && screen == openedScreen && key == openedKey;
     }
 
     private static boolean vanillaF3(Minecraft mc, int key) {
