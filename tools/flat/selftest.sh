@@ -20,5 +20,8 @@ sed -i "s/^level-type=.*/level-type=FLAT/; s|^generator-settings=.*|generator-se
 status=0
 (cd "$root" && ./gradlew runServer -Pselftest -PselftestOnly=flat -PdeployDir= -PcoreDeployDir=) || status=$?
 sed -i "s/^level-type=.*/level-type=DEFAULT/; s|^generator-settings=.*|generator-settings=|; s/^level-name=.*/level-name=${old_level:-world}/" "$props"
-grep -h "SELFTEST DONE" "$root/eclipse/logs/latest.log" 2>/dev/null | tail -1 || true
+done_line="$(grep -h "SELFTEST DONE" "$root/eclipse/logs/latest.log" 2>/dev/null | tail -1)"
+echo "${done_line:-no SELFTEST DONE line}"
+# runServer exits 0 whatever the tests say: fail unless the run finished with fail=0.
+case "$done_line" in *" fail=0"*) ;; *) [ $status -eq 0 ] && status=1 ;; esac
 exit $status
