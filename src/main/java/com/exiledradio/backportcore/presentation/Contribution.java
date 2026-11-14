@@ -48,6 +48,10 @@ public final class Contribution {
     String[] multiplayerWarning;
     @Nullable
     ResourceLocation creativeOrder;
+    @Nullable
+    com.exiledradio.backportcore.presentation.option.ToggleOption commandSuggestions;
+    @Nullable
+    SuggestionLook suggestionLook;
 
     Contribution(GameVersion version) {
         this.version = version;
@@ -317,6 +321,23 @@ public final class Contribution {
      * sorted by it, items not in it keeping their own order after those that are. The newest version with a file
      * wins.
      */
+    /**
+     * 1.13's command suggestions in the chat box, from this version on: the list of the server's completions above the
+     * input as a {@code /} command is typed, with the selected one's rest in grey. {@code autoSuggest} is the version's
+     * "Command Suggestions" option (Chat Settings); off, the list shows only on Tab. Register the option with
+     * {@link #option} too. Client side; works on any server.
+     */
+    public Contribution commandSuggestions(com.exiledradio.backportcore.presentation.option.ToggleOption autoSuggest) {
+        this.commandSuggestions = autoSuggest;
+        return this;
+    }
+
+    /** A later version's look for the suggestion list (colors, rows); the newest installed one's is drawn. */
+    public Contribution commandSuggestionLook(SuggestionLook look) {
+        this.suggestionLook = look;
+        return this;
+    }
+
     public Contribution creativeOrder(ResourceLocation file) {
         this.creativeOrder = file;
         return this;

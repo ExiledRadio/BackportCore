@@ -826,6 +826,36 @@ player's inventory once a second, when the items in it have changed.
 - `RecipeUnlocks.addMod(modId)`: include a mod that does not require Core. `RecipeUnlocks.triggersOf(recipeId)`:
   what unlocks a recipe (for tests). Setting: `recipes.unlockRecipes`.
 
+## Smelting books (`recipe.book.*`, 1.3.0)
+
+1.13's furnace recipe book, and the same book for any other cooking block (a smoker, a blast furnace). Register a book
+on both sides from pre-init or init:
+
+```java
+SmeltingBooks.register(SmeltingBook.furnace());   // vanilla's furnace, as 1.13 has it
+SmeltingBooks.register(new SmeltingBook(new ResourceLocation("modid", "smoker"),
+        c -> c.getClass() == ContainerSmoker.class, 0, 1, 2,              // input, fuel, output slots
+        () -> SmokerRecipes.instance().getSmeltingList(), TileEntityFurnace::isItemFuel,
+        "gui.recipebook.toggleRecipes.smokable", new ItemStack(smoker),
+        new SmeltingBook.Tab(s -> true, new ItemStack(Items.PORKCHOP))));
+```
+
+- Recipes: one per result, from every input of the recipe map (1.13's `iron_nugget_from_smelting` takes every iron
+  tool), in item registry order; the first tab whose test takes the result lists it. Ids name the result
+  (`minecraft:dye@2`, `minecraft:coal*2`), so both sides find the same recipe.
+- Unlocking: 1.13's rule, a recipe unlocks once the player holds any of its inputs, checked with `RecipeUnlocks`
+  (not switched off by `recipes.unlockRecipes`). The client gets 1.13's toast with the book's `toastIcon`.
+- State: open, filter and unlocked recipes per player under `PlayerPersisted.backportcore:recipe_books.<id>`
+  (`SmeltingBooks.data(player, book)`), kept through death; sent at login.
+- Placing: `SmeltingPlacer`, 1.13.2's `ServerRecipePlacerFurnace` (one more per click, shift for all, another recipe's
+  input and output back to the inventory, the ghost without ingredients). It refuses a click whose output would not
+  fit back in the inventory, where 1.13 deletes it. `SmeltingBooks.place(player, book, recipe, placeAll)` from code.
+- Screen: draw the book with `client.SmeltingBookGui` as 1.12.2's `GuiCrafting` draws its book (see its javadoc) and
+  implement `client.BookScreen`. `client.GuiFurnaceBook` is vanilla's furnace, opened in place of `GuiFurnace` once
+  the furnace book is registered. 1.13.2's `recipe_book.png` (furnace filter at 152, 182) and `recipe_button.png`
+  come from the backport (`Contribution.replaceAsset`).
+- Packets: `BookNetwork` (`backportcore_rb`), only to clients running Core.
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

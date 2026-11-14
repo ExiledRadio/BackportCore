@@ -240,6 +240,32 @@ public final class Presentation {
         return found == null ? null : found.clone();
     }
 
+    /**
+     * @return the newest installed version's "Command Suggestions" option, or null while no installed version has
+     * command suggestions (1.12.2's Tab completion stays)
+     */
+    @Nullable
+    public static com.exiledradio.backportcore.presentation.option.ToggleOption commandSuggestions() {
+        com.exiledradio.backportcore.presentation.option.ToggleOption found = null;
+        for (Contribution c : installed()) {
+            if (c.commandSuggestions != null) {
+                found = c.commandSuggestions;
+            }
+        }
+        return found;
+    }
+
+    /** @return the newest installed version's suggestion list look; 1.13's when none names one */
+    public static SuggestionLook suggestionLook() {
+        SuggestionLook found = SuggestionLook.V1_13;
+        for (Contribution c : installed()) {
+            if (c.suggestionLook != null) {
+                found = c.suggestionLook;
+            }
+        }
+        return found;
+    }
+
     /** @return the newest installed version's creative order file, or null */
     @Nullable
     public static ResourceLocation creativeOrder() {

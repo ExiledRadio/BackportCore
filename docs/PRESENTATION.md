@@ -35,6 +35,7 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Title Accessibility icon (1.14) | `v.titleAccessibilityIcon(rl)` | Vanilla's 32 by 64 `accessibility.png`. The button shows from 1.14 with the newest icon. |
 | Multiplayer warning (1.15.2) | `v.multiplayerWarning("multiplayerWarning.header", "multiplayerWarning.message", "multiplayerWarning.check")` | Shown before the server list from the title screen until dismissed for good (`backportcore:skip_multiplayer_warning`). The wording is whatever the newest version's text says. |
 | Creative order | `v.creativeOrder(new ResourceLocation("modid", "creative_order.txt"))` | One `modid:name` or `modid:name@meta` per line; every tab is sorted by the newest file, unnamed items after. No backport uses it: their items' places come from `creative.CreativePlacement` (`docs/CREATIVE_TABS.md`), and a file here would sort over them. |
+| Command suggestions (1.13) | `v.commandSuggestions(autoSuggest)`, `v.commandSuggestionLook(look)` | Turns on 1.13's suggestion list in the chat box (`presentation.client.ChatSuggestions`). `autoSuggest` is the version's "Command Suggestions" `ToggleOption`, registered with `option` too; off, the list shows on Tab. `SuggestionLook` is the list's colors and rows, plain data, so a later version can draw it its own way (1.13.2's by default). |
 | Option polish | `option.tooltip("options.x.tooltip")`, `option.alsoOn(OptionScreen.VIDEO)`, `slider.zeroKey("options.off")`, `slider.wholeLabel("options.chat.delay", "options.chat.delay_none")` | 1.16's tooltips (wrapped at 200 pixels), one option on two screens (one value), "OFF" at zero, and labels that are one sentence. |
 Client-only registrations, from the backport's client proxy:
 
@@ -198,10 +199,28 @@ change one version made stays made when only a later backport is installed:
   ends. 1.12.2 loads resources in one blocking call, so the bar cannot move during a reload.
 * The world list's search bar (1.13.1): its list, title and focus are private to `GuiWorldSelection`, so it
   would mean replacing the screen.
-* Optimize World (the Flattening's converter), Command Suggestions (no Brigadier), Raw Input (LWJGL 2), Fabulous
-  graphics, Biome Blend: no 1.12.2 counterpart.
+* Optimize World (the Flattening's converter), Raw Input (LWJGL 2), Fabulous graphics, Biome Blend: no 1.12.2
+  counterpart.
+* Command suggestions: 1.13's red highlighting of a wrong argument and the colored arguments (1.12.2's commands do not
+  describe their arguments), the usage of the argument at the cursor (the whole command's `getUsage` shows instead),
+  suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
 * Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
 * Key Binds, Online and Font Settings screens.
+## Command suggestions
+
+Once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen
+events (no patch). The text before the cursor goes to the server in 1.12.2's `CPacketTabComplete` with the looked-at
+block, one request at a time, once typing pauses for 80 ms; the answer is read off the connection on its way to
+vanilla's handler (which ignores it: its own Tab never ran). Forge's client commands are asked locally. So vanilla and
+Forge servers without Core work. The answer becomes Brigadier's form: the word before the cursor is the range, command
+names lose their `/`, sorted ignoring case (`CommandSuggestionModel`, plain Java, self-tested on a server).
+
+Keys as 1.13.2: Up and Down move, Tab accepts (again: the next; Shift: the one before), Esc closes the list before the
+chat, the wheel scrolls it, a click or hover picks. Plain chat lists the tab list's names on Tab. 1.12.2's Tab
+completion (and its comma-separated list in the chat) is off while suggestions are on. With a command's name typed out
+and no list showing, its `getUsage` shows grey above the input (the arguments after the name): asked of a server that
+said hello on login (`CommandUsageNetwork`, a server running Core), or from Forge's client commands; otherwise none.
+
 ## Testing
 
 `gradlew runServer -Pselftest` (delete `eclipse/world` first) checks the registry, the panorama choice, the
