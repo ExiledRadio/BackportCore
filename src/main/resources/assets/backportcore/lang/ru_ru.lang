@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <сооружение>
 commands.locate.structure.success=Ближайшее строение с типом %s находится по координатам %s (в %s блоках отсюда)
 commands.locate.structure.not_found=Не удалось найти строение «%s» поблизости
 commands.locate.structure.invalid=Не существует строения «%s»
+commands.locate.biome.success=Ближайший биом с типом %s находится по координатам %s (в %s блоках отсюда)
+commands.locate.biome.not_found=Не удалось найти биом «%s» поблизости
+argument.resource.not_found=Не удалось найти элемент «%s» типа «%s»
+argument.resource_tag.not_found=Не удалось найти тег «%s» типа «%s»
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=Нажмите для телепортации
 

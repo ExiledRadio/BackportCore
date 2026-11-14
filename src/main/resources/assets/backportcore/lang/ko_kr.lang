@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <구조물>
 commands.locate.structure.success=가장 가까운 %s은(는) %s에 있습니다 (%s블록 떨어져 있음)
 commands.locate.structure.not_found=근처에서 "%s" 종류의 구조물을 찾을 수 없습니다
 commands.locate.structure.invalid="%s" 종류의 구조물이 없습니다
+commands.locate.biome.success=가장 가까운 %s은(는) %s에 있습니다 (%s블록 떨어져 있음)
+commands.locate.biome.not_found=적당한 거리 안에 있는 "%s" 종류의 생물 군계를 찾을 수 없습니다
+argument.resource.not_found='%2$s' 유형의 '%1$s' 요소를 찾을 수 없습니다
+argument.resource_tag.not_found='%2$s' 유형의 '%1$s' 태그를 찾을 수 없습니다
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=순간이동하려면 클릭
 

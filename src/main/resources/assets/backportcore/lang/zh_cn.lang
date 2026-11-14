@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <结构>
 commands.locate.structure.success=最近的%s位于%s（%s个方块外）
 commands.locate.structure.not_found=无法在附近找到类型为“%s”的结构
 commands.locate.structure.invalid=没有类型为“%s”的结构
+commands.locate.biome.success=最近的%s位于%s（%s个方块外）
+commands.locate.biome.not_found=无法在合理距离内找到类型为“%s”的生物群系
+argument.resource.not_found=无法找到类型为“%2$s”的元素“%1$s”
+argument.resource_tag.not_found=无法找到类型为“%2$s”的标签“%1$s”
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=点此传送
 

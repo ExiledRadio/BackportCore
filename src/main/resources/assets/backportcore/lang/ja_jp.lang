@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <構造物>
 commands.locate.structure.success=最寄りの%sは%s（直線距離で%sブロック）にあります
 commands.locate.structure.not_found=近くに「%s」という種類の構造物は見つかりませんでした
 commands.locate.structure.invalid=「%s」という種類の構造物は存在しません
+commands.locate.biome.success=最寄りの%sは%s（直線距離で%sブロック）にあります
+commands.locate.biome.not_found=所定の距離内に「%s」で指定されたバイオームは見つかりませんでした
+argument.resource.not_found=タイプ「%2$s」の要素「%1$s」が見つかりませんでした
+argument.resource_tag.not_found=タイプ「%2$s」のタグ「%1$s」が見つかりませんでした
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=クリックしてテレポート
 

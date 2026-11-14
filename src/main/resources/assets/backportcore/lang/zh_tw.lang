@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <結構>
 commands.locate.structure.success=最接近的 %s 位於 %s（距離 %s 個方塊遠）
 commands.locate.structure.not_found=無法在附近找到類型為 "%s" 的結構
 commands.locate.structure.invalid=沒有類型為 "%s" 的結構
+commands.locate.biome.success=最接近的 %s 位於 %s（距離 %s 個方塊遠）
+commands.locate.biome.not_found=無法在合理距離內找到 "%s" 類型的生態域
+argument.resource.not_found=無法找到類型為 '%2$s' 的元素 '%1$s'
+argument.resource_tag.not_found=無法找到類型為 '%2$s' 的標籤 '%1$s'
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=按此傳送
 

@@ -641,6 +641,33 @@ What the family registers:
 | Trails & Tales | not yet: `trail_ruins` (not built) | |
 | Tricky Trials | not yet: `trial_chambers` (not built) | |
 
+### Biomes (`locate.BiomeLocate`, 1.2.0)
+
+`/locate biome <id>` and `/locate biome #<tag>`, today's biome form: "The nearest minecraft:cherry_grove is at
+[x, y, z] (n blocks away)", the height and the distance in three dimensions, the click putting `/tp @s x y z` in the
+chat box; an unknown id or tag gets today's argument messages ("Can't find element 'x' of type
+'minecraft:worldgen/biome'"). Completion as the structure form's.
+
+Ids are today's. 1.12.2's biomes answer to what a world upgraded to today makes of them (1.13's renames, then
+1.18's merges: `extreme_hills` is `minecraft:windswept_hills`, `desert_hills` is `minecraft:desert`). A biome a mod
+registers under one of today's vanilla names, any namespace, is that name in `minecraft:`
+(`trailsandtalesbackport:cherry_grove` is `minecraft:cherry_grove`), so the family's biomes need no call. Others
+keep their registry name. The backports may add:
+
+```java
+BiomeLocate.biome("minecraft:deep_dark", myBiome);      // a biome under a name its registry name does not give
+BiomeLocate.tag("minecraft:is_mountain", "minecraft:cherry_grove", "minecraft:windswept_hills");
+BiomeLocate.id("minecraft:meadow");                     // a sampler's biome with no 1.12.2 biome of its own
+BiomeLocate.source(world -> isMine(world) ? (x, y, z) -> modernIdAt(x, y, z) : null);   // a generator's own biomes
+```
+
+The search is 26.x's `BiomeSource.findClosestBiome3d(origin, 6400, 32, 64)`: `BlockPos.spiralAround` columns 32
+blocks apart (east first, then south), in each the heights `Mth.outFromOrigin(y, minY + 1, maxY + 1, 64)` gives, the
+first hit wins (`BiomeLocate.Spiral`, `outFromOrigin`; Core's self-test holds both to 26.3's output). In 1.12.2's
+layers the biome is the column's 1:4 cell (today's noise biome at its quart), read 32 x 32 cells at a time, and an
+id no registered biome has is not found at once, as `possibleBiomes` does. A world whose generator knows its own
+biomes in three dimensions (Caves & Cliffs' 1.18 terrain) answers through `source`.
+
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 
 1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server

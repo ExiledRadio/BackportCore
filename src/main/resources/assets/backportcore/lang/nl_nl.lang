@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <bouwwerk>
 commands.locate.structure.success=Dichtstbijzijnde %s bevindt zich op %s (%s blokken afstand)
 commands.locate.structure.not_found=Constructietype '%s' in de buurt vinden mislukt
 commands.locate.structure.invalid=Constructietype '%s' bestaat niet
+commands.locate.biome.success=Dichtstbijzijnde %s bevindt zich op %s (%s blokken afstand)
+commands.locate.biome.not_found=Vinden van klimaatsoort '%s' binnen een redelijke afstand mislukt
+argument.resource.not_found=Element '%s' met type '%s' niet gevonden
+argument.resource_tag.not_found=Eigenschap '%s' met type '%s' niet gevonden
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=Klik om te teleporteren
 

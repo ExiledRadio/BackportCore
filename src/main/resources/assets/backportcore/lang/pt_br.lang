@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <estrutura>
 commands.locate.structure.success=A estrutura do tipo %s mais próxima está em %s (a %s blocos de distância)
 commands.locate.structure.not_found=Não foi possível encontrar uma estrutura do tipo "%s" por perto
 commands.locate.structure.invalid=Nenhuma estrutura encontrada do tipo "%s"
+commands.locate.biome.success=O bioma %s mais próximo está em %s (a %s blocos de distância)
+commands.locate.biome.not_found=Não foi possível localizar o bioma "%s" a uma distância razoável
+argument.resource.not_found=Nenhum elemento "%s" encontrado do tipo "%s"
+argument.resource_tag.not_found=Nenhum marcador "%s" encontrado do tipo "%s"
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=Clique para teletransportar-se
 

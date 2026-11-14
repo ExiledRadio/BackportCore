@@ -1,5 +1,8 @@
 # 1.2.0
 
+*   **`/locate biome`**: today's biome form of `/locate` (`locate.BiomeLocate`), by today's ids (1.12.2's biomes as
+    an upgraded world names them, the backports' biomes by their modern names), with 26.x's search, reply and
+    tab completion; tags and a generator's own biomes through `BiomeLocate.tag` and `source`.
 *   **The backports' requests** (Tricky Trials Backport's `CORE_REQUESTS.md`, and the same asks from others):
     *   Ownership: Caves & Cliffs Backport's tuff and copper set are in `BlockOwnership`'s table; a per-name
         `provides` switch; an owner may hand its own block to a pseudo-owner (`modid:switched_off`). New

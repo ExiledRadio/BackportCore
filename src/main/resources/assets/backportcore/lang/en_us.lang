@@ -150,6 +150,10 @@ commands.backportcore.locate.usage=/locate structure <structure>
 commands.locate.structure.success=The nearest %s is at %s (%s blocks away)
 commands.locate.structure.not_found=Could not find a structure of type "%s" nearby
 commands.locate.structure.invalid=There is no structure with type "%s"
+commands.locate.biome.success=The nearest %s is at %s (%s blocks away)
+commands.locate.biome.not_found=Could not find a biome of type "%s" within a reasonable distance
+argument.resource.not_found=Can't find element '%s' of type '%s'
+argument.resource_tag.not_found=Can't find tag '%s' of type '%s'
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=Click to teleport
 

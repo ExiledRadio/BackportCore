@@ -40,13 +40,19 @@ import java.util.Locale;
  *       for the habit, but is only listed while no backport registers today's village types: then
  *       {@code #minecraft:village} is the way to ask.</li>
  *   <li>1.13-1.18's bare ids ({@code /locate shipwreck}) also work, unlisted.</li>
+ *   <li>{@code /locate biome <id>} and {@code /locate biome #<tag>}: today's biome form over {@link BiomeLocate}'s ids
+ *       ("The nearest minecraft:cherry_grove is at [x, y, z] (n blocks away)", with the height and the distance in
+ *       three dimensions, as today's).</li>
  * </ul>
- * Search and position are today's ({@link StructureLocate}). The reply is sent only to the one who asked,
+ * Search and position are today's ({@link StructureLocate}, {@link BiomeLocate}). The reply is sent only to the one who asked,
  * following the {@code sendCommandFeedback} rule, as today's {@code sendSuccess(..., false)}.
  */
 public final class LocateCommand extends CommandBase {
 
     static final String STRUCTURE = "structure";
+    static final String BIOME = "biome";
+    /** Today's registry name for biomes, as its "not found" messages name it. */
+    static final String BIOME_REGISTRY = "minecraft:worldgen/biome";
 
     /** 1.12.2's names, and today's id or tag each one is searched as (null: 1.12.2's own search). */
     private static final String[][] LEGACY = {
@@ -94,6 +100,10 @@ public final class LocateCommand extends CommandBase {
             reply(server, sender, from, found.pos, name);
             return;
         }
+        if (args.length == 2 && BIOME.equalsIgnoreCase(args[0])) {
+            locateBiome(server, sender, level, from, args[1]);
+            return;
+        }
         if (args.length != 1) {
             throw new WrongUsageException(getUsage(sender));
         }
@@ -123,6 +133,26 @@ public final class LocateCommand extends CommandBase {
         reply(server, sender, from, pos, name);
     }
 
+    /** Today's {@code locateBiome}: ResourceOrTagArgument's messages for an unknown id or tag. */
+    private static void locateBiome(MinecraftServer server, ICommandSender sender, WorldServer world, BlockPos from, String key)
+            throws CommandException {
+        boolean tag = key.startsWith("#");
+        if (!StructureLocate.isIdLike(key) || !BiomeLocate.known(key)) {
+            String bare = tag ? key.substring(1) : key;
+            throw new CommandException(tag ? "argument.resource_tag.not_found" : "argument.resource.not_found",
+                    StructureLocate.isIdLike(key) ? StructureLocate.normalize(bare) : bare, BIOME_REGISTRY);
+        }
+        String printable = StructureLocate.normalize(key);
+        long start = System.nanoTime();
+        BiomeLocate.Found found = BiomeLocate.nearest(world, from, printable);
+        if (found == null) {
+            throw new CommandException("commands.locate.biome.not_found", printable);
+        }
+        String name = tag ? printable + " (" + found.id + ")" : printable;
+        log(name, start);
+        reply(server, sender, from, found.pos, name, true, "commands.locate.biome.success");
+    }
+
     private static StructureLocate.Found search(WorldServer world, BlockPos from, String key, String printable)
             throws CommandException {
         long start = System.nanoTime();
@@ -145,21 +175,32 @@ public final class LocateCommand extends CommandBase {
         BackportCore.LOGGER.info("Locating element {} took {} ms", name, (System.nanoTime() - start) / 1000000L);
     }
 
-    /** Today's {@code showLocateResult} for a structure: horizontal distance, "~" for the height. */
     private static void reply(MinecraftServer server, ICommandSender sender, BlockPos from, BlockPos found, String name) {
-        int dx = found.getX() - from.getX();
-        int dz = found.getZ() - from.getZ();
-        int distance = MathHelper.floor(MathHelper.sqrt((float) (dx * dx + dz * dz)));
+        reply(server, sender, from, found, name, false, "commands.locate.structure.success");
+    }
+
+    /**
+     * Today's {@code showLocateResult}: for a structure the horizontal distance and "~" for the height, for a biome
+     * ({@code includeY}) the distance in three dimensions and the height found.
+     */
+    private static void reply(MinecraftServer server, ICommandSender sender, BlockPos from, BlockPos found, String name,
+                              boolean includeY, String successKey) {
+        double dx = found.getX() - from.getX();
+        double dy = found.getY() - from.getY();
+        double dz = found.getZ() - from.getZ();
+        int distance = includeY ? MathHelper.floor(MathHelper.sqrt((float) (dx * dx + dy * dy + dz * dz)))
+                : MathHelper.floor(MathHelper.sqrt((float) (dx * dx + dz * dz)));
+        String y = includeY ? String.valueOf(found.getY()) : "~";
         ITextComponent coordinates = new TextComponentString("[")
-                .appendSibling(new TextComponentTranslation("chat.coordinates", found.getX(), "~", found.getZ()))
+                .appendSibling(new TextComponentTranslation("chat.coordinates", found.getX(), y, found.getZ()))
                 .appendText("]");
         coordinates.getStyle()
                 .setColor(TextFormatting.GREEN)
-                .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + found.getX() + " ~ " + found.getZ()))
+                .setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + found.getX() + " " + y + " " + found.getZ()))
                 .setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentTranslation("chat.coordinates.tooltip")));
         sender.setCommandStat(CommandResultStats.Type.QUERY_RESULT, distance);
         if (acceptsSuccess(server, sender)) {
-            sender.sendMessage(new TextComponentTranslation("commands.locate.structure.success", name, coordinates, distance));
+            sender.sendMessage(new TextComponentTranslation(successKey, name, coordinates, distance));
         }
     }
 
@@ -204,11 +245,15 @@ public final class LocateCommand extends CommandBase {
         if (args.length == 1) {
             List<String> options = new ArrayList<String>();
             options.add(STRUCTURE);
+            options.add(BIOME);
             options.addAll(listedLegacyNames());
             return getListOfStringsMatchingLastWord(args, options);
         }
         if (args.length == 2 && STRUCTURE.equalsIgnoreCase(args[0])) {
             return completeIds(args[1]);
+        }
+        if (args.length == 2 && BIOME.equalsIgnoreCase(args[0])) {
+            return completeIds(args[1], BiomeLocate.ids(), BiomeLocate.tags());
         }
         return Collections.emptyList();
     }
@@ -231,11 +276,16 @@ public final class LocateCommand extends CommandBase {
      * empty word a tag would always be the first thing Tab writes.
      */
     static List<String> completeIds(String typed) {
+        return completeIds(typed, StructureLocate.ids(), StructureLocate.tags());
+    }
+
+    /** {@link #completeIds(String)} over any sorted ids and tags (the biome form's). */
+    static List<String> completeIds(String typed, List<String> ids, List<String> tags) {
         String lower = typed.toLowerCase(Locale.ROOT);
         boolean tag = lower.startsWith("#");
         String body = tag ? lower.substring(1) : lower;
         boolean full = body.indexOf(':') >= 0;
-        List<String> options = tag ? StructureLocate.tags() : StructureLocate.ids();
+        List<String> options = tag ? tags : ids;
         if (body.isEmpty()) {
             return options;
         }

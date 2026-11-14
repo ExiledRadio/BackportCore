@@ -90,6 +90,7 @@ public final class SelfTestRunner {
         PoseTests.schedule();
         NetherTests.schedule();
         LocateTests.schedule();
+        BiomeLocateTests.schedule();
         SettingsTests.schedule();
         RecipeTests.schedule();
         RequestTests.schedule();

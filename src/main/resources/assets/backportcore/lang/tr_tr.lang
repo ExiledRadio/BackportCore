@@ -151,6 +151,10 @@ commands.backportcore.locate.usage=/locate structure <yapı>
 commands.locate.structure.success=En yakın %s tam olarak %s konumunda (%s blok mesafede)
 commands.locate.structure.not_found=Yakında “%s” türünde bir yapı bulunamadı
 commands.locate.structure.invalid="%s” türünde bir yapı yok
+commands.locate.biome.success=En yakın %s, %s konumunda (%s blok uzaklıkta)
+commands.locate.biome.not_found=Makul uzaklıkta "%s" türü biyom bulunamadı
+argument.resource.not_found='%2$s' türünde '%1$s' ögesi bulunamadı
+argument.resource_tag.not_found='%2$s' türünde '%1$s' etiketi bulunamadı
 chat.coordinates=%s, %s, %s
 chat.coordinates.tooltip=Işınlanmak için tıklayın
 
