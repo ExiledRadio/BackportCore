@@ -132,6 +132,7 @@ public final class RecipeUnlocks {
     public static synchronized void serverStarting() {
         unlocks = null;
         SEEN.clear();
+        com.exiledradio.backportcore.recipe.book.SmeltingBooks.invalidate();
     }
 
     /** @return how many of the family's recipes have an unlock rule (the self-test's number) */
@@ -172,11 +173,8 @@ public final class RecipeUnlocks {
         }
     }
 
-    /** Gives the player every recipe their inventory now unlocks. */
+    /** Gives the player every recipe their inventory now unlocks, the smelting books' included. */
     public static synchronized void check(EntityPlayerMP player) {
-        if (!CoreConfig.recipes.unlockRecipes) {
-            return;
-        }
         InventoryPlayer inventory = player.inventory;
         // Which items are held, not how many: 1.12.2's own change counter is client-only.
         int held1 = 1;
@@ -192,10 +190,6 @@ public final class RecipeUnlocks {
         }
         SEEN.put(player, held1);
 
-        List<Unlock> all = unlocks();
-        if (all.isEmpty()) {
-            return;
-        }
         List<ItemStack> held = new ArrayList<ItemStack>();
         Set<String> ids = new HashSet<String>();
         Set<String> ores = new HashSet<String>();
@@ -214,6 +208,15 @@ public final class RecipeUnlocks {
             }
         }
         if (held.isEmpty()) {
+            return;
+        }
+        // 1.13's smelting recipes: whatever the setting below says (an empty furnace book would be no book).
+        com.exiledradio.backportcore.recipe.book.SmeltingBooks.unlockHeld(player, held);
+        if (!CoreConfig.recipes.unlockRecipes) {
+            return;
+        }
+        List<Unlock> all = unlocks();
+        if (all.isEmpty()) {
             return;
         }
         List<IRecipe> give = new ArrayList<IRecipe>();

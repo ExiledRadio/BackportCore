@@ -100,6 +100,8 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new CoreConfig.EventHandler());
         PoseNetwork.init();
         com.exiledradio.backportcore.settings.SettingsNetwork.init();
+        com.exiledradio.backportcore.presentation.CommandUsageNetwork.init();
+        com.exiledradio.backportcore.recipe.book.SmeltingBooks.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
@@ -117,6 +119,7 @@ public final class BackportCore {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
+            com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();
         }
     }
 

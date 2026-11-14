@@ -76,6 +76,7 @@ public final class SelfTestRunner {
                     case "patches": PatchTests.schedule(); break;
                     case "requests": RequestTests.schedule(); break;
                     case "lookfeel": LookFeelTests.schedule(); break;
+                    case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -93,6 +94,8 @@ public final class SelfTestRunner {
         BiomeLocateTests.schedule();
         SettingsTests.schedule();
         RecipeTests.schedule();
+        SuggestionTests.schedule();
+        SmeltingBookTests.schedule();
         RequestTests.schedule();
         RequestTests.schedulePresentation();
         LookFeelTests.schedule();
