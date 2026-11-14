@@ -37,6 +37,9 @@
         graphics), Weather Effect Radius (P27), Texture Filtering and Anisotropic Filtering (None or Anisotropic, 2x to
         8x), Show Vignette and Chunk Fade Time (P28); View Bobbing moves to Accessibility. 1.21.6's Cloud Distance, 2 to
         128 chunks (P26). A backport's option named after vanilla's lands in vanilla's place and follows the presets.
+        With OptiFine (`OptiFineVideoScreen`): OptiFine's own screen in the same layout, its submenus as an OptiFine
+        section; the options OptiFine has its own of (`VideoSections.OPTIFINE_HAS`: Texture and Anisotropic Filtering,
+        Show Vignette, Chunk Fade Time, Biome Blend) are left to it. A Video Settings without a list no longer throws.
     *   1.18's Controls screen (Mouse Settings..., Key Binds..., the toggles and Auto-Jump) with 1.12.2's key list as Key
         Binds; from 1.21.9 Auto-Jump, Toggle Crouch and Toggle Sprint leave Accessibility, which gains "Controls...".
     *   1.21.9's F3: every part of the debug screen Off, In F3 or Always on Debug Options (F3 + F6, with its search

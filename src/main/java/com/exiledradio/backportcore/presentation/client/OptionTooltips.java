@@ -4,10 +4,7 @@ import com.exiledradio.backportcore.presentation.option.PresentationOption;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.gui.GuiOptionsRowList;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiVideoSettings;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -30,10 +27,6 @@ import java.util.List;
 public final class OptionTooltips {
 
     private static Field buttonList;
-    private static Field videoList;
-    private static Field rowOptions;
-    private static Field rowA;
-    private static Field rowB;
     /** For the client self-test: the last tooltip drawn. */
     public static volatile String lastShown;
 
@@ -74,22 +67,11 @@ public final class OptionTooltips {
                     return b;
                 }
             }
-            if (gui instanceof GuiVideoSettings) {
-                if (videoList == null) {
-                    videoList = ReflectionHelper.findField(GuiVideoSettings.class, "optionsRowList", "field_146501_h");
-                    rowOptions = ReflectionHelper.findField(GuiOptionsRowList.class, "options", "field_148184_k");
-                    rowA = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonA", "field_148323_b");
-                    rowB = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonB", "field_148324_c");
-                }
-                GuiListExtended list = (GuiListExtended) videoList.get(gui);
-                if (list instanceof GuiOptionsRowList) {
-                    for (GuiOptionsRowList.Row row : (List<GuiOptionsRowList.Row>) rowOptions.get(list)) {
-                        for (Field f : new Field[] {rowA, rowB}) {
-                            GuiButton b = (GuiButton) f.get(row);
-                            if (b instanceof OptionWidgets.OptionButton && b.visible && b.isMouseOver()) {
-                                return b;
-                            }
-                        }
+            List<GuiButton> rows = OptionsInjector.rowButtons(gui);
+            if (rows != null) {
+                for (GuiButton b : rows) {
+                    if (b instanceof OptionWidgets.OptionButton && b.visible && b.isMouseOver()) {
+                        return b;
                     }
                 }
             }

@@ -104,10 +104,13 @@ moves it as vanilla moved it, and the graphics presets set it.
   * Video Settings: the scrolling list, after the entry each names, or at the end.
   * Controls: the row above the key list (two slots from 1.14, when "Mouse Settings..." and Auto-Jump take
     the first row).
-  * Chat, Music and Sounds, Skin Customization: the two-column grid continues; Done moves down.
+  * Chat, Music and Sounds, Skin Customization: the two-column grid continues; what is below it (Done, and on
+    Skin Customization OptiFine's "OptiFine Cape...") moves down.
   * Accessibility (1.14, falls back to Chat) and Mouse Settings (1.14, falls back to Controls): Core's own
     screens in 1.14's layout, with vanilla's settings that moved there (narrator, subtitles, chat opacity,
-    Auto-Jump; sensitivity, invert mouse, touchscreen) and the backports' options.
+    Auto-Jump; sensitivity, invert mouse, touchscreen) and the backports' options. When they do not all fit above
+    Done (the whole family on a small window), they scroll as 1.16's options screens do: a list from y 32 to 32 above
+    the bottom, rows 25 tall, Done or Accessibility's footer below.
   * Key Binds and Online (1.18) and Font (1.20.5) are not built yet: their options show on Controls and
     Options.
 
@@ -167,6 +170,32 @@ change one version made stays made when only a later backport is installed:
     set on the block atlas with OpenGL's anisotropic filtering. 1.21.11's RGSS is a shader 1.12.2 cannot run.
   * **Show Vignette**: off removes it; on draws it with See-Through Leaves off too.
   * **Chunk Fade Time** (P28): chunks drawn for the first time fade in from the fog color, 0 to 2 seconds.
+* **Video Settings with OptiFine** (`OptiFineVideoScreen`): OptiFine rewrites `GuiVideoSettings` as a fixed grid of
+  its twelve settings and six submenu buttons, with no scrolling list. Core recognizes that by its shape (no list among
+  the class's fields, not by any name) and opens a subclass of OptiFine's own screen instead: after OptiFine's
+  `initGui`, its buttons move into a scrolling list built as vanilla's, so the screen looks like Core's Video Settings
+  without OptiFine (1.21.11's sections when that is the newest version), and OptiFine's buttons keep OptiFine's
+  actions.
+  * **Display**: Max Framerate (OptiFine's, with its VSync step), Reduce FPS when, GUI Scale, Brightness.
+    **Quality & Performance**: the Preset, Render Distance, Smooth Lighting and OptiFine's Smooth Lighting Level,
+    Entity Distance, Menu Background Blurriness, Cloud Distance, See-Through Leaves, Weather Effect Radius.
+    **Preferences**: Autosave Indicator, Attack Indicator, then OptiFine's Dynamic Lights and Dynamic FOV.
+    **OptiFine**: Shaders..., Quality..., Details..., Performance..., Animations... and Other..., which open OptiFine's
+    submenus with this screen as their parent (Done there comes back to it). Without 1.21.11 there are no headers:
+    the settings and options in two columns, then the six buttons.
+  * The settings OptiFine moved off Video Settings (Fullscreen, Clouds, Particles, Mipmap Levels, Entity Shadows) stay
+    in OptiFine's submenus. Graphics and View Bobbing are left out as without OptiFine (See-Through Leaves sets
+    Graphics; View Bobbing is on Accessibility). Core's option tooltips show as without OptiFine, and OptiFine's
+    tooltip manager is given its settings in view, as its own screen does.
+  * **Left to OptiFine** (`VideoSections.OPTIFINE_HAS`): where OptiFine has its own setting, Core's is not on the
+    screen and does nothing: Texture Filtering and Anisotropic Filtering (OptiFine's Anisotropic Filtering, Quality),
+    Show Vignette (its Vignette, Details), Chunk Fade Time (off with OptiFine anyway; OptiFine draws the chunks) and
+    Update Aquatic Backport's Biome Blend (its Smooth Biomes, Quality; with Smooth Biomes off, the blend keeps its
+    saved radius). OptiFine's Clouds, Cloud Height, Fast Render, Dynamic Lights and mipmap settings have no Core
+    counterpart, so nothing is doubled. Cloud Distance and Weather Effect Radius are not OptiFine's (it has neither)
+    and stay; their patches (P26, P27) apply with OptiFine.
+  * If OptiFine's screen ever lacks Done or a submenu button, or another mod's screen has no list, Core leaves the
+    screen as it is and logs one line; nothing throws.
 * **F3** (1.21.9, `DebugEntries`, `DebugScreen`): each part of the debug screen is Off, In F3 (In Overlay from 1.21.11)
   or Always, on **Debug Options** (F3 + F6, `DebugOptionsScreen`) with its search box and the Default and Performance
   profiles. 1.12.2's lines are sorted into vanilla's parts (game_version, fps, chunk_render_stats,

@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.presentation.client;
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
+import com.exiledradio.backportcore.presentation.VideoSections;
 import com.exiledradio.backportcore.presentation.option.OptionScreen;
 import com.exiledradio.backportcore.presentation.option.PresentationOption;
 
@@ -21,6 +22,7 @@ import net.minecraft.client.gui.GuiVideoSettings;
 import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,7 +41,10 @@ import java.util.List;
  * <ul>
  * <li>Options: from 1.14, "Accessibility Settings..." takes the place of "Snooper Settings..." (1.14
  * removed the snooper screen). Its options fill the free row above Done.</li>
- * <li>Video Settings: its options join the scrolling list, after the entry each names or at the end.</li>
+ * <li>Video Settings: its options join the scrolling list, after the entry each names or at the end. Where
+ * OptiFine has rewritten the screen (no list), {@link OptiFineVideoScreen} lays OptiFine's screen out the same way,
+ * with OptiFine's submenus as a section of their own, and leaves out the options OptiFine has its own of
+ * ({@link VideoSections#OPTIFINE_HAS}).</li>
  * <li>Controls: from 1.14, "Mouse Settings..." and Auto-Jump take the first row (Sensitivity, Invert Mouse
  * and Touchscreen move to Mouse Settings, as in 1.14); its options take the second row.</li>
  * <li>Chat, Music and Sounds, Skin Customization: its options continue the two-column grid after vanilla's,
@@ -56,6 +61,8 @@ public final class OptionsInjector {
     private static final int CONTROLS_BUTTON = 100;
 
     private static Field videoList;
+    private static boolean videoListMissing;
+    private static boolean optiFineParentMissing;
     private static Field controlsTitle;
     private static Field controlsList;
     private static Field scrolledField;
@@ -65,6 +72,8 @@ public final class OptionsInjector {
 
     /** For the client self-test: the screens injected into this session. */
     public static final List<String> INJECTED = new ArrayList<String>();
+    /** For the client self-test: screens Core could not add its options to. */
+    public static volatile int failures;
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
@@ -72,7 +81,11 @@ public final class OptionsInjector {
         List<GuiButton> buttons = event.getButtonList();
         Class<?> c = gui.getClass();
         try {
-            if (c == GuiOptions.class) {
+            if (c == OptiFineVideoScreen.class) {
+                if (!((OptiFineVideoScreen) gui).laidOut()) {
+                    return;
+                }
+            } else if (c == GuiOptions.class) {
                 options(gui, buttons);
             } else if (c == GuiVideoSettings.class) {
                 video(gui, buttons);
@@ -89,8 +102,48 @@ public final class OptionsInjector {
             }
             INJECTED.add(c.getSimpleName());
         } catch (Exception e) {
+            failures++;
             BackportCore.LOGGER.error("Presentation: could not add options to {}", c.getName(), e);
         }
+    }
+
+    /**
+     * OptiFine's Video Settings (a {@code GuiVideoSettings} without a list) opens as {@link OptiFineVideoScreen}: the
+     * same screen of OptiFine's, laid out as Core lays out vanilla's.
+     */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onOpen(GuiOpenEvent event) {
+        GuiScreen gui = event.getGui();
+        if (gui == null || gui.getClass() != GuiVideoSettings.class || !OptiFineVideoScreen.optiFineShape()) {
+            return;
+        }
+        if (!VideoLayout.active() && videoOptions(true).isEmpty()) {
+            return;
+        }
+        GuiScreen parent = OptiFineVideoScreen.parentOf((GuiVideoSettings) gui);
+        if (parent == null) {
+            if (!optiFineParentMissing) {
+                optiFineParentMissing = true;
+                BackportCore.LOGGER.warn("Presentation: OptiFine's Video Settings has no parent screen field; left as it is");
+            }
+            return;
+        }
+        try {
+            event.setGui(new OptiFineVideoScreen(parent, Minecraft.getMinecraft().gameSettings));
+        } catch (RuntimeException e) {
+            BackportCore.LOGGER.warn("Presentation: could not open OptiFine's Video Settings as Core's ({}); left as it is", e.toString());
+        }
+    }
+
+    /** @return the options on Video Settings, less those OptiFine has its own of when {@code optiFine} */
+    static List<PresentationOption> videoOptions(boolean optiFine) {
+        List<PresentationOption> out = new ArrayList<PresentationOption>();
+        for (PresentationOption o : Presentation.optionsOn(OptionScreen.VIDEO)) {
+            if (!optiFine || !VideoSections.optiFineHas(o.id())) {
+                out.add(o);
+            }
+        }
+        return out;
     }
 
     /** Core's action buttons (opening its screens) act here, and vanilla's own handler never sees them. */
@@ -191,7 +244,12 @@ public final class OptionsInjector {
         Minecraft mc = Minecraft.getMinecraft();
         try {
             Float scrolled = null;
-            if (screen instanceof GuiVideoSettings && videoList != null) {
+            if (screen instanceof OptiFineVideoScreen) {
+                // It keeps where its list was scrolled itself.
+                screen.setWorldAndResolution(mc, screen.width, screen.height);
+                return;
+            }
+            if (screen instanceof GuiVideoSettings && videoList != null && scrollField() != null) {
                 Object list = videoList.get(screen);
                 if (list instanceof net.minecraft.client.gui.GuiSlot) {
                     scrolled = (Float) scrollField().get(list);
@@ -209,17 +267,74 @@ public final class OptionsInjector {
         }
     }
 
+    @Nullable
     private static Field scrollField() {
         if (scrolledField == null) {
-            scrolledField = ReflectionHelper.findField(net.minecraft.client.gui.GuiSlot.class, "amountScrolled", "field_148169_q");
+            scrolledField = field(net.minecraft.client.gui.GuiSlot.class, "amountScrolled", "field_148169_q");
         }
         return scrolledField;
+    }
+
+    /** @return the field by one of its names, or null (never throws) */
+    @Nullable
+    static Field field(Class<?> c, String... names) {
+        try {
+            return ReflectionHelper.findField(c, names);
+        } catch (RuntimeException e) {
+            return null;
+        }
+    }
+
+    /** Finds vanilla's list fields once; false (and one line in the log) when this game's screen has no list. */
+    private static boolean videoFields() {
+        if (videoList != null) {
+            return true;
+        }
+        if (videoListMissing) {
+            return false;
+        }
+        videoList = field(GuiVideoSettings.class, "optionsRowList", "field_146501_h");
+        rowFields();
+        if (videoList == null || rowOptions == null || rowA == null || rowB == null) {
+            videoList = null;
+            videoListMissing = true;
+            BackportCore.LOGGER.warn("Presentation: this game's Video Settings has no options list (another mod's screen); its options are not added");
+            return false;
+        }
+        return true;
+    }
+
+    private static void rowFields() {
+        if (rowA == null) {
+            rowOptions = field(GuiOptionsRowList.class, "options", "field_148184_k");
+            rowA = field(GuiOptionsRowList.Row.class, "buttonA", "field_148323_b");
+            rowB = field(GuiOptionsRowList.Row.class, "buttonB", "field_148324_c");
+        }
+    }
+
+    /** @return the buttons in these rows (headers have none) */
+    static List<GuiButton> buttonsOf(List<GuiOptionsRowList.Row> rows) throws IllegalAccessException {
+        rowFields();
+        List<GuiButton> out = new ArrayList<GuiButton>();
+        if (rowA == null || rowB == null) {
+            return out;
+        }
+        for (GuiOptionsRowList.Row row : rows) {
+            for (Field f : new Field[] {rowA, rowB}) {
+                GuiButton b = (GuiButton) f.get(row);
+                if (b != null) {
+                    out.add(b);
+                }
+            }
+        }
+        return out;
     }
 
     /** Each frame of Video Settings from 1.21.11: the preset turns Custom on a change; Anisotropic Filtering's state. */
     @SubscribeEvent
     public void onDraw(GuiScreenEvent.DrawScreenEvent.Pre event) {
-        if (!(event.getGui() instanceof GuiVideoSettings) || !VideoLayout.active() || videoList == null) {
+        if (!(event.getGui() instanceof GuiVideoSettings) || !VideoLayout.active()
+                || videoList == null && !(event.getGui() instanceof OptiFineVideoScreen)) {
             return;
         }
         try {
@@ -234,21 +349,22 @@ public final class OptionsInjector {
 
     /** @return every button in Video Settings' rows, or null when its list is another mod's */
     @Nullable
+    @SuppressWarnings("unchecked")
     static List<GuiButton> rowButtons(GuiScreen gui) throws Exception {
+        if (gui instanceof OptiFineVideoScreen) {
+            return ((OptiFineVideoScreen) gui).laidOut() ? ((OptiFineVideoScreen) gui).rowButtons() : null;
+        }
+        if (gui instanceof OptionsListScreen) {
+            return ((OptionsListScreen) gui).rowButtons();
+        }
+        if (!(gui instanceof GuiVideoSettings) || !videoFields()) {
+            return null;
+        }
         Object list = videoList.get(gui);
         if (!(list instanceof GuiOptionsRowList)) {
             return null;
         }
-        List<GuiButton> out = new ArrayList<GuiButton>();
-        for (Object row : (List<?>) rowOptions.get(list)) {
-            for (Field f : new Field[] {rowA, rowB}) {
-                GuiButton b = (GuiButton) f.get(row);
-                if (b != null) {
-                    out.add(b);
-                }
-            }
-        }
-        return out;
+        return buttonsOf((List<GuiOptionsRowList.Row>) rowOptions.get(list));
     }
 
     private static void video(GuiScreen gui, List<GuiButton> buttons) throws Exception {
@@ -257,11 +373,8 @@ public final class OptionsInjector {
         if (options.isEmpty() && !edits) {
             return;
         }
-        if (videoList == null) {
-            videoList = ReflectionHelper.findField(GuiVideoSettings.class, "optionsRowList", "field_146501_h");
-            rowOptions = ReflectionHelper.findField(GuiOptionsRowList.class, "options", "field_148184_k");
-            rowA = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonA", "field_148323_b");
-            rowB = ReflectionHelper.findField(GuiOptionsRowList.Row.class, "buttonB", "field_148324_c");
+        if (!videoFields()) {
+            return;
         }
         GuiListExtended list = (GuiListExtended) videoList.get(gui);
         if (!(list instanceof GuiOptionsRowList)) {
@@ -271,24 +384,29 @@ public final class OptionsInjector {
         }
         @SuppressWarnings("unchecked")
         List<GuiOptionsRowList.Row> rows = (List<GuiOptionsRowList.Row>) rowOptions.get(list);
-        List<GuiButton> entries = new ArrayList<GuiButton>();
+        List<GuiButton> entries = buttonsOf(rows);
         List<String> keys = new ArrayList<String>();
-        for (GuiOptionsRowList.Row row : rows) {
-            for (Field f : new Field[] {rowA, rowB}) {
-                GuiButton b = (GuiButton) f.get(row);
-                if (b != null) {
-                    entries.add(b);
-                    GameSettings.Options o = GameSettings.Options.byOrdinal(b.id);
-                    keys.add(o == null ? "" : o.name());
-                }
-            }
+        for (GuiButton b : entries) {
+            GameSettings.Options o = GameSettings.Options.byOrdinal(b.id);
+            keys.add(o == null ? "" : o.name());
         }
-        VideoOptions.edit(gui, entries, keys);
-        insertAfterAnchors(entries, keys, options);
+        List<GuiOptionsRowList.Row> laid = videoRows(gui, entries, keys, false);
         rows.clear();
+        rows.addAll(laid);
+    }
+
+    /**
+     * Video Settings' rows from the screen's own entries ({@code entries} and {@code keys} in step, edited in
+     * place): vanilla's entries as the newest version had them, the options after their anchors, then 1.21.11's
+     * sections or 1.12.2's two columns. With {@code optiFine}, the options OptiFine has its own of are left out.
+     */
+    static List<GuiOptionsRowList.Row> videoRows(GuiScreen gui, List<GuiButton> entries, List<String> keys, boolean optiFine) {
+        VideoOptions.edit(gui, entries, keys);
+        insertAfterAnchors(entries, keys, videoOptions(optiFine));
+        List<GuiOptionsRowList.Row> rows = new ArrayList<GuiOptionsRowList.Row>();
         if (VideoLayout.active()) {
             rows.addAll(VideoLayout.rows(gui, entries, keys));
-            return;
+            return rows;
         }
         for (int i = 0; i < entries.size(); i += 2) {
             GuiButton a = entries.get(i);
@@ -299,6 +417,7 @@ public final class OptionsInjector {
             }
             rows.add(new GuiOptionsRowList.Row(a, b));
         }
+        return rows;
     }
 
     /**
@@ -347,9 +466,11 @@ public final class OptionsInjector {
             x = left;
             y = lastY + 24;
         }
+        int gridEnd = lastY == Integer.MIN_VALUE ? y - 1 : lastY;
         int lastPlaced = y;
+        List<GuiButton> added = new ArrayList<GuiButton>();
         for (PresentationOption o : options) {
-            buttons.add(OptionWidgets.create(o, x, y));
+            added.add(OptionWidgets.create(o, x, y));
             lastPlaced = y;
             if (x == left) {
                 x = right;
@@ -358,10 +479,23 @@ public final class OptionsInjector {
                 y += 24;
             }
         }
-        GuiButton done = find(buttons, DONE_BUTTON);
-        if (done != null && done.y < lastPlaced + 24) {
-            done.y = lastPlaced + 24;
+        // Buttons below the grid that are not part of it (Done; OptiFine's "OptiFine Cape..." on Skin Customization)
+        // move down together, keeping their order, to stay below the new rows.
+        int below = Integer.MAX_VALUE;
+        for (GuiButton b : buttons) {
+            if (b.y > gridEnd) {
+                below = Math.min(below, b.y);
+            }
         }
+        if (below != Integer.MAX_VALUE && below < lastPlaced + 24) {
+            int shift = lastPlaced + 24 - below;
+            for (GuiButton b : buttons) {
+                if (b.y > gridEnd) {
+                    b.y += shift;
+                }
+            }
+        }
+        buttons.addAll(added);
     }
 
     private static boolean occupied(List<GuiButton> buttons, int x, int y) {

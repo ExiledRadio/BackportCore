@@ -29,7 +29,9 @@ public final class SelfTestMod {
         PresentationTests.register();
         SettingsTests.register();
         if (FMLCommonHandler.instance().getSide().isClient()) {
-            if (ClientSettingsShots.active()) {
+            if (ClientOptiFineTests.active()) {
+                ClientOptiFineTests.register();
+            } else if (ClientSettingsShots.active()) {
                 ClientSettingsShots.register();
             } else if (ClientTextureTests.version() != null) {
                 ClientTextureTests.register();

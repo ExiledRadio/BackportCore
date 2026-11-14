@@ -16,6 +16,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,10 @@ public class OptionsListScreen extends GuiScreen {
     private final OptionScreen screen;
     private final GameSettings.Options[] vanilla;
     private String title = "";
+    /** The scrolling list, when the buttons do not fit on the screen (null: they do). */
+    @Nullable
+    private OptionRowList list;
+    private final List<GuiButton> rowButtons = new ArrayList<GuiButton>();
 
     public OptionsListScreen(GuiScreen parent, String titleKey, OptionScreen screen, GameSettings.Options[] vanilla) {
         this.parent = parent;
@@ -112,6 +117,14 @@ public class OptionsListScreen extends GuiScreen {
             entries.add(at + 1, new OptionWidgets.Action(0, 0, 150, I18n.format("options.controls"),
                     () -> this.mc.displayGuiScreen(controls(this))));
         }
+        boolean footer = this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast("1.16.4");
+        int gridBottom = this.height / 6 + 24 * ((entries.size() + 1) / 2 - 1) + 20;
+        this.list = null;
+        this.rowButtons.clear();
+        if (gridBottom > (footer ? this.height - 31 : this.height - 28)) {
+            scrolling(entries, footer);
+            return;
+        }
         int i = 0;
         int lastY = this.height / 6;
         for (GuiButton b : entries) {
@@ -121,15 +134,74 @@ public class OptionsListScreen extends GuiScreen {
             this.buttonList.add(b);
             i++;
         }
-        if (this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast("1.16.4")) {
-            // 1.16.4's AccessibilityOptionsScreen.createFooter: the guide and Done side by side at the bottom.
-            this.buttonList.add(new OptionWidgets.Action(this.width / 2 - 155, this.height - 27, 150, I18n.format("options.accessibility.link"),
-                    () -> MenuScreens.confirmLink(this, GUIDE_URL)));
-            this.buttonList.add(new GuiButton(200, this.width / 2 + 5, this.height - 27, 150, 20, I18n.format("gui.done")));
+        if (footer) {
+            addFooter();
             return;
         }
         int doneY = Math.max(this.height / 6 + 144, lastY + 24);
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, doneY, I18n.format("gui.done")));
+    }
+
+    /** 1.16.4's AccessibilityOptionsScreen.createFooter: the guide and Done side by side at the bottom. */
+    private void addFooter() {
+        this.buttonList.add(new OptionWidgets.Action(this.width / 2 - 155, this.height - 27, 150, I18n.format("options.accessibility.link"),
+                () -> MenuScreens.confirmLink(this, GUIDE_URL)));
+        this.buttonList.add(new GuiButton(200, this.width / 2 + 5, this.height - 27, 150, 20, I18n.format("gui.done")));
+    }
+
+    /**
+     * More buttons than the screen holds (the whole family on a small window): they scroll, as every options screen
+     * does from 1.16 ({@code OptionsList} from y 32 to 32 above the bottom, rows 25 tall), Done or the footer below.
+     */
+    private void scrolling(List<GuiButton> entries, boolean footer) {
+        List<net.minecraft.client.gui.GuiOptionsRowList.Row> rows = new ArrayList<net.minecraft.client.gui.GuiOptionsRowList.Row>();
+        int left = this.width / 2 - 155;
+        for (int i = 0; i < entries.size(); i += 2) {
+            GuiButton a = entries.get(i);
+            GuiButton b = i + 1 < entries.size() ? entries.get(i + 1) : null;
+            a.x = left;
+            if (b != null) {
+                b.x = left + 160;
+            }
+            rows.add(new OptionRowList.ButtonRow(a, b));
+        }
+        this.rowButtons.addAll(entries);
+        this.list = new OptionRowList(this.mc, this.width, this.height, 32, this.height - 32, 25, rows);
+        if (footer) {
+            addFooter();
+        } else {
+            this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
+        }
+    }
+
+    /** @return the buttons in the scrolling list, or null when the screen does not scroll */
+    @Nullable
+    public List<GuiButton> rowButtons() {
+        return this.list == null ? null : this.rowButtons;
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        if (this.list != null) {
+            this.list.handleMouseInput();
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        if (this.list != null && this.mc.currentScreen == this) {
+            this.list.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+        if (this.list != null) {
+            this.list.mouseReleased(mouseX, mouseY, state);
+        }
     }
 
     /**
@@ -199,6 +271,9 @@ public class OptionsListScreen extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
+        if (this.list != null) {
+            this.list.drawScreen(mouseX, mouseY, partialTicks);
+        }
         drawCenteredString(this.fontRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

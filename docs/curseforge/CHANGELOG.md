@@ -4,7 +4,7 @@ What Caves & Cliffs Backport needs, and the 1.18 to 1.21.11 menus and settings t
 
 *   **1.18 worlds**: villages, outposts, shipwrecks, ocean ruins, buried treasure and ruined portals start where 1.18 puts them in Caves & Cliffs worlds, and the ground is shaped around them. Blocks below y 0 and above y 255 hold water. Features a world's generator already placed are not added twice.
 *   **`/locate biome`**, as in current Java, for vanilla's biomes and every backport's.
-*   **Video Settings** as in 1.21.11: Display, Quality & Performance and Preferences sections, a Fast/Fancy/Fabulous! preset, Cloud Distance, Weather Effect Radius, Texture Filtering, Show Vignette and Chunk Fade Time.
+*   **Video Settings** as in 1.21.11: Display, Quality & Performance and Preferences sections, a Fast/Fancy/Fabulous! preset, Cloud Distance, Weather Effect Radius, Texture Filtering, Show Vignette and Chunk Fade Time. With OptiFine, its Video Settings take the same layout, with OptiFine's Shaders, Quality, Details, Performance, Animations and Other as a section.
 *   **Controls** as in 1.18, with Toggle for Attack and Use Item.
 *   **Music and Sounds**: Music Frequency, the Music Toast and a UI volume.
 *   **F3** as in 1.21.9: every part of the debug screen can be Off, In F3 or Always (F3 + F6).

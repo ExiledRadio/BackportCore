@@ -53,6 +53,16 @@ public final class RenderOptions {
     private RenderOptions() {
     }
 
+    /**
+     * @return true when OptiFine is installed and has a setting of its own for this option
+     *         ({@link com.exiledradio.backportcore.presentation.VideoSections#OPTIFINE_HAS}): the option is not on
+     *         Video Settings then, and OptiFine's setting does the drawing
+     */
+    static boolean leftToOptiFine(com.exiledradio.backportcore.presentation.option.PresentationOption option) {
+        return FMLClientHandler.instance().hasOptifine()
+                && com.exiledradio.backportcore.presentation.VideoSections.optiFineHas(option.id());
+    }
+
     // ---- P26: Cloud Distance (1.21.6) ----
 
     /** @return the cloud distance in blocks, or -1 while 1.12.2's clouds stand */
@@ -230,7 +240,7 @@ public final class RenderOptions {
 
     /** Sets the block atlas' anisotropy: the option's 2x to 8x with Anisotropic filtering, else none. */
     public static void applyAnisotropy() {
-        if (!Presentation.TEXTURE_FILTERING.isShown()) {
+        if (!Presentation.TEXTURE_FILTERING.isShown() || leftToOptiFine(Presentation.TEXTURE_FILTERING)) {
             return;
         }
         try {
@@ -270,7 +280,7 @@ public final class RenderOptions {
         /** 1.21.11's Show Vignette: off takes it away; on draws it with Fast graphics too (1.12.2 drew it only with Fancy). */
         @SubscribeEvent(priority = EventPriority.LOWEST)
         public void onOverlay(RenderGameOverlayEvent.Pre event) {
-            if (!Presentation.VIGNETTE.isShown()) {
+            if (!Presentation.VIGNETTE.isShown() || leftToOptiFine(Presentation.VIGNETTE)) {
                 return;
             }
             if (event.getType() == RenderGameOverlayEvent.ElementType.VIGNETTE && !Presentation.VIGNETTE.get()) {

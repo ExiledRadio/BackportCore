@@ -22,9 +22,12 @@ public final class VideoSections {
     /** Display: Fullscreen Resolution (not in 1.12.2), Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, Brightness. */
     static final List<String> DISPLAY_ENTRIES = Arrays.asList("FRAMERATE_LIMIT", "ENABLE_VSYNC", "~inactivity_fps_limit", "GUI_SCALE",
             "USE_FULLSCREEN", "GAMMA");
-    /** Quality &amp; Performance after the Preset, as {@code qualityOptions}. */
+    /**
+     * Quality &amp; Performance after the Preset, as {@code qualityOptions}; {@code AO_LEVEL} is OptiFine's Smooth
+     * Lighting Level, beside Smooth Lighting.
+     */
     static final List<String> QUALITY_ENTRIES = Arrays.asList("~biome_blend_radius", "RENDER_DISTANCE", "~prioritize_chunk_updates",
-            "~simulation_distance", "AMBIENT_OCCLUSION", "RENDER_CLOUDS", "PARTICLES", "MIPMAP_LEVELS", "ENTITY_SHADOWS",
+            "~simulation_distance", "AMBIENT_OCCLUSION", "AO_LEVEL", "RENDER_CLOUDS", "PARTICLES", "MIPMAP_LEVELS", "ENTITY_SHADOWS",
             "~entity_distance_scaling", "~menu_background_blurriness", "~cloud_range", "~cutout_leaves", "~improved_transparency",
             "~texture_filtering", "~max_anisotropy", "~weather_radius");
     /** Preferences, as {@code preferenceOptions}. */
@@ -36,7 +39,26 @@ public final class VideoSections {
      */
     public static final List<String> LEFT_OUT = Arrays.asList("GRAPHICS", "VIEW_BOBBING");
 
+    /**
+     * Options OptiFine has a setting of its own for, left off Video Settings when OptiFine's screen is there (and
+     * Core's own then leave the drawing to OptiFine's): Texture Filtering and Anisotropic Filtering (OptiFine's
+     * Anisotropic Filtering, Quality), Show Vignette (its Vignette, Details), Chunk Fade Time (OptiFine draws the
+     * chunks, and Core's fade is off with it) and Update Aquatic's Biome Blend (its Smooth Biomes, Quality).
+     */
+    public static final List<String> OPTIFINE_HAS = Arrays.asList("~texture_filtering", "~max_anisotropy", "~vignette", "~chunk_fade",
+            "~biome_blend_radius");
+
     private VideoSections() {
+    }
+
+    /** @return true when OptiFine has a setting of its own for the option with this id ({@link #OPTIFINE_HAS}) */
+    public static boolean optiFineHas(String id) {
+        for (String name : OPTIFINE_HAS) {
+            if (matches(id, name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** One section: its header's lang key and the indices of its entries into the list given. */

@@ -52,6 +52,10 @@ Everything must look exactly as 1.12.2:
       drags smoothly; Done returns to Controls.
 - [ ] A backport's Video option sits in the Video Settings list where it names (for example after Clouds),
       and scrolls with the list.
+- [ ] With OptiFine: Video Settings has Core's layout with an OptiFine section (Shaders..., Quality..., Details...,
+      Performance..., Animations..., Other...); each opens OptiFine's screen and its Done comes back; Texture
+      Filtering, Anisotropic Filtering, Show Vignette, Chunk Fade Time and Biome Blend are not on it; OptiFine's
+      tooltips show over its settings; nothing in the log about Video Settings.
 - [ ] Chat, Music and Sounds, Skin Customization: added options continue the two columns and Done moves
       down with them; nothing overlaps at GUI scale Auto and at 1, 2 and 3, in a small window too.
 - [ ] Every toggle, slider and cycle button flips, drags or steps with the click sound vanilla's make, and
