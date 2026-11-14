@@ -478,6 +478,27 @@ if (FeatureSource.places(world, "1.14")) return;   // an IWorldGenerator for a 1
 Caves & Cliffs Backport's 1.18 generator places every 1.18.2 feature, with the backports' blocks where they are
 installed (Village & Pillage's sweet berry bushes, bamboo and flowers): their own generators for those step aside.
 
+### Superflat worlds (`worldgen.FlatWorlds`, 1.3.0)
+
+A superflat world generates only what its preset lists. 1.12.2's options: `decoration` (the biome's decorator:
+flowers, grass, trees, ores, every feature), `village`, `stronghold`, `mineshaft`, `biome_1` (temples, witch huts,
+igloos), `oceanmonument` (these five only with structures on), `dungeon`, `lake`, `lava_lake`. Structures newer than
+1.12 have no option: today's superflat generates them only where a preset lists them (`structure_overrides`), and the
+default presets list villages at most, so the family never generates them in superflat. Pillager outposts are among
+them (today's default preset has villages only).
+
+```java
+if (!FlatWorlds.decoration(world)) return;                              // an IWorldGenerator or PopulateChunkEvent feature
+if (!FlatWorlds.structure(world, Structures.VILLAGE)) return;           // 1.14 villages follow `village`
+FlatWorlds.allows(world, FlatWorlds.DUNGEON);                           // any option; true outside superflat
+FlatWorlds.isFlat(world);                                               // the Overworld of a superflat world only
+```
+
+`DecorateBiomeEvent` handlers need nothing: 1.12.2's flat generator runs the decorator only with `decoration`.
+`IWorldGenerator`s and `PopulateChunkEvent` handlers run in every world, so a feature there asks. Core asks for every
+`ScatteredStructure` kind (no instance in a superflat world that cannot have it), every `Structures` locator (null)
+and `/locate structure` (not found). Other dimensions and other world types are never superflat here.
+
 ### Jigsaw structures (`Jigsaw`, `JigsawPools`, `JigsawPiece`, `ModernProcessors`, 1.1.0)
 
 1.16.5's jigsaw assembly (`JigsawPlacement.addPieces`), read from Mojang's own files. Given the same random, it lays

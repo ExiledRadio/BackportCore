@@ -9,6 +9,7 @@ What Caves & Cliffs Backport needs, and the 1.18 to 1.21.11 menus and settings t
 *   **Music and Sounds**: Music Frequency, the Music Toast and a UI volume.
 *   **F3** as in 1.21.9: every part of the debug screen can be Off, In F3 or Always (F3 + F6).
 *   Copper from different backports ages and waxes the same way.
+*   **Superflat worlds** get only what their preset lists, as in vanilla: no trial chambers, shipwrecks, ruined portals or other newer structures floating over the ground, and the backports' flowers, bushes and other features only with `decoration`.
 
 # 1.2.0
 

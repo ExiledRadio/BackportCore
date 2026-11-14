@@ -1,5 +1,9 @@
 # 1.3.0
 
+*   **Superflat worlds** (`worldgen.FlatWorlds`): what a superflat preset lists, and nothing else. `decoration(world)`,
+    `structure(world, kind)` and `allows(world, option)` read the world's preset; no structure newer than 1.12 (pillager
+    outposts included) generates in superflat. `ScatteredStructure` kinds, `Structures` locators and
+    `/locate structure` follow it on their own.
 *   **`/locate biome`**: today's biome form of `/locate` (`locate.BiomeLocate`), by today's ids (1.12.2's biomes as
     an upgraded world names them, the backports' biomes by their modern names), with 26.x's search, reply and
     tab completion; tags and a generator's own biomes through `BiomeLocate.tag` and `source`.
