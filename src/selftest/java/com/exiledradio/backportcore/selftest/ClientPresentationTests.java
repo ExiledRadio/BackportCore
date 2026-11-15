@@ -182,6 +182,32 @@ final class ClientPresentationTests {
         check("client: the loading screen is Core's", mc.loadingScreen instanceof WorldLoadingScreen, mc.loadingScreen.getClass().getName());
         // The ticker starts the menu music within its first 20 to 600 ticks; 400 have passed.
         check("client: the menu music came from the pool", MenuMusicPlayer.lastPick != null, MenuMusicPlayer.lastPick);
+        soundChannels(mc);
+    }
+
+    /** 1.14's channels (the dummy 1.16 wants them): set, and allocated by the running paulscode library. */
+    private static void soundChannels(Minecraft mc) {
+        check("client: 1.14's sound channels are set (247 + 8)", com.exiledradio.backportcore.presentation.client.SoundChannels.applied(),
+                paulscode.sound.SoundSystemConfig.getNumberNormalChannels() + " + " + paulscode.sound.SoundSystemConfig.getNumberStreamingChannels());
+        try {
+            Object manager = ReflectionHelper.getPrivateValue(net.minecraft.client.audio.SoundHandler.class, mc.getSoundHandler(), "sndManager", "field_147694_f");
+            Object system = ReflectionHelper.getPrivateValue(net.minecraft.client.audio.SoundManager.class, (net.minecraft.client.audio.SoundManager) manager,
+                    "sndSystem", "field_148620_e");
+            java.lang.reflect.Field lib = paulscode.sound.SoundSystem.class.getDeclaredField("soundLibrary");
+            lib.setAccessible(true);
+            Object library = lib.get(system);
+            java.lang.reflect.Field normal = paulscode.sound.Library.class.getDeclaredField("normalChannels");
+            java.lang.reflect.Field streaming = paulscode.sound.Library.class.getDeclaredField("streamingChannels");
+            normal.setAccessible(true);
+            streaming.setAccessible(true);
+            int n = ((List<?>) normal.get(library)).size();
+            int st = ((List<?>) streaming.get(library)).size();
+            BackportCore.LOGGER.info("CLIENT SELFTEST sound channels allocated: {} + {}", n, st);
+            check("client: paulscode allocated well over 1.12's 28 sound channels", n > 100, n + " + " + st);
+            check("client: and 8 streamed", st == 8, st);
+        } catch (Exception e) {
+            check("client: the sound library's channels are readable", false, e);
+        }
     }
 
     private static void optionScreens(Minecraft mc) throws Exception {

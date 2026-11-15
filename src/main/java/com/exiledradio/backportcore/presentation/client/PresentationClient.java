@@ -38,6 +38,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
         MinecraftForge.EVENT_BUS.register(new RenderOptions.Events());
         MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
+        MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());
         DebugScreen.init();
         RenderOptions.init();
     }
@@ -66,6 +67,7 @@ public final class PresentationClient {
         DebugBindings.register();
         RenderOptions.applyAnisotropy();
         VideoOptions.applyForced(Minecraft.getMinecraft());
+        SoundChannels.initLate(Minecraft.getMinecraft());
     }
 
     /** Forge event handlers; public for the event bus. */
