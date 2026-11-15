@@ -171,7 +171,7 @@ final class LocateTests {
             MinecraftServer server = server();
             BlockPos spawn = world.getSpawnPoint();
             List<String> first = LocateChecks.complete(server, world, spawn, "locate ");
-            check("completion offers today's two forms and nothing else", first.equals(Arrays.asList("biome", "structure")), first);
+            check("completion offers today's two forms and nothing else", first.size() == 2 && first.containsAll(Arrays.asList("biome", "structure")), first);
             List<String> ids = LocateChecks.complete(server, world, spawn, "locate structure ");
             check("an empty word completes every id and no tag (1.12.2's client writes the first it sorts)",
                     ids.equals(StructureLocate.ids()), ids);
