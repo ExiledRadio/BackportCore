@@ -205,6 +205,16 @@ final class ClientPresentationTests {
             BackportCore.LOGGER.info("CLIENT SELFTEST sound channels allocated: {} + {}", n, st);
             check("client: paulscode allocated well over 1.12's 28 sound channels", n > 100, n + " + " + st);
             check("client: and 8 streamed", st == 8, st);
+            // attenuation_distance (1.14): read from sounds.json, set on the playing source.
+            net.minecraft.util.ResourceLocation far = new net.minecraft.util.ResourceLocation(SelfTestMod.MOD_ID, "selftest.far");
+            Integer d = com.exiledradio.backportcore.presentation.client.SoundDistances.distance(far,
+                    new net.minecraft.util.ResourceLocation("minecraft", "ambient/cave/cave1"));
+            check("client: attenuation_distance is read from sounds.json", d != null && d == 35, d);
+            int before = com.exiledradio.backportcore.presentation.client.SoundDistances.applied;
+            mc.getSoundHandler().playSound(new net.minecraft.client.audio.PositionedSoundRecord(new net.minecraft.util.SoundEvent(far),
+                    net.minecraft.util.SoundCategory.AMBIENT, 0.01F, 1.0F, 0.0F, 64.0F, 0.0F));
+            check("client: and set on the source as it plays", com.exiledradio.backportcore.presentation.client.SoundDistances.applied == before + 1,
+                    before + " -> " + com.exiledradio.backportcore.presentation.client.SoundDistances.applied);
         } catch (Exception e) {
             check("client: the sound library's channels are readable", false, e);
         }

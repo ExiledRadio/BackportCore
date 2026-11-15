@@ -1,0 +1,10 @@
+{
+  "selftest.far": {
+    "sounds": [
+      {
+        "name": "minecraft:ambient/cave/cave1",
+        "attenuation_distance": 35
+      }
+    ]
+  }
+}
