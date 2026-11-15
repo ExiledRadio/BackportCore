@@ -27,19 +27,14 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * {@code /locate}, today's command in place of 1.12.2's ({@code CommandLocate}, replaced under the same name).
+ * {@code /locate}, today's command in place of 1.12.2's ({@code CommandLocate}, replaced under the same name). Only
+ * today's two forms: 1.12.2's names ({@code /locate Stronghold}) and 1.13-1.18's bare ids are gone, as in today's game.
  *
  * <ul>
  *   <li>{@code /locate structure <id>} and {@code /locate structure #<tag>}: today's form, over every structure the
  *       installed backports register with {@link StructureLocate}. Today's reply: "The nearest minecraft:shipwreck
  *       is at [x, ~, z] (n blocks away)", the coordinates green, a click puts {@code /tp @s x ~ z} in the chat box.
  *       A tag names what it found: "#minecraft:village (minecraft:village_plains)".</li>
- *   <li>{@code /locate <Name>}: 1.12.2's names (Stronghold, Monument, Mansion, EndCity, Fortress, Temple,
- *       Mineshaft) keep working, as does any other name 1.12.2's search knows (other mods' structures). Each
- *       one 1.12.2 shares with today's game is searched as today's id. {@code Village} still works as it did,
- *       for the habit, but is only listed while no backport registers today's village types: then
- *       {@code #minecraft:village} is the way to ask.</li>
- *   <li>1.13-1.18's bare ids ({@code /locate shipwreck}) also work, unlisted.</li>
  *   <li>{@code /locate biome <id>} and {@code /locate biome #<tag>}: today's biome form over {@link BiomeLocate}'s ids
  *       ("The nearest minecraft:cherry_grove is at [x, y, z] (n blocks away)", with the height and the distance in
  *       three dimensions, as today's).</li>
@@ -53,17 +48,6 @@ public final class LocateCommand extends CommandBase {
     static final String BIOME = "biome";
     /** Today's registry name for biomes, as its "not found" messages name it. */
     static final String BIOME_REGISTRY = "minecraft:worldgen/biome";
-
-    /** 1.12.2's names, and today's id or tag each one is searched as (null: 1.12.2's own search). */
-    private static final String[][] LEGACY = {
-            {"Stronghold", "minecraft:stronghold"},
-            {"Monument", "minecraft:monument"},
-            {"Village", "#minecraft:village"},
-            {"Mansion", "minecraft:mansion"},
-            {"EndCity", "minecraft:end_city"},
-            {"Fortress", "minecraft:fortress"},
-            {"Temple", null},
-            {"Mineshaft", "minecraft:mineshaft"}};
 
     @Override
     public String getName() {
@@ -104,33 +88,7 @@ public final class LocateCommand extends CommandBase {
             locateBiome(server, sender, level, from, args[1]);
             return;
         }
-        if (args.length != 1) {
-            throw new WrongUsageException(getUsage(sender));
-        }
-
-        String typed = args[0];
-        String[] legacy = legacy(typed);
-        if (legacy != null && legacy[1] != null && StructureLocate.known(legacy[1])) {
-            StructureLocate.Found found = search(level, from, legacy[1], legacy[0]);
-            reply(server, sender, from, found.pos, legacy[0]);
-            return;
-        }
-        if (legacy == null && StructureLocate.isIdLike(typed) && StructureLocate.known(typed)) {
-            // 1.13 to 1.18 took the bare id.
-            String printable = StructureLocate.normalize(typed);
-            StructureLocate.Found found = search(level, from, printable, printable);
-            reply(server, sender, from, found.pos, printable);
-            return;
-        }
-        // 1.12.2's own search, by the name as 1.12.2 spells it (its names are case-sensitive).
-        String name = legacy != null ? legacy[0] : typed;
-        long start = System.nanoTime();
-        BlockPos pos = level.findNearestStructure(name, from, false);
-        if (pos == null) {
-            throw new CommandException("commands.locate.structure.not_found", name);
-        }
-        log(name, start);
-        reply(server, sender, from, pos, name);
+        throw new WrongUsageException(getUsage(sender));
     }
 
     /** Today's {@code locateBiome}: ResourceOrTagArgument's messages for an unknown id or tag. */
@@ -216,29 +174,6 @@ public final class LocateCommand extends CommandBase {
         return world == null || world.getGameRules().getBoolean("sendCommandFeedback");
     }
 
-    /** @return the {name, target} row for a 1.12.2 name, any case, or null */
-    @Nullable
-    static String[] legacy(String typed) {
-        for (String[] row : LEGACY) {
-            if (row[0].equalsIgnoreCase(typed)) {
-                return row;
-            }
-        }
-        return null;
-    }
-
-    /** @return the 1.12.2 names tab completion lists: all but Village once today's village types are registered */
-    static List<String> listedLegacyNames() {
-        List<String> names = new ArrayList<String>();
-        for (String[] row : LEGACY) {
-            if ("Village".equals(row[0]) && !StructureLocate.members(row[1]).isEmpty()) {
-                continue;
-            }
-            names.add(row[0]);
-        }
-        return names;
-    }
-
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
                                           @Nullable BlockPos targetPos) {
@@ -246,7 +181,6 @@ public final class LocateCommand extends CommandBase {
             List<String> options = new ArrayList<String>();
             options.add(STRUCTURE);
             options.add(BIOME);
-            options.addAll(listedLegacyNames());
             return getListOfStringsMatchingLastWord(args, options);
         }
         if (args.length == 2 && STRUCTURE.equalsIgnoreCase(args[0])) {

@@ -41,9 +41,9 @@ final class ClientLocateTests {
             {"/locate structure #minecraft:v", "/locate structure #minecraft:v", null},
             {"/locate structure strong", "/locate structure minecraft:stronghold", null},
             {"/locate structure end", "/locate structure minecraft:end_city", null},
-            // The client sorts: "Stronghold" before "structure", and cycles on the second Tab.
-            {"/locate str", "/locate Stronghold", "/locate structure"},
-            {"/locate Strong", "/locate Stronghold", null},
+            // Only today's two forms: "str" is "structure" (1.12.2's "Stronghold" came first before).
+            {"/locate str", "/locate structure", null},
+            {"/locate Strong", "/locate Strong", null},
     };
 
     /** {command, start of the reply}. */
@@ -55,7 +55,7 @@ final class ClientLocateTests {
             {"/locate structure minecraft:end_city", "Could not find a structure of type \"minecraft:end_city\" nearby"},
             {"/locate structure minecraft:fortress", "Could not find a structure of type \"minecraft:fortress\" nearby"},
             {"/locate structure #minecraft:monument", "There is no structure with type \"#minecraft:monument\""},
-            {"/locate Monument", "The nearest Monument is at ["},
+            {"/locate Monument", "Usage: /locate structure <structure>"},
     };
 
     static final List<String> CHAT = new ArrayList<String>();

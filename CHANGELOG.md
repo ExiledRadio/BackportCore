@@ -1,5 +1,7 @@
 # 1.3.1
 
+*   **`/locate`**: `LocateCommand` takes only `structure` and `biome`; 1.12.2's names and 1.13-1.18's bare ids are
+    gone (a usage error), and so is their completion. `VanillaLocate` still answers today's ids with 1.12.2's searches.
 *   **Sound channels** (`presentation.client.SoundChannels`): with `Presentation.isAtLeast("1.14")`, paulscode gets
     1.14's split of OpenAL Soft's 255 sources, 247 normal and 8 streaming (1.12.2: 28 and 4), set on Forge's
     `SoundSetupEvent`; a version registered later restarts the sound system at init.

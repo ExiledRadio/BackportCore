@@ -161,22 +161,17 @@ final class LocateTests {
             said = LocateChecks.run(server, world, new BlockPos(100000, 64, 100000), "locate structure " + TEST);
             check("nothing nearby is today's not-found message", said.size() == 1
                     && said.get(0).equals("Could not find a structure of type \"" + TEST + "\" nearby"), said);
-            said = LocateChecks.run(server, world, spawn, "locate stronghold");
-            check("1.12.2's names still work, any case", said.size() == 1 && said.get(0).startsWith("The nearest Stronghold is at ["), said);
+            said = LocateChecks.run(server, world, spawn, "locate Stronghold");
+            check("1.12.2's names are gone, as in today's game", said.size() == 1 && !said.get(0).startsWith("The nearest"), said);
             said = LocateChecks.run(server, world, spawn, "locate " + TEST);
-            check("1.13's bare id still works", said.size() == 1 && said.get(0).startsWith("The nearest " + TEST + " is at ["), said);
-            said = LocateChecks.run(server, world, spawn, "locate Village");
-            check("Village still searches", said.size() == 1 && (said.get(0).startsWith("The nearest Village is at [")
-                    || said.get(0).startsWith("Could not find")), said);
+            check("and so are 1.13's bare ids", said.size() == 1 && !said.get(0).startsWith("The nearest"), said);
         });
 
         then(1, "locate tab completion", world -> {
             MinecraftServer server = server();
             BlockPos spawn = world.getSpawnPoint();
             List<String> first = LocateChecks.complete(server, world, spawn, "locate ");
-            check("completion offers structure and 1.12.2's names", first.contains("structure") && first.contains("Stronghold")
-                    && first.contains("Temple"), first);
-            check("Village is listed while no backport registers village types", first.contains("Village"), first);
+            check("completion offers today's two forms and nothing else", first.equals(Arrays.asList("biome", "structure")), first);
             List<String> ids = LocateChecks.complete(server, world, spawn, "locate structure ");
             check("an empty word completes every id and no tag (1.12.2's client writes the first it sorts)",
                     ids.equals(StructureLocate.ids()), ids);

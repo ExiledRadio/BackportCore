@@ -1,5 +1,6 @@
 # 1.3.1
 
+*   **`/locate` is only today's two forms**, `/locate structure` and `/locate biome`. 1.12.2's names (`/locate Stronghold`, `Village`, `Temple` ...) and the bare ids of 1.13 to 1.18 are gone from the command and its tab completion, as in today's game.
 *   **Sounds no longer cut each other off in busy places.** 1.12.2 can play 28 sounds at once and cut the oldest when a new one starts, so long sounds like the sculk shrieker's shriek were cut short among clicking sensors. With a backport from 1.14 or later installed, the game gets 1.14's 247 (and 8 for music).
 *   **Sounds carry as far as in vanilla.** Sounds that current Java hears from farther or nearer than 16 blocks (a ravager's roar, a fox's screech, the sculk sounds) now do so here too.
 *   **Fixed the F3 key combinations on Cleanroom**: F3 + F4 (the game mode switcher), F3 + N and the other newer combinations did nothing there.
