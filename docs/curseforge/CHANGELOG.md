@@ -13,6 +13,7 @@ What Caves & Cliffs Backport needs, and the 1.18 to 1.21.11 menus and settings t
 *   **Superflat worlds** get only what their preset lists, as in vanilla: no trial chambers, shipwrecks, ruined portals or other newer structures floating over the ground, and the backports' flowers, bushes and other features only with `decoration`.
 *   **Command suggestions** as in 1.13, for backports that turn them on: the server's completions list above the chat box as a command is typed, with Tab, the arrow keys and Esc. Works on any server.
 *   **Furnace recipe book** as in 1.13, for backports that turn it on, and the same book for other backports' cooking blocks.
+*   **Fixed the F3 key combinations on Cleanroom**: F3 + F4 (the game mode switcher), F3 + N and the other newer combinations did nothing there.
 
 # 1.2.0
 

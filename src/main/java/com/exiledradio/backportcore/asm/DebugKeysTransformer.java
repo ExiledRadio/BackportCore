@@ -35,7 +35,7 @@ public final class DebugKeysTransformer implements IClassTransformer {
             Asm.skipped(PATCH, WHAT, "runTickKeyboard()V not found");
             return basicClass;
         }
-        List<MethodInsnNode> f3 = Asm.calls(keyboard, Opcodes.INVOKESPECIAL, MC, "processKeyF3", "func_184122_c", "(I)Z");
+        List<MethodInsnNode> f3 = Asm.privateCalls(keyboard, MC, "processKeyF3", "func_184122_c", "(I)Z");
         if (f3.size() != 1) {
             Asm.skipped(PATCH, WHAT, "unexpected shape (" + f3.size() + " processKeyF3 calls)");
             return basicClass;

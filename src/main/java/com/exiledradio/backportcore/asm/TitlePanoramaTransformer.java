@@ -35,7 +35,7 @@ public final class TitlePanoramaTransformer implements IClassTransformer {
             Asm.skipped(PATCH, WHAT, "drawScreen(IIF)V not found");
             return basicClass;
         }
-        List<MethodInsnNode> skybox = Asm.calls(draw, Opcodes.INVOKESPECIAL, MENU, "renderSkybox", "func_73971_c", "(IIF)V");
+        List<MethodInsnNode> skybox = Asm.privateCalls(draw, MENU, "renderSkybox", "func_73971_c", "(IIF)V");
         List<MethodInsnNode> gradients = Asm.calls(draw, Opcodes.INVOKEVIRTUAL, null, "drawGradientRect", "func_73733_a", "(IIIIII)V");
         if (skybox.size() != 1 || gradients.size() != 2) {
             Asm.skipped(PATCH, WHAT, "unexpected shape (" + skybox.size() + " renderSkybox, " + gradients.size() + " drawGradientRect calls)");

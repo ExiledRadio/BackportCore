@@ -123,6 +123,17 @@ public final class Asm {
     }
 
     /** @return every call in the method with this opcode, name and descriptor (any owner when owner is null) */
+    /**
+     * Calls to a private method of the class itself. Java 8's javac calls one with {@code INVOKESPECIAL}, Java 11's
+     * and later with {@code INVOKEVIRTUAL} (nestmates, JEP 181), and Cleanroom's patched classes are compiled by a
+     * modern javac, so both count.
+     */
+    static List<MethodInsnNode> privateCalls(MethodNode method, String owner, String mcp, String srg, String desc) {
+        List<MethodInsnNode> out = calls(method, Opcodes.INVOKESPECIAL, owner, mcp, srg, desc);
+        out.addAll(calls(method, Opcodes.INVOKEVIRTUAL, owner, mcp, srg, desc));
+        return out;
+    }
+
     static List<MethodInsnNode> calls(MethodNode method, int opcode, String owner, String mcp, String srg, String desc) {
         List<MethodInsnNode> out = new ArrayList<MethodInsnNode>();
         for (AbstractInsnNode insn : method.instructions.toArray()) {

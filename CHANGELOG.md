@@ -1,5 +1,8 @@
 # 1.3.0
 
+*   **P7 on Cleanroom**: its classes are compiled by a modern javac, which calls private methods with
+    `INVOKEVIRTUAL` (JEP 181), so P7 found no `processKeyF3` call and skipped. `Asm.privateCalls` matches both
+    opcodes; P7 and the title panorama's `renderSkybox` use it.
 *   **Texture layers**: the modern pack is now one layer per release line (`backportcore_packs/modern` for 1.14,
     `modern-1.15` to `modern-26.3`), applied up to `Presentation.newest()` (`client.TextureLayers`,
     `client.LayeredPack`). Built from Mojang's client jars by `tools/textures/build.py`, which keeps only textures that
