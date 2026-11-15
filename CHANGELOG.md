@@ -1,5 +1,9 @@
 # 1.3.1
 
+*   **`/seed`** (`command.SeedCommand`, replacing `CommandShowSeed` at `Presentation.isAtLeast("1.15")`): "Seed: [n]",
+    green, click to copy, shift-click to insert. 1.12.2 has no `COPY_TO_CLIPBOARD`: the click runs
+    `/backportcore:copy <text>`, which `presentation.client.CopyClick` puts on the clipboard from Forge's `ClientChatEvent`
+    instead of sending. `chat.copy.click` in all 19 languages (Mojang's).
 *   **`/locate`**: `LocateCommand` takes only `structure` and `biome`; 1.12.2's names and 1.13-1.18's bare ids are
     gone (a usage error), and so is their completion. `VanillaLocate` still answers today's ids with 1.12.2's searches.
 *   **Sound channels** (`presentation.client.SoundChannels`): with `Presentation.isAtLeast("1.14")`, paulscode gets

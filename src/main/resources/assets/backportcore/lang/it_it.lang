@@ -239,3 +239,4 @@ backportcore.general.rendering.blockupdates.tooltip=Quali chunk modificati il gi
 config.backportcore.recipes.tooltip=Le ricette di fabbricazione dei backport nel ricettario, sbloccate come vanilla sblocca le proprie.
 backportcore.general.recipes.unlockrecipes.tooltip=Sblocca le ricette di fabbricazione dei backport come vanilla sblocca le proprie: avere un lingotto di ferro dà la ricetta del banco da forgiatura, un bastone o del carbone quella del falò. Compare l'avviso della ricetta e la ricetta appare nel ricettario. Disattivato: le ricette si possono ancora fabbricare, ma non compaiono mai nel ricettario.\n\nLe ricette già sbloccate restano sbloccate.
 # --- end config tooltips ---
+chat.copy.click=Fai clic per copiare negli appunti

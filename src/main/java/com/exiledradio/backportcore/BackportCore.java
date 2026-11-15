@@ -175,6 +175,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.recipe.RecipeUnlocks.serverStarting();
         // Today's /locate, in place of 1.12.2's (same name, so it replaces vanilla's).
         event.registerServerCommand(new com.exiledradio.backportcore.locate.LocateCommand());
+        // 1.15's /seed (click to copy), in place of 1.12.2's.
+        event.registerServerCommand(new com.exiledradio.backportcore.command.SeedCommand());
     }
 
     /** Also starts {@code -Dbackportcore.seeddump=<folder>}: the overworld's seed-parity dump (a dev tool). */

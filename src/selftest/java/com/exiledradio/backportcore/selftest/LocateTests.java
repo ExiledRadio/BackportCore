@@ -161,6 +161,16 @@ final class LocateTests {
             said = LocateChecks.run(server, world, new BlockPos(100000, 64, 100000), "locate structure " + TEST);
             check("nothing nearby is today's not-found message", said.size() == 1
                     && said.get(0).equals("Could not find a structure of type \"" + TEST + "\" nearby"), said);
+            // 1.15's /seed (the dummy 1.16 is installed): "Seed: [n]", the seed a click from the clipboard.
+            said = LocateChecks.run(server, world, spawn, "seed");
+            check("/seed answers as 1.15", said.size() == 1 && said.get(0).equals("Seed: [" + world.getSeed() + "]"), said);
+            net.minecraft.util.text.ITextComponent seed = com.exiledradio.backportcore.command.SeedCommand.copyable("42");
+            net.minecraft.util.text.ITextComponent green = seed.getSiblings().get(0);
+            check("its seed is green, copies on click and inserts on shift-click",
+                    green.getStyle().getColor() == net.minecraft.util.text.TextFormatting.GREEN
+                    && green.getStyle().getClickEvent() != null
+                    && green.getStyle().getClickEvent().getValue().equals(com.exiledradio.backportcore.command.SeedCommand.COPY + "42")
+                    && "42".equals(green.getStyle().getInsertion()), seed);
             said = LocateChecks.run(server, world, spawn, "locate Stronghold");
             check("1.12.2's names are gone, as in today's game", said.size() == 1 && !said.get(0).startsWith("The nearest"), said);
             said = LocateChecks.run(server, world, spawn, "locate " + TEST);

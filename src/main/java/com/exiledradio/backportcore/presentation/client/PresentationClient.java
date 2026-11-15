@@ -40,6 +40,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
         MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());
         MinecraftForge.EVENT_BUS.register(new SoundDistances.Events());
+        MinecraftForge.EVENT_BUS.register(new CopyClick());
         DebugScreen.init();
         RenderOptions.init();
     }

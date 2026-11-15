@@ -353,6 +353,11 @@ final class ClientPresentationTests {
 
     private static void inWorld(Minecraft mc) {
         check("client: F3+Q lists the key map in a world", PresentationHooks.processKeyF3(mc, 16));
+        // 1.15's copy click: what /seed's click "runs" goes to the clipboard and is not sent.
+        String sent = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(com.exiledradio.backportcore.command.SeedCommand.COPY + "-1234567890");
+        check("client: a copy click is not sent", sent.isEmpty(), sent);
+        check("client: and its text is on the clipboard", "-1234567890".equals(net.minecraft.client.gui.GuiScreen.getClipboardString()),
+                net.minecraft.client.gui.GuiScreen.getClipboardString());
     }
 
     private static boolean isOption(GuiButton b, com.exiledradio.backportcore.presentation.option.PresentationOption o) {

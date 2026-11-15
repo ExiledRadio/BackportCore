@@ -238,3 +238,4 @@ backportcore.general.rendering.blockupdates.tooltip=Which changed chunks the gam
 config.backportcore.recipes.tooltip=The backports' crafting recipes in the recipe book, unlocked the way vanilla unlocks its own.
 backportcore.general.recipes.unlockrecipes.tooltip=Unlock the backports' crafting recipes the way vanilla unlocks its own: holding an iron ingot gives the smithing table's recipe, a stick or coal the campfire's. The recipe toast shows and the recipe appears in the recipe book. Off: the recipes still craft but never show in the recipe book.\n\nRecipes already unlocked stay unlocked.
 # --- end config tooltips ---
+chat.copy.click=Click to Copy to Clipboard

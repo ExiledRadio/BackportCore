@@ -239,3 +239,4 @@ backportcore.general.rendering.blockupdates.tooltip=哪些已變更的區塊由�
 config.backportcore.recipes.tooltip=將向後移植模組的合成配方加入配方書，並依原版解鎖自身配方的方式解鎖。
 backportcore.general.recipes.unlockrecipes.tooltip=依原版解鎖自身配方的方式解鎖向後移植模組的合成配方：持有鐵錠會獲得鍛造台的配方，持有木棒或煤炭會獲得營火的配方。此時會顯示配方提示，配方也會出現在配方書中。關閉：這些配方仍可合成，但不會出現在配方書中。\n\n已解鎖的配方維持解鎖。
 # --- end config tooltips ---
+chat.copy.click=點擊複製到剪貼簿

@@ -239,3 +239,4 @@ backportcore.general.rendering.blockupdates.tooltip=Welche geänderten Chunks da
 config.backportcore.recipes.tooltip=Die Handwerksrezepte der Backports im Rezeptbuch, freigeschaltet wie Vanilla seine eigenen freischaltet.
 backportcore.general.recipes.unlockrecipes.tooltip=Schaltet die Handwerksrezepte der Backports so frei, wie Vanilla seine eigenen freischaltet: Wer einen Eisenbarren hält, erhält das Rezept des Schmiedetischs, mit einem Stock oder Kohle das des Lagerfeuers. Die Rezept-Einblendung erscheint und das Rezept steht im Rezeptbuch. Aus: Die Rezepte lassen sich weiterhin herstellen, erscheinen aber nie im Rezeptbuch.\n\nBereits freigeschaltete Rezepte bleiben freigeschaltet.
 # --- end config tooltips ---
+chat.copy.click=Klicken, um in die Zwischenablage zu kopieren
