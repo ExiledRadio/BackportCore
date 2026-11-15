@@ -1,5 +1,10 @@
 # 1.3.1
 
+*   **Sound channels** (`presentation.client.SoundChannels`): with `Presentation.isAtLeast("1.14")`, paulscode gets
+    1.14's split of OpenAL Soft's 255 sources, 247 normal and 8 streaming (1.12.2: 28 and 4), set on Forge's
+    `SoundSetupEvent`; a version registered later restarts the sound system at init.
+*   **`attenuation_distance`** (`presentation.client.SoundDistances`): read from every pack's `sounds.json` at each
+    resource load; a source's distance becomes `max(volume, 1) * attenuation_distance`, as 1.14's `SoundEngine.play`.
 *   **P7 on Cleanroom**: its classes are compiled by a modern javac, which calls private methods with
     `INVOKEVIRTUAL` (JEP 181), so P7 found no `processKeyF3` call and skipped. `Asm.privateCalls` matches both
     opcodes; P7 and the title panorama's `renderSkybox` use it.
