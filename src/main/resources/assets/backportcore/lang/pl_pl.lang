@@ -239,4 +239,5 @@ backportcore.general.rendering.blockupdates.tooltip=Które zmienione chunki gra 
 config.backportcore.recipes.tooltip=Receptury wytwarzania z backportów w księdze receptur, odblokowywane tak, jak vanilla odblokowuje własne.
 backportcore.general.recipes.unlockrecipes.tooltip=Odblokowuje receptury wytwarzania z backportów tak, jak vanilla odblokowuje własne: posiadanie sztabki żelaza daje recepturę stołu kowalskiego, a patyka lub węgla recepturę ogniska. Pojawia się powiadomienie o recepturze, a receptura trafia do księgi receptur. Wyłączone: z receptur nadal można wytwarzać, ale nigdy nie pojawiają się w księdze receptur.\n\nJuż odblokowane receptury pozostają odblokowane.
 # --- end config tooltips ---
-chat.copy.click=Kliknij, aby skopiować
+chat.copy.click=Kliknij, aby skopiować do schowka
+item.minecraft.smithing_template.upgrade=Ulepszenie: 

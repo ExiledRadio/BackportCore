@@ -239,4 +239,5 @@ backportcore.general.rendering.blockupdates.tooltip=Değişen yığınlardan han
 config.backportcore.recipes.tooltip=Backportların üretim tarifleri, vanilla kendi tariflerinin kilidini nasıl açıyorsa öyle açılarak tarif kitabında görünür.
 backportcore.general.recipes.unlockrecipes.tooltip=Backportların üretim tariflerinin kilidini, vanilla kendi tariflerinin kilidini açtığı şekilde açar: demir külçesi taşımak demirci masasının tarifini, çubuk veya kömür taşımak kamp ateşinin tarifini verir. Tarif bildirimi görünür ve tarif, tarif kitabında yer alır. Kapalı: tarifler yine üretilebilir, ancak tarif kitabında hiç görünmez.\n\nKilidi zaten açılmış tarifler açık kalır.
 # --- end config tooltips ---
-chat.copy.click=Panoya Kopyalamak için Tıklayın
+chat.copy.click=Panoya kopyalamak için tıkla
+item.minecraft.smithing_template.upgrade=Yükseltme: 

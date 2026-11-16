@@ -239,4 +239,5 @@ backportcore.general.rendering.blockupdates.tooltip=Quais chunks alterados o jog
 config.backportcore.recipes.tooltip=As receitas de fabricação dos backports no livro de receitas, desbloqueadas como o vanilla desbloqueia as suas.
 backportcore.general.recipes.unlockrecipes.tooltip=Desbloqueia as receitas de fabricação dos backports como o vanilla desbloqueia as suas: ter uma barra de ferro dá a receita da bancada de ferraria, e um graveto ou carvão a da fogueira. O aviso de receita aparece e a receita passa a constar no livro de receitas. Desligado: as receitas continuam funcionando, mas nunca aparecem no livro de receitas.\n\nReceitas já desbloqueadas continuam desbloqueadas.
 # --- end config tooltips ---
-chat.copy.click=Clique para copiar
+chat.copy.click=Clique para copiar para a área de transferência
+item.minecraft.smithing_template.upgrade=Melhorias: 

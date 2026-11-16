@@ -240,3 +240,4 @@ config.backportcore.recipes.tooltip=バックポートのクラフトレシピ�
 backportcore.general.recipes.unlockrecipes.tooltip=バックポートのクラフトレシピを、バニラが自身のレシピを解除するのと同じ方法で解除します。鉄インゴットを持つと鍛冶台のレシピ、棒か石炭を持つと焚き火のレシピが手に入ります。レシピの通知が表示され、レシピ本にレシピが載ります。オフ：レシピは引き続きクラフトできますが、レシピ本には表示されません。\n\nすでに解除したレシピは解除されたままです。
 # --- end config tooltips ---
 chat.copy.click=クリックしてクリップボードにコピー
+item.minecraft.smithing_template.upgrade=強化：

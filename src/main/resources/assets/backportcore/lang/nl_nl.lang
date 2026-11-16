@@ -240,3 +240,4 @@ config.backportcore.recipes.tooltip=De werkbankrecepten van de backports in het 
 backportcore.general.recipes.unlockrecipes.tooltip=Ontgrendelt de werkbankrecepten van de backports zoals vanilla zijn eigen recepten ontgrendelt: met een ijzerstaaf krijg je het recept van de smeedtafel, met een stok of steenkool dat van het kampvuur. De receptmelding verschijnt en het recept staat in het receptenboek. Uit: de recepten werken nog steeds, maar verschijnen nooit in het receptenboek.\n\nRecepten die al ontgrendeld zijn, blijven ontgrendeld.
 # --- end config tooltips ---
 chat.copy.click=Klik om te kopiëren
+item.minecraft.smithing_template.upgrade=Upgrade(s): 

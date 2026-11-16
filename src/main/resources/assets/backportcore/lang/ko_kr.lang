@@ -239,4 +239,5 @@ backportcore.general.rendering.blockupdates.tooltip=바뀐 청크 중 어느 것
 config.backportcore.recipes.tooltip=백포트의 제작법을 제작법 책에 표시하며, 바닐라가 자체 제작법을 해금하는 방식으로 해금합니다.
 backportcore.general.recipes.unlockrecipes.tooltip=백포트의 제작법을 바닐라가 자체 제작법을 해금하는 방식으로 해금합니다. 철 주괴를 가지면 대장장이 작업대의 제작법을, 막대기나 석탄을 가지면 모닥불의 제작법을 얻습니다. 제작법 알림이 표시되고 제작법 책에 제작법이 나타납니다. 끄면 제작법으로 여전히 제작할 수 있지만 제작법 책에는 나타나지 않습니다.\n\n이미 해금한 제작법은 그대로 유지됩니다.
 # --- end config tooltips ---
-chat.copy.click=클릭하여 클립보드에 복사
+chat.copy.click=클립보드에 복사하려면 클릭
+item.minecraft.smithing_template.upgrade=강화: 
