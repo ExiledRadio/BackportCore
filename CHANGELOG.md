@@ -1,3 +1,13 @@
+# 1.4.0
+
+*   **Game events and vibrations** (`gameevent.*`), shared by every backport: Wild Update Backport's dispatcher,
+    emitters, 1.19.2 vibration listener, `avoid_vibration` trigger (now `backportcore:avoid_vibration`) and vibration
+    particle, moved here; 1.20.6's vibration system (`VibrationSystem`: the per-tick selector, block-distance
+    dispatch, the `listener` tag) for 1.20 backports; 1.20's events (mount, dismount, unequip, `entity_action`,
+    `resonate_1`-`15`) and tags, chosen by `GameEvents.require(version, switch)`; mount/dismount, 1.20's
+    equip/unequip and wolf-shake emitters; `GameEventTags.addResonator`; `SensorActivation`.
+*   Ownership: Wild Update Backport's sculk sensor (Trails & Tales Backport copies it).
+
 # 1.3.1
 
 *   **`/seed`** (`command.SeedCommand`, replacing `CommandShowSeed` at `Presentation.isAtLeast("1.15")`): "Seed: [n]",

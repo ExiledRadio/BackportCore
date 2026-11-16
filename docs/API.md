@@ -810,6 +810,42 @@ CreativePlacement.addEnchantmentType(CreativeTabs.COMBAT, type);        // books
     tab, for its own tab object and (if installed) in JEI. `-Dbackportcore.creativeDump.exit=true` then closes the
     game. With Gradle, an init script can set both on `runClient` (see `docs/CREATIVE_TABS.md`).
 
+## Game events and vibrations (`gameevent.*`, 1.4.0)
+
+One dispatcher per world for every backport, so one mod's sensors hear another mod's mobs and blocks. Moved from
+Wild Update Backport (1.19.2's rules, unchanged) with 1.20.6's rules added.
+
+```java
+GameEvents.require("1.20", () -> ModConfig.x.enabled);   // construction or pre-init; nothing runs until a switch is on
+GameEvents.emit(world, GameEvent.BLOCK_CHANGE, pos, GameEventContext.of(player, state));   // server only
+GameEvents.add(world, listener); GameEvents.remove(world, listener); GameEvents.move(world, listener);
+GameEvents.isAtLeast("1.20"); GameEvents.newest();        // from the requirements whose switch is on
+```
+
+- `GameEvent`: every 1.19.2 and 1.20.6 event, radius (16; shriek 32; jukebox 10) and current Java's frequency
+  (0 = not a vibration). 1.19.2's renamed events keep the frequency of what they became (`piston_extend` 10,
+  `piston_contract` 9, `entity_roar`/`entity_shake` 4). `resonance(f)` is `resonate_f`. `register` adds a mod's own.
+- `GameEventTags`: `vibrations()` and `wardenCanListen()` give 1.20.6's sets while a "1.20" requirement is on, else
+  1.19.2's (`VIBRATIONS_1_19`, `VIBRATIONS_1_20`, ...). 1.20's sets also hold the renamed 1.19.2 events. Wool
+  occludes; wool and carpets dampen; `addResonator(block)` / `resonates(state)` is `#vibration_resonators`.
+- `GameEventListener.rules()`: `V1_20` (default: radius between blocks, heard at once, closest first) or `V1_19`
+  (exact radius, heard at the end of the world tick, closest first). `immediate()` hears before either; `active()`
+  false is deaf (a mod's own switch while another mod keeps events on).
+- `VibrationSystem` (1.20.6): `User` (radius, position, `canReceiveVibration`, `onReceiveVibration`, listenable set,
+  avoid-vibration, adjacent chunks), `Data` (in flight, selector; `write()`/`read()` as 1.20's `listener` tag),
+  `Listener` (register it; `forceSchedule` for a stepped-on sensor), `tick(world, data, user)` from the owner's tick.
+  Closest candidate of a tick wins, ties to the higher frequency; taken the next tick; `floor(distance)` ticks of
+  travel; `redstoneStrengthForDistance`.
+- `VibrationListener` (1.19.2, Wild Update Backport's): `Config` with `shouldListen` / `onSignalReceive`.
+- `SensorActivation`: sensors call `activated(source, world, pos, frequency)` where 1.20 resonates; a backport adds a
+  `Handler` (Trails & Tales Backport's amethyst resonance reaches every mod's sensors).
+- `GameEventEmitters`: vanilla's events from Forge's hooks (steps, swims, flaps, splashes, falls, block place and
+  break, a player's clicks, containers, eating, projectiles, damage, death, explosions, note blocks, pistons,
+  lightning...). With 1.20 on: mount and dismount, 1.20's equip/unequip, a wolf shaking dry. `addEntityPlacer`:
+  a mod's boats.
+- `AvoidVibrationTrigger` (`backportcore:avoid_vibration`, Sneak 100) and the vibration particle
+  (`GameEventNetwork`, channel `backportcore_ge`) are registered by Core.
+
 ## Recipe unlocking (`recipe.RecipeUnlocks`, 1.2.0)
 
 Nothing to call. Every crafting recipe registered under the id of a mod that requires `backportcore` unlocks for a

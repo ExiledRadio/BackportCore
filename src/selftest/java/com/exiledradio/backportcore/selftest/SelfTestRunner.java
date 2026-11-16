@@ -79,6 +79,7 @@ public final class SelfTestRunner {
                     case "textures": TextureLayerTests.schedule(); break;
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
+                    case "gameevents": GameEventTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -97,6 +98,7 @@ public final class SelfTestRunner {
         BiomeLocateTests.schedule();
         SettingsTests.schedule();
         RecipeTests.schedule();
+        GameEventTests.schedule();
         SuggestionTests.schedule();
         SmeltingBookTests.schedule();
         RequestTests.schedule();

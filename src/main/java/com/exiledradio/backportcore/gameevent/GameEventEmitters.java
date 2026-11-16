@@ -108,6 +108,7 @@ import java.util.function.Predicate;
  *       equip, prime_fuse, lightning_strike</td><td>the matching Forge events; a new primed TNT, a creeper lighting;
  *       new lightning bolts in the world's weather list</td></tr>
  *   <tr><td>piston_extend / piston_contract</td><td>neighbor notifications around piston bases</td></tr>
+ *   <tr><td>entity_action (1.20)</td><td>a wolf starting to shake itself dry</td></tr>
  *   <tr><td>entity_mount / entity_dismount (1.20)</td><td>{@code EntityMountEvent}, at the vehicle, the rider as the
  *       source</td></tr>
  *   <tr><td>equip / unequip (1.20's rules)</td><td>{@code LivingEquipmentChangeEvent}: a player's armor slots, any slot
@@ -136,6 +137,12 @@ public final class GameEventEmitters {
 
     /** Creepers that have started to swell. */
     private static final Set<Entity> SWELLING = Collections.newSetFromMap(new WeakHashMap<Entity, Boolean>());
+
+    /** Wolves shaking themselves dry (1.20's entity_action). */
+    private static final Set<Entity> SHAKING = Collections.newSetFromMap(new WeakHashMap<Entity, Boolean>());
+
+    /** {@code EntityWolf.isShaking}, private. */
+    private static java.lang.reflect.Field wolfShaking;
 
     /** Lightning bolts already emitted. */
     private static final Set<Entity> BOLTS = Collections.newSetFromMap(new WeakHashMap<Entity, Boolean>());
@@ -218,6 +225,15 @@ public final class GameEventEmitters {
         if (e.isElytraFlying() && e.getTicksElytraFlying() % 10 == 0) {
             emit(world, GameEvent.ELYTRA_GLIDE, at(e), e, null);
         }
+        if (e instanceof net.minecraft.entity.passive.EntityWolf && GameEvents.isAtLeast("1.20")) {
+            boolean shaking = wolfShaking(e);
+            if (shaking && SHAKING.add(e)) {
+                // 1.20's Wolf.tick: entity_action as the shake starts (shakeAnim 0).
+                emit(world, GameEvent.ENTITY_ACTION, at(e), e, null);
+            } else if (!shaking) {
+                SHAKING.remove(e);
+            }
+        }
         if (e instanceof EntityCreeper) {
             boolean swelling = ((EntityCreeper) e).getCreeperState() > 0;
             if (swelling && SWELLING.add(e)) {
@@ -225,6 +241,18 @@ public final class GameEventEmitters {
             } else if (!swelling) {
                 SWELLING.remove(e);
             }
+        }
+    }
+
+    private static boolean wolfShaking(Entity wolf) {
+        try {
+            if (wolfShaking == null) {
+                wolfShaking = net.minecraftforge.fml.common.ObfuscationReflectionHelper.findField(
+                        net.minecraft.entity.passive.EntityWolf.class, "field_70928_h");
+            }
+            return wolfShaking.getBoolean(wolf);
+        } catch (RuntimeException | IllegalAccessException e) {
+            return false;
         }
     }
 
