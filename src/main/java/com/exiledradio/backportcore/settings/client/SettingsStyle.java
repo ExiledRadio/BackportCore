@@ -205,19 +205,32 @@ final class SettingsStyle {
             } catch (NumberFormatException ignored) {
             }
         }
-        ItemStack stack = null;
-        Item item = Item.getByNameOrId(name);
+        Item item = item(name);
         if (item == null) {
-            Block block = Block.getBlockFromName(name);
-            if (block != null) {
-                item = Item.getItemFromBlock(block);
+            // A copy its owner registers instead (Buzzy Bees' campfire when Village & Pillage is installed): the same
+            // name under another family mod, oldest update first, as the owners are.
+            int colon = name.indexOf(':');
+            String path = colon >= 0 ? name.substring(colon + 1) : name;
+            String namespace = colon >= 0 ? name.substring(0, colon) : "minecraft";
+            for (com.exiledradio.backportcore.settings.Family.Member m : com.exiledradio.backportcore.settings.Family.MEMBERS) {
+                if (!m.modid.equals(namespace) && (item = item(m.modid + ":" + path)) != null) {
+                    break;
+                }
             }
         }
-        if (item != null && item != net.minecraft.init.Items.AIR) {
-            stack = new ItemStack(item, 1, meta);
-        }
+        ItemStack stack = item == null ? null : new ItemStack(item, 1, meta);
         ICONS.put(id, stack);
         return stack;
+    }
+
+    /** @return the registered item, or a registered block's item, by name; null for neither */
+    private static Item item(String name) {
+        Item item = Item.getByNameOrId(name);
+        if (item == null || item == net.minecraft.init.Items.AIR) {
+            Block block = Block.getBlockFromName(name);
+            item = block == null ? null : Item.getItemFromBlock(block);
+        }
+        return item == null || item == net.minecraft.init.Items.AIR ? null : item;
     }
 
     static void item(Minecraft mc, ItemStack stack, int x, int y) {

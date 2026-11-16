@@ -1,3 +1,7 @@
+# 1.3.2
+
+*   **Fixed a blank square in place of a feature's icon on the settings screen** when its item comes from another installed backport, such as Buzzy Bees' campfire with Village & Pillage installed.
+
 # 1.3.1
 
 *   **`/seed` as in 1.15**, with a 1.15 or newer backport installed: the seed is green, and a click copies it.
