@@ -716,6 +716,44 @@ layers the biome is the column's 1:4 cell (today's noise biome at its quart), re
 id no registered biome has is not found at once, as `possibleBiomes` does. A world whose generator knows its own
 biomes in three dimensions (Caves & Cliffs' 1.18 terrain) answers through `source`.
 
+### Adventuring Time (`advancement.AdventuringTime`, 1.3.2)
+
+`minecraft:adventure/adventuring_time` follows vanilla's later lists as far as the installed backports bring their
+biomes; no backport calls anything. The list is vanilla's at the newest installed version, by today's ids
+(`AdventuringTime.listAt`: 1.13's four new oceans and the deep frozen and lukewarm ones, 1.14's bamboo jungle, 1.18's 50,
+1.19's deep dark and mangrove swamp, 1.20's cherry grove, 1.21.4's pale garden; Core's self-test holds 1.20.6's to the
+file in its jar).
+
+*   1.12.2's terrain: 1.12.2's 36 criteria stay, and each later biome of that list that a backport registers (any
+    biome `BiomeLocate.id` names by that id, not a `minecraft:` one) is added: Update Aquatic's oceans, Village &
+    Pillage's bamboo jungle, Wild Update's deep dark and mangrove swamp, the cherry grove, the pale garden. Other mods'
+    biomes never count, as in vanilla.
+*   A world whose overworld is a `terrain.ModernGeneration` (Caves & Cliffs' 1.18 terrain): the whole advancement is the
+    list, by today's ids: its generation version's biomes, and each later one a backport registers and the generator
+    says it makes (`ModernGeneration.generates(id)`, true unless the generator overrides it; a world made before a
+    backport was added has none of its biomes).
+*   The added criteria are Core's trigger `backportcore:biome` (`{"biome": "minecraft:cherry_grove"}`, usable in any
+    advancement file), met every 20 ticks where the player stands: the generator's 3D biome in a modern world
+    (`AdventuringTime.biomeAt`), else the column's 1.12 biome by today's id.
+*   Changed after each load of the advancements (the server's start, `/reload`), then the online players' progress is
+    read again. `AdventuringTime.extend(server, ids...)` adds criteria by hand (the self-tests).
+
+## Water colors (`water.WaterColors`, 1.3.2)
+
+Today's water color and underwater fog color by biome, for whichever mod draws 1.13's water (Update Aquatic Backport).
+
+```java
+WaterColors.register(myBiome, 0x3A7A6A, 0x4D7A60);    // a biome whose colors are not its vanilla name's
+int[] c = WaterColors.of(biome);                      // {water, fog}, or null: the drawer's own rule
+int[] here = WaterColors.at(world, pos);              // a modern world's 3D biome first
+int fog = WaterColors.fog(biome);                     // or the default fog, 0x050533
+```
+
+A registration wins; otherwise vanilla's colors for the biome's today's id (1.20.6's `worldgen/biome` files, 1.21.4's
+pale garden), so the family's biomes registered under vanilla's names (the cherry grove's `0x5DB7EF`, the mangrove
+swamp's fog `0x4D7A60`, the pale garden's `0x556980`) need no call; every vanilla biome without its own colors answers
+the defaults; another mod's biome answers null.
+
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 
 1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server

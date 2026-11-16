@@ -214,6 +214,30 @@ change one version made stays made when only a later backport is installed:
   256 by 44 piece, `edition.png` 128 by 14 under it, Minceraft from `minceraft.png`, the splash at width / 2 + 123, 69.
   A backport of 1.20 or later registers `replaceAsset` for `textures/gui/title/minecraft.png`, `edition.png` and
   `minceraft.png` with vanilla's own files, and draws nothing itself.
+* **Narrator Hotkey** (1.20.2, P32): Core's own option `backportcore:narrator_hotkey`, last on Accessibility Settings, on
+  by default; off, Ctrl + B (Cmd + B) no longer toggles the narrator.
+* **Panorama motion** (1.20.5, `VanillaRevisions.panoramaSpinOnly`): the pitch holds at 10 degrees and the view only
+  turns, by one spin every screen shares and that never restarts (the title screen's, the menus', the loading screens');
+  each screen advances it by the ticks since its own last frame, half a tick for its first (`advancePanoramaTime`).
+* **Menu backgrounds** (1.20.5, `MenuBackground`, P31): no dirt anywhere. Outside a world a menu is the panorama and its
+  overlay, blurred, under `menu_background.png`; inside one the world as drawn this frame, blurred, under
+  `inworld_menu_background.png` (the pause menu among them). Container, book and sign screens keep 1.12.2's gradient,
+  as 1.20.5's do. Lists (every `GuiSlot`: the world and server lists, Video Settings, languages, resource packs, key binds,
+  other mods' lists) draw `menu_list_background.png` over their area with their entries clipped to it, a header
+  separator above and a footer separator below, and no dirt or shadows; a list whose screen draws no background gets the
+  screen's behind it. The title screen itself is not blurred, as in vanilla.
+  * **Blur**: 1.20.6's `post/blur.json` is six box-blur passes, all at the full radius (its `RadiusMultiplier`s sit
+    where `PostChain` never reads them); Core's `backportcore:shaders/post/menu_blur.json` is the same six on 1.12.2's
+    `blur` program. The radius is Menu Background Blurriness times 10: the slider of that name a backport registers
+    (0 to 100%, Trails & Tales Backport's, or 0 to 10), else 1.20.5's default 5; under 1 there is no blur. Once a frame.
+    The graphics presets set it in vanilla's 0 to 10 and convert for a 0 to 100% slider. Without shaders or
+    framebuffers, no blur. `PanoramaRenderer.renderBlurred` uses the same six passes.
+  * **Textures**: the eight files (`menu_background`, `inworld_menu_background`, `menu_list_background`,
+    `inworld_menu_list_background`, `header_separator`, `footer_separator` and their `inworld_` forms, under
+    `textures/gui/`) are read when a pack has them (a backport's `replaceAsset`, a player's resource pack). Each of
+    1.20.6's is a single color, so without one Core draws that color: black at 64 of 255 for the screens, 112 for lists,
+    and the separators a white line at 51 over a black line at 191 (the footer the other way up). A backport needs to
+    supply none of them.
 ## What is not covered yet
 
 * 1.21.11's Fullscreen Resolution (1.12.2 goes fullscreen at the desktop's mode), Biome Blend, Prioritize Chunk
@@ -235,6 +259,9 @@ change one version made stays made when only a later backport is installed:
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
 * Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
 * Key Binds, Online and Font Settings screens.
+* 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
+  rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers and header-and-footer layouts (1.12.2's screens
+  keep their layouts, only the backgrounds change).
 ## Command suggestions
 
 Once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen

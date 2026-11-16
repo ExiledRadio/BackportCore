@@ -78,7 +78,6 @@ final class ClientMenuShots {
         Minecraft mc = Minecraft.getMinecraft();
         add("title", () -> {
             check("P31 (screens) applied", "applied".equals(Asm.state("P31")), Asm.state("P31"));
-            check("P31 (lists) applied", "applied".equals(Asm.state("P31-list")), Asm.state("P31-list"));
             check("P32 applied", "applied".equals(Asm.state("P32")), Asm.state("P32"));
             check("1.20.5 is the newest", Presentation.isAtLeast("1.20.5") && MenuBackground.active(), Presentation.newest());
             return true;
@@ -101,6 +100,7 @@ final class ClientMenuShots {
         add("language", () -> show(new GuiLanguage(new GuiMainMenu(), mc.gameSettings, mc.getLanguageManager())));
         add("worlds", () -> show(new GuiWorldSelection(new GuiMainMenu())));
         add(null, () -> {
+            check("P31 (lists) applied", "applied".equals(Asm.state("P31-list")), Asm.state("P31-list"));
             check("lists: drawn as 1.20.5's", MenuBackground.listFrames > 0, MenuBackground.listFrames);
             check("lists: the screen behind the world list is drawn (it has no background of its own)",
                     MenuBackground.menuFrames > this.menuAt, MenuBackground.menuFrames + " after " + this.menuAt);
@@ -138,10 +138,13 @@ final class ClientMenuShots {
         add("ingame-video", () -> show(new GuiVideoSettings(new GuiIngameMenu(), mc.gameSettings)));
         add(null, () -> {
             check("in a world: lists as 1.20.5's", MenuBackground.listFrames > this.listAt, MenuBackground.listFrames);
+            return true;
+        });
+        add("inventory", () -> {
+            show(new GuiInventory(mc.player));
             this.worldAt = MenuBackground.worldFrames;
             return true;
         });
-        add("inventory", () -> show(new GuiInventory(mc.player)));
         add(null, () -> {
             check("inventory: the transparent gradient kept (no blur)", MenuBackground.worldFrames == this.worldAt,
                     MenuBackground.worldFrames + " after " + this.worldAt);
