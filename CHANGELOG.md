@@ -1,3 +1,30 @@
+# 1.3.2
+
+*   **The backports' requests** (Trails & Tales Backport's `CORE_REQUESTS.md` 10.5, 10.6, 10.8 and 11.2; Wild Update
+    Backport's 10; T&T's 10.2 and 10.9, added while this was built):
+    *   **1.20.5's menus** (P31, `presentation.client.MenuBackground`): no dirt. Outside a world menus are the panorama,
+        blurred, under `menu_background.png`; inside one the world, blurred, under `inworld_menu_background.png` (the
+        pause menu too). Container, book and sign screens keep the gradient. Every list (`GuiSlot`) draws
+        `menu_list_background.png`, its entries clipped to it, header and footer separators, no dirt or shadows. The blur
+        is 1.20.6's six passes (`backportcore:shaders/post/menu_blur.json`, also used by `PanoramaRenderer.renderBlurred`)
+        at Menu Background Blurriness x 10 (the backport's slider of that name, else 5). The textures are read when a pack
+        has them; each is one color, which Core draws itself otherwise. The graphics presets now set a 0 to 100% blur
+        slider to 50% and 20%, not 100%, and no longer count it as Custom.
+    *   **Panorama motion as 1.20.5**: the pitch holds at 10 degrees and the view only turns, one spin for every screen
+        that never restarts.
+    *   **Narrator Hotkey** (1.20.2, P32): Core's option on Accessibility Settings; off, Ctrl + B no longer toggles the
+        narrator. Its text in all 19 languages (Mojang's).
+    *   **Adventuring Time** (`advancement.AdventuringTime`): the biomes vanilla's later lists add, as far as installed
+        backports register them (Update Aquatic's oceans, Village & Pillage's bamboo jungle, Wild Update's deep dark and
+        mangrove swamp, the cherry grove, the pale garden); in Caves & Cliffs' 1.18 terrain the whole list by today's ids,
+        by the generator's 3D biomes. Core's criterion trigger `backportcore:biome`. Re-applied after `/reload`.
+        `ModernGeneration.generates(id)` (default true) lets a generator leave out a biome it does not make.
+    *   **F3 + 3** (1.20.2, `presentation.client.NetworkCharts`): the bandwidth and ping charts as 1.20.6 draws them,
+        Core's own key from 1.20.2; the ping over Core's channel `backportcore_ping` (the tab list's latency on a server
+        without Core); 1.20.2's "Debug charts: ..." line. `debugKey(key, null, action)`: a key with no F3 + Q line.
+    *   **Water colors** (`water.WaterColors`): today's water and underwater fog colors by biome (1.20.6's, the pale
+        garden's 1.21.4), registrations first, for the mod that draws 1.13's water.
+
 # 1.3.1
 
 *   **`/seed`** (`command.SeedCommand`, replacing `CommandShowSeed` at `Presentation.isAtLeast("1.15")`): "Seed: [n]",

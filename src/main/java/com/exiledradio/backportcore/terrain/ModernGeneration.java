@@ -30,6 +30,15 @@ public interface ModernGeneration {
     @Nullable
     String biomeId(int x, int y, int z);
 
+    /**
+     * @return whether this world's generation makes a biome a version after {@link #generationVersion} added (today's
+     * id, {@code "minecraft:cherry_grove"}): Adventuring Time lists such a biome only then. True unless the generator
+     * knows better (an edition chosen when the world was made). Since Core 1.3.2.
+     */
+    default boolean generates(String biomeId) {
+        return true;
+    }
+
     /** @return this world's chunk generator if it is one (server worlds), else null */
     @Nullable
     static ModernGeneration of(World world) {

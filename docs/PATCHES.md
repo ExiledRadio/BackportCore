@@ -585,3 +585,55 @@ or passes an existing constant through a hook of the same type.
 *   **Shape**: `invokestatic (I)I` after six `bipush` constants.
 *   **Fails safe**: not exactly three, one and two: skipped, F3 and C fixed as in 1.12.2.
 *   **Tested**: client self-test (`P30 applied`, keys pass through before 1.21.11).
+
+## P31. 1.20.5's menu backgrounds
+
+*   **Classes**: `net.minecraft.client.gui.GuiScreen`, methods `drawBackground(I)V` (`func_146278_c`, the dirt) and
+    `drawWorldBackground(I)V` (`func_146270_b`, the gradient over the world); `net.minecraft.client.gui.GuiSlot`, method
+    `drawScreen(IIF)V` (`func_148128_a`, every list). **Transformer**: `asm/MenuBackgroundTransformer`. **Hooks**:
+    `PresentationHooks.menuDirt`, `menuWorldGradient`, `listBackground`, `listOverlay`, `listMaxScroll`, which call
+    `presentation/client/MenuBackground`. **Since**: 1.3.2.
+*   **Vanilla 1.20.5** (24w09a, `Screen.renderBackground`, `AbstractSelectionList.renderWidget`): no dirt anywhere. Outside a
+    world a menu is the panorama, blurred, under `menu_background.png`; inside one the world, blurred, under
+    `inworld_menu_background.png` (lighter than 1.12.2's gradient, the pause menu's look). Container, book and sign screens
+    keep the gradient (`renderTransparentBackground`). A list draws `menu_list_background.png` over its area, its entries
+    clipped to it, and a header and a footer separator on its edges, with no dirt above or below and no shadows.
+*   **Why a patch**: every screen draws its background through these two methods and every list through `drawScreen`, in
+    the middle of the screen's own drawing; no event comes between the dirt and what is drawn over it, and the lists' dirt
+    is drawn after their entries.
+*   **What changes**: call owners only. `drawBackground`'s one `tessellator.draw()` (the dirt quad, built but not yet drawn)
+    becomes `menuDirt(tessellator)`; `drawWorldBackground`'s one `drawGradientRect` becomes `menuWorldGradient(screen,
+    ...)`; in `GuiSlot.drawScreen` Forge's one `drawContainerBackground(tessellator)`, the two `overlayBackground(...)` and
+    the one `getMaxScroll()` become `listBackground(slot, tessellator)`, `listOverlay(slot, ...)` and `listMaxScroll(slot)`.
+    Until a 1.20.5 or later backport is installed, each hook draws exactly what 1.12.2 does (the dirt quad is drawn, the
+    gradient and the list's protected methods are called by reflection). From 1.20.5: the dirt quad is dropped and the
+    screen's background drawn in its place (once a frame: the panorama outside a world, then the blur, then the menu
+    texture); the list's hook draws the screen's background first if the screen drew none, the list texture (a list class
+    that overrides `drawContainerBackground` keeps its own), and turns on a scissor over the list; the first overlay turns it
+    off and draws the separators; the second turns color writes off for 1.12.2's two shadow quads; `getMaxScroll` turns
+    them back on before the scroll bar.
+*   **Who it reaches**: every `GuiScreen` and `GuiSlot`, vanilla's and every mod's that uses them. Forge's
+    `GuiScrollingList` (the mod list) is its own class and keeps 1.12.2's look.
+*   **Fails safe**: per class. `GuiScreen` without exactly one draw and one gradient, or `GuiSlot` without exactly one
+    container background, two overlays and one `getMaxScroll`: that class is skipped (`P31` or `P31-list`). A list drawn
+    inside a scissor the screen already set keeps 1.12.2's own clipping. Color writes and the scissor are also reset at
+    the start of every frame, should a list's drawing throw. Without shaders or framebuffers the blur is left out.
+*   **Tested**: server self-test (`PatchTests`): the dev chain carries the five hooks and verifies; on the SRG jar
+    `GuiScreen` is patched the same way, and `GuiSlot` (vanilla's bytes, without Forge's `drawContainerBackground`) is
+    left unchanged. Client: `BACKPORTCORE_MENUSHOTS=1 runClient -Pselftest` (`selftest/ClientMenuShots`) opens Options,
+    Video Settings, Language, the world list, Resource Packs and Multiplayer outside a world and the pause menu, Video
+    Settings and the inventory inside one, checks what was drawn and saves each (`screenshots/menu-*.png`).
+
+## P32. Narrator Hotkey
+
+*   **Class**: `net.minecraft.client.Minecraft`, method `dispatchKeypresses()V` (`func_152348_aa`).
+    **Transformer**: `asm/MenuBackgroundTransformer`. **Hook**: `PresentationHooks.narratorCtrl`. **Since**: 1.3.2.
+*   **Vanilla 1.20.2** (23w31a): Accessibility Settings' Narrator Hotkey (on by default); off, Ctrl + B (Cmd + B) no longer
+    toggles the narrator.
+*   **Why a patch**: 1.12.2 tests `key == 48 && GuiScreen.isCtrlKeyDown()` inside `dispatchKeypresses`, before any event a
+    mod could cancel.
+*   **What changes**: the method's one `GuiScreen.isCtrlKeyDown()` becomes `PresentationHooks.narratorCtrl()`, which
+    answers the same unless Core's `backportcore:narrator_hotkey` is shown (a 1.20.2 or later backport is installed) and
+    off. Nothing else in the method moves.
+*   **Fails safe**: not exactly one `isCtrlKeyDown` call: skipped; Ctrl + B always toggles the narrator.
+*   **Tested**: server self-test (`PatchTests`, dev and SRG); client: the option shown and off turns the hotkey away.

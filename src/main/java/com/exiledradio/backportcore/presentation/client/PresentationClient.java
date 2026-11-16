@@ -41,6 +41,9 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());
         MinecraftForge.EVENT_BUS.register(new SoundDistances.Events());
         MinecraftForge.EVENT_BUS.register(new CopyClick());
+        MinecraftForge.EVENT_BUS.register(new MenuBackground.Events());
+        NetworkCharts.init();
+        MinecraftForge.EVENT_BUS.register(new NetworkCharts.Events());
         DebugScreen.init();
         RenderOptions.init();
     }
@@ -63,6 +66,7 @@ public final class PresentationClient {
         if (rm instanceof net.minecraft.client.resources.IReloadableResourceManager) {
             ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(StartupScreen.INSTANCE);
             ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(m -> TitleLogo.invalidate());
+            ((net.minecraft.client.resources.IReloadableResourceManager) rm).registerReloadListener(m -> MenuBackground.invalidate());
         }
         // Every backport has said its version by now: 1.21.11's leaves, debug key binds and texture filtering.
         VideoLayout.initLeaves(Minecraft.getMinecraft());

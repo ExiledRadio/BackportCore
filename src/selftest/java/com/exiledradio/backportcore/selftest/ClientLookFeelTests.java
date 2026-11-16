@@ -62,6 +62,20 @@ final class ClientLookFeelTests {
         check("client: Cloud Distance and the weather keep 1.12.2's below 1.21.6", com.exiledradio.backportcore.presentation.client.PresentationHooks.cloudFast(256) == 256
                 && com.exiledradio.backportcore.presentation.client.PresentationHooks.cloudFancy(-3) == -3
                 && com.exiledradio.backportcore.presentation.client.PresentationHooks.weatherRadius(10) == 10);
+        check("client: P31 and P32 applied", "applied".equals(com.exiledradio.backportcore.asm.Asm.state("P31"))
+                && "applied".equals(com.exiledradio.backportcore.asm.Asm.state("P32")));
+        check("client: before 1.20.5 the screens keep 1.12.2's dirt (no menu background, no 1.20.5 lists)",
+                !com.exiledradio.backportcore.presentation.client.MenuBackground.active()
+                        && com.exiledradio.backportcore.presentation.client.MenuBackground.menuFrames == 0
+                        && com.exiledradio.backportcore.presentation.client.MenuBackground.listFrames == 0,
+                com.exiledradio.backportcore.presentation.client.MenuBackground.menuFrames + "/"
+                        + com.exiledradio.backportcore.presentation.client.MenuBackground.listFrames);
+        check("client: before 1.20.2 Ctrl + B is always the narrator's", com.exiledradio.backportcore.presentation.client.PresentationHooks.narratorHotkeyOn());
+        float[] a = com.exiledradio.backportcore.presentation.client.PanoramaRenderer.lastAngles();
+        check("client: before 1.20.5 the panorama nods between 20 and 30 degrees", a[0] >= 20.0F && a[0] <= 30.0F, a[0]);
+        check("client: 1.20.6's panorama time: ticks, half a tick past seven", com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advance(1100, 1000) == 2.0F
+                && com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advance(5000, 0) == 0.5F
+                && com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advanceSpin(359.9F, 2.0F, 1.0F) < 1.0F);
         mc.displayGuiScreen(menu);
     }
 

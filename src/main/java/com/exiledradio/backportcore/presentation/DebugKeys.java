@@ -22,14 +22,17 @@ public final class DebugKeys {
         boolean run();
     }
 
-    /** One combination: F3 + {@code keyCode}, its F3+Q help line, and what it does (null: 1.12.2's own). */
+    /**
+     * One combination: F3 + {@code keyCode}, its F3+Q help line (null: none, as 1.20.2's F3 + 1, 2 and 3; since 1.3.2), and
+     * what it does (null: 1.12.2's own).
+     */
     public static final class Key {
         public final int keyCode;
         public final String helpKey;
         @Nullable
         public final Action action;
 
-        public Key(int keyCode, String helpKey, @Nullable Action action) {
+        public Key(int keyCode, @Nullable String helpKey, @Nullable Action action) {
             this.keyCode = keyCode;
             this.helpKey = helpKey;
             this.action = action;

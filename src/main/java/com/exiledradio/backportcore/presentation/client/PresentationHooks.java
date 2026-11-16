@@ -120,7 +120,9 @@ public final class PresentationHooks {
         if (key == DebugKeys.KEY_Q) {
             debugFeedback("debug.help.message");
             for (DebugKeys.Key line : map.values()) {
-                mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation(line.helpKey));
+                if (line.helpKey != null) { // a key with no help line (1.20.2's F3 + 1, 2 and 3)
+                    mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation(line.helpKey));
+                }
             }
             return true;
         }
@@ -326,6 +328,57 @@ public final class PresentationHooks {
             return vanilla;
         }
         return cloudHeight(mc.world.provider);
+    }
+
+    // ---- P31: 1.20.5's menu backgrounds (MenuBackground) ----
+
+    /** P31: {@code GuiScreen.drawBackground}'s {@code tessellator.draw()} (the dirt). */
+    public static void menuDirt(net.minecraft.client.renderer.Tessellator tessellator) {
+        MenuBackground.dirt(tessellator);
+    }
+
+    /** P31: {@code GuiScreen.drawWorldBackground}'s {@code drawGradientRect} (the gradient over the world). */
+    public static void menuWorldGradient(net.minecraft.client.gui.GuiScreen screen, int left, int top, int right, int bottom,
+            int from, int to) {
+        MenuBackground.worldGradient(screen, left, top, right, bottom, from, to);
+    }
+
+    /** P31: {@code GuiSlot.drawScreen}'s {@code drawContainerBackground(tessellator)}. */
+    public static void listBackground(net.minecraft.client.gui.GuiSlot slot, net.minecraft.client.renderer.Tessellator tessellator) {
+        MenuBackground.listBackground(slot, tessellator);
+    }
+
+    /** P31: {@code GuiSlot.drawScreen}'s two {@code overlayBackground} calls. */
+    public static void listOverlay(net.minecraft.client.gui.GuiSlot slot, int startY, int endY, int startAlpha, int endAlpha) {
+        MenuBackground.listOverlay(slot, startY, endY, startAlpha, endAlpha);
+    }
+
+    /** P31: {@code GuiSlot.drawScreen}'s {@code getMaxScroll()}. */
+    public static int listMaxScroll(net.minecraft.client.gui.GuiSlot slot) {
+        return MenuBackground.listMaxScroll(slot);
+    }
+
+    // ---- P32: 1.20.2's Narrator Hotkey ----
+
+    /** For the client self-test: Ctrl + B presses the hotkey turned away. */
+    public static volatile int narratorHotkeyBlocked;
+
+    /**
+     * P32: {@code Minecraft.dispatchKeypresses}'s one {@code GuiScreen.isCtrlKeyDown()}, the narrator's Ctrl + B test:
+     * false while Narrator Hotkey (1.20.2) is shown and off.
+     */
+    public static boolean narratorCtrl() {
+        boolean ctrl = net.minecraft.client.gui.GuiScreen.isCtrlKeyDown();
+        if (ctrl && !narratorHotkeyOn()) {
+            narratorHotkeyBlocked++;
+            return false;
+        }
+        return ctrl;
+    }
+
+    /** @return true when Ctrl + B toggles the narrator: always before 1.20.2, then Narrator Hotkey's value */
+    public static boolean narratorHotkeyOn() {
+        return !Presentation.NARRATOR_HOTKEY.isShown() || Presentation.NARRATOR_HOTKEY.get();
     }
 
     /**

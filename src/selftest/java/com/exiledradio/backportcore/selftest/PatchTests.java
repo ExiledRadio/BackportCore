@@ -59,6 +59,9 @@ final class PatchTests {
             {"net.minecraft.client.renderer.EntityRenderer", "P16", new String[] {"skyColor", "cloudLayer*2"}},
             {"net.minecraft.client.renderer.RenderGlobal", "P17", new String[] {"nearbyDistanceSq", "needsImmediateUpdate*2"}},
             {"net.minecraft.client.renderer.RenderGlobal", "P18", new String[] {"terrainStart"}},
+            {"net.minecraft.client.gui.GuiScreen", "P31", new String[] {"menuDirt", "menuWorldGradient"}},
+            {"net.minecraft.client.gui.GuiSlot", "P31", new String[] {"listBackground", "listOverlay*2", "listMaxScroll"}},
+            {"net.minecraft.client.Minecraft", "P32", new String[] {"narratorCtrl"}},
     };
 
     private PatchTests() {
@@ -132,6 +135,14 @@ final class PatchTests {
                     }
                     byte[] raw = readAll(zip.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
+                    if (name.endsWith(".GuiSlot")) {
+                        // The SRG jar is vanilla's, without Forge's binary patches; P31's list half swaps Forge's
+                        // drawContainerBackground call, which a real game has (Forge patches before any transformer).
+                        // On vanilla's bytes it must leave the class alone; the dev chain above checks the patch.
+                        check("SRG P31 on unpatched GuiSlot: left alone (Forge's drawContainerBackground missing)", out == raw,
+                                Asm.state("P31-list"));
+                        continue;
+                    }
                     check("SRG " + c[1] + " transformed", out != raw, Asm.state((String) c[1]));
                     verify("SRG " + c[1], name, out, (String[]) c[2]);
                 }
@@ -163,6 +174,7 @@ final class PatchTests {
             case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
             case "P17": cls = "ChunkRebuildsTransformer"; break;
             case "P18": cls = "CameraTerrainTransformer"; break;
+            case "P31": case "P32": cls = "MenuBackgroundTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

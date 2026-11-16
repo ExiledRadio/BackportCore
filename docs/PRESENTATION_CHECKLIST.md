@@ -92,3 +92,12 @@ Create a new world and load an existing one, each with these installed:
 
 - [ ] With the backports that add fog steps: underwater, nether and overworld fog look as in their version,
       and nothing flickers when walking into and out of water or lava.
+
+## 1.20.5 menus (with a 1.20.5 or later backport)
+
+- [ ] Options, Video Settings, the world list and Resource Packs show the panorama blurred under a dark tint, no dirt;
+      lists sit in a darker band between two thin lines, entries clipped at its edges while scrolling.
+- [ ] The pause menu and in-game Options show the world blurred; inventories, books and signs show it dimmed, not blurred.
+- [ ] Menu Background Blurriness at OFF: no blur anywhere; at 100%: stronger. The title screen is never blurred.
+- [ ] The panorama only turns (no nodding up and down) and keeps turning from screen to screen.
+- [ ] Narrator Hotkey (Accessibility, 1.20.2 or later): off, Ctrl + B does nothing; on, it toggles the narrator.
