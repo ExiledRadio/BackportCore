@@ -1,0 +1,20 @@
+{
+    "_comment": "1.20.6's post/blur.json (six box-blur passes; its RadiusMultipliers are never read, so all run at the full radius) on 1.12.2's own blur program. Core sets Radius each frame.",
+    "targets": [
+        "swap"
+    ],
+    "passes": [
+        { "name": "blur", "intarget": "minecraft:main", "outtarget": "swap",
+          "uniforms": [ { "name": "BlurDir", "values": [ 1.0, 0.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] },
+        { "name": "blur", "intarget": "swap", "outtarget": "minecraft:main",
+          "uniforms": [ { "name": "BlurDir", "values": [ 0.0, 1.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] },
+        { "name": "blur", "intarget": "minecraft:main", "outtarget": "swap",
+          "uniforms": [ { "name": "BlurDir", "values": [ 1.0, 0.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] },
+        { "name": "blur", "intarget": "swap", "outtarget": "minecraft:main",
+          "uniforms": [ { "name": "BlurDir", "values": [ 0.0, 1.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] },
+        { "name": "blur", "intarget": "minecraft:main", "outtarget": "swap",
+          "uniforms": [ { "name": "BlurDir", "values": [ 1.0, 0.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] },
+        { "name": "blur", "intarget": "swap", "outtarget": "minecraft:main",
+          "uniforms": [ { "name": "BlurDir", "values": [ 0.0, 1.0 ] }, { "name": "Radius", "values": [ 5.0 ] } ] }
+    ]
+}

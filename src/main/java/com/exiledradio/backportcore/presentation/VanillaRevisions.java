@@ -129,6 +129,29 @@ public final class VanillaRevisions {
         return null;
     }
 
+    /**
+     * 1.20.5 (24w09a, {@code PanoramaRenderer}): the panorama's pitch holds at 10 degrees and it only turns (1.13's nod
+     * between 20 and 30 degrees is gone), by one spin shared by every screen and never restarted.
+     */
+    public static boolean panoramaSpinOnly(GameVersion v) {
+        return v.isAtLeast("1.20.5");
+    }
+
+    /**
+     * 1.20.5 (24w09a, {@code Screen.renderBackground}): menus over the blurred panorama (outside a world) or the blurred
+     * world, under {@code menu_background.png} or {@code inworld_menu_background.png}; lists over their own darker
+     * background between two separators, with no dirt above or below. Container, book and sign screens keep the
+     * transparent gradient ({@code renderTransparentBackground}).
+     */
+    public static boolean menuBackgrounds(GameVersion v) {
+        return v.isAtLeast("1.20.5");
+    }
+
+    /** 1.20.2 (23w31a): the Narrator Hotkey option (Accessibility); off, Ctrl + B no longer toggles the narrator. */
+    public static boolean narratorHotkeyOption(GameVersion v) {
+        return v.isAtLeast("1.20.2");
+    }
+
     /** The title screen's logo layout. */
     public enum TitleLogo {
         /** 1.12.2 to 1.19: {@code minecraft.png} in two 155 by 44 pieces, "Java Edition" (98 by 14) below. */

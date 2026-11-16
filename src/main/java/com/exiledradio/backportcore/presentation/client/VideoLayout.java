@@ -132,7 +132,7 @@ public final class VideoLayout {
             }
             try {
                 if (o instanceof SliderOption) {
-                    ((SliderOption) o).set(Double.parseDouble(value));
+                    ((SliderOption) o).set(GraphicsPreset.toSlider(path, Double.parseDouble(value), ((SliderOption) o).max()));
                 } else if (o instanceof ToggleOption) {
                     ((ToggleOption) o).set(Boolean.parseBoolean(value));
                 } else if (o instanceof CycleOption) {
@@ -157,7 +157,8 @@ public final class VideoLayout {
         m.put(GraphicsPreset.ENTITY_SHADOWS, Boolean.toString(s.entityShadows));
         for (PresentationOption o : Presentation.options()) {
             if (o != Presentation.GRAPHICS_PRESET && o.isShown() && !m.containsKey(o.path())) {
-                m.put(o.path(), o instanceof SliderOption ? Double.toString(((SliderOption) o).get()) : o.write());
+                m.put(o.path(), o instanceof SliderOption
+                        ? Double.toString(GraphicsPreset.fromSlider(o.path(), ((SliderOption) o).get(), ((SliderOption) o).max())) : o.write());
             }
         }
         return m;

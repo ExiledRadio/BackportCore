@@ -96,6 +96,19 @@ public final class GraphicsPreset {
         return true;
     }
 
+    /**
+     * A preset's number for a backport's slider of that name. Menu Background Blurriness is 0 to 10 in vanilla's
+     * presets; a backport may register it as 0 to 100% (a slider to 1.0, Trails &amp; Tales Backport's), which takes a tenth.
+     */
+    public static double toSlider(String path, double presetValue, double sliderMax) {
+        return "menu_background_blurriness".equals(path) && sliderMax <= 1.0 ? presetValue / 10.0 : presetValue;
+    }
+
+    /** @return a slider's value as the presets write it (the inverse of {@link #toSlider}) */
+    public static double fromSlider(String path, double sliderValue, double sliderMax) {
+        return "menu_background_blurriness".equals(path) && sliderMax <= 1.0 ? Math.round(sliderValue * 1000.0) / 100.0 : sliderValue;
+    }
+
     /** Numbers compare as numbers ("1.0" is "1"), anything else as text. */
     static boolean same(String a, String b) {
         if (a.equals(b)) {

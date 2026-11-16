@@ -25,3 +25,5 @@ options.maxAnisotropy.tooltip = options.maxAnisotropy.tooltip
 options.vignette.tooltip = options.vignette.tooltip
 options.chunkFade.tooltip = options.chunkFade.tooltip
 debug.options.notAllowed.tooltip = debug.options.notAllowed.tooltip
+options.accessibility.narrator_hotkey.tooltip = options.accessibility.narrator_hotkey.tooltip
+options.accessibility.narrator_hotkey.mac.tooltip = options.accessibility.narrator_hotkey.mac.tooltip

@@ -103,6 +103,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.presentation.CommandUsageNetwork.init();
         com.exiledradio.backportcore.recipe.book.SmeltingBooks.init();
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
+        com.exiledradio.backportcore.advancement.AdventuringTime.register();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.recipe.RecipeUnlocks.Events());

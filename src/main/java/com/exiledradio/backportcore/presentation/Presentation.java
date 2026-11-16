@@ -46,6 +46,12 @@ public final class Presentation {
     /** 1.20.3's Hide Splash Texts (Accessibility Settings). Core's, since Core owns the splash list. */
     public static final ToggleOption HIDE_SPLASH_TEXTS = new ToggleOption("backportcore:hide_splash_texts",
             "options.hideSplashTexts", OptionScreen.ACCESSIBILITY, false);
+    /**
+     * 1.20.2's Narrator Hotkey (Accessibility Settings, last): off, Ctrl + B no longer toggles the narrator (patch P32).
+     * Core's, since only a patch reaches that key.
+     */
+    public static final ToggleOption NARRATOR_HOTKEY = new ToggleOption("backportcore:narrator_hotkey",
+            "options.accessibility.narrator_hotkey", OptionScreen.ACCESSIBILITY, true);
 
     /** 1.14's Text Background Opacity (Accessibility, and Chat Settings): the chat's background apart from its text. */
     public static final SliderOption TEXT_BACKGROUND_OPACITY = new SliderOption("backportcore:text_background_opacity",
@@ -158,6 +164,12 @@ public final class Presentation {
         HIDE_SPLASH_TEXTS.since("1.20.3");
         registerOption(PANORAMA_SPEED);
         registerOption(HIDE_SPLASH_TEXTS);
+        NARRATOR_HOTKEY.since("1.20.2");
+        NARRATOR_HOTKEY.after(HIDE_SPLASH_TEXTS.id());
+        // Vanilla's Util.getOSType test (that method is client-only in 1.12.2).
+        NARRATOR_HOTKEY.tooltip(System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("mac")
+                ? "options.accessibility.narrator_hotkey.mac.tooltip" : "options.accessibility.narrator_hotkey.tooltip");
+        registerOption(NARRATOR_HOTKEY);
         // 1.16.5's AccessibilityOptionsScreen order: narrator, subtitles, text background opacity, text background,
         // chat opacity, line spacing, chat delay, Auto-Jump, ...
         TEXT_BACKGROUND_OPACITY.since("1.14");

@@ -53,6 +53,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             ChunkFadeTransformer.class.getName(),
             TitleLogoTransformer.class.getName(),
             DebugBindsTransformer.class.getName(),
+            MenuBackgroundTransformer.class.getName(),
     };
 
     @Override

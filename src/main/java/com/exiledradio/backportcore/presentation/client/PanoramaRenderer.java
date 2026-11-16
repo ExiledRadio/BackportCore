@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.presentation.client;
 import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.presentation.PanoramaChoice;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.option.OptionStore;
 
 import net.minecraft.client.Minecraft;
@@ -29,6 +30,11 @@ import java.util.Random;
  * degrees a tick) and a gentle nod ({@code sin(t / 1000) * 5 + 25} degrees). The clock restarts for each new
  * title screen, as 1.13's does. 1.19.3's Panorama Scroll Speed scales the turn once a 1.19.3 or later
  * backport shows it.
+ *
+ * <p>From 1.20.5 ({@link VanillaRevisions#panoramaSpinOnly}) it is 1.20.6's {@code PanoramaRenderer}: the pitch holds at
+ * 10 degrees and the view only turns, by one spin shared by every screen ({@code Screen.PANORAMA} is static) that never
+ * restarts; each screen advances it by the ticks since its own last frame, half a tick for a screen's first frame or
+ * after more than seven ({@code Screen.advancePanoramaTime}).
  */
 @SideOnly(Side.CLIENT)
 public final class PanoramaRenderer {
@@ -47,6 +53,11 @@ public final class PanoramaRenderer {
     private static WeakReference<GuiScreen> screen = new WeakReference<GuiScreen>(null);
     private static float time;
     private static long lastMillis;
+    /** 1.20.5's spin, in degrees (0 to 360), shared by every screen. */
+    private static float spin;
+    /** The angles of the frame drawn last, for {@link #redraw}. */
+    private static float lastPitch = 25.0F;
+    private static float lastYaw;
     /** For the client self-test: frames drawn. */
     public static volatile int frames;
 
@@ -80,18 +91,49 @@ public final class PanoramaRenderer {
     /** Draws the panorama over the whole screen, advancing its clock by the real time since the last frame. */
     public static void render(GuiScreen menu) {
         long now = Minecraft.getSystemTime();
-        if (screen.get() != menu) {
-            screen = new WeakReference<GuiScreen>(menu);
-            time = 0.0F;
-            lastMillis = now;
-        }
-        // 1.13's screens get the ticks elapsed since the last frame; 1.12.2's get only the partial tick.
-        float elapsed = MathHelper.clamp((now - lastMillis) / 50.0F, 0.0F, 10.0F);
-        lastMillis = now;
         float speed = Presentation.PANORAMA_SPEED.isShown() ? (float) Presentation.PANORAMA_SPEED.get() : 1.0F;
-        time += elapsed * speed;
-        drawCube(Minecraft.getMinecraft(), faces(), MathHelper.sin(time * 0.001F) * 5.0F + 25.0F, -time * 0.1F, 1.0F);
+        if (VanillaRevisions.panoramaSpinOnly(Presentation.newest())) {
+            if (screen.get() != menu) {
+                // A new screen's last panorama time is 0, so its first frame advances half a tick.
+                screen = new WeakReference<GuiScreen>(menu);
+                lastMillis = 0L;
+            }
+            spin = advanceSpin(spin, advance(now, lastMillis), speed);
+            lastMillis = now;
+            lastPitch = 10.0F;
+            lastYaw = -spin;
+        } else {
+            if (screen.get() != menu) {
+                screen = new WeakReference<GuiScreen>(menu);
+                time = 0.0F;
+                lastMillis = now;
+            }
+            // 1.13's screens get the ticks elapsed since the last frame; 1.12.2's get only the partial tick.
+            float elapsed = MathHelper.clamp((now - lastMillis) / 50.0F, 0.0F, 10.0F);
+            lastMillis = now;
+            time += elapsed * speed;
+            lastPitch = MathHelper.sin(time * 0.001F) * 5.0F + 25.0F;
+            lastYaw = -time * 0.1F;
+        }
+        drawCube(Minecraft.getMinecraft(), faces(), lastPitch, lastYaw, 1.0F);
         frames++;
+    }
+
+    /** 1.20.6's {@code Screen.advancePanoramaTime}: the ticks since a screen's last frame, half a tick past seven. */
+    public static float advance(long nowMillis, long lastMillis) {
+        float ticks = (nowMillis - lastMillis) / 50.0F;
+        return ticks > 7.0F ? 0.5F : ticks;
+    }
+
+    /** 1.20.6's {@code PanoramaRenderer.render}: 0.1 degrees a tick, scaled by the scroll speed, kept under 360. */
+    public static float advanceSpin(float spin, float ticks, float speed) {
+        float next = spin + ticks * speed * 0.1F;
+        return next > 360.0F ? next - 360.0F : next;
+    }
+
+    /** @return the pitch and yaw of the panorama frame drawn last, in degrees (for the self-tests) */
+    public static float[] lastAngles() {
+        return new float[] {lastPitch, lastYaw};
     }
 
     /** 1.20.5's Menu Background Blurriness default (5), the blur's radius. */
@@ -107,8 +149,9 @@ public final class PanoramaRenderer {
 
     /**
      * 1.20.5's menu panorama ({@code Screen.renderPanorama} then {@code renderBlurredBackground}): {@link #render} into a
-     * buffer of its own, blurred by 1.12.2's own {@code shaders/post/blur.json} at {@code radius}, then drawn over the
-     * whole screen. Wherever the blur cannot run (no shader support, or an error once), the sharp panorama is drawn.
+     * buffer of its own, blurred at {@code radius} by 1.20.6's six box-blur passes on 1.12.2's {@code blur} program
+     * ({@code backportcore:shaders/post/menu_blur.json}; 1.3.0 and 1.3.1 ran 1.12.2's two-pass {@code blur.json}), then
+     * drawn over the whole screen. Wherever the blur cannot run (no shader support, or an error once), the sharp panorama is drawn.
      * Since Core 1.3.0.
      */
     public static void renderBlurred(@Nullable GuiScreen menu, float radius) {
@@ -131,7 +174,7 @@ public final class PanoramaRenderer {
                     blur.deleteShaderGroup();
                 }
                 blur = new net.minecraft.client.shader.ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), blurTarget,
-                        new ResourceLocation("shaders/post/blur.json"));
+                        new ResourceLocation("backportcore", "shaders/post/menu_blur.json"));
                 blur.createBindFramebuffers(w, h);
             }
             java.util.List<net.minecraft.client.shader.Shader> passes = net.minecraftforge.fml.common.ObfuscationReflectionHelper
@@ -190,7 +233,7 @@ public final class PanoramaRenderer {
             }
         }
         GlStateManager.disableDepth();
-        drawCube(mc, faces(), MathHelper.sin(time * 0.001F) * 5.0F + 25.0F, -time * 0.1F, hi);
+        drawCube(mc, faces(), lastPitch, lastYaw, hi);
         net.minecraft.util.ResourceLocation overlay = Presentation.panoramaOverlay();
         if (overlay != null) {
             mc.getTextureManager().bindTexture(overlay);
