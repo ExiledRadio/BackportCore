@@ -58,6 +58,8 @@ public final class BlockOwnership {
             }
         }
         own(vp, "blue_ice");
+        // The smithing table (1.14), which Nether Update (netherite) and Trails & Tales (templates) copy.
+        own(vp, "smithing_table");
 
         // Update Aquatic Backport (1.13). When two backports need the same block, it belongs to the one it
         // fits best: sea pickles are an ocean block, moved here from Village & Pillage on 2026-11-08. V&P's
