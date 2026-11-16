@@ -299,9 +299,18 @@ public final class SmithingUpgrades {
         return !base.isEmpty() && all().containsKey(base.getItem());
     }
 
-    /** @return the upgrade these two make, or null */
+    /**
+     * @return the upgrade these two make, or null; always null while {@link SmithingTemplates#upgradesNeedTemplate()}
+     * is true (1.20: a netherite upgrade takes the template, so a two-slot table makes nothing)
+     */
     @Nullable
     public static Upgrade find(ItemStack base, ItemStack addition) {
+        return SmithingTemplates.upgradesNeedTemplate() ? null : findAny(base, addition);
+    }
+
+    /** As {@link #find}, whether or not upgrades need the template: for {@link SmithingTemplates#find}. */
+    @Nullable
+    static Upgrade findAny(ItemStack base, ItemStack addition) {
         if (base.isEmpty() || addition.isEmpty()) {
             return null;
         }
@@ -324,7 +333,12 @@ public final class SmithingUpgrades {
         return null;
     }
 
+    /** Every two-slot upgrade; empty while {@link SmithingTemplates#upgradesNeedTemplate()} is true. */
     public static List<Upgrade> list() {
+        return SmithingTemplates.upgradesNeedTemplate() ? new ArrayList<Upgrade>() : listAny();
+    }
+
+    static List<Upgrade> listAny() {
         List<Upgrade> list = new ArrayList<Upgrade>();
         for (List<Upgrade> options : all().values()) {
             list.addAll(options);

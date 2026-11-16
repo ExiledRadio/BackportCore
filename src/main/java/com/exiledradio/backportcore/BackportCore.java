@@ -128,6 +128,8 @@ public final class BackportCore {
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
             com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();
             com.exiledradio.backportcore.gameevent.client.VibrationClient.init();
+            // 1.20's armor trims, worn and on item icons (smithing/).
+            com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.init();
         }
     }
 
@@ -164,6 +166,7 @@ public final class BackportCore {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();
+            com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.loadComplete();
         }
     }
 

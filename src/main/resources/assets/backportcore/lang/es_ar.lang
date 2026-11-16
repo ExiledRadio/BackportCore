@@ -242,4 +242,5 @@ backportcore.general.rendering.blockupdates.tooltip=Qué chunks modificados reco
 config.backportcore.recipes.tooltip=Las recetas de fabricación de los backports en el libro de recetas, desbloqueadas como vanilla desbloquea las suyas.
 backportcore.general.recipes.unlockrecipes.tooltip=Desbloquea las recetas de fabricación de los backports como vanilla desbloquea las suyas: tener un lingote de hierro da la receta de la mesa de herrería, y un palo o carbón la de la fogata. Aparece el aviso de receta y la receta se muestra en el libro de recetas. Desactivado: las recetas se pueden fabricar igual, pero nunca aparecen en el libro de recetas.\n\nLas recetas ya desbloqueadas siguen desbloqueadas.
 # --- end config tooltips ---
-chat.copy.click=Hacé clic para copiar
+chat.copy.click=Haz clic para copiar
+item.minecraft.smithing_template.upgrade=Diseño: 

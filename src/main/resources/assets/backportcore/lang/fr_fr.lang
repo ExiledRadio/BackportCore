@@ -243,3 +243,4 @@ config.backportcore.recipes.tooltip=Les recettes de fabrication des backports da
 backportcore.general.recipes.unlockrecipes.tooltip=Débloque les recettes de fabrication des backports comme vanilla débloque les siennes : avoir un lingot de fer donne la recette de la table de forgeron, un bâton ou du charbon celle du feu de camp. La notification de recette s'affiche et la recette apparaît dans le livre de recettes. Désactivé : les recettes restent fabricables, mais n'apparaissent jamais dans le livre de recettes.\n\nLes recettes déjà débloquées le restent.
 # --- end config tooltips ---
 chat.copy.click=Cliquez pour copier dans le presse-papiers
+item.minecraft.smithing_template.upgrade=Amélioration : 

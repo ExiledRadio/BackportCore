@@ -242,4 +242,5 @@ backportcore.general.rendering.blockupdates.tooltip=哪些发生变化的区块�
 config.backportcore.recipes.tooltip=将向后移植模组的合成配方加入配方书，并按原版解锁自身配方的方式解锁。
 backportcore.general.recipes.unlockrecipes.tooltip=按原版解锁自身配方的方式解锁向后移植模组的合成配方：持有铁锭会获得锻造台的配方，持有木棍或煤炭会获得营火的配方。此时会显示配方提示，配方也会出现在配方书中。关闭：这些配方仍可合成，但不会出现在配方书中。\n\n已解锁的配方保持解锁。
 # --- end config tooltips ---
-chat.copy.click=单击复制到剪切板
+chat.copy.click=单击复制到剪贴板
+item.minecraft.smithing_template.upgrade=已有升级：

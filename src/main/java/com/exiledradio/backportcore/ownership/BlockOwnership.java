@@ -58,6 +58,8 @@ public final class BlockOwnership {
             }
         }
         own(vp, "blue_ice");
+        // The smithing table (1.14), which Nether Update (netherite) and Trails & Tales (templates) copy.
+        own(vp, "smithing_table");
 
         // Update Aquatic Backport (1.13). When two backports need the same block, it belongs to the one it
         // fits best: sea pickles are an ocean block, moved here from Village & Pillage on 2026-11-08. V&P's
@@ -77,6 +79,10 @@ public final class BlockOwnership {
 
         // Wild Update Backport (1.19): the sculk sensor, which Trails & Tales (1.20) copies for its calibrated one.
         own("wildupdatebackport", "sculk_sensor");
+        // Amethyst and its geodes' layers, which Trails & Tales (1.20) copies for the calibrated sculk sensor and
+        // the amethyst trim.
+        own(cc, "amethyst_block", "budding_amethyst", "small_amethyst_bud", "medium_amethyst_bud",
+                "large_amethyst_bud", "amethyst_cluster", "calcite", "smooth_basalt");
     }
 
     private BlockOwnership() {
