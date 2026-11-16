@@ -46,7 +46,7 @@ final class RequestTests {
             check("ownership: tuff is Caves & Cliffs'", "cavesandcliffsbackport".equals(BlockOwnership.owner("tuff")));
             check("ownership: waxed oxidized cut copper slab is Caves & Cliffs'",
                     "cavesandcliffsbackport".equals(BlockOwnership.owner("waxed_oxidized_cut_copper_slab")));
-            check("ownership: 40 copper blocks plus ore, raw block and tuff", countOwned("cavesandcliffsbackport") == 43,
+            check("ownership: 40 copper blocks plus ore, raw block, tuff and 8 amethyst blocks", countOwned("cavesandcliffsbackport") == 51,
                     countOwned("cavesandcliffsbackport"));
             check("ownership: Caves & Cliffs is not installed, so others copy tuff", BlockOwnership.shouldRegister("trickytrialsbackport", "tuff"));
             BlockOwnership.declare("cavesandcliffsbackport:switched_off", "tuff");
