@@ -162,6 +162,33 @@ final class TtRequestTests {
             check("player: the advancement is not done by one biome", !progress.isDone());
         });
 
+        then(1, "F3 + 3's charts (request 10.9)", world -> {
+            com.exiledradio.backportcore.presentation.DebugCharts.Samples s = new com.exiledradio.backportcore.presentation.DebugCharts.Samples();
+            for (int i = 0; i < 250; i++) {
+                s.log(i);
+            }
+            check("samples: the last 240, oldest first", s.size() == 240 && s.get(0) == 10 && s.get(239) == 249);
+            check("ping: 500 ms is the top, 250 ms half way", com.exiledradio.backportcore.presentation.DebugCharts.pingHeight(500) == 60
+                    && com.exiledradio.backportcore.presentation.DebugCharts.pingHeight(250) == 30);
+            check("ping: green, yellow, red", com.exiledradio.backportcore.presentation.DebugCharts.pingColor(0) == 0xFF00FF00
+                    && com.exiledradio.backportcore.presentation.DebugCharts.pingColor(250) == 0xFFFFFF00
+                    && com.exiledradio.backportcore.presentation.DebugCharts.pingColor(2000) == 0xFFFF0000
+                    && com.exiledradio.backportcore.presentation.DebugCharts.pingColor(125) == 0xFF7FFF00);
+            check("ping: the label", "37 ms".equals(com.exiledradio.backportcore.presentation.DebugCharts.pingText(36.6)));
+            check("bandwidth: a tick's bytes a second", com.exiledradio.backportcore.presentation.DebugCharts.bytesPerSecond(100) == 2000.0);
+            check("bandwidth: labels as 1.20.6's", "64 B/s".equals(com.exiledradio.backportcore.presentation.DebugCharts.bandwidthText(64))
+                    && "16.0 KiB/s".equals(com.exiledradio.backportcore.presentation.DebugCharts.bandwidthText(16384))
+                    && "1.0 MiB/s".equals(com.exiledradio.backportcore.presentation.DebugCharts.bandwidthText(1048576)));
+            check("bandwidth: logarithmic, 1 MiB/s at the top", com.exiledradio.backportcore.presentation.DebugCharts.bandwidthHeight(1048576) == 60
+                    && com.exiledradio.backportcore.presentation.DebugCharts.bandwidthHeight(64) == 18
+                    && com.exiledradio.backportcore.presentation.DebugCharts.bandwidthHeight(0) == 0);
+            check("bandwidth: cyan, lilac, red", com.exiledradio.backportcore.presentation.DebugCharts.bandwidthColor(0) == 0xFF00FFFF
+                    && com.exiledradio.backportcore.presentation.DebugCharts.bandwidthColor(8192 / 20 + 1) != 0xFF00FFFF
+                    && com.exiledradio.backportcore.presentation.DebugCharts.bandwidthColor(10_000_000) == 0xFFFF0000);
+            check("charts: at most 242 wide, half the screen", com.exiledradio.backportcore.presentation.DebugCharts.width(400) == 242
+                    && com.exiledradio.backportcore.presentation.DebugCharts.width(200) == 200);
+        });
+
         then(1, "underwater fog colors", world -> {
             check("fog: the cherry grove's, by today's id", Arrays.equals(WaterColors.of("minecraft:cherry_grove"), new int[] {0x5DB7EF, 0x5DB7EF}));
             check("fog: the mangrove swamp's (Wild's request)", Arrays.equals(WaterColors.of("minecraft:mangrove_swamp"), new int[] {0x3A7A6A, 0x4D7A60}));

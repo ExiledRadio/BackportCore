@@ -214,6 +214,16 @@ change one version made stays made when only a later backport is installed:
   256 by 44 piece, `edition.png` 128 by 14 under it, Minceraft from `minceraft.png`, the splash at width / 2 + 123, 69.
   A backport of 1.20 or later registers `replaceAsset` for `textures/gui/title/minecraft.png`, `edition.png` and
   `minceraft.png` with vanilla's own files, and draws nothing itself.
+* **F3 + 3, the network charts** (1.20.2, `NetworkCharts`): Core's own key from 1.20.2. On, the debug screen comes on
+  and F3 + 2's charts (1.12.2's lagometer) go, and the other way round. The bandwidth received (bottom left; every byte
+  the connection receives, counted at the front of its Netty pipeline, logged each tick; not on this game's own server,
+  as vanilla) and the ping (bottom right; Core's ping request each tick while shown, `PingNetwork`, answered by a server
+  running Core; on a server without Core, the tab list's latency) are 1.20.6's `BandwidthDebugChart` and
+  `PingDebugChart`: 240 samples, 60 high, the min, avg and max above, the scale lines, the colors (`DebugCharts`).
+  1.12.2's "Debug: Pie [shift] ... FPS [alt] ..." line reads 1.20.2's "Debug charts: [F3+1] Profiler hidden; [F3+2] FPS +
+  TPS hidden; [F3+3] Ping hidden".
+* **F3 keys with no help line** (1.20.2): `v.debugKey(key, null, action)` puts a key in the map with no F3 + Q line, as
+  1.20.2's F3 + 1, 2 and 3 have none.
 * **Narrator Hotkey** (1.20.2, P32): Core's own option `backportcore:narrator_hotkey`, last on Accessibility Settings, on
   by default; off, Ctrl + B (Cmd + B) no longer toggles the narrator.
 * **Panorama motion** (1.20.5, `VanillaRevisions.panoramaSpinOnly`): the pitch holds at 10 degrees and the view only

@@ -120,7 +120,9 @@ public final class PresentationHooks {
         if (key == DebugKeys.KEY_Q) {
             debugFeedback("debug.help.message");
             for (DebugKeys.Key line : map.values()) {
-                mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation(line.helpKey));
+                if (line.helpKey != null) { // a key with no help line (1.20.2's F3 + 1, 2 and 3)
+                    mc.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation(line.helpKey));
+                }
             }
             return true;
         }

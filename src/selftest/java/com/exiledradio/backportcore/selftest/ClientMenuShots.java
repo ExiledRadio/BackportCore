@@ -140,6 +140,57 @@ final class ClientMenuShots {
             check("in a world: lists as 1.20.5's", MenuBackground.listFrames > this.listAt, MenuBackground.listFrames);
             return true;
         });
+        add(null, () -> {
+            mc.gameSettings.pauseOnLostFocus = false; // the dev window is not focused: no pause menu over the charts
+            mc.displayGuiScreen(null);
+            com.exiledradio.backportcore.presentation.DebugKeys.Key k = com.exiledradio.backportcore.presentation.DebugKeys
+                    .map(Presentation.installed()).get(org.lwjgl.input.Keyboard.KEY_3);
+            check("F3 + 3 is in the map from 1.20.2, with no F3 + Q line", k != null && k.helpKey == null && k.action != null);
+            mc.gameSettings.showDebugInfo = false;
+            com.exiledradio.backportcore.presentation.client.NetworkCharts.toggle();
+            check("F3 + 3 shows the charts and the debug screen", com.exiledradio.backportcore.presentation.client.NetworkCharts.showing()
+                    && mc.gameSettings.showDebugInfo && !mc.gameSettings.showLagometer);
+            io.netty.channel.embedded.EmbeddedChannel ch = new io.netty.channel.embedded.EmbeddedChannel(
+                    new com.exiledradio.backportcore.presentation.client.NetworkCharts.Counter());
+            ch.writeInbound(io.netty.buffer.Unpooled.wrappedBuffer(new byte[1234]));
+            ch.finishAndReleaseAll();
+            return true;
+        });
+        add(null, () -> {
+            BackportCore.LOGGER.info("MENU network charts: {} pings, {} pongs, {} samples",
+                    com.exiledradio.backportcore.presentation.client.NetworkCharts.pings,
+                    com.exiledradio.backportcore.presentation.client.NetworkCharts.pongs,
+                    com.exiledradio.backportcore.presentation.client.NetworkCharts.PING.size());
+            return true;
+        });
+        // A chart 213 wide shows only the newest 211 of 240 samples (vanilla's skip), so the shot waits for 29.
+        add("network-charts", () -> {
+            com.exiledradio.backportcore.presentation.DebugCharts.Samples b = com.exiledradio.backportcore.presentation.client.NetworkCharts.BANDWIDTH;
+            boolean counted = false;
+            for (int i = 0; i < b.size(); i++) {
+                counted |= b.get(i) == 1234;
+            }
+            check("bandwidth: the bytes a connection receives are logged in the tick", counted, b.size());
+            check("ping: the integrated server (with Core) answers each tick's request",
+                    com.exiledradio.backportcore.presentation.client.NetworkCharts.pongs > 5
+                            && com.exiledradio.backportcore.presentation.client.NetworkCharts.PING.size() > 5,
+                    com.exiledradio.backportcore.presentation.client.NetworkCharts.pings + " sent, "
+                            + com.exiledradio.backportcore.presentation.client.NetworkCharts.pongs + " back");
+            check("charts: drawn", com.exiledradio.backportcore.presentation.client.NetworkCharts.frames > 0);
+            String line = com.exiledradio.backportcore.presentation.client.NetworkCharts.chartsLine(mc);
+            check("the debug line is 1.20.2's", line.equals("Debug charts: [F3+1] Profiler hidden; [F3+2] FPS + TPS hidden; [F3+3] Ping visible"), line);
+            return true;
+        });
+        add(null, () -> {
+            mc.gameSettings.showLagometer = true;
+            return true;
+        });
+        add(null, () -> {
+            check("F3 + 2's charts turn F3 + 3's off", !com.exiledradio.backportcore.presentation.client.NetworkCharts.showing());
+            mc.gameSettings.showLagometer = false;
+            mc.gameSettings.showDebugInfo = false;
+            return true;
+        });
         add("inventory", () -> {
             show(new GuiInventory(mc.player));
             this.worldAt = MenuBackground.worldFrames;
@@ -176,7 +227,7 @@ final class ClientMenuShots {
     private void check(String what, boolean ok, Object detail) {
         if (ok) {
             this.pass++;
-            BackportCore.LOGGER.info("MENU PASS {}", what);
+            BackportCore.LOGGER.info("MENU PASS {} ({})", what, detail);
         } else {
             this.fail++;
             BackportCore.LOGGER.error("MENU FAIL {} ({})", what, detail);

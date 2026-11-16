@@ -229,10 +229,10 @@ public final class Contribution {
 
     /**
      * An F3 key combination this version added or changed: F3 + {@code keyCode} (an LWJGL 2 key code) runs
-     * {@code action} on the client, with no screen open. {@code helpKey} is its line in the F3+Q list (a lang
+     * {@code action} on the client, with no screen open. {@code helpKey} is its line in the F3+Q list (null for none, since 1.3.2; a lang
      * key, as vanilla's {@code "debug.copy_location.help"}). A key vanilla 1.12.2 already has is replaced.
      */
-    public Contribution debugKey(int keyCode, String helpKey, DebugKeys.Action action) {
+    public Contribution debugKey(int keyCode, @javax.annotation.Nullable String helpKey, DebugKeys.Action action) {
         this.debugAdds.add(new DebugKeys.Key(keyCode, helpKey, action));
         return this;
     }

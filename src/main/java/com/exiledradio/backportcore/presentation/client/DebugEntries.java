@@ -386,7 +386,7 @@ public final class DebugEntries {
         }
         String charts = null;
         for (String s : left) {
-            if (s != null && s.startsWith("Debug: Pie [shift]")) {
+            if (s != null && (s.startsWith("Debug: Pie [shift]") || s.startsWith("Debug charts: "))) {
                 charts = s;
             }
         }
