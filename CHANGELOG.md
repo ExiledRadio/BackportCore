@@ -1,5 +1,12 @@
-# 1.3.2
+# 1.4.0
 
+*   **Game events and vibrations** (`gameevent.*`), shared by every backport: Wild Update Backport's dispatcher,
+    emitters, 1.19.2 vibration listener, `avoid_vibration` trigger (now `backportcore:avoid_vibration`) and vibration
+    particle, moved here; 1.20.6's vibration system (`VibrationSystem`: the per-tick selector, block-distance
+    dispatch, the `listener` tag) for 1.20 backports; 1.20's events (mount, dismount, unequip, `entity_action`,
+    `resonate_1`-`15`) and tags, chosen by `GameEvents.require(version, switch)`; mount/dismount, 1.20's
+    equip/unequip and wolf-shake emitters; `GameEventTags.addResonator`; `SensorActivation`.
+*   Ownership: Wild Update Backport's sculk sensor (Trails & Tales Backport copies it).
 *   **The backports' requests** (Trails & Tales Backport's `CORE_REQUESTS.md` 10.5, 10.6, 10.8 and 11.2; Wild Update
     Backport's 10; T&T's 10.2 and 10.9, added while this was built):
     *   **1.20.5's menus** (P31, `presentation.client.MenuBackground`): no dirt. Outside a world menus are the panorama,

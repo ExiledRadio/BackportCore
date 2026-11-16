@@ -102,6 +102,10 @@ public final class BackportCore {
         com.exiledradio.backportcore.settings.SettingsNetwork.init();
         com.exiledradio.backportcore.presentation.CommandUsageNetwork.init();
         com.exiledradio.backportcore.recipe.book.SmeltingBooks.init();
+        // Game events and vibrations, for every backport that requires them (gameevent/).
+        com.exiledradio.backportcore.gameevent.GameEventNetwork.init();
+        com.exiledradio.backportcore.gameevent.AvoidVibrationTrigger.register();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.gameevent.GameEvents.Events());
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         com.exiledradio.backportcore.advancement.AdventuringTime.register();
         com.exiledradio.backportcore.presentation.PingNetwork.init();
@@ -123,6 +127,7 @@ public final class BackportCore {
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
             com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();
+            com.exiledradio.backportcore.gameevent.client.VibrationClient.init();
         }
     }
 
