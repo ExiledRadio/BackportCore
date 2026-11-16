@@ -69,10 +69,12 @@ public final class ColoredTooltipText {
         int y = event.getY();
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            if (line.startsWith(MARK)) {
-                int end = line.indexOf(END, MARK.length());
+            // GuiScreen.renderToolTip puts a gray code ahead of every line after the name.
+            int mark = line.indexOf(MARK);
+            if (mark >= 0) {
+                int end = line.indexOf(END, mark + MARK.length());
                 if (end > 0) {
-                    int id = decode(line.substring(MARK.length(), end));
+                    int id = decode(line.substring(mark + MARK.length(), end));
                     synchronized (ColoredTooltipText.class) {
                         if (id >= 0 && id < TEXTS.size()) {
                             event.getFontRenderer().drawStringWithShadow(TEXTS.get(id), event.getX(), y, COLORS.get(id));

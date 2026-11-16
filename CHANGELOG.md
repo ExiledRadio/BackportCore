@@ -1,3 +1,24 @@
+# 1.4.0
+
+*   **1.20's smithing** (`smithing.SmithingTemplates`, Trails & Tales request 1): template + base + addition.
+    Transforms keep the base's tag and damage; trims go through `ArmorTrims`. A template mod registers the netherite
+    upgrade template (`requireForUpgrades`, with its "needs the template" setting), a table owner says its table has
+    the slot (`declareTableSupport`) and asks `find`; `isTemplate`/`isBase`/`isAddition` sort shift-clicks, `list`
+    is for recipe viewers. While upgrades need the template, `SmithingUpgrades.find` and `list` answer nothing, so
+    no two-slot table skips it; with no table declaring support nothing changes.
+*   **Armor trims** (`smithing.ArmorTrims`): patterns (with their templates; each adds its trim recipe) and
+    materials (palette, tooltip color, `darkerOn` for 1.20's `override_armor_materials`), stored as 1.20.4's
+    `Trim: {pattern, material}`; unknown ids are kept and ignored. Client (`smithing.client`): 1.20's
+    `paletted_permutations` built at runtime from the grayscale pattern and the palette (worn textures on first use,
+    item overlays into the item atlas when it is stitched); every renderer's plain biped armor layer is replaced by
+    one that draws armor, trim, then glint per piece (vanilla's `renderArmorLayer` still draws the armor, so other
+    mods' armor hooks stay); another mod's armor layer subclass keeps its layer and gets a trim layer after it.
+    Armor icons in vanilla's shapes (vanilla's, netherite mods', `drawOnIcon`) get the trim overlay through a
+    wrapped model, by exact model name. Tooltip: "Upgrade:", pattern and material in the material's exact color
+    (`ColoredTooltipText` draws any RGB over a placeholder line), at 1.20's place, hidden by `HideFlags` 128.
+*   **Ownership**: `smithing_table` is Village & Pillage's; amethyst, its buds and cluster, calcite and smooth
+    basalt (blocks) and `amethyst_shard` (item) are Caves & Cliffs' (Trails & Tales copies them).
+
 # 1.3.1
 
 *   **`/seed`** (`command.SeedCommand`, replacing `CommandShowSeed` at `Presentation.isAtLeast("1.15")`): "Seed: [n]",
