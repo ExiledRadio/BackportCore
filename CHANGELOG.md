@@ -47,6 +47,14 @@
     Armor icons in vanilla's shapes (vanilla's, netherite mods', `drawOnIcon`) get the trim overlay through a
     wrapped model, by exact model name. Tooltip: "Upgrade:", pattern and material in the material's exact color
     (`ColoredTooltipText` draws any RGB over a placeholder line), at 1.20's place, hidden by `HideFlags` 128.
+*   **Snow over structures** (`structure.FreezeTopLayer`): today's `freeze_top_layer` runs after the structures, so
+    snow covers their tops like the terrain around them. 1.12.2 snowed before the family's structures were built, which
+    left outposts, shipwrecks and ruins bare in snowy biomes. Every `ScatteredStructure` now gets a snow layer (and
+    ice on still water) on the top block of each column its pieces cover; interiors are never touched. Today's rules:
+    no light check while decorating (snow lies by a structure's torches, which melt it later). A chunk generator with
+    today's temperatures implements `FreezeTopLayer.Climate`. `afterBuilding(world, structure, chunkX, chunkZ)` for a
+    backport's own structure generator, `area(world, chunkX, chunkZ)` for a generator that snows before its
+    structures.
 *   **Ownership**: `smithing_table` is Village & Pillage's; amethyst, its buds and cluster, calcite and smooth
     basalt (blocks) and `amethyst_shard` (item) are Caves & Cliffs' (Trails & Tales copies them).
 

@@ -281,6 +281,9 @@ public abstract class ScatteredStructure extends MapGenStructure {
                 kinds = new ArrayList<String>(FACTORIES.keySet());
             }
             ChunkPos chunk = new ChunkPos(chunkX, chunkZ);
+            // The columns the built pieces cover: 1.12 snowed the chunk before this ran, today's freeze_top_layer after.
+            boolean[] built = new boolean[256];
+            boolean any = false;
             for (String kind : kinds) {
                 ScatteredStructure structure = of(world, kind);
                 if (structure == null) {
@@ -289,9 +292,18 @@ public abstract class ScatteredStructure extends MapGenStructure {
                 try {
                     // Lays out every start within range; the primer is never touched by a structure.
                     structure.generate(world, chunkX, chunkZ, null);
-                    structure.generateStructure(world, random, chunk);
+                    if (structure.generateStructure(world, random, chunk)) {
+                        any |= FreezeTopLayer.cover(built, structure.structureMap.values(), chunkX, chunkZ);
+                    }
                 } catch (RuntimeException e) {
                     BackportCore.LOGGER.error("Could not build a {} at chunk {}, {}.", kind, chunkX, chunkZ, e);
+                }
+            }
+            if (any) {
+                try {
+                    FreezeTopLayer.freeze(world, built, chunkX, chunkZ);
+                } catch (RuntimeException e) {
+                    BackportCore.LOGGER.error("Could not snow over the structures at chunk {}, {}.", chunkX, chunkZ, e);
                 }
             }
         }

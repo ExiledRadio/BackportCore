@@ -80,6 +80,7 @@ public final class SelfTestRunner {
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
                     case "gameevents": GameEventTests.schedule(); break;
+                    case "snow": SnowTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -90,6 +91,7 @@ public final class SelfTestRunner {
         DeepWaterTests.schedule();
         DuplicateTests.schedule();
         StructureTests.schedule();
+        SnowTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();
         NetherTests.schedule();
