@@ -195,6 +195,17 @@ final class SettingsStyle {
         if (ICONS.containsKey(id)) {
             return ICONS.get(id);
         }
+        // "a|b": the first of several that is installed (Wild Update's goat horn, else wheat).
+        if (id.indexOf('|') >= 0) {
+            ItemStack stack = null;
+            for (String one : id.split("\\|")) {
+                if ((stack = icon(one.trim())) != null) {
+                    break;
+                }
+            }
+            ICONS.put(id, stack);
+            return stack;
+        }
         String name = id;
         int meta = 0;
         int at = id.indexOf('@');

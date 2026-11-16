@@ -19,7 +19,10 @@ public final class Setting {
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
     public @interface Feature {
-        /** The item drawn beside it, as {@code "modid:name"} or {@code "modid:name@meta"}. Empty for none. */
+        /**
+         * The item drawn beside it, as {@code "modid:name"} or {@code "modid:name@meta"}; several separated by
+         * {@code |} take the first one installed. Empty for none.
+         */
         String icon() default "";
 
         /** The boolean field in the category that switches it on and off. Default: {@code enabled}, if it has one. */

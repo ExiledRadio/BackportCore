@@ -1,6 +1,7 @@
 # 1.3.2
 
 *   **Fixed a blank square in place of a feature's icon on the settings screen** when its item comes from another installed backport, such as Buzzy Bees' campfire with Village & Pillage installed.
+*   A feature's settings icon can name several items, and the first one installed is shown: Caves & Cliffs' goats show Wild Update's goat horn when it is installed.
 
 # 1.3.1
 
