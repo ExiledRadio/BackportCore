@@ -76,6 +76,10 @@ public final class BlockOwnership {
                         waxed + stage + "cut_copper_slab", waxed + stage + "cut_copper_double_slab");
             }
         }
+        // Amethyst and its geodes' layers, which Trails & Tales (1.20) copies for the calibrated sculk sensor and
+        // the amethyst trim.
+        own(cc, "amethyst_block", "budding_amethyst", "small_amethyst_bud", "medium_amethyst_bud",
+                "large_amethyst_bud", "amethyst_cluster", "calcite", "smooth_basalt");
     }
 
     private BlockOwnership() {

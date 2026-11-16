@@ -38,6 +38,7 @@ public final class ItemOwnership {
         // Caves & Cliffs (1.17): copper's items.
         ITEMS.put("copper_ingot", "cavesandcliffsbackport");
         ITEMS.put("raw_copper", "cavesandcliffsbackport");
+        ITEMS.put("amethyst_shard", "cavesandcliffsbackport");
         // Buzzy Bees (1.15): honeycomb, which waxes copper and makes candles.
         ITEMS.put("honeycomb", "buzzybeesbackport");
         // Village & Pillage (1.14): the ominous bottle (metadata 0-4 = levels I-V) and Bad Omen, which its raids use.
