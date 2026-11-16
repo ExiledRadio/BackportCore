@@ -74,6 +74,9 @@ public final class BlockOwnership {
                         waxed + stage + "cut_copper_slab", waxed + stage + "cut_copper_double_slab");
             }
         }
+
+        // Wild Update Backport (1.19): the sculk sensor, which Trails & Tales (1.20) copies for its calibrated one.
+        own("wildupdatebackport", "sculk_sensor");
     }
 
     private BlockOwnership() {
