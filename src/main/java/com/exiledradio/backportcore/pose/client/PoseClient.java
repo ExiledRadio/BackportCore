@@ -8,12 +8,15 @@ import com.exiledradio.backportcore.pose.Poses;
 import com.exiledradio.backportcore.BackportCore;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.util.MovementInput;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -57,6 +60,8 @@ public final class PoseClient {
         /** P3: the call's limbSwing and headPitch, taken at the method's first line (see BipedAnglesTransformer). */
         float limbSwing;
         float headPitch;
+        /** Held crouched with the sneak key up (1.14's short crouch): drawn sneaking for this render only. */
+        boolean forcedSneak;
         /** P3: the model whose angles are being set for this player, so the later hooks need no parameters. */
         net.minecraft.client.model.ModelBiped model;
 
@@ -144,8 +149,41 @@ public final class PoseClient {
     public void preRenderPlayer(RenderPlayerEvent.Pre event) {
         EntityPlayer player = event.getEntityPlayer();
         boolean posed = Poses.drawn();
-        FRAMES.addLast(new Frame(player, posed ? Poses.get(player) : Pose.STANDING,
-                posed ? Poses.swimAmount(player, event.getPartialRenderTick()) : 0.0F));
+        Frame frame = new Frame(player, posed ? Poses.get(player) : Pose.STANDING,
+                posed ? Poses.swimAmount(player, event.getPartialRenderTick()) : 0.0F);
+        if (posed && frame.pose == Pose.SNEAKING && !player.isSneaking() && Poses.shortCrouch()) {
+            // 1.14 draws by pose (isVisuallySneaking): a player held crouched under a low ceiling crouches. 1.12.2's
+            // renderer, model and every layer ask isSneaking(), so it says yes for this one render.
+            frame.forcedSneak = true;
+            setSneak(player, true);
+        }
+        FRAMES.addLast(frame);
+    }
+
+    private static void setSneak(EntityPlayer player, boolean sneak) {
+        if (player instanceof EntityPlayerSP) {
+            // The client's own player answers isSneaking() from its input.
+            MovementInput input = ((EntityPlayerSP) player).movementInput;
+            if (input != null) {
+                input.sneak = sneak;
+            }
+        } else {
+            player.setSneaking(sneak);
+        }
+    }
+
+    /**
+     * 1.14's {@code ClientPlayerEntity.livingTick}: a player drawn crouching moves at sneaking speed (0.3) even with
+     * the sneak key up. Forge posts this right after vanilla's own 0.3 for the key.
+     */
+    @SubscribeEvent
+    public void inputUpdate(InputUpdateEvent event) {
+        MovementInput input = event.getMovementInput();
+        EntityPlayer player = event.getEntityPlayer();
+        if (!input.sneak && Poses.shortCrouch() && Poses.get(player) == Pose.SNEAKING && !player.capabilities.isFlying) {
+            input.moveStrafe *= 0.3F;
+            input.moveForward *= 0.3F;
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
@@ -153,6 +191,9 @@ public final class PoseClient {
         Frame top = FRAMES.peekLast();
         if (top != null && top.player == event.getEntityPlayer()) {
             FRAMES.removeLast();
+            if (top.forcedSneak) {
+                setSneak(top.player, false);
+            }
         }
     }
 
@@ -160,6 +201,11 @@ public final class PoseClient {
     public void renderTick(TickEvent.RenderTickEvent event) {
         if (event.phase == TickEvent.Phase.START) {
             // A render another mod cancelled after we saw its Pre never posts a Post.
+            for (Frame frame : FRAMES) {
+                if (frame.forcedSneak) {
+                    setSneak(frame.player, false);
+                }
+            }
             FRAMES.clear();
         }
     }

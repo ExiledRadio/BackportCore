@@ -42,6 +42,7 @@ final class PoseTests {
 
     static boolean rulesOn;
     static boolean crawlOn;
+    static boolean crouchOn;
     static final Set<EntityPlayer> SWIMMERS = Collections.newSetFromMap(new MapMaker().weakKeys().<EntityPlayer, Boolean>makeMap());
     static int travelCalls;
     static float slowDown = -1.0F;
@@ -67,6 +68,11 @@ final class PoseTests {
             @Override
             public boolean crawls() {
                 return crawlOn;
+            }
+
+            @Override
+            public boolean shortCrouch() {
+                return crouchOn;
             }
         });
         Poses.registerMovement(new PlayerMovement() {
@@ -206,6 +212,70 @@ final class PoseTests {
             fill(world, base.add(3, 0, -2), base.add(14, 2, 2), Blocks.AIR.getDefaultState());
             r.onUpdateEntity();
             check("then room to stand: 0.6 x 1.8, eyes 1.62", Poses.get(r) == Pose.STANDING && sized(r, 0.6F, 1.8F, 1.62F), size(r));
+        });
+
+        then(1, "1.14's short crouch", world -> {
+            rulesOn = true;
+            crawlOn = true;
+            crouchOn = false;
+            check("short crouch: off until the rules ask", !Poses.shortCrouch() && Poses.height(Pose.SNEAKING) == 1.65F, Poses.height(Pose.SNEAKING));
+            crouchOn = true;
+            check("short crouch: on, sneaking is 1.5 tall", Poses.shortCrouch() && Poses.height(Pose.SNEAKING) == 1.5F, Poses.height(Pose.SNEAKING));
+            fill(world, base.add(-2, 0, -2), base.add(14, 4, 2), Blocks.AIR.getDefaultState());
+            EntityPlayerMP p = player(world, "crouch");
+            p.setLocationAndAngles(base.getX() + 0.5D, base.getY(), base.getZ() + 0.5D, 0.0F, 0.0F);
+            p.onUpdateEntity();
+            check("crouch, open air: standing 0.6 x 1.8, eyes 1.62", Poses.get(p) == Pose.STANDING && sized(p, 0.6F, 1.8F, 1.62F), size(p));
+            p.setSneaking(true);
+            p.onUpdateEntity();
+            check("sneaking: pose SNEAKING, 0.6 x 1.5, eyes 1.27", Poses.get(p) == Pose.SNEAKING && sized(p, 0.6F, 1.5F, 1.27F), size(p));
+            check("sneaking: box is 1.5 tall", Math.abs(p.getEntityBoundingBox().maxY - p.getEntityBoundingBox().minY - 1.5D) < 1.0E-6D, p.getEntityBoundingBox());
+            p.onUpdateEntity();
+            check("sneaking, next tick: still 1.5 (vanilla's 1.65 put back)", sized(p, 0.6F, 1.5F, 1.27F), size(p));
+            p.setSneaking(false);
+            p.onUpdateEntity();
+            check("sneak released in the open: stands, 1.8, eyes 1.62", Poses.get(p) == Pose.STANDING && sized(p, 0.6F, 1.8F, 1.62F), size(p));
+
+            // A gap 1.5 tall: top-half stone slabs one block up, x 3..14. The player sneaks in from x 1.5.
+            net.minecraft.block.state.IBlockState topSlab = Blocks.STONE_SLAB.getDefaultState()
+                    .withProperty(net.minecraft.block.BlockSlab.HALF, net.minecraft.block.BlockSlab.EnumBlockHalf.TOP);
+            fill(world, base.add(3, 1, -2), base.add(14, 1, 2), topSlab);
+            p.setLocationAndAngles(base.getX() + 1.5D, base.getY(), base.getZ() + 0.5D, 0.0F, 0.0F);
+            p.setSneaking(true);
+            p.onUpdateEntity();
+            p.move(net.minecraft.entity.MoverType.SELF, 3.0D, 0.0D, 0.0D);
+            check("crouched: walks into a 1.5-block gap", p.posX > base.getX() + 4.0D, p.posX - base.getX());
+            p.onUpdateEntity();
+            p.setSneaking(false);
+            p.onUpdateEntity();
+            check("sneak released under the 1.5 ceiling: held crouched, 1.5, eyes 1.27",
+                    Poses.get(p) == Pose.SNEAKING && sized(p, 0.6F, 1.5F, 1.27F) && Poses.isVisuallySneaking(p), size(p));
+            float start = p.getHealth();
+            boolean everInside = false;
+            for (int i = 0; i < 100; i++) {
+                p.onUpdateEntity();
+                everInside |= p.isEntityInsideOpaqueBlock();
+            }
+            check("100 ticks held crouched: stays SNEAKING", Poses.get(p) == Pose.SNEAKING && p.height == 1.5F, size(p));
+            check("100 ticks held crouched: eyes never inside a block, no damage", !everInside && p.getHealth() >= start, p.getHealth());
+            p.move(net.minecraft.entity.MoverType.SELF, -6.0D, 0.0D, 0.0D);
+            p.onUpdateEntity();
+            check("out from under the ceiling: stands", Poses.get(p) == Pose.STANDING && sized(p, 0.6F, 1.8F, 1.62F), size(p));
+
+            // Control: 1.12.2's 1.65 crouch can't go in.
+            crouchOn = false;
+            EntityPlayerMP q = player(world, "nocrouch");
+            q.setLocationAndAngles(base.getX() + 1.5D, base.getY(), base.getZ() + 0.5D, 0.0F, 0.0F);
+            q.setSneaking(true);
+            q.onUpdateEntity();
+            q.onUpdateEntity();
+            q.move(net.minecraft.entity.MoverType.SELF, 3.0D, 0.0D, 0.0D);
+            check("short crouch off: 1.65 sneaking stops at the 1.5 gap", q.posX < base.getX() + 3.0D, q.posX - base.getX() + " " + size(q));
+            check("short crouch off: sneaking eyes 1.54", Math.abs(q.getEyeHeight() - 1.54F) < 1.0E-6F, size(q));
+            crouchOn = true;
+            fill(world, base.add(3, 1, -2), base.add(14, 1, 2), Blocks.AIR.getDefaultState());
+            crouchOn = false;
+            p.onUpdateEntity();
         });
 
         then(1, "pose packet", world -> {

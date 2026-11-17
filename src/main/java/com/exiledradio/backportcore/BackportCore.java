@@ -124,6 +124,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.duplicate.QuarkPairs.preInit();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.pose.client.PoseClient.init();
+            // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).
+            com.exiledradio.backportcore.map.client.MapIconRenderer.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
             com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();

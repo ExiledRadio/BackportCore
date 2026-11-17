@@ -62,6 +62,9 @@ final class PatchTests {
             {"net.minecraft.client.gui.GuiScreen", "P31", new String[] {"menuDirt", "menuWorldGradient"}},
             {"net.minecraft.client.gui.GuiSlot", "P31", new String[] {"listBackground", "listOverlay*2", "listMaxScroll"}},
             {"net.minecraft.client.Minecraft", "P32", new String[] {"narratorCtrl"}},
+            {"net.minecraft.entity.player.EntityPlayer", "P33", new String[] {"eyesFor", "eyeHeight"}},
+            {"net.minecraft.world.storage.MapDecoration", "P34", new String[] {"render"}},
+            {"net.minecraft.block.BlockPane", "P35", new String[] {"torchOnPane"}},
     };
 
     private PatchTests() {
@@ -135,6 +138,13 @@ final class PatchTests {
                     }
                     byte[] raw = readAll(zip.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
+                    if (name.endsWith(".MapDecoration")) {
+                        // Forge adds MapDecoration.render(int); the SRG jar is vanilla's, which has none. The patch
+                        // must leave it alone there; the dev chain above checks the patch.
+                        check("SRG P34 on unpatched MapDecoration: left alone (Forge's render missing)", out == raw,
+                                Asm.state("P34"));
+                        continue;
+                    }
                     if (name.endsWith(".GuiSlot")) {
                         // The SRG jar is vanilla's, without Forge's binary patches; P31's list half swaps Forge's
                         // drawContainerBackground call, which a real game has (Forge patches before any transformer).
@@ -175,6 +185,9 @@ final class PatchTests {
             case "P17": cls = "ChunkRebuildsTransformer"; break;
             case "P18": cls = "CameraTerrainTransformer"; break;
             case "P31": case "P32": cls = "MenuBackgroundTransformer"; break;
+            case "P33": cls = "EyeHeightTransformer"; break;
+            case "P34": cls = "MapIconTransformer"; break;
+            case "P35": cls = "PaneTorchTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -252,7 +265,9 @@ final class PatchTests {
                         && ((((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/pose/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/presentation/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/worldgen/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/render/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/render/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/map/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/mechanics/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }

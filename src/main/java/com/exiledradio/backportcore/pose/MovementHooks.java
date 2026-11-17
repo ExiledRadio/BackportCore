@@ -47,6 +47,36 @@ public final class MovementHooks {
         return gravity;
     }
 
+    /** P33: the player whose {@code getEyeHeight} is running on this thread. */
+    private static final ThreadLocal<EntityPlayer> EYES_OF = new ThreadLocal<EntityPlayer>();
+
+    /** P33: first instruction of {@code EntityPlayer.getEyeHeight}. */
+    public static void eyesFor(EntityPlayer player) {
+        EYES_OF.set(player);
+    }
+
+    /**
+     * P33: each return of {@code EntityPlayer.getEyeHeight}. 1.14's crouching eyes, 1.27, for a player in the short
+     * crouch's 1.5 box, whether or not the sneak key is down (1.12.2's method answers by the key and the height).
+     */
+    public static float eyeHeight(float eyes) {
+        EntityPlayer player = EYES_OF.get();
+        if (player == null) {
+            return eyes;
+        }
+        EYES_OF.set(null); // holds no player past the call
+        return eyeHeight(eyes, player);
+    }
+
+    /** P33's rule for one player. */
+    public static float eyeHeight(float eyes, EntityPlayer player) {
+        if (player.height == Poses.CROUCH_HEIGHT && Poses.get(player) == Pose.SNEAKING && !player.isPlayerSleeping()
+                && Poses.shortCrouch()) {
+            return Poses.CROUCH_EYES;
+        }
+        return eyes;
+    }
+
     /** {@code EntityPlayerSP.onLivingUpdate}, before {@code super.onLivingUpdate()} (from {@code pose.client.ClientHooks}). */
     public static void beforeClientMove(EntityPlayer player) {
         if (Poses.moving()) {
