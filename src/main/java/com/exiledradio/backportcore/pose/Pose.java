@@ -4,7 +4,8 @@ package com.exiledradio.backportcore.pose;
  * A player's pose, as 1.14's {@code Pose}: what shape their hitbox has and how they are drawn.
  *
  * <p>The sizes are 1.14.4's {@code PlayerEntity} sizes except sneaking, which keeps 1.12.2's 1.65 box and
- * 1.54 eyes (the shorter 1.14 crouch is a separate change no backport makes yet). 1.14 has one pose for
+ * 1.54 eyes here. 1.14's shorter crouch (a 1.5 box, eyes at 1.27) is a switch a backport turns on with
+ * {@link PoseRules#shortCrouch()}; {@link Poses#height} gives the height in use. 1.14 has one pose for
  * swimming and crawling: crawling is the swimming pose out of water.
  *
  * <p>The order is the packet encoding: add new poses at the end only.

@@ -74,6 +74,7 @@ public final class SelfTestRunner {
                     case "deepwater": DeepWaterTests.schedule(); break;
                     case "water": WaterTests.schedule(); WaterRuleTests.schedule(); break;
                     case "patches": PatchTests.schedule(); break;
+                    case "poses": PoseTests.schedule(); MechanicsTests.schedule(); break;
                     case "requests": RequestTests.schedule(); TtRequestTests.schedule(); break;
                     case "lookfeel": LookFeelTests.schedule(); break;
                     case "textures": TextureLayerTests.schedule(); break;
@@ -94,6 +95,7 @@ public final class SelfTestRunner {
         SnowTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();
+        MechanicsTests.schedule();
         NetherTests.schedule();
         LocateTests.schedule();
         FlatTests.schedule();

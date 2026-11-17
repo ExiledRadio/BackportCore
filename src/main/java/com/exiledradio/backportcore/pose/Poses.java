@@ -41,6 +41,11 @@ public final class Poses {
     /** Eye height base in the swimming pose: 1.12.2 returns 0.4 for a 0.6-tall player, and this less 0.08 sneaking. */
     static final float SWIM_EYE_BASE = 0.48F;
 
+    /** 1.14's crouching box height ({@code PlayerEntity}'s CROUCHING size), with {@link PoseRules#shortCrouch()} on. */
+    public static final float CROUCH_HEIGHT = 1.5F;
+    /** 1.14's crouching eye height ({@code PlayerEntity.getStandingEyeHeight}), with the short crouch on. */
+    public static final float CROUCH_EYES = 1.27F;
+
     private static final List<PoseRules> RULES = new CopyOnWriteArrayList<PoseRules>();
     private static final List<PlayerMovement> MOVEMENT = new CopyOnWriteArrayList<PlayerMovement>();
     /** Keyed by the player object itself (weak, by identity): a world's client and server copies of a player share an entity id. */
@@ -81,6 +86,41 @@ public final class Poses {
             }
         }
         return false;
+    }
+
+    /**
+     * @return true while poses are active and some enabled backport's rules ask for 1.14's shorter crouch
+     * ({@link PoseRules#shortCrouch()})
+     */
+    public static boolean shortCrouch() {
+        if (standsDown()) {
+            return false;
+        }
+        for (PoseRules rules : RULES) {
+            if (rules.enabled() && rules.shortCrouch()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** @return the box height of a pose as the engine sizes it now: sneaking is 1.5 with the short crouch on */
+    public static float height(Pose pose) {
+        return pose == Pose.SNEAKING && shortCrouch() ? CROUCH_HEIGHT : pose.height;
+    }
+
+    /** @return true if the engine sizes this pose itself (rather than leaving it to vanilla's updateSize) */
+    static boolean resized(Pose pose) {
+        return pose.resized() || pose == Pose.SNEAKING && shortCrouch();
+    }
+
+    /**
+     * @return true if the player is drawn crouching and moves at sneaking speed: 1.14's
+     * {@code isVisuallySneaking}, the crouching pose whether or not the sneak key is down. Only with the short
+     * crouch on; otherwise vanilla's sneak key.
+     */
+    public static boolean isVisuallySneaking(EntityPlayer player) {
+        return shortCrouch() ? get(player) == Pose.SNEAKING : player.isSneaking();
     }
 
     /** @return true if a mod is installed that resizes players or adds swimming of its own */
@@ -126,7 +166,7 @@ public final class Poses {
     public static AxisAlignedBB box(EntityPlayer player, Pose pose) {
         double half = pose.width / 2.0D;
         return new AxisAlignedBB(player.posX - half, player.posY, player.posZ - half,
-                player.posX + half, player.posY + pose.height, player.posZ + half);
+                player.posX + half, player.posY + height(pose), player.posZ + half);
     }
 
     /** @return true if nothing solid (blocks, boats, the world border) is in the player's box for this pose: 1.14's {@code isPoseClear} */
@@ -224,11 +264,13 @@ public final class Poses {
 
     /** Sets the box and eyes for a pose; vanilla's own poses are left to vanilla, once a shrunk box can grow back. */
     static void apply(EntityPlayer player, PoseState state, Pose pose) {
-        if (pose.resized()) {
-            if (player.width != pose.width || player.height != pose.height) {
-                setSize(player, pose.width, pose.height);
+        if (resized(pose)) {
+            float height = height(pose);
+            if (player.width != pose.width || player.height != height) {
+                setSize(player, pose.width, height);
             }
-            player.eyeHeight = SWIM_EYE_BASE;
+            // The short crouch's eyes come from patch P33 (MovementHooks.eyeHeight), which knows the pose.
+            player.eyeHeight = pose == Pose.SNEAKING ? player.getDefaultEyeHeight() : SWIM_EYE_BASE;
             state.resized = true;
             return;
         }
@@ -246,7 +288,10 @@ public final class Poses {
         if (player.width == target.width && player.height == target.height) {
             player.eyeHeight = player.getDefaultEyeHeight();
             state.resized = false;
-        } else if (fits(player, target)) {
+        } else if (player.world.getCollisionBoxes(player, new AxisAlignedBB(player.posX - target.width / 2.0D, player.posY,
+                player.posZ - target.width / 2.0D, player.posX + target.width / 2.0D, player.posY + target.height,
+                player.posZ + target.width / 2.0D)).isEmpty()) {
+            // Vanilla's own size for the pose (1.65 sneaking), which the short crouch does not use.
             setSize(player, target.width, target.height);
             player.eyeHeight = player.getDefaultEyeHeight();
             state.resized = false;

@@ -36,4 +36,13 @@ public interface PoseRules {
     default boolean crawls() {
         return false;
     }
+
+    /**
+     * @return true for 1.14's shorter crouch: a sneaking player is 1.5 blocks tall with eyes at 1.27 (1.12.2:
+     * 1.65 and 1.54), fits through a 1.5-block gap, and is held crouched (drawn crouching, moving at
+     * sneaking speed) where there is no room to stand
+     */
+    default boolean shortCrouch() {
+        return false;
+    }
 }
