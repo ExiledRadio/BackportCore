@@ -134,8 +134,11 @@ final class ClientPresentationTests {
                     }
                     if (mc.world != null && mc.player != null && this.worldTicks > 5) {
                         ClientCameraTests.tick(mc);
+                        if (ClientCameraTests.done) {
+                            ClientCrouchTests.tick(mc);
+                        }
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done) {
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);

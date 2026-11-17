@@ -655,7 +655,8 @@ or passes an existing constant through a hook of the same type.
 *   **Who it reaches**: players, while a backport's `PoseRules.shortCrouch()` is on; otherwise vanilla's value.
 *   **Fails safe**: method missing or no `FRETURN`: skipped; eyes are 1.12.2's (1.54 with the key, 1.62 held crouched).
 *   **Tested**: transformer chain and SRG names; `PoseTests` "1.14's short crouch" (sizes, eyes, the 1.5 gap, held
-    crouched, the 1.65 control).
+    crouched, the 1.65 control); client: `ClientCrouchTests` (camera easing to 1.27, walking into a 1.5 gap with the
+    integrated server agreeing, held crouched at sneaking speed and drawn crouching, standing up outside).
 
 ## P34. Map decorations from their own sprites
 
