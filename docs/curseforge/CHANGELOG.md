@@ -1,3 +1,7 @@
+# 1.4.1
+
+*   **Fixed two command suggestion lists on Cleanroom**: Cleanroom 0.6 and later show their own, so the backports' list now stays off there.
+
 # 1.4.0
 
 *   **Fixed a blank square in place of a feature's icon on the settings screen** when its item comes from another installed backport, such as Buzzy Bees' campfire with Village & Pillage installed.

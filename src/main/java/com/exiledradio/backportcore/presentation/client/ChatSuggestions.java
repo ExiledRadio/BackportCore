@@ -140,7 +140,14 @@ public final class ChatSuggestions {
     private ChatSuggestions() {
     }
 
+    /** Cleanroom 0.6 and later draw 1.13's command suggestions in {@link GuiChat} themselves, with no switch. */
+    static final String CLEANROOM_LIST = "com/cleanroommc/client/chat/suggestion/SuggestionList.class";
+
     public static void init() {
+        if (ChatSuggestions.class.getClassLoader().getResource(CLEANROOM_LIST) != null) {
+            BackportCore.LOGGER.info("Command suggestions: Cleanroom shows its own, so the backports' list stays off");
+            return;
+        }
         MinecraftForge.EVENT_BUS.register(INSTANCE);
         CommandUsageNetwork.onAnswer((name, usage) -> Minecraft.getMinecraft().addScheduledTask(() -> INSTANCE.usageAnswered(name, usage)));
     }

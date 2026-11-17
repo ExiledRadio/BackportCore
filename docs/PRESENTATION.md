@@ -274,7 +274,7 @@ change one version made stays made when only a later backport is installed:
   keep their layouts, only the backgrounds change).
 ## Command suggestions
 
-Once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen
+On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen
 events (no patch). The text before the cursor goes to the server in 1.12.2's `CPacketTabComplete` with the looked-at
 block, one request at a time, once typing pauses for 80 ms; the answer is read off the connection on its way to
 vanilla's handler (which ignores it: its own Tab never ran). Forge's client commands are asked locally. So vanilla and
