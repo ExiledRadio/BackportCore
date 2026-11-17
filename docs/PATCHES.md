@@ -642,7 +642,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Class**: `net.minecraft.entity.player.EntityPlayer`, method `getEyeHeight()F` (`func_70047_e`).
     **Transformer**: `asm/EyeHeightTransformer`. **Hooks**: `pose/MovementHooks.eyesFor`, `MovementHooks.eyeHeight`.
-    **Since**: 1.4.2.
+    **Since**: 1.4.0.
 *   **Vanilla 1.14** (19w12a): a crouching player is 1.5 blocks tall with eyes at 1.27 (`PlayerEntity`'s CROUCHING
     size and `getStandingEyeHeight`), by pose: a player held crouched under a 1.5-block ceiling has those eyes with the
     sneak key up. 1.12.2 is 1.65 tall sneaking and lowers the eyes 0.08 (to 1.54) only for the key or a 1.65 height.
@@ -661,7 +661,7 @@ or passes an existing constant through a hook of the same type.
 ## P34. Map decorations from their own sprites
 
 *   **Class**: `net.minecraft.world.storage.MapDecoration`, Forge's method `render(I)Z` (client only).
-    **Transformer**: `asm/MapIconTransformer`. **Hook**: `map/MapIcons.render`. **Since**: 1.4.2.
+    **Transformer**: `asm/MapIconTransformer`. **Hook**: `map/MapIcons.render`. **Since**: 1.4.0.
 *   **Vanilla 1.14 to 1.21.5**: village, swamp hut, jungle temple and trial chambers maps carry their own icons. 1.12.2
     draws decorations from a 4 x 4 sheet already holding ten (Update Aquatic Backport's red X makes eleven).
 *   **Why a patch**: Forge asks `MapDecoration.render(index)` before drawing each decoration ("true to skip vanilla"),
@@ -676,7 +676,7 @@ or passes an existing constant through a hook of the same type.
 ## P35. Torches on panes and bars
 
 *   **Class**: `net.minecraft.block.BlockPane`; adds an override of Forge's `canPlaceTorchOnTop`.
-    **Transformer**: `asm/PaneTorchTransformer`. **Hook**: `mechanics/BlockRules.torchOnPane`. **Since**: 1.4.2.
+    **Transformer**: `asm/PaneTorchTransformer`. **Hook**: `mechanics/BlockRules.torchOnPane`. **Since**: 1.4.0.
 *   **Vanilla 1.14.3** (pre3): torches and redstone torches stand on glass panes and iron bars.
 *   **Why a patch**: `BlockPane` inherits Forge's `Block.canPlaceTorchOnTop`, which turns its `CENTER_SMALL` top away;
     a vanilla class can't be given an override any other way.

@@ -1,15 +1,9 @@
-# 1.4.2
+# 1.4.0
 
 *   **1.14's shorter crouch**, for Village & Pillage Backport to turn on: sneaking makes a player 1.5 blocks tall with eyes at 1.27, a crouching player fits through a 1.5-block gap, and a player under a 1.5-block ceiling stays crouched there, drawn crouching and moving at sneaking speed.
 *   **Newer map icons**: backports can give maps today's village, swamp hut, jungle temple and trial chambers icons.
 *   **Torches on glass panes and iron bars**, as in 1.14, for Village & Pillage Backport to turn on.
-
-# 1.4.1
-
 *   **Fixed two command suggestion lists on Cleanroom**: Cleanroom 0.6 and later show their own, so the backports' list now stays off there.
-
-# 1.4.0
-
 *   **Fixed a blank square in place of a feature's icon on the settings screen** when its item comes from another installed backport, such as Buzzy Bees' campfire with Village & Pillage installed.
 *   A feature's settings icon can name several items, and the first one installed is shown: Caves & Cliffs' goats show Wild Update's goat horn when it is installed.
 
