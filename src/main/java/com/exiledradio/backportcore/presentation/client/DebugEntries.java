@@ -142,7 +142,7 @@ public final class DebugEntries {
 
     /** @return true when the newest installed version has 1.21.9's debug options */
     public static boolean active() {
-        return VanillaRevisions.debugOptions(Presentation.newest());
+        return VanillaRevisions.debugOptions(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.DEBUG));
     }
 
     /** @return a profile's statuses ({@code DebugScreenEntries.PROFILES}); entries not named are Off */

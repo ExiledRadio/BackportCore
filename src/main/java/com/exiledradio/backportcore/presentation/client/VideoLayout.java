@@ -45,7 +45,7 @@ public final class VideoLayout {
 
     /** @return true when the newest installed version lays Video Settings out in sections */
     public static boolean active() {
-        return VanillaRevisions.videoSections(Presentation.newest());
+        return VanillaRevisions.videoSections(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.VIDEO));
     }
 
     /** Builds the rows from the screen's entries ({@code entries} and {@code keys} in step). */

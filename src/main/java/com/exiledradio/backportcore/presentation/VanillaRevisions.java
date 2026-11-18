@@ -33,42 +33,42 @@ public final class VanillaRevisions {
 
     /** @return the startup screen at the newest installed version */
     public static Startup startup() {
-        return Startup.forVersion(Presentation.newest());
+        return Startup.forVersion(Presentation.newest(LookArea.STARTUP));
     }
 
     /** 1.13: the title screen fades in on the first start (its panorama at once, the rest over the next second). */
     public static boolean titleFadeIn() {
-        return Presentation.isAtLeast("1.13");
+        return Presentation.isAtLeast(LookArea.TITLE, "1.13");
     }
 
     /** 1.13 (17w43a): 3D Anaglyph is gone from Video Settings, and off. */
     public static boolean anaglyphRemoved() {
-        return Presentation.isAtLeast("1.13");
+        return Presentation.isAtLeast(LookArea.VIDEO, "1.13");
     }
 
     /** 1.13: GUI Scale counts Auto, 1, 2, 3 ... up to what the window fits (4 at 1080p). */
     public static boolean numberedGuiScale() {
-        return Presentation.isAtLeast("1.13");
+        return Presentation.isAtLeast(LookArea.VIDEO, "1.13");
     }
 
     /** 1.14 (18w44a): Use VBOs is gone from Video Settings, and always on. */
     public static boolean vboRemoved() {
-        return Presentation.isAtLeast("1.14");
+        return Presentation.isAtLeast(LookArea.VIDEO, "1.14");
     }
 
     /** 1.14 (18w43a): the pause menu's Give Feedback and Report Bugs row. */
     public static boolean pauseFeedback() {
-        return Presentation.isAtLeast("1.14");
+        return Presentation.isAtLeast(LookArea.MENUS, "1.14");
     }
 
     /** 1.15 (19w35a): a hardcore death screen has one "Title screen" button instead of Delete World and Leave Server. */
     public static boolean hardcoreTitleButton() {
-        return Presentation.isAtLeast("1.15");
+        return Presentation.isAtLeast(LookArea.MENUS, "1.15");
     }
 
     /** 1.15: button text is white, hovered or not (was 0xE0E0E0, and yellow 0xFFFFA0 hovered). */
     public static boolean whiteButtonText() {
-        return Presentation.isAtLeast("1.15");
+        return Presentation.isAtLeast(LookArea.MENUS, "1.15");
     }
 
     // ---- Since Core 1.3.0: 1.18 to 1.21.11's options screens, F3 and the title logo ----

@@ -42,7 +42,7 @@ public final class WorldBackups {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
-        if (!(event.getGui() instanceof GuiWorldEdit) || !Presentation.isAtLeast("1.13")) {
+        if (!(event.getGui() instanceof GuiWorldEdit) || !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MENUS, "1.13")) {
             return;
         }
         GuiScreen gui = event.getGui();

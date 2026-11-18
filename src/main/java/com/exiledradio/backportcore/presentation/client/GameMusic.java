@@ -96,7 +96,7 @@ public final class GameMusic {
         void choose(Situation situation);
     }
 
-    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>();
+    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>(com.exiledradio.backportcore.presentation.LookArea.MUSIC);
     private static boolean tried;
     @Nullable
     private static volatile SoundEvent underWater;
@@ -174,7 +174,7 @@ public final class GameMusic {
                 return false;
             }
             field.set(mc, new CoreTicker(mc));
-            BackportCore.LOGGER.info("Presentation: in-game music follows {}", STEPS.names(com.exiledradio.backportcore.presentation.Presentation.newest()));
+            BackportCore.LOGGER.info("Presentation: in-game music follows {}", STEPS.names(com.exiledradio.backportcore.presentation.Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.MUSIC)));
             return true;
         } catch (Exception e) {
             BackportCore.LOGGER.warn("Presentation: could not replace the music ticker; the versions' music is not applied.", e);
@@ -301,6 +301,6 @@ public final class GameMusic {
 
     /** For tests: the names of the steps at the newest version. */
     public static List<String> names() {
-        return STEPS.names(com.exiledradio.backportcore.presentation.Presentation.newest());
+        return STEPS.names(com.exiledradio.backportcore.presentation.Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.MUSIC));
     }
 }

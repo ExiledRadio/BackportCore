@@ -90,7 +90,7 @@ public class OptionsListScreen extends GuiScreen {
         this.buttonList.clear();
         List<GuiButton> entries = new ArrayList<GuiButton>();
         List<String> keys = new ArrayList<String>();
-        GameVersion newest = Presentation.newest();
+        GameVersion newest = Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS);
         for (GameSettings.Options o : this.vanilla) {
             if (o == GameSettings.Options.AUTO_JUMP && this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.controlsLeaveAccessibility(newest)) {
                 continue;
@@ -98,7 +98,7 @@ public class OptionsListScreen extends GuiScreen {
             entries.add(vanillaButton(o));
             keys.add(o.name());
         }
-        if (this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.videoSections(newest)) {
+        if (this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.videoSections(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.VIDEO))) {
             // 1.21.11: View Bobbing left Video Settings for Accessibility.
             entries.add(vanillaButton(GameSettings.Options.VIEW_BOBBING));
             keys.add(GameSettings.Options.VIEW_BOBBING.name());
@@ -117,7 +117,7 @@ public class OptionsListScreen extends GuiScreen {
             entries.add(at + 1, new OptionWidgets.Action(0, 0, 150, I18n.format("options.controls"),
                     () -> this.mc.displayGuiScreen(controls(this))));
         }
-        boolean footer = this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast("1.16.4");
+        boolean footer = this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.16.4");
         int gridBottom = this.height / 6 + 24 * ((entries.size() + 1) / 2 - 1) + 20;
         this.list = null;
         this.rowButtons.clear();

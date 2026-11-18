@@ -11,6 +11,41 @@ hook calls vanilla's own code.
 
 ## What each backport calls
 
+## The Look & Feel switches (Core 1.4.0)
+
+Each part of the look resolves at its own version, `Presentation.newest(LookArea)`: the newest installed version,
+stopped at Core's **Newest Look** (`lookAndFeel.newestLook`: Latest or a version), or 1.12.2 while **Use the Newer Look
+and Feel** (`lookAndFeel.newerLook`) or that part's own switch is off. `Presentation.newest()` and `isAtLeast(version)`
+are the whole look's (the master switch and Newest Look); `installedNewest()` is the newest installed version whatever
+the switches, for content. A dedicated server ignores the switches: each player chooses their own look.
+
+| `LookArea` | Switch | What resolves by it |
+|---|---|---|
+| `LOADING` | `loadingScreens` | `loadingRevision()`: the world-loading screen, the backports' drawers too |
+| `STARTUP` | `startupScreen` | the startup screen, its logos, Monochrome Logo |
+| `TITLE` | `titleScreen` | panorama, overlay, motion, logo (P29), fade-in, Accessibility button, Panorama Scroll Speed |
+| `SPLASHES` | `splashes` | the splash list, Hide Splash Texts |
+| `MENUS` | `menus` | menu backgrounds, button text, `widgets.png` and other GUI textures, pause and death screens, world backups, multiplayer warning, 60 fps menus |
+| `OPTIONS` | `optionsScreens` | Accessibility, Mouse, Controls and Key Binds screens, the options on them |
+| `VIDEO` | `videoSettings` | Video Settings' layout, removed entries, its options |
+| `CHAT` | `chat` | command suggestions, the chat options |
+| `DEBUG` | `debug` | F3 keys, `DebugText`, Debug Options, debug key binds |
+| `TOASTS` | `toasts` | toast textures, Music Toast |
+| `INVENTORY` | `inventory` | creative order, slot highlights (P23), container and recipe book textures |
+| `MUSIC` | `music` | menu music, `GameMusic`, the Music and Sounds options, 1.14's sound channels |
+| `SKY` | `sky` | `FogPipeline` |
+| `WORDING` | `wording` | `vanillaText` |
+| `TEXTURES` | `textures.modernTextures` | the texture layers, and other replaced assets |
+
+A replaced asset belongs to a part by its path (`LookArea.ofAsset`). An option belongs to its screen's part (Video
+Settings, Chat, Music and Sounds, else the options screens) unless it names one with `option.area(LookArea.X)`. Code
+that only shows while an option `isShown()` follows its part.
+
+A backport's own drawing asks `Presentation.isAtLeast(LookArea.LOADING, "1.20.5")` (its part) or `isAtLeast("1.20.5")`
+(only the master switch and Newest Look). A backport's `@Config` boolean that only changes the look joins the Look & Feel
+page with `@Setting.Look("music")` (sections: loading, title, menus, video, chat, debug, toasts, inventory, music, world,
+backports); the family's existing ones are listed by name in `settings.LookFeelPage.KNOWN`.
+
 Once, from pre-init or init, on both sides (everything on a `Contribution` is plain data):
 
 ```java

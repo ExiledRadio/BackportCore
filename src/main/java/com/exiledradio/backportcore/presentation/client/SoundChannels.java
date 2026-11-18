@@ -36,7 +36,7 @@ public final class SoundChannels {
 
     /** @return true when the installed versions want 1.14's channels */
     public static boolean wanted() {
-        return Presentation.isAtLeast("1.14");
+        return Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MUSIC, "1.14");
     }
 
     /** @return true when paulscode is set to 1.14's channels */

@@ -29,6 +29,11 @@ public final class CoreConfig {
     @Config.Comment("The parts of the game's look that follow the newest installed backport, as vanilla's did at that version.")
     public static final PresentationSettings presentation = new PresentationSettings();
 
+    @Setting.Feature(icon = "minecraft:item_frame", toggle = "newerLook")
+    @Config.LangKey("config.backportcore.lookAndFeel")
+    @Config.Comment("The newer look and feel the installed backports bring, part by part. Also on the Look & Feel page.")
+    public static final LookAndFeelSettings lookAndFeel = new LookAndFeelSettings();
+
     @Setting.Feature(icon = "minecraft:grass")
     @Config.LangKey("config.backportcore.rendering")
     @Config.Comment("How the world's chunks are rebuilt when blocks change, as later versions do it.")
@@ -108,6 +113,88 @@ public final class CoreConfig {
         })
         @Setting.Client
         public String reportBugsLink = "https://discord.gg/kxQvMDJBTN";
+    }
+
+    /**
+     * The Look &amp; Feel page's switches ({@link com.exiledradio.backportcore.presentation.LookArea}). Client only: each
+     * player picks their own look, and a server ignores these. Off puts that part back to 1.12.2's; the backports stay
+     * installed and their content is unchanged.
+     */
+    public static final class LookAndFeelSettings {
+
+        @Config.Comment({
+                "Use the newer look and feel the installed backports bring. Off: everything below looks and",
+                "feels as 1.12.2, and each switch keeps its own choice for when this is on again.",
+                "",
+                "Client only; a server ignores it."
+        })
+        @Setting.Client
+        public boolean newerLook = true;
+
+        @Config.Comment({
+                "The newest version whose look is used: Latest (the newest installed backport), or a version",
+                "such as 1.16 to stop there even with later backports installed.",
+                "",
+                "Client only; a server ignores it."
+        })
+        @Setting.Client
+        public String newestLook = "LATEST";
+
+        @Config.Comment("The newer world-loading screens: the spawn-area percentage, the chunk grid, the panorama behind it. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean loadingScreens = true;
+
+        @Config.Comment("The Mojang Studios screen when resources load. Off: none, as 1.12.2.")
+        @Setting.Client
+        public boolean startupScreen = true;
+
+        @Config.Comment("The newer title screen: panorama, logo, fade-in and Accessibility button. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean titleScreen = true;
+
+        @Config.Comment("The newer versions' splash texts. Off: 1.12.2's list.")
+        @Setting.Client
+        public boolean splashes = true;
+
+        @Config.Comment("Newer menus and buttons: backgrounds, button text, the pause and death screens, world backups. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean menus = true;
+
+        @Config.Comment("The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean optionsScreens = true;
+
+        @Config.Comment("The newer Video Settings: layout, sections, preset and its options. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean videoSettings = true;
+
+        @Config.Comment("Command suggestions and the newer chat options. Off: 1.12.2's Tab completion and chat.")
+        @Setting.Client
+        public boolean chat = true;
+
+        @Config.Comment("The newer F3 screen, F3 keys, Debug Options and charts. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean debug = true;
+
+        @Config.Comment("The music toast and the newer toast textures. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean toasts = true;
+
+        @Config.Comment("The creative order, slot highlights and newer container textures. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean inventory = true;
+
+        @Config.Comment("The newer menu music, in-game music and music options. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean music = true;
+
+        @Config.Comment("Each version's fog, sky, clouds and sunrise. Off: 1.12.2's.")
+        @Setting.Client
+        public boolean sky = true;
+
+        @Config.Comment("Vanilla's text as the newer versions word it. Off: 1.12.2's wording.")
+        @Setting.Client
+        public boolean wording = true;
     }
 
     public static final class Textures {

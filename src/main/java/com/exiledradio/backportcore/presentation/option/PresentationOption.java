@@ -33,6 +33,8 @@ public abstract class PresentationOption {
     @Nullable
     private String tooltipKey;
     private final java.util.List<OptionScreen> alsoOn = new java.util.ArrayList<OptionScreen>();
+    @Nullable
+    private com.exiledradio.backportcore.presentation.LookArea area;
     private boolean loaded;
 
     /**
@@ -164,9 +166,36 @@ public abstract class PresentationOption {
         return false;
     }
 
-    /** @return true while the newest installed version shows it */
+    /** @return true while the version its part of the look resolves at ({@link #area()}) shows it */
     public final boolean isShown() {
-        return isShownAt(Presentation.newest());
+        return isShownAt(Presentation.newest(area()));
+    }
+
+    /**
+     * The part of the look it belongs to (Core's Look &amp; Feel page): while that part is off, the option is hidden and,
+     * where its code asks {@link #isShown()}, has no effect. By default its screen's: Video Settings, Chat, Music and
+     * Sounds, else the options screens.
+     */
+    public PresentationOption area(com.exiledradio.backportcore.presentation.LookArea area) {
+        this.area = area;
+        return this;
+    }
+
+    /** @return the part of the look it belongs to */
+    public final com.exiledradio.backportcore.presentation.LookArea area() {
+        if (this.area != null) {
+            return this.area;
+        }
+        switch (this.screen) {
+            case VIDEO:
+                return com.exiledradio.backportcore.presentation.LookArea.VIDEO;
+            case CHAT:
+                return com.exiledradio.backportcore.presentation.LookArea.CHAT;
+            case SOUNDS:
+                return com.exiledradio.backportcore.presentation.LookArea.MUSIC;
+            default:
+                return com.exiledradio.backportcore.presentation.LookArea.OPTIONS;
+        }
     }
 
     /** @return true when version {@code v} shows it */

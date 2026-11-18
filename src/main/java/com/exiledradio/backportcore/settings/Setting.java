@@ -61,6 +61,17 @@ public final class Setting {
         Kind value();
     }
 
+    /**
+     * A boolean that only changes how the game looks or feels: it is also listed on Core's Look &amp; Feel page, in that
+     * section, and is the client's own (as {@link Client}). Since Core 1.4.0.
+     */
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    public @interface Look {
+        /** The page's section: loading, title, menus, video, chat, debug, toasts, inventory, music, world or backports. */
+        String value();
+    }
+
     /** What a list entry names. The part before the first {@code =}, space or {@code @} is the id. */
     public enum Kind {
         BLOCK, ITEM, ENTITY, BIOME, ANY

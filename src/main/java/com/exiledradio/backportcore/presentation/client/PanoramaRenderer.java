@@ -66,7 +66,7 @@ public final class PanoramaRenderer {
 
     /** @return true when the title screen is drawn as 1.13 and later draw it: any backport is installed */
     public static boolean modern() {
-        return Presentation.isAtLeast("1.13");
+        return Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.TITLE, "1.13");
     }
 
     /** @return this launch's panorama, chosen once from Core's {@code presentation.panorama} setting */
@@ -82,6 +82,11 @@ public final class PanoramaRenderer {
         return choice;
     }
 
+    /** Chooses the panorama again (the Look &amp; Feel page changed which versions the title screen uses). */
+    public static synchronized void resetChoice() {
+        choice = null;
+    }
+
     /** @return the six faces drawn this launch */
     public static ResourceLocation[] faces() {
         PanoramaChoice c = choice();
@@ -92,7 +97,7 @@ public final class PanoramaRenderer {
     public static void render(GuiScreen menu) {
         long now = Minecraft.getSystemTime();
         float speed = Presentation.PANORAMA_SPEED.isShown() ? (float) Presentation.PANORAMA_SPEED.get() : 1.0F;
-        if (VanillaRevisions.panoramaSpinOnly(Presentation.newest())) {
+        if (VanillaRevisions.panoramaSpinOnly(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.TITLE))) {
             if (screen.get() != menu) {
                 // A new screen's last panorama time is 0, so its first frame advances half a tick.
                 screen = new WeakReference<GuiScreen>(menu);

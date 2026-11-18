@@ -65,7 +65,7 @@ public final class DebugText {
         }
     }
 
-    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>();
+    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>(com.exiledradio.backportcore.presentation.LookArea.DEBUG);
     /** For the client self-test: frames edited. */
     public static volatile int frames;
 

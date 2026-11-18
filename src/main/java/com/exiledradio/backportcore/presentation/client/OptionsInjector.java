@@ -156,7 +156,7 @@ public final class OptionsInjector {
     }
 
     private static void options(GuiScreen gui, List<GuiButton> buttons) {
-        if (VanillaRevisions.keyBindsScreen(Presentation.newest())) {
+        if (VanillaRevisions.keyBindsScreen(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS))) {
             // 1.18: "Controls..." opens the Controls screen; 1.12.2's key list is Key Binds behind it.
             GuiButton controls = find(buttons, CONTROLS_BUTTON);
             if (controls != null) {
@@ -165,7 +165,7 @@ public final class OptionsInjector {
                         () -> Minecraft.getMinecraft().displayGuiScreen(OptionsListScreen.controls(gui))));
             }
         }
-        if (Presentation.isAtLeast("1.14")) {
+        if (Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.14")) {
             GuiButton snooper = find(buttons, SNOOPER_BUTTON);
             if (snooper != null) {
                 buttons.remove(snooper);
@@ -177,13 +177,13 @@ public final class OptionsInjector {
     }
 
     private static void controls(GuiScreen gui, List<GuiButton> buttons) throws Exception {
-        if (VanillaRevisions.keyBindsScreen(Presentation.newest())) {
+        if (VanillaRevisions.keyBindsScreen(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS))) {
             keyBinds((GuiControls) gui, buttons);
             return;
         }
         int left = gui.width / 2 - 155;
         int right = gui.width / 2 + 5;
-        if (Presentation.isAtLeast("1.14")) {
+        if (Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.14")) {
             for (GameSettings.Options moved : OptionsListScreen.MOUSE) {
                 GuiButton b = find(buttons, moved.getOrdinal());
                 if (b instanceof GuiOptionButton || b instanceof GuiOptionSlider) {

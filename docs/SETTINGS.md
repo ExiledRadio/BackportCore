@@ -40,6 +40,14 @@ Core reads the `@Config` classes Forge already knows (`ConfigManager.getModConfi
 A mod outside the family registers with `BackportSettings.register(modid)` (or names its classes) in
 pre-init or init.
 
+## Look & Feel page (Core 1.4.0)
+
+Below Backport Core in the side list. It holds no settings of its own: each row is a setting of another page (the same
+Forge property), listed when it is Core's `lookAndFeel`, `textures.modernTextures` or `presentation.panorama`, carries
+`@Setting.Look(section)`, or is in `LookFeelPage.KNOWN`. The master switch heads it; the sections start open. A look
+setting is a Client setting wherever it shows. A row shows the versions its part comes from; with the master switch
+off, the others are dimmed and keep their values.
+
 ## Servers
 
 - Single player and LAN host: everything edits the local files, on the client thread, as Forge's own config

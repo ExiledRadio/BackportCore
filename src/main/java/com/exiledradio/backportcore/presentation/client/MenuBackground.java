@@ -121,7 +121,7 @@ public final class MenuBackground {
 
     /** @return true when screens and lists are drawn as 1.20.5 draws them */
     public static boolean active() {
-        return VanillaRevisions.menuBackgrounds(Presentation.newest());
+        return VanillaRevisions.menuBackgrounds(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.MENUS));
     }
 
     /** @return true for the screens 1.20.5 draws over the transparent gradient (containers, books, signs) */

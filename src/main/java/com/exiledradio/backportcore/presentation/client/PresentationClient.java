@@ -20,6 +20,7 @@ public final class PresentationClient {
 
     public static void init() {
         MinecraftForge.EVENT_BUS.register(new Events());
+        MinecraftForge.EVENT_BUS.register(new LookFeelClient());
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());
         MinecraftForge.EVENT_BUS.register(new MenuMusicPlayer());
         MinecraftForge.EVENT_BUS.register(new FogPipeline.Events());

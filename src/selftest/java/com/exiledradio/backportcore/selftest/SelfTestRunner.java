@@ -77,6 +77,7 @@ public final class SelfTestRunner {
                     case "poses": PoseTests.schedule(); MechanicsTests.schedule(); break;
                     case "requests": RequestTests.schedule(); TtRequestTests.schedule(); break;
                     case "lookfeel": LookFeelTests.schedule(); break;
+                    case "looksettings": LookSwitchTests.schedule(); break;
                     case "textures": TextureLayerTests.schedule(); break;
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
@@ -109,6 +110,7 @@ public final class SelfTestRunner {
         RequestTests.schedulePresentation();
         TtRequestTests.schedule();
         LookFeelTests.schedule();
+        LookSwitchTests.schedule();
         TextureLayerTests.schedule();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();

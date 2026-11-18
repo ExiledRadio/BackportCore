@@ -74,13 +74,13 @@ public final class DebugBindings {
 
     /** From Core's client init, after every backport's pre-init: registers the binds when 1.21.11 is installed. */
     static void register() {
-        if (!VanillaRevisions.debugKeyBinds(Presentation.newest()) || modifier != null) {
+        if (!VanillaRevisions.debugKeyBinds(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.DEBUG)) || modifier != null) {
             return;
         }
         overlay = bind("key.debug.overlay", Keyboard.KEY_F3);
         modifier = bind("key.debug.modifier", Keyboard.KEY_F3);
         crash = bind("key.debug.crash", Keyboard.KEY_C);
-        for (Integer code : DebugKeys.map(Presentation.installed()).keySet()) {
+        for (Integer code : DebugKeys.map(Presentation.installed(com.exiledradio.backportcore.presentation.LookArea.DEBUG)).keySet()) {
             String name = NAMES.get(code);
             if (name != null && !COMBOS.containsKey(code)) {
                 COMBOS.put(code, bind(name, code));

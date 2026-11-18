@@ -191,7 +191,7 @@ public final class FogPipeline {
         return movesClouds;
     }
 
-    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>();
+    private static final OrderedSteps<Step> STEPS = new OrderedSteps<Step>(com.exiledradio.backportcore.presentation.LookArea.SKY);
 
     /** Adds a step of {@code version} ("1.13"); steps run oldest version first, then in the order added. */
     public static void add(String version, String name, Step step) {

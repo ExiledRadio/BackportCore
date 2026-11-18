@@ -208,7 +208,7 @@ public final class OptionWidgets {
 
         /** 1.21.11 (25w41a): the knob follows the mouse and snaps to the nearest value when let go. */
         static boolean snapsOnRelease() {
-            return com.exiledradio.backportcore.presentation.Presentation.isAtLeast("1.21.11");
+            return com.exiledradio.backportcore.presentation.Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.21.11");
         }
     }
 }
