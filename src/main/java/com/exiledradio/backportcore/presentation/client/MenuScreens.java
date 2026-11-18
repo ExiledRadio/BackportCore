@@ -25,10 +25,12 @@ import java.util.List;
  * text.
  * <ul>
  *   <li>Pause, 1.14 (18w43a): 1.14.4's {@code PauseScreen} grid, 204 wide (Back to Game; Advancements, Statistics;
- *       Mod Options, Report Bugs; Options..., Open to LAN; Save and Quit to Title). The user's choice: Forge's Mod
- *       Options button takes Give Feedback's place, so it sits with the other menus instead of under Save and Quit,
- *       and Report Bugs opens {@code presentation.reportBugsLink} (the backports' Discord by default), since bugs in
- *       a backport are not Mojang's. Without a Mod Options button, Give Feedback keeps its place.</li>
+ *       Give Feedback, Report Bugs; Options..., Open to LAN; Save and Quit to Title). Forge 1.12.2's Mod Options
+ *       button goes where Forge itself puts its pause-menu Mods button since it re-added one (1.19.2 to 1.20.x,
+ *       NeoForge 1.20 and 1.21, "Re-add in-game mod menu", #9655): a full-width "Mods" row under Options... and Open
+ *       to LAN, with Save and Quit one row lower. Forge 1.13 to 1.18 had no pause-menu button at all. Report Bugs opens
+ *       {@code presentation.reportBugsLink} (the backports' Discord by default), since bugs in a backport are not
+ *       Mojang's.</li>
  *   <li>Death, 1.15 (19w35a): a hardcore death screen's second button is "Title screen" instead of Delete World or
  *       Leave Server, and it leaves the world for the title screen, saving it (1.15's {@code exitToTitleScreen};
  *       1.12.2's only showed the title screen over a world still running).</li>
@@ -96,19 +98,18 @@ public final class MenuScreens {
                 case 7: // Open to LAN
                     place(b, w / 2 + 4, top + 96, 98);
                     break;
-                case 1: // Save and Quit to Title / Disconnect
-                    place(b, w / 2 - 102, top + 120, 204);
+                case 1: // Save and Quit to Title / Disconnect, a row lower when Forge's Mods row is there
+                    place(b, w / 2 - 102, find(buttons, MOD_OPTIONS) != null ? top + 144 : top + 120, 204);
                     break;
-                case MOD_OPTIONS:
-                    place(b, w / 2 - 102, top + 72, 98);
+                case MOD_OPTIONS: // Forge's own pause-menu Mods row (1.19.2+): full width, above Save and Quit
+                    place(b, w / 2 - 102, top + 120, 204);
+                    b.displayString = I18n.format("fml.menu.mods");
                     break;
                 default:
                     break;
             }
         }
-        if (find(buttons, MOD_OPTIONS) == null) {
-            buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, FEEDBACK_URL)));
-        }
+        buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, FEEDBACK_URL)));
         String bugs = reportBugsLink();
         if (!bugs.isEmpty()) {
             buttons.add(new OptionWidgets.Action(w / 2 + 4, top + 72, 98, I18n.format("menu.reportBugs"), () -> confirmLink(gui, bugs)));

@@ -478,10 +478,12 @@ final class ClientPresentationTests {
         GuiButton back = find(pb, 4);
         GuiButton mods = find(pb, 12);
         GuiButton quit = find(pb, 1);
-        check("client: pause menu: Mod Options in Give Feedback's place, Report Bugs beside it, 204 wide grid",
-                mods != null && mods.y == top + 72 && mods.x == pause.width / 2 - 102 && mods.width == 98
-                        && feedback == null && bugs != null && back != null && back.width == 204 && back.x == pause.width / 2 - 102, describe(pb));
-        check("client: pause menu: nothing below Save and Quit", quit != null && quit.y == top + 120 && !below(pb, top + 120), describe(pb));
+        check("client: pause menu: Give Feedback and Report Bugs side by side, 204 wide grid",
+                feedback != null && bugs != null && back != null && back.width == 204 && back.x == pause.width / 2 - 102, describe(pb));
+        check("client: pause menu: Forge's Mods row, full width under Options and Open to LAN (Forge 1.19.2+)",
+                mods != null && mods.y == top + 120 && mods.x == pause.width / 2 - 102 && mods.width == 204
+                        && net.minecraft.client.resources.I18n.format("fml.menu.mods").equals(mods.displayString), describe(pb));
+        check("client: pause menu: Save and Quit one row lower, nothing below it", quit != null && quit.y == top + 144 && !below(pb, top + 144), describe(pb));
         check("client: Report Bugs opens the configured link (Discord by default)",
                 "https://discord.gg/kxQvMDJBTN".equals(com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink),
                 com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink);
