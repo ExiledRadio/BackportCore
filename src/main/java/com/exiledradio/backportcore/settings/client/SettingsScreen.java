@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.settings.client;
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.settings.BackportSettings;
 import com.exiledradio.backportcore.settings.Family;
+import com.exiledradio.backportcore.settings.LookFeelPage;
 import com.exiledradio.backportcore.settings.SettingsModel;
 import com.exiledradio.backportcore.settings.SettingsModel.Entry;
 import com.exiledradio.backportcore.settings.SettingsModel.Group;
@@ -61,6 +62,7 @@ public class SettingsScreen extends GuiScreen {
     final Map<Entry, String[]> staged = new LinkedHashMap<Entry, String[]>();
     private final Set<Group> expanded = new HashSet<Group>();
     private final List<Row> rows = new ArrayList<Row>();
+    private boolean lookOpened;
 
     private GuiTextField search;
     private String query = "";
@@ -94,6 +96,9 @@ public class SettingsScreen extends GuiScreen {
         this.parent = parent;
         for (Family.Member m : Family.MEMBERS) {
             this.side.add(m.modid);
+            if (m.modid.equals(BackportCore.MOD_ID)) {
+                this.side.add(LookFeelPage.ID);
+            }
         }
         for (String id : BackportSettings.modids()) {
             if (!this.side.contains(id)) {
@@ -160,7 +165,21 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private Page page() {
-        return BackportSettings.page(this.selected);
+        return LookFeelPage.ID.equals(this.selected) ? LookFeelPage.page() : BackportSettings.page(this.selected);
+    }
+
+    /** @return the Look &amp; Feel page's master switch, as this screen shows it (with its staged change), or true */
+    boolean newerLookOn() {
+        Page look = LookFeelPage.page();
+        if (look.groups.isEmpty() || look.groups.get(0).toggle == null) {
+            return true;
+        }
+        return "true".equals(value(look.groups.get(0).toggle)[0]);
+    }
+
+    /** @return true for a look setting the master switch turns off for now (its own choice is kept) */
+    boolean offByMaster(Entry e) {
+        return e.lookSection != null && !LookFeelPage.isMaster(e) && !"".equals(e.lookSection) && !newerLookOn();
     }
 
     private int pageColor(String modid) {
@@ -265,6 +284,10 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private void buildPage(Page page) {
+        if (page.modid.equals(LookFeelPage.ID) && !this.lookOpened) {
+            this.lookOpened = true;
+            this.expanded.addAll(page.groups);
+        }
         if (SettingsClient.remote() && hasServerEntries(page)) {
             if (SettingsClient.serverValues() == null) {
                 this.rows.add(new MessageRow(I18n.format(SettingsClient.waitingForServer() && !timedOut()
@@ -406,13 +429,16 @@ public class SettingsScreen extends GuiScreen {
             int iconSize = ih >= 20 ? 16 : ih - 2;
             if (m != null) {
                 SettingsStyle.familyIcon(this.mc, m, this.sideX + 6, y + (ih - iconSize) / 2, iconSize, installed ? 1.0F : 0.35F);
+            } else if (LookFeelPage.ID.equals(id) && ih >= 18) {
+                SettingsStyle.item(this.mc, SettingsStyle.icon("minecraft:item_frame"), this.sideX + 6, y + (ih - 16) / 2);
             }
             int tx = this.sideX + 8 + iconSize;
             int tw = this.sideX + this.sideW - 4 - tx;
             String name = SettingsClient.modName(id);
             if (ih >= 20) {
                 this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, name, tw), tx, y + 2, installed ? SettingsStyle.TEXT : SettingsStyle.DIM);
-                String sub = installed ? (m != null && !m.version.isEmpty() ? m.version + "  " : "") + modVersion(id)
+                String sub = LookFeelPage.ID.equals(id) ? I18n.format("backportcore.settings.look.sub")
+                        : installed ? (m != null && !m.version.isEmpty() ? m.version + "  " : "") + modVersion(id)
                         : I18n.format("backportcore.settings.notInstalled");
                 this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, sub, tw), tx, y + 11, SettingsStyle.DIM);
             } else {
@@ -445,7 +471,8 @@ public class SettingsScreen extends GuiScreen {
         }
         int nameW = (this.headerH == 26 ? this.chips[0].x - 4 : this.mainX + this.mainW - 4) - tx;
         this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, SettingsClient.modName(this.selected), nameW), tx, this.top + 4, SettingsStyle.TEXT);
-        String sub = (m != null && !m.version.isEmpty() ? m.version + "  " : "") + modVersion(this.selected);
+        String sub = LookFeelPage.ID.equals(this.selected) ? I18n.format("backportcore.settings.look.sub")
+                : (m != null && !m.version.isEmpty() ? m.version + "  " : "") + modVersion(this.selected);
         this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, sub, nameW), tx, this.top + 14, SettingsStyle.MUTED);
         Gui.drawRect(this.mainX, this.listTop - 1, this.mainX + this.mainW, this.listTop, 0xFF000000 | pageColor(this.selected));
     }
@@ -823,6 +850,11 @@ public class SettingsScreen extends GuiScreen {
             texts.add(I18n.format("backportcore.settings.badge.newChunks"));
             colors.add(SettingsStyle.CHUNKS);
         }
+        String versions = LookFeelPage.versions(e);
+        if (versions != null) {
+            texts.add(versions);
+            colors.add(SettingsStyle.CORE);
+        }
         if (e.side == SettingsModel.Side.CLIENT) {
             texts.add(I18n.format("backportcore.settings.badge.client"));
             colors.add(SettingsStyle.CLIENT);
@@ -848,8 +880,14 @@ public class SettingsScreen extends GuiScreen {
         StringBuilder b = new StringBuilder();
         if (why != null) {
             b.append(I18n.format(why)).append(' ');
+        } else if (offByMaster(e)) {
+            b.append(I18n.format("backportcore.settings.look.offByMaster")).append(' ');
         }
         b.append(description.replace('\n', ' ').trim());
+        String changedIn = LookFeelPage.versionList(e);
+        if (!changedIn.isEmpty()) {
+            b.append(' ').append(I18n.format("backportcore.settings.look.changedIn", changedIn));
+        }
         if (e.type != SettingsModel.Type.LIST) {
             b.append(' ').append(I18n.format("backportcore.settings.default", SettingsStyle.value(e, e.defaults())));
             if (e.vanilla != null) {
@@ -994,7 +1032,7 @@ public class SettingsScreen extends GuiScreen {
                 nameY = y + 12;
             }
             String shown = SettingsStyle.trim(SettingsScreen.this.fontRenderer, name, left - tx - 8);
-            boolean locked = lockReason(this.e) != null;
+            boolean locked = lockReason(this.e) != null || offByMaster(this.e);
             SettingsScreen.this.fontRenderer.drawString(shown, tx, nameY, locked ? SettingsStyle.MUTED : SettingsStyle.TEXT);
             int end = tx + SettingsScreen.this.fontRenderer.getStringWidth(shown);
             if (SettingsScreen.this.staged.containsKey(this.e)) {

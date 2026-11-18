@@ -152,8 +152,15 @@ final class ClientPresentationTests {
                 case 4:
                     this.stage = 5;
                     backups(mc);
-                    BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
-                    mc.shutdown();
+                    break;
+                case 5:
+                    // The Look & Feel page last: it turns the look off and on and creates a world of its own.
+                    ClientLookSwitchTests.tick(mc);
+                    if (ClientLookSwitchTests.done) {
+                        this.stage = 6;
+                        BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
+                        mc.shutdown();
+                    }
                     break;
                 default:
                     break;

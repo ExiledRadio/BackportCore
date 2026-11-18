@@ -194,7 +194,7 @@ public final class AdventuringTime {
             return;
         }
         changed = advancement;
-        if (!Presentation.isAtLeast("1.13")) {
+        if (!Presentation.installedNewest().isAtLeast("1.13")) {
             lastAdded = Collections.emptyList();
             return;
         }
@@ -204,7 +204,7 @@ public final class AdventuringTime {
         Map<String, Criterion> criteria = new LinkedHashMap<String, Criterion>();
         List<String> added;
         if (generation != null) {
-            added = modernList(Presentation.newest(), generation, registered);
+            added = modernList(Presentation.installedNewest(), generation, registered);
         } else {
             criteria.putAll(advancement.getCriteria());
             Set<String> base = new HashSet<String>();
@@ -214,7 +214,7 @@ public final class AdventuringTime {
                     base.add(BiomeLocate.id(biome));
                 }
             }
-            added = additions(Presentation.newest(), registered, base);
+            added = additions(Presentation.installedNewest(), registered, base);
             if (added.isEmpty()) {
                 lastAdded = Collections.emptyList();
                 return;

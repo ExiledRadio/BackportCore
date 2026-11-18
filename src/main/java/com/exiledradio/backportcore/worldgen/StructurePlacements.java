@@ -207,7 +207,7 @@ public final class StructurePlacements {
 
     /** @return the newest installed version: the newer of this table's and the presentation module's */
     public static GameVersion newest() {
-        GameVersion p = Presentation.newest();
+        GameVersion p = Presentation.installedNewest();
         synchronized (StructurePlacements.class) {
             if (!VERSIONS.isEmpty() && VERSIONS.last().compareTo(p) > 0) {
                 return VERSIONS.last();

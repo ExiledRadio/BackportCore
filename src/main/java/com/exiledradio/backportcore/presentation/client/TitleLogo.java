@@ -43,7 +43,7 @@ public final class TitleLogo {
     @Nullable
     static GameVersion sourceVersion(String path) {
         GameVersion found = null;
-        for (Contribution c : Presentation.installed()) {
+        for (Contribution c : Presentation.installed(com.exiledradio.backportcore.presentation.LookArea.TITLE)) {
             if (c.replacedAssets().containsKey(path)) {
                 found = c.version();
             }

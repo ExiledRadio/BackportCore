@@ -57,7 +57,7 @@ public final class ModernTextures {
         ConfigManager.sync(BackportCore.MOD_ID, Config.Type.INSTANCE);
         modern = new LayeredPack();
         classic = new BuiltInPack("classic");
-        active = CoreConfig.textures.modernTextures;
+        active = wanted();
         apply(active);
         MinecraftForge.EVENT_BUS.register(new ModernTextures.Listener());
         BackportCore.LOGGER.info("Texture Update: {} ({} texture layers, {} classic textures).",
@@ -150,13 +150,26 @@ public final class ModernTextures {
         // On event, and the order two handlers of one event run in is not defined.
         @SubscribeEvent
         public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
-            if (!BackportCore.MOD_ID.equals(event.getModID()) || CoreConfig.textures.modernTextures == active) {
+            if (!BackportCore.MOD_ID.equals(event.getModID()) || wanted() == active) {
                 return;
             }
-            active = CoreConfig.textures.modernTextures;
+            active = wanted();
             apply(active);
-            Minecraft mc = Minecraft.getMinecraft();
-            mc.addScheduledTask(mc::refreshResources);
+            // The resources are read again by the Look & Feel listener (presentation.client.LookFeelClient), once for
+            // every look change at a time.
+        }
+    }
+
+    /** @return whether the modern textures should be served: Core's switch, and the newer look on */
+    static boolean wanted() {
+        return CoreConfig.textures.modernTextures && CoreConfig.lookAndFeel.newerLook;
+    }
+
+    /** Puts the right pack in place now (the Look &amp; Feel page's master switch changed). */
+    public static void sync() {
+        if (modern != null && wanted() != active) {
+            active = wanted();
+            apply(active);
         }
     }
 }

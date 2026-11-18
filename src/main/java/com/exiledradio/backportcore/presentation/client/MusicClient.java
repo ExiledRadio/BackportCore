@@ -171,7 +171,7 @@ public final class MusicClient {
 
     @SubscribeEvent
     public void mouse(GuiScreenEvent.MouseInputEvent.Post event) {
-        if (!(event.getGui() instanceof GuiScreenOptionsSounds) || !Presentation.isAtLeast("1.21.9")) {
+        if (!(event.getGui() instanceof GuiScreenOptionsSounds) || !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MUSIC, "1.21.9")) {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();

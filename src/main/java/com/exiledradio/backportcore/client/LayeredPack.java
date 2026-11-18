@@ -44,7 +44,7 @@ final class LayeredPack implements IResourcePack {
 
     /** @return the layers in use now, oldest first */
     synchronized List<TextureLayers.Layer> active() {
-        GameVersion newest = Presentation.newest();
+        GameVersion newest = Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.TEXTURES);
         if (!newest.equals(activeFor)) {
             active = TextureLayers.active(newest);
             activeFor = newest;

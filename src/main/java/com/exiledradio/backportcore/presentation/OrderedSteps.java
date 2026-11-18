@@ -32,6 +32,50 @@ public final class OrderedSteps<T> {
     private volatile List<T> cache = Collections.emptyList();
     private volatile GameVersion builtFor;
     private int added;
+    @javax.annotation.Nullable
+    private final LookArea area;
+
+    /** Steps that run at the version the whole look resolves at ({@link Presentation#newest()}). */
+    public OrderedSteps() {
+        this(null);
+    }
+
+    /** Steps of one part of the look: they run at {@link Presentation#newest(LookArea)}, none while it is off. */
+    public OrderedSteps(@javax.annotation.Nullable LookArea area) {
+        this.area = area;
+        if (area != null) {
+            synchronized (ALL) {
+                ALL.add(new java.lang.ref.WeakReference<OrderedSteps<?>>(this));
+            }
+        }
+    }
+
+    private static final List<java.lang.ref.WeakReference<OrderedSteps<?>>> ALL = new ArrayList<java.lang.ref.WeakReference<OrderedSteps<?>>>();
+
+    /** @return the versions of the steps of {@code area} at or before {@code top} (for the Look &amp; Feel page) */
+    static List<GameVersion> versions(LookArea area, GameVersion top) {
+        List<GameVersion> out = new ArrayList<GameVersion>();
+        synchronized (ALL) {
+            for (java.lang.ref.WeakReference<OrderedSteps<?>> ref : ALL) {
+                OrderedSteps<?> s = ref.get();
+                if (s == null || s.area != area) {
+                    continue;
+                }
+                synchronized (s) {
+                    for (Slot<?> slot : s.slots) {
+                        if (top.isAtLeast(slot.version)) {
+                            out.add(slot.version);
+                        }
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
+    private GameVersion version() {
+        return this.area == null ? Presentation.newest() : Presentation.newest(this.area);
+    }
 
     /** Adds a step of {@code version}; {@code name} identifies it in the log. */
     public synchronized void add(String version, String name, T step) {
@@ -45,7 +89,7 @@ public final class OrderedSteps<T> {
 
     /** @return the steps to run, in order, at the newest installed version */
     public List<T> steps() {
-        if (this.builtFor != Presentation.newest()) {
+        if (!version().equals(this.builtFor)) {
             rebuild();
         }
         return this.cache;
@@ -64,7 +108,7 @@ public final class OrderedSteps<T> {
 
     /** Recomputes the steps for the current newest version (call after more versions register). */
     public synchronized void rebuild() {
-        GameVersion newest = Presentation.newest();
+        GameVersion newest = version();
         List<T> out = new ArrayList<T>();
         for (Slot<T> s : this.slots) {
             if (newest.isAtLeast(s.version)) {

@@ -105,7 +105,11 @@ final class SettingsStyle {
     /** @return an enum value's words: its lang key under the setting's, else the constant made readable */
     static String enumValue(SettingsModel.Entry e, String value) {
         String key = e.langKey() + "." + value.toLowerCase(Locale.ENGLISH);
-        return I18n.hasKey(key) ? I18n.format(key) : words(value);
+        if (I18n.hasKey(key)) {
+            return I18n.format(key);
+        }
+        // A version ("1.20.5", the Newest look and Panorama choices) reads as itself.
+        return !value.isEmpty() && Character.isDigit(value.charAt(0)) ? value : words(value);
     }
 
     /** @return the value as the screen shows it */

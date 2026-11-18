@@ -94,7 +94,7 @@ public final class MultiplayerWarningScreen extends GuiScreen {
             if (Presentation.asset("textures/gui/checkbox.png") != null) {
                 mc.getTextureManager().bindTexture(CHECKBOX);
                 GlStateManager.enableBlend();
-                if (Presentation.isAtLeast("1.16")) {
+                if (Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MENUS, "1.16")) {
                     // 1.16's 64 by 64 texture: a hovered column beside the plain one.
                     Gui.drawModalRectWithCustomSizedTexture(this.x, this.y, this.hovered ? 20.0F : 0.0F, this.selected ? 20.0F : 0.0F, 20, this.height, 64.0F, 64.0F);
                 } else {

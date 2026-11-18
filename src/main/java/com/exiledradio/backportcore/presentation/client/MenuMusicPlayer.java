@@ -54,7 +54,7 @@ public final class MenuMusicPlayer {
         if (sound == null || !MENU.equals(sound.getSoundLocation())) {
             return;
         }
-        List<Contribution> installed = Presentation.installed();
+        List<Contribution> installed = Presentation.installed(com.exiledradio.backportcore.presentation.LookArea.MUSIC);
         if (!MenuMusic.changed(installed)) {
             return;
         }

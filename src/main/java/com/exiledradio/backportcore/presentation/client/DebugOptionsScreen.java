@@ -266,7 +266,7 @@ public class DebugOptionsScreen extends GuiScreen {
         OptionRow(DebugEntries.Entry entry) {
             this.entry = entry;
             this.never = new StateButton(I18n.format("options.off"), 0xFFFFFF, DebugEntries.Status.NEVER);
-            boolean f3 = !com.exiledradio.backportcore.presentation.VanillaRevisions.debugKeyBinds(Presentation.newest());
+            boolean f3 = !com.exiledradio.backportcore.presentation.VanillaRevisions.debugKeyBinds(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.DEBUG));
             this.overlay = new StateButton(I18n.format(f3 ? "debug.entry.f3" : "debug.entry.overlay"), YELLOW, DebugEntries.Status.IN_OVERLAY);
             this.always = new StateButton(I18n.format("debug.entry.always"), RED, DebugEntries.Status.ALWAYS_ON);
             refresh();

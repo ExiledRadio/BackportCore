@@ -118,6 +118,16 @@ public final class Presentation {
             0.0, 2.0, 0.05, 0.75);
 
     static {
+        // The parts of Core's own options that are not their screen's (LookArea): the rest follow their screen.
+        PANORAMA_SPEED.area(LookArea.TITLE);
+        HIDE_SPLASH_TEXTS.area(LookArea.SPLASHES);
+        TEXT_BACKGROUND_OPACITY.area(LookArea.CHAT);
+        TEXT_BACKGROUND.area(LookArea.CHAT);
+        MONOCHROME_LOGO.area(LookArea.STARTUP);
+        MUSIC_TOAST.area(LookArea.TOASTS);
+    }
+
+    static {
         GRAPHICS_PRESET.since("1.21.11");
         GRAPHICS_PRESET.tooltip("options.graphics.preset.tooltip");
         CLOUD_RANGE.since("1.21.6");
@@ -198,7 +208,7 @@ public final class Presentation {
     @Nullable
     public static ResourceLocation asset(String path) {
         ResourceLocation found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.ofAsset(path))) {
             ResourceLocation r = c.assets.get(path);
             if (r != null) {
                 found = r;
@@ -211,7 +221,11 @@ public final class Presentation {
     public static Map<String, ResourceLocation> assets() {
         Map<String, ResourceLocation> out = new LinkedHashMap<String, ResourceLocation>();
         for (Contribution c : installed()) {
-            out.putAll(c.assets);
+            for (Map.Entry<String, ResourceLocation> e : c.assets.entrySet()) {
+                if (newest(LookArea.ofAsset(e.getKey())).isAtLeast(c.version())) {
+                    out.put(e.getKey(), e.getValue());
+                }
+            }
         }
         return out;
     }
@@ -219,7 +233,7 @@ public final class Presentation {
     /** @return every installed version's vanilla-text folders, oldest version first (later ones win) */
     public static List<ResourceLocation> vanillaTexts() {
         List<ResourceLocation> out = new ArrayList<ResourceLocation>();
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.WORDING)) {
             out.addAll(c.texts);
         }
         return out;
@@ -228,11 +242,11 @@ public final class Presentation {
     /** @return the title screen's Accessibility icon from 1.14 on, or null when none is to show */
     @Nullable
     public static ResourceLocation titleAccessibilityIcon() {
-        if (!isAtLeast("1.14")) {
+        if (!isAtLeast(LookArea.TITLE, "1.14")) {
             return null;
         }
         ResourceLocation found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.TITLE)) {
             if (c.accessibilityIcon != null) {
                 found = c.accessibilityIcon;
             }
@@ -244,7 +258,7 @@ public final class Presentation {
     @Nullable
     public static String[] multiplayerWarning() {
         String[] found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.MENUS)) {
             if (c.multiplayerWarning != null) {
                 found = c.multiplayerWarning;
             }
@@ -259,7 +273,7 @@ public final class Presentation {
     @Nullable
     public static com.exiledradio.backportcore.presentation.option.ToggleOption commandSuggestions() {
         com.exiledradio.backportcore.presentation.option.ToggleOption found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.CHAT)) {
             if (c.commandSuggestions != null) {
                 found = c.commandSuggestions;
             }
@@ -270,7 +284,7 @@ public final class Presentation {
     /** @return the newest installed version's suggestion list look; 1.13's when none names one */
     public static SuggestionLook suggestionLook() {
         SuggestionLook found = SuggestionLook.V1_13;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.CHAT)) {
             if (c.suggestionLook != null) {
                 found = c.suggestionLook;
             }
@@ -282,7 +296,7 @@ public final class Presentation {
     @Nullable
     public static ResourceLocation creativeOrder() {
         ResourceLocation found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.INVENTORY)) {
             if (c.creativeOrder != null) {
                 found = c.creativeOrder;
             }
@@ -325,19 +339,86 @@ public final class Presentation {
         return new Contribution(GameVersion.parse(version));
     }
 
-    /** @return the newest installed version, or 1.12.2 when no backport registered one */
-    public static synchronized GameVersion newest() {
+    /** @return the newest installed version, or 1.12.2 when no backport registered one, whatever the look settings */
+    public static synchronized GameVersion installedNewest() {
         return VERSIONS.isEmpty() ? GameVersion.BASE : VERSIONS.lastKey();
     }
 
-    /** @return true when the newest installed version is {@code version} or later */
+    /**
+     * @return the version the game looks like: the newest installed version, stopped at Core's "Newest look" setting,
+     *         or 1.12.2 while "Use the newer look and feel" is off (a dedicated server ignores both). Asked for a look;
+     *         content asks {@link #installedNewest()}.
+     */
+    public static GameVersion newest() {
+        return look(null);
+    }
+
+    /** @return the version {@code area} looks like: {@link #newest()}, or 1.12.2 while that part's switch is off */
+    public static GameVersion newest(LookArea area) {
+        return look(area);
+    }
+
+    /** @return true when the game looks like {@code version} or later */
     public static boolean isAtLeast(String version) {
         return newest().isAtLeast(version);
     }
 
-    /** @return every installed version's contribution, oldest first */
+    /** @return true when {@code area} looks like {@code version} or later (for a backport's own piece of that part) */
+    public static boolean isAtLeast(LookArea area, String version) {
+        return newest(area).isAtLeast(version);
+    }
+
+    /** @return every installed version's contribution, oldest first, whatever the look settings */
     public static synchronized List<Contribution> installed() {
         return Collections.unmodifiableList(new ArrayList<Contribution>(VERSIONS.values()));
+    }
+
+    /** @return the contributions {@code area} uses now, oldest first: those at or before {@link #newest(LookArea)} */
+    public static List<Contribution> installed(LookArea area) {
+        GameVersion v = newest(area);
+        List<Contribution> out = new ArrayList<Contribution>();
+        for (Contribution c : installed()) {
+            if (v.isAtLeast(c.version())) {
+                out.add(c);
+            }
+        }
+        return out;
+    }
+
+    private static GameVersion look(@Nullable LookArea area) {
+        GameVersion installed = installedNewest();
+        if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isServer()) {
+            return installed;
+        }
+        com.exiledradio.backportcore.CoreConfig.LookAndFeelSettings s = com.exiledradio.backportcore.CoreConfig.lookAndFeel;
+        return resolveLook(installed, s.newerLook && (area == null || area.switchOn()), s.newestLook);
+    }
+
+    /**
+     * @param installed the newest installed version
+     * @param on        the master switch and the part's own, both on
+     * @param cap       Core's "Newest look": LATEST, or a version
+     * @return the version a part looks like
+     */
+    public static GameVersion resolveLook(GameVersion installed, boolean on, @Nullable String cap) {
+        if (!on) {
+            return GameVersion.BASE;
+        }
+        GameVersion c = lookCap(cap);
+        return c != null && installed.compareTo(c) > 0 ? c : installed;
+    }
+
+    /** @return the version Core's "Newest look" stops at, or null for LATEST (or a value that is not a version) */
+    @Nullable
+    public static GameVersion lookCap(@Nullable String cap) {
+        if (cap == null || cap.trim().isEmpty() || "LATEST".equalsIgnoreCase(cap.trim())) {
+            return null;
+        }
+        try {
+            return GameVersion.parse(cap.trim());
+        } catch (RuntimeException e) {
+            return null;
+        }
     }
 
     /** @return the contribution of exactly this version, or null when it is not installed */
@@ -350,7 +431,7 @@ public final class Presentation {
 
     /** @return the world-loading screen to show: vanilla's at the newest version, or a newer one a version declared */
     public static LoadingRevision loadingRevision() {
-        return loadingRevision(newest(), installed());
+        return loadingRevision(newest(LookArea.LOADING), installed(LookArea.LOADING));
     }
 
     /** @see #loadingRevision() */
@@ -367,7 +448,7 @@ public final class Presentation {
     /** @return every installed version with a panorama, oldest first, as (version, six faces) */
     public static List<Panorama> panoramas() {
         List<Panorama> out = new ArrayList<Panorama>();
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.TITLE)) {
             if (c.panorama != null) {
                 out.add(new Panorama(c.version(), c.panorama.clone()));
             }
@@ -379,7 +460,7 @@ public final class Presentation {
     @Nullable
     public static ResourceLocation panoramaOverlay() {
         ResourceLocation found = null;
-        for (Contribution c : installed()) {
+        for (Contribution c : installed(LookArea.TITLE)) {
             if (c.panoramaOverlay != null) {
                 found = c.panoramaOverlay;
             }
@@ -412,10 +493,10 @@ public final class Presentation {
      *         then in registration order (placement after another entry is the screen's business)
      */
     public static List<PresentationOption> optionsOn(OptionScreen screen) {
-        GameVersion newest = newest();
+        GameVersion screens = newest(LookArea.OPTIONS);
         List<PresentationOption> out = new ArrayList<PresentationOption>();
         for (PresentationOption o : options()) {
-            if (o.isShownAt(newest) && o.isOn(screen, newest)) {
+            if (o.isShown() && o.isOn(screen, screens)) {
                 out.add(o);
             }
         }

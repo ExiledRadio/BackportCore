@@ -101,6 +101,8 @@ public final class SettingsModel {
         public final boolean newChunks;
         public final String vanilla;
         public final Setting.Kind listKind;
+        /** Its section on the Look &amp; Feel page ({@link LookFeelPage}), or null when it is not listed there. */
+        public final String lookSection;
         /** The value when the game started, to tell which changes still wait for a restart. */
         private final String[] startup;
 
@@ -120,7 +122,11 @@ public final class SettingsModel {
                 this.type = element;
                 this.elementType = element;
             }
-            this.side = field != null && field.isAnnotationPresent(Setting.Client.class) ? Side.CLIENT : Side.SERVER;
+            Setting.Look look = field == null ? null : field.getAnnotation(Setting.Look.class);
+            this.lookSection = this.type == Type.BOOL || this.type == Type.ENUM
+                    ? (look != null ? look.value() : LookFeelPage.knownSection(group.page.modid, group.path, this.name)) : null;
+            // A look is each player's own: a server operator never sets it for them.
+            this.side = this.lookSection != null || field != null && field.isAnnotationPresent(Setting.Client.class) ? Side.CLIENT : Side.SERVER;
             this.restart = property.requiresMcRestart();
             this.worldRestart = property.requiresWorldRestart();
             this.newChunks = field != null && field.isAnnotationPresent(Setting.NewChunks.class);

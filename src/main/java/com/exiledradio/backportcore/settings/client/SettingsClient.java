@@ -257,6 +257,9 @@ public final class SettingsClient {
 
     /** @return the family member's short name, or the mod's own name */
     static String modName(String modid) {
+        if (com.exiledradio.backportcore.settings.LookFeelPage.ID.equals(modid)) {
+            return I18n.format("backportcore.settings.look.page");
+        }
         Family.Member m = Family.get(modid);
         if (m != null) {
             return I18n.format(m.nameKey());

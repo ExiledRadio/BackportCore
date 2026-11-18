@@ -53,6 +53,7 @@ public final class BackportSettings {
             return;
         }
         built = true;
+        LookFeelPage.prepare();
         Map<String, Class<?>[]> all = new LinkedHashMap<String, Class<?>[]>();
         for (Family.Member m : Family.MEMBERS) {
             if (Loader.isModLoaded(m.modid)) {

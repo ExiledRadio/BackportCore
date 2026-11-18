@@ -46,7 +46,7 @@ public final class TitleSplashes {
 
     /** The title screen was just made: pick its splash from the pool. */
     static void pick(GuiMainMenu menu) {
-        List<Contribution> installed = Presentation.installed();
+        List<Contribution> installed = Presentation.installed(com.exiledradio.backportcore.presentation.LookArea.SPLASHES);
         if (!Splashes.changed(installed)) {
             return;
         }

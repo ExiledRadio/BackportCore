@@ -1,5 +1,20 @@
 # 1.4.0
 
+*   **Look & Feel page** (settings screen, under Backport Core): every switch that only changes how the game looks or
+    feels, from Core and every installed backport, in one place. At the top **Use the Newer Look and Feel** (off: the
+    game looks and feels as 1.12.2; each switch keeps its choice) and **Newest Look** (Latest, or the version the look
+    stops at). Then sections, each switch with the versions it comes from: Loading Screens (World Loading Screens,
+    Startup Screen), Title Screen (Title Screen, Panorama, Splash Texts), Menus and Buttons (Menus and Buttons, Options
+    Screens), Video Settings, Chat, F3 and Debug, Toasts, Inventory and Creative Tabs, Sounds and Music, World and Text
+    (Sky, Fog and Clouds, Textures, Vanilla Wording), and Whole Backports. Every row is the same setting as on its mod's
+    page; they are Client settings, which a server operator never sets for a player. New `CoreConfig.lookAndFeel`
+    (all on by default; existing files keep their values). Takes effect at once; the resources load again when a part
+    that replaces vanilla's files changes.
+*   `presentation.LookArea`, `Presentation.newest(LookArea)`, `isAtLeast(LookArea, version)`, `installed(LookArea)`,
+    `installedNewest()`, `PresentationOption.area(...)`, `new OrderedSteps(LookArea)` and `@Setting.Look(section)`.
+    `Presentation.newest()` and `isAtLeast(version)` now give the version the game looks like (1.12.2 with the newer look
+    off, stopped at Newest Look); `installedNewest()` is the newest installed version for content.
+    `presentation.panorama` and `lookAndFeel.newestLook` cycle through their choices on the settings screen.
 *   **Game events and vibrations** (`gameevent.*`), shared by every backport: Wild Update Backport's dispatcher,
     emitters, 1.19.2 vibration listener, `avoid_vibration` trigger (now `backportcore:avoid_vibration`) and vibration
     particle, moved here; 1.20.6's vibration system (`VibrationSystem`: the per-tick selector, block-distance

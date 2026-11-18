@@ -52,7 +52,9 @@ public final class WorldLoadingScreen extends LoadingScreenRenderer {
 
     /** Puts this in place of vanilla's loading screen, which 1.12.2 makes again on every window resize. */
     static void install(Minecraft mc) {
-        if (Presentation.loadingRevision() == LoadingRevision.CLASSIC || mc.loadingScreen == null) {
+        // Whether any backport brings a newer screen, not whether it shows now: the Look & Feel page can turn it on and off
+        // in game, and this draws 1.12.2's own while it is off.
+        if (Presentation.loadingRevision(Presentation.installedNewest(), Presentation.installed()) == LoadingRevision.CLASSIC || mc.loadingScreen == null) {
             return;
         }
         if (mc.loadingScreen.getClass() == LoadingScreenRenderer.class) {

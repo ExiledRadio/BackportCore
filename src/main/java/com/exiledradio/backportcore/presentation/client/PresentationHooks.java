@@ -99,7 +99,7 @@ public final class PresentationHooks {
         if (key < 0) {
             return false;
         }
-        List<Contribution> installed = Presentation.installed();
+        List<Contribution> installed = Presentation.installed(com.exiledradio.backportcore.presentation.LookArea.DEBUG);
         if (!DebugKeys.changed(installed)) {
             return vanillaF3(mc, key);
         }
@@ -233,7 +233,7 @@ public final class PresentationHooks {
 
     /** P22: the frame rate of a menu without a world: 1.21.2's 60 once a backport of 1.21.2 or later is installed. */
     public static int menuFramerate(int vanilla) {
-        return Presentation.isAtLeast("1.21.2") ? 60 : vanilla;
+        return Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MENUS, "1.21.2") ? 60 : vanilla;
     }
 
     // ---- P23: the slot highlight ----
@@ -251,7 +251,7 @@ public final class PresentationHooks {
                                      int startColor, int endColor) {
         String back = "textures/gui/sprites/container/slot_highlight_back.png";
         String front = "textures/gui/sprites/container/slot_highlight_front.png";
-        if (!Presentation.isAtLeast("1.21.2") || Presentation.asset(back) == null || Presentation.asset(front) == null) {
+        if (!Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.INVENTORY, "1.21.2") || Presentation.asset(back) == null || Presentation.asset(front) == null) {
             net.minecraftforge.fml.client.config.GuiUtils.drawGradientRect(0, left, top, right, bottom, startColor, endColor);
             return;
         }
