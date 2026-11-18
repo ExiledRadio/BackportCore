@@ -1,5 +1,7 @@
 # 1.4.0
 
+*   **Look & Feel page**: one place in the Backport settings screen for every backport's newer look, from the loading screens to the title screen, menus, chat and F3, each with its own switch, and one switch at the top that turns them all off for plain 1.12.2.
+*   **The pause menu's Mods button is where Forge puts it**: a full-width row above Save and Quit, as Forge has done since it brought the button back, with Give Feedback back in its place.
 *   **1.14's shorter crouch**, for Village & Pillage Backport to turn on: sneaking makes a player 1.5 blocks tall with eyes at 1.27, a crouching player fits through a 1.5-block gap, and a player under a 1.5-block ceiling stays crouched there, drawn crouching and moving at sneaking speed.
 *   **Newer map icons**: backports can give maps today's village, swamp hut, jungle temple and trial chambers icons.
 *   **Torches on glass panes and iron bars**, as in 1.14, for Village & Pillage Backport to turn on.
