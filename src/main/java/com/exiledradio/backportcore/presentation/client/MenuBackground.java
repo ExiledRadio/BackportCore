@@ -293,6 +293,10 @@ public final class MenuBackground {
             GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
             GlStateManager.disableDepth();
+            // 1.12.2's Shader.render turns the alpha test off and leaves it off. Vanilla's gradient (which this
+            // background replaces) leaves it on, and a screen that draws a texture with transparent parts right after
+            // drawDefaultBackground (Village & Pillage's book editor) drew those parts opaque white without it.
+            GlStateManager.enableAlpha();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             blurFrames++;
             return true;
