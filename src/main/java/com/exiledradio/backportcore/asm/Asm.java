@@ -97,6 +97,28 @@ public final class Asm {
         return found.size();
     }
 
+    /**
+     * Passes the result of every matching call through a static hook, after the call: the call itself stays in place,
+     * so another mod's mixin {@code @Redirect} or {@code @ModifyVariable} on it still finds its target. The hook takes
+     * the call's result, then the {@code float} locals listed (loaded with {@code FLOAD}), and returns the result's
+     * type, so the stack is the same afterwards and the frames stay valid.
+     *
+     * @return how many calls were wrapped
+     */
+    static int wrapCalls(MethodNode method, int opcode, String owner, String mcp, String srg, String desc, String hookName, String hookDesc,
+                         int... floatLocals) {
+        List<MethodInsnNode> found = calls(method, opcode, owner, mcp, srg, desc);
+        for (MethodInsnNode call : found) {
+            org.objectweb.asm.tree.InsnList after = new org.objectweb.asm.tree.InsnList();
+            for (int local : floatLocals) {
+                after.add(new org.objectweb.asm.tree.VarInsnNode(Opcodes.FLOAD, local));
+            }
+            after.add(new MethodInsnNode(Opcodes.INVOKESTATIC, PRESENTATION_HOOKS, hookName, hookDesc, false));
+            method.instructions.insert(call, after);
+        }
+        return found.size();
+    }
+
     /** @return every {@code LDC} of exactly this constant in the method */
     static List<org.objectweb.asm.tree.LdcInsnNode> constants(MethodNode method, Object constant) {
         List<org.objectweb.asm.tree.LdcInsnNode> out = new ArrayList<org.objectweb.asm.tree.LdcInsnNode>();

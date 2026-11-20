@@ -322,7 +322,9 @@ or passes an existing constant through a hook of the same type.
     pipeline (`presentation/client/FogPipeline`) applies each version's step in order.
 *   **Why a patch**: Forge has events for the fog, not for the sky color or the cloud height.
 *   **What changes**: P15: `renderSky`'s `world.getSkyColor(entity, partialTicks)` and the two cloud passes'
-    `provider.getCloudHeight()` change owner. P16: `updateFogColor`'s `getSkyColor` call changes owner (the fog's
+    `provider.getCloudHeight()` keep their call and pass its result through `skyColor(Vec3d, float)` and
+    `cloudHeight(float)` right after it (since 1.4.1: a mixin redirecting the call, such as SRParasites', still finds
+    it). P16: `updateFogColor`'s `getSkyColor` result goes through the same hook (the fog's
     blend with the sky follows the same color), and `renderWorldPass`'s two `128.0D` (whether the camera is below
     the clouds, which decides if they draw before or after the terrain) pass through `cloudLayer(double)`,
     which returns 128.0 until a step moves the clouds.
@@ -500,7 +502,9 @@ or passes an existing constant through a hook of the same type.
     copy of the array (1.12.2 shares one). Tricky Trials Backport's 1.21.11 step dims it in rain and thunder.
 *   **Why a patch**: the color is read straight from the provider; a provider replacement would fight every mod
     that replaces providers.
-*   **Shape**: one `invokevirtual` swapped in each method; the hook returns vanilla's own array when no step exists.
+*   **Shape**: in each method, `sunriseColors([FF)[F` (with `FLOAD 1`, partialTicks) inserted after the one
+    `invokevirtual`, which stays in place for mixins (SRParasites redirects it; Core 1.3.0 to 1.4.0 swapped it and
+    crashed it). The hook returns the array it was given when no step exists.
 *   **Fails safe**: per class, skipped when the call is not found once.
 *   **Tested**: client self-test (`P24 applied`); the 1.21.11 math in Tricky Trials' self-test.
 

@@ -30,7 +30,7 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
     private static final String GUI_NEW_CHAT = "net/minecraft/client/gui/GuiNewChat";
     private static final String COMPONENT = "Lnet/minecraft/util/text/ITextComponent;";
     private static final String SKY_DESC = "(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/math/Vec3d;";
-    private static final String SKY_HOOK = "(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/math/Vec3d;";
+    private static final String SKY_HOOK = "(Lnet/minecraft/util/math/Vec3d;F)Lnet/minecraft/util/math/Vec3d;";
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
@@ -124,7 +124,8 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
     }
 
     private static int swapSky(MethodNode m) {
-        return Asm.swapCalls(m, Opcodes.INVOKEVIRTUAL, null, "getSkyColor", "func_72833_a", SKY_DESC, "skyColor", SKY_HOOK);
+        // Wrapped after the call (renderSky's and updateFogColor's float partialTicks is local 1), so mixins keep it.
+        return Asm.wrapCalls(m, Opcodes.INVOKEVIRTUAL, null, "getSkyColor", "func_72833_a", SKY_DESC, "skyColor", SKY_HOOK, 1);
     }
 
     private static byte[] renderGlobal(byte[] bytes) {
@@ -147,7 +148,7 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
         }
         swapSky(sky);
         for (MethodNode m : new MethodNode[] {clouds, fancy}) {
-            Asm.swapCalls(m, Opcodes.INVOKEVIRTUAL, provider, "getCloudHeight", "func_76571_f", "()F", "cloudHeight", "(L" + provider + ";)F");
+            Asm.wrapCalls(m, Opcodes.INVOKEVIRTUAL, provider, "getCloudHeight", "func_76571_f", "()F", "cloudHeight", "(F)F");
         }
         Asm.applied("P15", what);
         return Asm.write(node);

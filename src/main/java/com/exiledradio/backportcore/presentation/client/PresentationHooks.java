@@ -219,9 +219,14 @@ public final class PresentationHooks {
 
     // ---- P24, P25: the sky ----
 
-    /** P24: {@code WorldProvider.calcSunriseSunsetColors}, through the fog pipeline's sunrise steps. */
-    public static float[] sunriseColors(net.minecraft.world.WorldProvider provider, float angle, float partialTicks) {
-        return FogPipeline.sunriseColors(provider, angle, partialTicks, provider.calcSunriseSunsetColors(angle, partialTicks));
+    /**
+     * P24: what {@code WorldProvider.calcSunriseSunsetColors} returned (or what another mod's redirect of that call
+     * returned), through the fog pipeline's sunrise steps.
+     */
+    @javax.annotation.Nullable
+    public static float[] sunriseColors(@javax.annotation.Nullable float[] vanilla, float partialTicks) {
+        net.minecraft.world.World world = net.minecraft.client.Minecraft.getMinecraft().world;
+        return world == null ? vanilla : FogPipeline.sunriseColors(world.provider, world.getCelestialAngle(partialTicks), partialTicks, vanilla);
     }
 
     /** P25: {@code RenderGlobal.cloudTickCounter} as the clouds read it. */
@@ -308,14 +313,16 @@ public final class PresentationHooks {
     // ---- P15, P16: sky and clouds ----
 
     /** P15/P16: {@code world.getSkyColor(entity, partialTicks)}, then the fog pipeline's sky steps. */
-    public static net.minecraft.util.math.Vec3d skyColor(net.minecraft.world.World world, net.minecraft.entity.Entity entity, float partialTicks) {
-        net.minecraft.util.math.Vec3d vanilla = world.getSkyColor(entity, partialTicks);
-        return FogPipeline.skyColor(world, entity, partialTicks, vanilla);
+    public static net.minecraft.util.math.Vec3d skyColor(net.minecraft.util.math.Vec3d vanilla, float partialTicks) {
+        net.minecraft.client.Minecraft mc = net.minecraft.client.Minecraft.getMinecraft();
+        net.minecraft.entity.Entity entity = mc.getRenderViewEntity();
+        return mc.world == null || entity == null ? vanilla : FogPipeline.skyColor(mc.world, entity, partialTicks, vanilla);
     }
 
     /** P15: {@code provider.getCloudHeight()}, then the fog pipeline's cloud steps. */
-    public static float cloudHeight(net.minecraft.world.WorldProvider provider) {
-        return FogPipeline.cloudHeight(provider, provider.getCloudHeight());
+    public static float cloudHeight(float vanilla) {
+        net.minecraft.world.World world = net.minecraft.client.Minecraft.getMinecraft().world;
+        return world == null ? vanilla : FogPipeline.cloudHeight(world.provider, vanilla);
     }
 
     /**
@@ -327,7 +334,7 @@ public final class PresentationHooks {
         if (mc.world == null || !FogPipeline.movesClouds()) {
             return vanilla;
         }
-        return cloudHeight(mc.world.provider);
+        return cloudHeight(mc.world.provider.getCloudHeight());
     }
 
     // ---- P31: 1.20.5's menu backgrounds (MenuBackground) ----
