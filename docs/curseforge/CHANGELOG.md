@@ -1,6 +1,7 @@
 # 1.4.1
 
 *   **Fixed a crash on launch with SRParasites** (and any mod that hooks the same sky calls): Backport Core's sunrise, sky color and cloud height changes now adjust vanilla's results instead of replacing the calls other mods hook into.
+*   **Fixed a white box behind the book and quill** (and behind other modded screens that draw a see-through texture over the blurred background).
 
 # 1.4.0
 
