@@ -138,7 +138,7 @@ final class ClientPresentationTests {
                             ClientCrouchTests.tick(mc);
                         }
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done) {
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);
@@ -580,5 +580,64 @@ final class ClientPresentationTests {
             s.append(b.id).append('@').append(b.x).append(',').append(b.y).append(' ');
         }
         return s.toString().trim();
+    }
+    private int bookTicks;
+    private boolean bookAdded;
+
+    /**
+     * A modded screen (as Village & Pillage's book editor) draws a texture with transparent parts right after
+     * drawDefaultBackground: the alpha test must be on there, as vanilla's gradient leaves it, or the parts draw white.
+     *
+     * @return true once checked
+     */
+    private boolean bookChecked(Minecraft mc) {
+        if (this.bookTicks == 0) {
+            // 1.20.5's menu background only runs with a 1.20.5 backport: a dummy one for this check, removed after.
+            this.bookAdded = !com.exiledradio.backportcore.presentation.Presentation.isAtLeast("1.20.5");
+            if (this.bookAdded) {
+                com.exiledradio.backportcore.presentation.Presentation.version("1.20.5");
+            }
+            BookLike.blursBefore = com.exiledradio.backportcore.presentation.client.MenuBackground.blurFrames;
+            mc.displayGuiScreen(new BookLike());
+        }
+        if (++this.bookTicks < 10) {
+            return false;
+        }
+        if (this.bookTicks == 10) {
+            check("client: the alpha test is on after the in-world menu background (book textures not drawn white)",
+                    BookLike.frames > 0 && BookLike.alphaOff == 0, BookLike.frames + " frames, " + BookLike.alphaOff
+                            + " with the alpha test off, blurred " + (com.exiledradio.backportcore.presentation.client.MenuBackground.blurFrames > BookLike.blursBefore));
+            mc.displayGuiScreen(null);
+            if (this.bookAdded) {
+                try {
+                    java.lang.reflect.Field f = com.exiledradio.backportcore.presentation.Presentation.class.getDeclaredField("VERSIONS");
+                    f.setAccessible(true);
+                    ((java.util.Map<?, ?>) f.get(null)).remove(com.exiledradio.backportcore.presentation.GameVersion.parse("1.20.5"));
+                } catch (ReflectiveOperationException e) {
+                    check("client: the dummy 1.20.5 is removed after the book check", false, e);
+                }
+            }
+        }
+        return true;
+    }
+
+    /** A plain modded screen that draws over drawDefaultBackground, as Village & Pillage's book editor does. */
+    static final class BookLike extends net.minecraft.client.gui.GuiScreen {
+        static volatile int frames, alphaOff, blursBefore;
+
+        @Override
+        public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+            this.drawDefaultBackground();
+            frames++;
+            if (!org.lwjgl.opengl.GL11.glIsEnabled(org.lwjgl.opengl.GL11.GL_ALPHA_TEST)) {
+                alphaOff++;
+            }
+            super.drawScreen(mouseX, mouseY, partialTicks);
+        }
+
+        @Override
+        public boolean doesGuiPauseGame() {
+            return false;
+        }
     }
 }

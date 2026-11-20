@@ -4,6 +4,9 @@
     (P15, P24) replaced vanilla's calls to `WorldProvider.calcSunriseSunsetColors`, `World.getSkyColor` and
     `WorldProvider.getCloudHeight`, so a mixin redirecting one of those calls (SRParasites' blizzard sky) found no
     target. The calls now stay in place and their results go through the fog pipeline afterward.
+*   Fixed a white rectangle behind the book in a modded book screen (Village & Pillage's book and quill editor) in a
+    world: 1.20.5's blurred menu background left the alpha test off (1.12.2's shader pass turns it off), so the
+    book texture's transparent parts drew opaque white. The background now leaves it on, as vanilla's gradient does.
 
 # 1.4.0
 
