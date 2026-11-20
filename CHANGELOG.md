@@ -1,3 +1,10 @@
+# 1.4.1
+
+*   Fixed a crash at startup with SRParasites (since 1.3.0): the sunrise color, sky color and cloud height patches
+    (P15, P24) replaced vanilla's calls to `WorldProvider.calcSunriseSunsetColors`, `World.getSkyColor` and
+    `WorldProvider.getCloudHeight`, so a mixin redirecting one of those calls (SRParasites' blizzard sky) found no
+    target. The calls now stay in place and their results go through the fog pipeline afterward.
+
 # 1.4.0
 
 *   **Look & Feel page** (settings screen, under Backport Core): every switch that only changes how the game looks or

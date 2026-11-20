@@ -8,7 +8,7 @@ import org.objectweb.asm.tree.MethodNode;
 /**
  * Patch P24 (docs/PATCHES.md): the sunrise and sunset color goes through {@code FogPipeline}'s sunrise steps
  * ({@code PresentationHooks.sunriseColors}), so a version can change it (1.21.11: rain and thunder dim it). Both of
- * 1.12.2's readers of {@code WorldProvider.calcSunriseSunsetColors} are swapped: {@code EntityRenderer.updateFogColor}
+ * 1.12.2's readers of {@code WorldProvider.calcSunriseSunsetColors} have its result wrapped (the call stays, for mixins): {@code EntityRenderer.updateFogColor}
  * (the fog's blend toward the sunrise) and {@code RenderGlobal.renderSky} (the glow itself).
  */
 public final class SunriseTransformer implements IClassTransformer {
@@ -32,8 +32,9 @@ public final class SunriseTransformer implements IClassTransformer {
             Asm.skipped(PATCH, WHAT, (renderer ? "updateFogColor" : "renderSky") + " not found");
             return basicClass;
         }
-        int swapped = Asm.swapCalls(method, Opcodes.INVOKEVIRTUAL, "net/minecraft/world/WorldProvider", "calcSunriseSunsetColors",
-                "func_76560_a", "(FF)[F", "sunriseColors", "(Lnet/minecraft/world/WorldProvider;FF)[F");
+        // Wrapped after the call, not swapped for it: SRParasites (and any mixin) redirects this very call.
+        int swapped = Asm.wrapCalls(method, Opcodes.INVOKEVIRTUAL, "net/minecraft/world/WorldProvider", "calcSunriseSunsetColors",
+                "func_76560_a", "(FF)[F", "sunriseColors", "([FF)[F", 1);
         if (swapped != 1) {
             Asm.skipped(PATCH, WHAT, "unexpected shape (" + swapped + " calls in " + transformedName + ")");
             return basicClass;
