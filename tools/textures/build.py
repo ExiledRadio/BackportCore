@@ -29,7 +29,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from layers import REPO, ATLAS, load_jars, follow, pixel_hash  # noqa: E402
 from png_rgba import keyed_to_rgba  # noqa: E402
-from tables import ACCEPT, EXCLUDE, LAYOUT, LOST_MAX, LINES  # noqa: E402
+from tables import ACCEPT, EXCLUDE, LAYOUT, LOST_MAX, LINES, MODELS  # noqa: E402
 
 PACKS = os.path.join(REPO, 'src', 'main', 'resources', 'backportcore_packs')
 BASE = os.path.join(PACKS, 'modern')
@@ -106,6 +106,16 @@ def base_layer(old):
     return shown
 
 
+def line_model(jar, template, tex):
+    """A line's block model (no parent) as a 1.12.2 model: its elements, every texture variable on the 1.12.2 texture."""
+    m = json.loads(jar.read('assets/minecraft/models/block/%s.json' % template))
+    if 'parent' in m:
+        raise ValueError('%s has a parent; only parentless templates are copied' % template)
+    variables = {f['texture'][1:] for e in m['elements'] for f in e['faces'].values()}
+    m['textures'] = dict({v: tex for v in variables}, particle='#' + sorted(variables)[0])
+    return (json.dumps(m, indent=4) + '\n').encode('utf-8')
+
+
 def main(check):
     jars = load_jars()
     old = jars['1.12.2']
@@ -141,6 +151,8 @@ def main(check):
             files[rel(o)] = keyed_to_rgba(jar.png(n))
             if meta is not None:
                 files[rel(o) + '.mcmeta'] = meta
+            for model, template in MODELS.get(o, ()):
+                files['assets/minecraft/models/block/%s.json' % model] = line_model(jar, template, o)
             shown[o] = (h, animation(meta), line)
             report.append('%-5s %-48s <- %s %s' % (line, o, jar.version, n))
         for o, n in sorted(gone.items()):
