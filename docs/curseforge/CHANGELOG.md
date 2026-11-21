@@ -2,6 +2,7 @@
 
 *   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth.
 *   **More of today's commands**: `/random` (with today's saved sequences, so a world gives the same values as in the current game), `/ride`, `/rotate`, `/spectate` and `/teammsg` (or `/tm`). Each command has its own switch in the settings.
+*   **26.2's pause menu**: with a backport that supplies its icons (Game Drops Backport), Report Bugs and Send Feedback become two icon buttons in one row under Advancements and Statistics.
 
 # 1.4.4
 
