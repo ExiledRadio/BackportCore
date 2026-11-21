@@ -3,8 +3,14 @@ package com.exiledradio.backportcore.selftest;
 import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.asm.ExtendedFluidStatesTransformer;
 
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.passive.IAnimals;
+import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Biomes;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.util.EnumHelper;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -17,6 +23,7 @@ import org.objectweb.asm.tree.analysis.BasicVerifier;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -65,6 +72,7 @@ final class PatchTests {
             {"net.minecraft.entity.player.EntityPlayer", "P33", new String[] {"eyesFor", "eyeHeight"}},
             {"net.minecraft.world.storage.MapDecoration", "P34", new String[] {"render"}},
             {"net.minecraft.block.BlockPane", "P35", new String[] {"torchOnPane"}},
+            {"net.minecraft.world.biome.Biome", "P36", new String[] {"switchIndex"}},
     };
 
     private PatchTests() {
@@ -74,6 +82,27 @@ final class PatchTests {
         then(1, "patches in the running game", world -> {
             check("P1 applied when EntityLivingBase loaded (dev, beside Fluidlogged API)", "applied".equals(Asm.state("P1")), Asm.state("P1"));
             check("coremod is registered with FML", isTransformerRegistered(), "");
+        });
+        then(1, "P36: a creature type added after the spawn list switch ran", world -> {
+            check("P36 applied when Biome loaded", "applied".equals(Asm.state("P36")), Asm.state("P36"));
+            Biome plains = Biomes.PLAINS;
+            plains.getSpawnableList(EnumCreatureType.MONSTER); // the switch has run: its table exists
+            int before = EnumCreatureType.values().length;
+            EnumCreatureType late = EnumHelper.addCreatureType("BACKPORTCORE_SELFTEST_LATE", IAnimals.class, 0, Material.AIR, true, false);
+            check("late type is past the table's end (ordinal " + late.ordinal() + ", " + before + " types when the switch ran)",
+                    late.ordinal() >= before, late.ordinal());
+            List<Biome.SpawnListEntry> list = null;
+            String error = null;
+            try {
+                list = plains.getSpawnableList(late);
+            } catch (RuntimeException e) {
+                error = e.toString();
+            }
+            check("getSpawnableList(late type) returns Forge's empty modded list instead of throwing",
+                    list != null && list.isEmpty(), error);
+            check("the same list comes back the second time (Forge's modSpawnableLists)", list != null && list == plains.getSpawnableList(late), "");
+            check("vanilla types still get their own lists", plains.getSpawnableList(EnumCreatureType.CREATURE) == plains.getSpawnableList(EnumCreatureType.CREATURE)
+                    && !plains.getSpawnableList(EnumCreatureType.CREATURE).isEmpty(), "");
         });
         then(1, "patches through the dev transformer chain", world -> {
             for (Object[] c : CLASSES) {
@@ -188,6 +217,7 @@ final class PatchTests {
             case "P33": cls = "EyeHeightTransformer"; break;
             case "P34": cls = "MapIconTransformer"; break;
             case "P35": cls = "PaneTorchTransformer"; break;
+            case "P36": cls = "SpawnListSwitchTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

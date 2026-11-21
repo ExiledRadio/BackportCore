@@ -1,3 +1,7 @@
+# 1.4.4
+
+*   **Fixed a crash on world load with Alex's Mobs (Legacy)** ("Index 6 out of bounds for length 6" in `getSpawnableList`): a creature type a mod adds late, after the biome spawn lists were first read, now gets its own empty list instead of crashing, whichever mods add types and in whatever order.
+
 # 1.4.3
 
 *   **The newer textures are in the Resource Packs screen**, as "Backport Textures": move it to the left column to keep 1.12.2's textures. It is the same switch as Modern Textures in the settings, and it always sits just above Default, so every pack you pick still wins over it.

@@ -689,3 +689,23 @@ or passes an existing constant through a hook of the same type.
     otherwise the inherited method's answer, line for line. Subclasses that override it keep their own.
 *   **Fails safe**: `BlockPane` already overrides the method (another coremod): skipped; panes keep 1.12.2's rule.
 *   **Tested**: transformer chain and SRG names; `MechanicsTests` "torches on panes and bars".
+
+## P36. Spawn lists for late creature types
+
+*   **Class**: `net.minecraft.world.biome.Biome`, method `getSpawnableList(EnumCreatureType)`.
+    **Transformer**: `asm/SpawnListSwitchTransformer`. **Hook**: `worldgen/SpawnListHooks.switchIndex`. **Since**: 1.4.4.
+*   **Not a vanilla change**: a crash fix. The method's `switch` reads `Biome$1`'s table, sized to the creature
+    types that exist when it first runs. A type `EnumHelper.addCreatureType` adds after that has an ordinal past the
+    end, and every call with it throws `ArrayIndexOutOfBoundsException` instead of taking the default branch
+    (Forge's `modSpawnableLists`). Seen with Alex's Mobs (Legacy) 1.7.0, which adds `AM_WATER_AMBIENT` in pre-init
+    after C&C's and UA's constructors had already made the table (their `SwitchTables.grow` initializes `Biome$1`),
+    and Alex's Mobs' own widener only looks at `Biome`'s member classes, not the anonymous `Biome$1`.
+*   **Why a patch**: which mod adds its type when, and which mod first runs the switch, changes from pack to pack;
+    growing the table at some later point still loses to a type added after it.
+*   **What changes**: the switch's one `IALOAD` (`GETSTATIC <int[]>`, `type.ordinal()`, `IALOAD`) becomes
+    `SpawnListHooks.switchIndex(table, ordinal)`: the table's entry, or 0 (the default branch) past its end. The
+    stack is the same before and after, so the frames stay valid; vanilla types read the same entries as before.
+*   **Fails safe**: method not found, or no such table read in it (another coremod already replaced the switch):
+    skipped.
+*   **Tested**: transformer chain and SRG names; `PatchTests` "P36" adds a creature type after the switch ran and
+    asks plains for its list.

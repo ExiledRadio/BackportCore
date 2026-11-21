@@ -1,3 +1,10 @@
+# 1.4.4
+
+*   Fixed `ArrayIndexOutOfBoundsException` in `Biome.getSpawnableList` with Alex's Mobs (Legacy) 1.7.0 (P36): its
+    `AM_WATER_AMBIENT` type is added in pre-init, after C&C's and UA's constructors had initialized `Biome$1` (their
+    `SwitchTables.grow`), and its own widener misses the anonymous `Biome$1`. The switch's table lookup now takes the
+    default branch (Forge's `modSpawnableLists`) for any ordinal past the table's end.
+
 # 1.4.3
 
 *   Fixed red squares around a lit redstone torch's head with the 1.21 textures (Newest Look 1.21 or later): 1.21's
