@@ -186,7 +186,7 @@ public class DebugOptionsScreen extends GuiScreen {
             Boolean renderers = null;
             int n = 0;
             for (DebugEntries.Entry e : DebugEntries.ENTRIES) {
-                if (!e.id.contains(query)) {
+                if (!e.id.contains(query) || !e.present()) {
                     continue;
                 }
                 if (renderers == null || renderers != e.renderer) {

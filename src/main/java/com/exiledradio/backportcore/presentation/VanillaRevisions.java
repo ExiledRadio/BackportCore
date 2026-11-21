@@ -69,6 +69,11 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.MENUS, "26.2");
     }
 
+    /** 26.3: an options list's section headers are bold, underlined and centered ({@code OptionsList.addHeader}). */
+    public static boolean centeredOptionHeaders() {
+        return Presentation.isAtLeast(LookArea.MENUS, "26.3");
+    }
+
     /**
      * 26.2's pause grid top: {@code FrameLayout.alignInRectangle} at a quarter of the free height, the grid being rows
      * of 24 (20 and a 4 padding) with the first 70 (Back to Game's 50 padding).

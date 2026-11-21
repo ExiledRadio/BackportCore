@@ -23,6 +23,17 @@
 
 # 1.4.4
 
+*   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
+    disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
+    `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,
+    idOrTag, rings, skipClaimed[, claim])` and `locate.StructureClaims` (26.3's `exploration_map` search radius and
+    `skip_existing_chunks`, claims saved per dimension); `structure.ModernItems`, today's item names to 1.12.2's item
+    and metadata (table from the data fixers: `tools/flattening/items.py`); the abandoned camp, ancient city, desert
+    pyramid, mineshaft and warm ocean ruins map sprites; `leaf_litter` owned by Tricky Trials.
+*   26.1's F3 (`ModernDebugLines`): "Day #n" split from Local Difficulty, "Speed: n blocks/tick", the spawn line by
+    26.1's category abbreviations; Debug Options entries `day_count`, `player_speed` (26.1) and `entity_spawn_counts`
+    (an entry's `since` hides newer ones from older looks). 26.3's centered, bold, underlined option headers
+    (`VanillaRevisions.centeredOptionHeaders`).
 *   Fixed `ArrayIndexOutOfBoundsException` in `Biome.getSpawnableList` with Alex's Mobs (Legacy) 1.7.0 (P36): its
     `AM_WATER_AMBIENT` type is added in pre-init, after C&C's and UA's constructors had initialized `Biome$1` (their
     `SwitchTables.grow`), and its own widener misses the anonymous `Biome$1`. The switch's table lookup now takes the

@@ -34,6 +34,8 @@ public final class GameEvent {
     public static final GameEvent BLOCK_DETACH = vanilla("block_detach", 9);
     public static final GameEvent BLOCK_OPEN = vanilla("block_open", 10);
     public static final GameEvent BLOCK_PLACE = vanilla("block_place", 13);
+    /** 26.2: an entity bouncing off a block or a wall (a sulfur cube holding a block, slime blocks, beds). */
+    public static final GameEvent BOUNCE = vanilla("bounce", 2);
     public static final GameEvent CONTAINER_CLOSE = vanilla("container_close", 9);
     public static final GameEvent CONTAINER_OPEN = vanilla("container_open", 10);
     /** 1.19.2 only. */

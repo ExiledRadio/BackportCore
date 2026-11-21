@@ -44,6 +44,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new CopyClick());
         MinecraftForge.EVENT_BUS.register(new MenuBackground.Events());
         NetworkCharts.init();
+        ModernDebugLines.init();
         MinecraftForge.EVENT_BUS.register(new NetworkCharts.Events());
         DebugScreen.init();
         RenderOptions.init();

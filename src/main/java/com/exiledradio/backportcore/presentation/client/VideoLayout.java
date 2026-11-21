@@ -234,8 +234,17 @@ public final class VideoLayout {
 
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partialTicks) {
-            // 1.21.11's header text sits 4 pixels above the row below it.
-            Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(this.text, this.x, y + slotHeight - 9 - 4 - 4, 0xFFFFFF);
+            // 1.21.11's header text sits 4 pixels above the row below it; 26.3's is bold, underlined and centered.
+            net.minecraft.client.gui.FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+            int top = y + slotHeight - 9 - 4 - 4;
+            if (VanillaRevisions.centeredOptionHeaders()) {
+                String styled = net.minecraft.util.text.TextFormatting.BOLD + "" + net.minecraft.util.text.TextFormatting.UNDERLINE + this.text;
+                GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+                int center = screen != null ? screen.width / 2 : this.x + 155;
+                font.drawStringWithShadow(styled, center - font.getStringWidth(styled) / 2, top, 0xFFFFFF);
+            } else {
+                font.drawStringWithShadow(this.text, this.x, top, 0xFFFFFF);
+            }
         }
 
         @Override

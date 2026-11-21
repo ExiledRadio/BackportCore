@@ -788,3 +788,18 @@ or passes an existing constant through a hook of the same type.
     things as moving.
 *   **Tested**: transformer chain and SRG names; `ClientTickTests` (rate sync, timer, frozen pig and clock, partial
     ticks, a step, reset on leaving).
+
+## P41. A jukebox's comparator signal for discs added after 1.12.2
+
+*   **Class**: `net.minecraft.block.BlockJukebox`, method `getComparatorInputOverride`.
+    **Transformer**: `asm/JukeboxSignalTransformer`. **Hook**: `mechanics/JukeboxSignal.has`, `signal`. **Since**: 1.4.4.
+*   **Vanilla change**: since 1.21 each song carries its own `comparator_output` (`JukeboxSong`; 26.3's Bounce gives
+    8). 1.12.2 counts from the disc's item id (`id + 1 - id of record_13`), right for its own twelve discs only, and a
+    modded disc gives a number far above 15.
+*   **Why a patch**: the signal is the block's own method, and no Forge event or interface lets an item answer it.
+*   **What changes**: the method starts with `if (JukeboxSignal.has(world, pos)) return JukeboxSignal.signal(world, pos);`
+    (one branch, an `F_SAME` frame at the head, where the locals are exactly the parameters). A disc answers when its
+    item class has a public `int comparatorSignal()` (found by name, so a backport needs no Core type); 0 to 15. Every
+    other disc, and an empty jukebox, keep 1.12.2's answer.
+*   **Fails safe**: method not found: skipped, and every disc gives 1.12.2's signal.
+*   **Tested**: transformer chain and SRG names; `GdRequestTests` (13 and wait as before, a test disc with 8, empty 0).

@@ -60,6 +60,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             SpawnListSwitchTransformer.class.getName(),
             GroundSpawnTransformer.class.getName(),
             TickTransformer.class.getName(),
+            JukeboxSignalTransformer.class.getName(),
     };
 
     @Override

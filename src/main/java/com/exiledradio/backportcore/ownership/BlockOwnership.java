@@ -83,6 +83,9 @@ public final class BlockOwnership {
         // the amethyst trim.
         own(cc, "amethyst_block", "budding_amethyst", "small_amethyst_bud", "medium_amethyst_bud",
                 "large_amethyst_bud", "amethyst_cluster", "calcite", "smooth_basalt");
+
+        // Tricky Trials Backport (1.21.5's leaf litter), which Game Drops Backport's dappled forest drops from its poplars.
+        own("trickytrialsbackport", "leaf_litter");
     }
 
     private BlockOwnership() {

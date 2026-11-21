@@ -62,11 +62,23 @@ public final class DebugEntries {
         public final String id;
         public final boolean renderer;
         public final boolean allowedReduced;
+        /** The version that added it (1.21.9 for the first set). */
+        public final String since;
 
         Entry(String id, boolean renderer, boolean allowedReduced) {
+            this(id, renderer, allowedReduced, "1.21.9");
+        }
+
+        Entry(String id, boolean renderer, boolean allowedReduced, String since) {
             this.id = id;
             this.renderer = renderer;
             this.allowedReduced = allowedReduced;
+            this.since = since;
+        }
+
+        /** @return true when the newest installed version has it (Debug Options lists it) */
+        public boolean present() {
+            return Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.DEBUG, this.since);
         }
 
         /** @return true when the player may see it ({@code DebugScreenEntry.isAllowed}) */
@@ -89,6 +101,11 @@ public final class DebugEntries {
     public static final String LIGHT_LEVELS = "light_levels";
     public static final String BIOME = "biome";
     public static final String LOCAL_DIFFICULTY = "local_difficulty";
+    /** 26.1: "Day #n", split from Local Difficulty's "(Day n)". */
+    public static final String DAY_COUNT = "day_count";
+    public static final String ENTITY_SPAWN_COUNTS = "entity_spawn_counts";
+    /** 26.1: "Speed: n blocks/tick" in the position group. */
+    public static final String PLAYER_SPEED = "player_speed";
     public static final String POST_EFFECT = "post_effect";
     public static final String ENTITY_HITBOXES = "entity_hitboxes";
     public static final String CHUNK_BORDERS = "chunk_borders";
@@ -103,7 +120,9 @@ public final class DebugEntries {
             new Entry(BIOME, false, false),
             new Entry(CHUNK_RENDER_STATS, false, true),
             new Entry(CHUNK_SOURCE_STATS, false, true),
+            new Entry(DAY_COUNT, false, false, "26.1"),
             new Entry(ENTITY_RENDER_STATS, false, true),
+            new Entry(ENTITY_SPAWN_COUNTS, false, false),
             new Entry(FPS, false, true),
             new Entry(GAME_VERSION, false, true),
             new Entry(LIGHT_LEVELS, false, false),
@@ -113,6 +132,7 @@ public final class DebugEntries {
             new Entry(PARTICLE_RENDER_STATS, false, true),
             new Entry(PLAYER_POSITION, false, false),
             new Entry(PLAYER_SECTION_POSITION, false, true),
+            new Entry(PLAYER_SPEED, false, false, "26.1"),
             new Entry(POST_EFFECT, false, false),
             new Entry(SYSTEM_SPECS, false, true),
             new Entry(THREE_DIMENSIONAL_CROSSHAIR, true, false),
@@ -318,6 +338,15 @@ public final class DebugEntries {
         }
         if (s.startsWith("Local Difficulty:")) {
             return LOCAL_DIFFICULTY;
+        }
+        if (s.startsWith("Day #")) {
+            return DAY_COUNT;
+        }
+        if (s.startsWith("SC: ")) {
+            return ENTITY_SPAWN_COUNTS;
+        }
+        if (s.startsWith("Speed: ")) {
+            return PLAYER_SPEED;
         }
         if (s.startsWith("Shader:")) {
             return POST_EFFECT;

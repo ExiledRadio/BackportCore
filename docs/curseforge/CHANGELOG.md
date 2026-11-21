@@ -1,5 +1,9 @@
 # 1.4.4
 
+*   **Music discs from the backports give their own comparator signal** from a jukebox, as today's game does (Game Drops Backport's Bounce gives 8); 1.12.2's twelve discs are unchanged.
+*   **26.x's debug screen lines** with Game Drops Backport: "Day #" on its own line, the player's speed, and the spawn counts by today's mob categories, each one its own entry in Debug Options (off by default, as in 26.3).
+*   **26.3's section headings** in Video Settings with Game Drops Backport: bold, underlined and centered.
+*   **For the backports**: today's explorer map icons (abandoned camp, ancient city, desert pyramid, mineshaft, warm ocean ruins), explorer maps that lead to a new structure each time, today's item names in loot read from newer files, wool stairs and slabs that muffle vibrations, and the bounce game event.
 *   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth.
 *   **More of today's commands**: `/random` (with today's saved sequences, so a world gives the same values as in the current game), `/ride`, `/rotate`, `/spectate` and `/teammsg` (or `/tm`). Each command has its own switch in the settings.
 *   **26.2's pause menu**: with a backport that supplies its icons (Game Drops Backport), Report Bugs and Send Feedback become two icon buttons in one row under Advancements and Statistics.

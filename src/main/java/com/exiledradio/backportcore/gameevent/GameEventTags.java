@@ -42,7 +42,7 @@ public final class GameEventTags {
             GameEvent.PISTON_EXTEND, GameEvent.PRIME_FUSE, GameEvent.PROJECTILE_LAND, GameEvent.PROJECTILE_SHOOT, GameEvent.SHEAR,
             GameEvent.SPLASH, GameEvent.STEP, GameEvent.SWIM, GameEvent.TELEPORT, GameEvent.FLAP);
 
-    /** 1.20.6's {@code #vibrations} (with the renamed 1.19.2 events). */
+    /** 1.20.6's {@code #vibrations} (with the renamed 1.19.2 events), and 26.2's {@code bounce}. */
     public static final Set<GameEvent> VIBRATIONS_1_20;
 
     /** 1.19.2's {@code #warden_can_listen}: the vibrations but flap, the shriek, and the tendrils' clicking. */
@@ -55,7 +55,7 @@ public final class GameEventTags {
         Set<GameEvent> v = new HashSet<GameEvent>(Arrays.asList(GameEvent.BLOCK_ATTACH, GameEvent.BLOCK_CHANGE, GameEvent.BLOCK_CLOSE,
                 GameEvent.BLOCK_DESTROY, GameEvent.BLOCK_DETACH, GameEvent.BLOCK_OPEN, GameEvent.BLOCK_PLACE, GameEvent.BLOCK_ACTIVATE,
                 GameEvent.BLOCK_DEACTIVATE, GameEvent.CONTAINER_CLOSE, GameEvent.CONTAINER_OPEN, GameEvent.DRINK, GameEvent.EAT,
-                GameEvent.ELYTRA_GLIDE, GameEvent.ENTITY_DAMAGE, GameEvent.ENTITY_DIE, GameEvent.ENTITY_DISMOUNT,
+                GameEvent.BOUNCE, GameEvent.ELYTRA_GLIDE, GameEvent.ENTITY_DAMAGE, GameEvent.ENTITY_DIE, GameEvent.ENTITY_DISMOUNT,
                 GameEvent.ENTITY_INTERACT, GameEvent.ENTITY_MOUNT, GameEvent.ENTITY_PLACE, GameEvent.ENTITY_ACTION, GameEvent.EQUIP,
                 GameEvent.EXPLODE, GameEvent.FLUID_PICKUP, GameEvent.FLUID_PLACE, GameEvent.HIT_GROUND, GameEvent.INSTRUMENT_PLAY,
                 GameEvent.ITEM_INTERACT_FINISH, GameEvent.LIGHTNING_STRIKE, GameEvent.NOTE_BLOCK_PLAY, GameEvent.PRIME_FUSE,
@@ -110,10 +110,25 @@ public final class GameEventTags {
 
     private static final ResourceLocation WARDEN = new ResourceLocation("wildupdatebackport", "warden");
 
-    /** {@code #dampens_vibrations}: wool and wool carpets. */
+    private static final Set<Block> DAMPENERS = new CopyOnWriteArraySet<Block>();
+
+    /**
+     * Adds a block to {@code #dampens_vibrations} (blocks and items: 26.3's wool stairs and slabs, whichever mod
+     * registers them), counted by both {@link #dampens(IBlockState)} and {@link #dampens(Entity)}.
+     */
+    public static void addDampener(Block block) {
+        if (block != null && block != Blocks.AIR) {
+            DAMPENERS.add(block);
+        }
+    }
+
+    private static boolean dampener(Block b) {
+        return b == Blocks.WOOL || b == Blocks.CARPET || DAMPENERS.contains(b);
+    }
+
+    /** {@code #dampens_vibrations}: wool, wool carpets and the blocks {@link #addDampener} added. */
     public static boolean dampens(IBlockState state) {
-        Block b = state.getBlock();
-        return b == Blocks.WOOL || b == Blocks.CARPET;
+        return dampener(state.getBlock());
     }
 
     /** {@code Entity.dampensVibrations}: a dropped wool or carpet item, and the warden. */
@@ -122,8 +137,7 @@ public final class GameEventTags {
             return true;
         }
         if (entity instanceof EntityItem) {
-            Block b = Block.getBlockFromItem(((EntityItem) entity).getItem().getItem());
-            return b == Blocks.WOOL || b == Blocks.CARPET;
+            return dampener(Block.getBlockFromItem(((EntityItem) entity).getItem().getItem()));
         }
         return false;
     }

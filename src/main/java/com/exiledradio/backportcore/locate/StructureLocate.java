@@ -167,10 +167,18 @@ public final class StructureLocate {
     public static final class Found {
         public final BlockPos pos;
         public final String id;
+        /** The start chunk, for a grid's answer; null for a finder's. */
+        @Nullable
+        public final ChunkPos chunk;
 
         Found(BlockPos pos, String id) {
+            this(pos, id, null);
+        }
+
+        Found(BlockPos pos, String id, @Nullable ChunkPos chunk) {
             this.pos = pos;
             this.id = id;
+            this.chunk = chunk;
         }
 
         @Override
@@ -339,6 +347,31 @@ public final class StructureLocate {
      */
     @Nullable
     public static Found nearest(WorldServer world, BlockPos from, String idOrTag) throws Unavailable {
+        return nearest(world, from, idOrTag, RINGS, false);
+    }
+
+    /**
+     * The nearest of an id or a tag's members within so many rings, as today's {@code findNearestMapStructure} with
+     * a search radius and {@code skipKnownStructures} (the {@code exploration_map} function's {@code search_radius}
+     * and {@code skip_existing_chunks}). With {@code skipClaimed}, a grid start some map already claimed is passed
+     * over, and the start found is claimed for this world ({@link StructureClaims}); a finder's answer is never
+     * skipped or claimed (finders search 1.12.2's way and know no starts).
+     *
+     * @param rings regions out from the sender's, 0 to {@link #RINGS}
+     */
+    @Nullable
+    public static Found nearest(WorldServer world, BlockPos from, String idOrTag, int rings, boolean skipClaimed) throws Unavailable {
+        return nearest(world, from, idOrTag, rings, skipClaimed, skipClaimed);
+    }
+
+    /**
+     * As {@link #nearest(WorldServer, BlockPos, String, int, boolean)}, choosing whether the start found is claimed:
+     * a caller comparing several searches (one per member of its own list) passes false and claims the one it keeps
+     * with {@link StructureClaims#claim}.
+     */
+    @Nullable
+    public static Found nearest(WorldServer world, BlockPos from, String idOrTag, int rings, boolean skipClaimed, boolean claim) throws Unavailable {
+        rings = Math.max(0, Math.min(RINGS, rings));
         String key = normalize(idOrTag);
         Collection<String> wanted = key.startsWith("#") ? members(key) : Collections.singleton(key);
         if (FlatWorlds.isFlat(world)) {
@@ -418,7 +451,11 @@ public final class StructureLocate {
         }
 
         if (!placements.isEmpty()) {
-            Found ring = searchGrids(world.getSeed(), from, placements, placementIds, best, bestDistance);
+            StructureClaims claims = skipClaimed ? StructureClaims.of(world) : null;
+            Found ring = searchGrids(world.getSeed(), from, placements, placementIds, best, bestDistance, rings, claims);
+            if (ring != null && claims != null && claim && ring.chunk != null) {
+                claims.claim(ring.id, ring.chunk.x, ring.chunk.z);
+            }
             if (ring != null) {
                 return ring;
             }
@@ -469,12 +506,18 @@ public final class StructureLocate {
     @Nullable
     static Found searchGrids(long seed, BlockPos from, List<Placement> placements, List<Set<String>> ids,
                              @Nullable Found best, double bestDistance) {
+        return searchGrids(seed, from, placements, ids, best, bestDistance, RINGS, null);
+    }
+
+    @Nullable
+    static Found searchGrids(long seed, BlockPos from, List<Placement> placements, List<Set<String>> ids,
+                             @Nullable Found best, double bestDistance, int rings, @Nullable StructureClaims claims) {
         int originX = from.getX() >> 4;
         int originZ = from.getZ() >> 4;
-        for (int radius = 0; radius <= RINGS; radius++) {
+        for (int radius = 0; radius <= rings; radius++) {
             boolean foundSomething = false;
             for (int i = 0; i < placements.size(); i++) {
-                Found found = firstInRing(seed, originX, originZ, radius, placements.get(i), ids.get(i));
+                Found found = firstInRing(seed, originX, originZ, radius, placements.get(i), ids.get(i), claims);
                 if (found != null) {
                     foundSomething = true;
                     double d = from.distanceSq(found.pos);
@@ -493,7 +536,8 @@ public final class StructureLocate {
 
     /** Today's {@code getNearestGeneratedStructure} for one ring of one grid: the first start, x outer, z inner. */
     @Nullable
-    private static Found firstInRing(long seed, int originX, int originZ, int radius, Placement placement, Set<String> ids) {
+    private static Found firstInRing(long seed, int originX, int originZ, int radius, Placement placement, Set<String> ids,
+                                     @Nullable StructureClaims claims) {
         ScatteredPlacement grid = placement.grid();
         int spacing = grid.spacing();
         for (int x = -radius; x <= radius; x++) {
@@ -511,8 +555,8 @@ public final class StructureLocate {
                     BackportCore.LOGGER.error("Locate: a start check failed at chunk {}, {}.", target.x, target.z, e);
                     id = null;
                 }
-                if (id != null && ids.contains(id)) {
-                    return new Found(placement.locatePos(target.x, target.z), id);
+                if (id != null && ids.contains(id) && (claims == null || !claims.claimed(id, target.x, target.z))) {
+                    return new Found(placement.locatePos(target.x, target.z), id, target);
                 }
             }
         }
