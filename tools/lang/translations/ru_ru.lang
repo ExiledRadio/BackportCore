@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=Порядок в творч�
 backportcore.general.lookandfeel.music.tooltip=Новая музыка меню, музыка в игре и настройки музыки. Выкл.: как в 1.12.2.
 backportcore.general.lookandfeel.sky.tooltip=Туман, небо, облака и рассвет каждой версии. Выкл.: как в 1.12.2.
 backportcore.general.lookandfeel.wording.tooltip=Тексты ванильной игры в формулировках новых версий. Выкл.: формулировки 1.12.2.
+backportcore.resourcepack.textures=Текстуры Backport
+backportcore.resourcepack.textures.description=Новые текстуры, до версии %s

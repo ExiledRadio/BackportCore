@@ -60,6 +60,7 @@ public final class ModernTextures {
         active = wanted();
         apply(active);
         MinecraftForge.EVENT_BUS.register(new ModernTextures.Listener());
+        MinecraftForge.EVENT_BUS.register(new TexturesPackEntry.Events());
         BackportCore.LOGGER.info("Texture Update: {} ({} texture layers, {} classic textures).",
                 active ? "modern textures" : "1.12.2 textures", TextureLayers.all().size(), classic.size());
     }

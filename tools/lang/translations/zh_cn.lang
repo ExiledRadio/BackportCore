@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=创造模式排序、槽位�
 backportcore.general.lookandfeel.music.tooltip=新版菜单音乐、游戏内音乐和音乐选项。关闭：1.12.2的样式。
 backportcore.general.lookandfeel.sky.tooltip=各版本的雾、天空、云和日出。关闭：1.12.2的样式。
 backportcore.general.lookandfeel.wording.tooltip=按新版本措辞的原版文本。关闭：1.12.2的措辞。
+backportcore.resourcepack.textures=Backport 纹理
+backportcore.resourcepack.textures.description=截至 %s 的新版纹理

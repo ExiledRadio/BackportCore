@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=クリエイティブの並�
 backportcore.general.lookandfeel.music.tooltip=新しいメニューの音楽、ゲーム内の音楽、音楽の設定。オフ: 1.12.2のもの。
 backportcore.general.lookandfeel.sky.tooltip=各バージョンの霧、空、雲、日の出。オフ: 1.12.2のもの。
 backportcore.general.lookandfeel.wording.tooltip=新しいバージョンの言い回しによるバニラのテキスト。オフ: 1.12.2の文言。
+backportcore.resourcepack.textures=Backport のテクスチャ
+backportcore.resourcepack.textures.description=%s までの新しいテクスチャ

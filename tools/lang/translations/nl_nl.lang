@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=De creatief-volgorde, slotmar
 backportcore.general.lookandfeel.music.tooltip=De nieuwere menumuziek, muziek in het spel en muziekopties. Uit: die van 1.12.2.
 backportcore.general.lookandfeel.sky.tooltip=De mist, lucht, wolken en zonsopgang van elke versie. Uit: die van 1.12.2.
 backportcore.general.lookandfeel.wording.tooltip=De tekst van vanilla zoals de nieuwere versies hem verwoorden. Uit: de woordkeuze van 1.12.2.
+backportcore.resourcepack.textures=Backport-texturen
+backportcore.resourcepack.textures.description=Nieuwere texturen, tot en met %s

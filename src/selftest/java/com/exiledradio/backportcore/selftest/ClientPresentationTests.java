@@ -158,6 +158,13 @@ final class ClientPresentationTests {
                     ClientLookSwitchTests.tick(mc);
                     if (ClientLookSwitchTests.done) {
                         this.stage = 6;
+                    }
+                    break;
+                case 6:
+                    // Core 1.4.3's Backport Textures row in the Resource Packs screen.
+                    ClientPackListTests.tick(mc);
+                    if (ClientPackListTests.done) {
+                        this.stage = 7;
                         BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
                         mc.shutdown();
                     }

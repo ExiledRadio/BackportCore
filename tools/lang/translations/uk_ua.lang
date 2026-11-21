@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=Порядок у творч�
 backportcore.general.lookandfeel.music.tooltip=Новіша музика меню, музика в грі та налаштування музики. Вимкнено: як у 1.12.2.
 backportcore.general.lookandfeel.sky.tooltip=Туман, небо, хмари і схід сонця кожної версії. Вимкнено: як у 1.12.2.
 backportcore.general.lookandfeel.wording.tooltip=Ванільний текст у формулюваннях новіших версій. Вимкнено: формулювання 1.12.2.
+backportcore.resourcepack.textures=Текстури Backport
+backportcore.resourcepack.textures.description=Новіші текстури, до версії %s

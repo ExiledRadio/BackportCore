@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=크리에이티브 정렬 순
 backportcore.general.lookandfeel.music.tooltip=새로운 메뉴 음악, 게임 내 음악, 음악 설정입니다. 끄면 1.12.2의 것입니다.
 backportcore.general.lookandfeel.sky.tooltip=각 버전의 안개, 하늘, 구름, 해돋이입니다. 끄면 1.12.2의 것입니다.
 backportcore.general.lookandfeel.wording.tooltip=새로운 버전의 표현을 따른 바닐라 텍스트입니다. 끄면 1.12.2의 문구입니다.
+backportcore.resourcepack.textures=Backport 텍스처
+backportcore.resourcepack.textures.description=%s까지의 새 텍스처

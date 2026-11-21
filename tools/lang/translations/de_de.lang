@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=Die Kreativ-Reihenfolge, Slot
 backportcore.general.lookandfeel.music.tooltip=Die neuere Menümusik, Spielmusik und Musikoptionen. Aus: wie in 1.12.2.
 backportcore.general.lookandfeel.sky.tooltip=Nebel, Himmel, Wolken und Sonnenaufgang jeder Version. Aus: wie in 1.12.2.
 backportcore.general.lookandfeel.wording.tooltip=Die Texte von Vanilla so, wie die neueren Versionen sie formulieren. Aus: die Formulierungen von 1.12.2.
+backportcore.resourcepack.textures=Backport-Texturen
+backportcore.resourcepack.textures.description=Neuere Texturen, bis %s

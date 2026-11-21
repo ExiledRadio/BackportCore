@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=創造模式排序、物品�
 backportcore.general.lookandfeel.music.tooltip=新版選單音樂、遊戲內音樂和音樂選項。停用：1.12.2 的樣式。
 backportcore.general.lookandfeel.sky.tooltip=各版本的霧、天空、雲和日出。停用：1.12.2 的樣式。
 backportcore.general.lookandfeel.wording.tooltip=依新版本用語的原版文字。停用：1.12.2 的用語。
+backportcore.resourcepack.textures=Backport 材質
+backportcore.resourcepack.textures.description=截至 %s 的新版材質

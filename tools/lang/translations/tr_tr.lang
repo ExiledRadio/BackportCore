@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=Yaratıcı sıralaması, yuva
 backportcore.general.lookandfeel.music.tooltip=Daha yeni menü müziği, oyun içi müzik ve müzik seçenekleri. Kapalı: 1.12.2'ninkiler.
 backportcore.general.lookandfeel.sky.tooltip=Her sürümün sisi, gökyüzü, bulutları ve gün doğumu. Kapalı: 1.12.2'ninkiler.
 backportcore.general.lookandfeel.wording.tooltip=Vanilla'nın metinleri, daha yeni sürümlerin ifade ettiği gibi. Kapalı: 1.12.2'nin ifadeleri.
+backportcore.resourcepack.textures=Backport Dokuları
+backportcore.resourcepack.textures.description=%s sürümüne kadar yeni dokular

@@ -151,3 +151,5 @@ backportcore.general.lookandfeel.inventory.tooltip=Kolejność w trybie kreatywn
 backportcore.general.lookandfeel.music.tooltip=Nowsza muzyka w menu, muzyka w grze i opcje muzyki. Wyłączone: te z 1.12.2.
 backportcore.general.lookandfeel.sky.tooltip=Mgła, niebo, chmury i wschód słońca każdej wersji. Wyłączone: te z 1.12.2.
 backportcore.general.lookandfeel.wording.tooltip=Teksty vanilla w brzmieniu nowszych wersji. Wyłączone: słownictwo z 1.12.2.
+backportcore.resourcepack.textures=Tekstury Backport
+backportcore.resourcepack.textures.description=Nowsze tekstury, do wersji %s

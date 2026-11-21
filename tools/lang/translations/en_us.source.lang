@@ -1,6 +1,8 @@
 # The English each translations/<code>.lang entry was made from. Written by build_langs.py snapshot.
 config.backportcore.textures=Textures
 backportcore.general.textures.moderntextures=Modern Textures
+backportcore.resourcepack.textures=Backport Textures
+backportcore.resourcepack.textures.description=Newer textures, up to %s
 config.backportcore.presentation=Title and Pause Menu
 backportcore.general.presentation.panorama=Panorama
 backportcore.general.presentation.reportbugslink=Report Bugs Link

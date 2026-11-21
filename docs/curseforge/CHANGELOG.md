@@ -1,3 +1,7 @@
+# 1.4.3
+
+*   **The newer textures are in the Resource Packs screen**, as "Backport Textures": move it to the left column to keep 1.12.2's textures. It is the same switch as Modern Textures in the settings, and it always sits just above Default, so every pack you pick still wins over it.
+
 # 1.4.2
 
 *   **Fixed a white box behind the book and quill** (and behind other modded screens that draw a see-through texture over the blurred background).

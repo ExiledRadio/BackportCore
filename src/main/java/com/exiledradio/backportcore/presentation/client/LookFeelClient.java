@@ -22,8 +22,16 @@ public final class LookFeelClient {
     /** For the self-tests: how many resource reloads a look change asked for. */
     public static volatile int reloads;
 
+    /** Set by a caller whose own reload follows at once (the Resource Packs screen's Done after a pack change). */
+    private static boolean skipNext;
+
     private String state = state();
     private String resources = resources();
+
+    /** The next look change reads no resources: the caller reloads them itself, right after it, with the new packs. */
+    public static void skipNextReload() {
+        skipNext = true;
+    }
 
     /** @return every switch and the newest look, as one string */
     static String state() {
@@ -51,6 +59,8 @@ public final class LookFeelClient {
         if (!BackportCore.MOD_ID.equals(event.getModID())) {
             return;
         }
+        boolean skip = skipNext;
+        skipNext = false;
         String now = state();
         if (now.equals(this.state)) {
             return;
@@ -62,6 +72,9 @@ public final class LookFeelClient {
         String res = resources();
         if (!res.equals(this.resources)) {
             this.resources = res;
+            if (skip) {
+                return;
+            }
             reloads++;
             Minecraft mc = Minecraft.getMinecraft();
             mc.addScheduledTask(mc::refreshResources);
