@@ -61,6 +61,23 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.MENUS, "1.14");
     }
 
+    /**
+     * 26.2: the pause menu's Report Bugs and Send Feedback are 20 by 20 icon buttons in one row under Advancements and
+     * Statistics (sprites {@code pause_menu/bug} and {@code pause_menu/social_interactions}, supplied by a backport).
+     */
+    public static boolean pauseIconRow() {
+        return Presentation.isAtLeast(LookArea.MENUS, "26.2");
+    }
+
+    /**
+     * 26.2's pause grid top: {@code FrameLayout.alignInRectangle} at a quarter of the free height, the grid being rows
+     * of 24 (20 and a 4 padding) with the first 70 (Back to Game's 50 padding).
+     */
+    public static int pauseGridTop(int height, int rows) {
+        int gridHeight = 70 + 24 * (rows - 1);
+        return (int) (0.25F * (height - gridHeight));
+    }
+
     /** 1.15 (19w35a): a hardcore death screen has one "Title screen" button instead of Delete World and Leave Server. */
     public static boolean hardcoreTitleButton() {
         return Presentation.isAtLeast(LookArea.MENUS, "1.15");

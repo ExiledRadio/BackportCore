@@ -331,6 +331,25 @@ public final class MenuBackground {
         GlStateManager.disableBlend();
     }
 
+    /**
+     * A {@code HeaderAndFooterLayout} screen's content frame, for a backport's own screens (26.3's World Options): the
+     * in-world or title list background between {@code top} and {@code bottom}, scrolled by {@code scrolled}, and the
+     * header and footer separators, while the newer menu backgrounds are on. Since Core 1.4.6.
+     *
+     * @return whether it drew (false: the caller keeps 1.12.2's look)
+     */
+    public static boolean contentFrame(int left, int top, int right, int bottom, int scrolled) {
+        if (!active()) {
+            return false;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        boolean world = mc.world != null;
+        tile(world ? INWORLD_LIST : LIST, LIST_COLOR, left, top, right - left, bottom - top, right, bottom + scrolled);
+        separator(mc, world ? INWORLD_HEADER : HEADER, left, top - 2, right - left, true);
+        separator(mc, world ? INWORLD_FOOTER : FOOTER, left, bottom, right - left, false);
+        return true;
+    }
+
     /** 1.20.6's {@code renderListSeparators}: two pixels above the list's top, two below its bottom. */
     static void separators(GuiSlot slot) {
         Minecraft mc = Minecraft.getMinecraft();
