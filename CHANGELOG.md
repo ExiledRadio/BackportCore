@@ -1,3 +1,10 @@
+# 1.4.3
+
+*   Fixed red squares around a lit redstone torch's head with the 1.21 textures (Newest Look 1.21 or later): 1.21's
+    texture has a 4 by 4 head whose corners only its own model's glow quads sample, and 1.12.2's torch draws the
+    whole texture on crossed planes. The 1.21 texture layer now carries 1.21's standing and wall redstone torch models
+    (a stick and six glow quads) under 1.12.2's names (`lit_redstone_torch`, `lit_redstone_torch_wall`).
+
 # 1.4.1
 
 *   Fixed a crash at startup with SRParasites (since 1.3.0): the sunrise color, sky color and cloud height patches

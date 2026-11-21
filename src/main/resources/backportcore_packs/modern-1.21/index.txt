@@ -1,3 +1,5 @@
+assets/minecraft/models/block/lit_redstone_torch.json
+assets/minecraft/models/block/lit_redstone_torch_wall.json
 assets/minecraft/textures/blocks/nether_brick.png
 assets/minecraft/textures/blocks/red_nether_brick.png
 assets/minecraft/textures/blocks/redstone_torch_on.png

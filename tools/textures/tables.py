@@ -123,3 +123,12 @@ ACCEPT = {
                                   'guardian\'s 1.12.2 sheet is blank there too) and the "jeb" signature',
     ('1.17', 'entity/guardian_elder'): 'blank only at the "jeb" signature, which no model part uses',
 }
+
+# Models a texture needs from the line that changed it, {1.12.2 texture: [(1.12.2 block model, that line's model)]}.
+# Written into the same layer as the texture, under 1.12.2's model name, with the line's elements and the texture
+# variable pointed at the 1.12.2 texture. 1.21's redstone torch has a 4 by 4 head whose corners only the glow quads
+# of its own model sample: on 1.12.2's crossed 16 by 16 planes the whole block showed as a red square.
+MODELS = {
+    'blocks/redstone_torch_on': [('lit_redstone_torch', 'template_redstone_torch'),
+                                 ('lit_redstone_torch_wall', 'template_redstone_torch_wall')],
+}

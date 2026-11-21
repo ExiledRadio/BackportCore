@@ -95,6 +95,15 @@ final class ClientTextureTests {
         mc.getTextureManager().bindTexture(new ResourceLocation(CAT));
         String diff = compare(bound(), layerImage(catLayer, "assets/minecraft/" + CAT));
         check("client textures: the siamese cat is layer " + catLayer + "'s at " + newest, diff == null, diff);
+        // 1.21's lit redstone torch texture has a 4 by 4 head that only 1.21's own model (a stick and six glow
+        // quads) shows right; on 1.12.2's crossed planes it was a red square. The 1.21 layer carries the models.
+        boolean torch121 = Presentation.isAtLeast("1.21");
+        int standing = quads(mc, net.minecraft.init.Blocks.REDSTONE_TORCH.getDefaultState());
+        int wall = quads(mc, net.minecraft.init.Blocks.REDSTONE_TORCH.getDefaultState()
+                .withProperty(net.minecraft.block.BlockTorch.FACING, net.minecraft.util.EnumFacing.EAST));
+        check("client textures: the lit redstone torch is " + (torch121 ? "1.21's model (12 quads standing and on a wall)"
+                : "1.12.2's crossed planes (6 quads)") + " at " + newest,
+                torch121 ? standing == 12 && wall == 12 : standing == 6 && wall == 6, standing + " standing, " + wall + " on a wall");
 
         // The switch: off gives 1.12.2's own textures back, on gives the layers again.
         CoreConfig.textures.modernTextures = false;
@@ -115,6 +124,16 @@ final class ClientTextureTests {
         String file = "assets/minecraft/textures/blocks/coal_ore.png";
         String d = compare(atlasSprite(mc, "minecraft:blocks/coal_ore"), layerImage(TextureLayers.layerFor(file, Presentation.newest()), file));
         check("client textures: switched back on, the coal ore is the layers' again", d == null, d);
+    }
+
+    /** @return how many quads the block model has, every side and the general list */
+    private static int quads(Minecraft mc, net.minecraft.block.state.IBlockState state) {
+        net.minecraft.client.renderer.block.model.IBakedModel model = mc.getBlockRendererDispatcher().getModelForState(state);
+        int n = model.getQuads(state, null, 0L).size();
+        for (net.minecraft.util.EnumFacing side : net.minecraft.util.EnumFacing.values()) {
+            n += model.getQuads(state, side, 0L).size();
+        }
+        return n;
     }
 
     /** Moves Core's modern pack just above the dev client's Forge pack (see the class comment) and reloads. */
