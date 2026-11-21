@@ -1,11 +1,8 @@
-# 1.4.5
+# 1.4.4
 
 *   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth.
 *   **More of today's commands**: `/random` (with today's saved sequences, so a world gives the same values as in the current game), `/ride`, `/rotate`, `/spectate` and `/teammsg` (or `/tm`). Each command has its own switch in the settings.
 *   **26.2's pause menu**: with a backport that supplies its icons (Game Drops Backport), Report Bugs and Send Feedback become two icon buttons in one row under Advancements and Statistics.
-
-# 1.4.4
-
 *   **Fixed land animals spawning in the sea** (Lycanites' bobekos in cold oceans, among others): chunk generation put them on the sea floor inside kelp, seagrass and other blocks holding water, and they floated up. A mob that spawns on the ground now needs a spot without water, as in 1.13 and later.
 *   **Fixed a crash on world load with Alex's Mobs (Legacy)** ("Index 6 out of bounds for length 6" in `getSpawnableList`): a creature type a mod adds late, after the biome spawn lists were first read, now gets its own empty list instead of crashing, whichever mods add types and in whatever order.
 

@@ -734,7 +734,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Class**: `net.minecraft.server.MinecraftServer`, methods `run` and `updateTimeLightAndEntities`.
     **Transformer**: `asm/TickTransformer`. **Hooks**: `command/tick/TickHooks.msPerTick`, `runTick`, `functions`.
-    **Since**: 1.4.5.
+    **Since**: 1.4.4.
 *   **Vanilla change**: 1.20.3's `/tick rate` and `/tick sprint`. 26.3's loop waits `nanosecondsPerTick()` between
     ticks, and while sprinting runs ticks with no wait at all; functions do not run while the game is frozen.
     1.12.2's loop waits a constant 50 ms.
@@ -755,7 +755,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Classes**: `net.minecraft.world.World` (`updateEntityWithOptionalForce`, `updateEntities`) and
     `net.minecraft.world.WorldServer` (`tick`). **Transformer**: `asm/TickTransformer`. **Hooks**:
-    `TickHooks.skipEntity`, `updateTile`, `frozenWorldTick`. **Since**: 1.4.5.
+    `TickHooks.skipEntity`, `updateTile`, `frozenWorldTick`. **Since**: 1.4.4.
 *   **Vanilla change**: while frozen (and not stepping), 26.3's `ServerLevel.tick` skips the world border, weather,
     time, block and fluid ticks, random ticks, spawning, raids and block events; entities skip their tick unless they
     are players or carry one (`TickRateManager.isEntityFrozen`), and block entities skip theirs (`Level.tickBlockEntities`).
@@ -774,7 +774,7 @@ or passes an existing constant through a hook of the same type.
 
 *   **Classes**: `WorldClient` (`tick`), `Minecraft` (`runTick`), `RenderManager` (`renderEntityStatic`),
     `TileEntityRendererDispatcher` (`render(TileEntity, float, int)`). **Transformer**: `asm/TickTransformer`.
-    **Hooks**: `command/tick/client/ClientTicks`. **Since**: 1.4.5.
+    **Hooks**: `command/tick/client/ClientTicks`. **Since**: 1.4.4.
 *   **Vanilla change**: 26.3's client follows the server's tick state: while frozen its clock, particles and ambient
     particles (`animateTick`) wait, and `DeltaTracker` gives frozen entities and block entities a partial tick of 1,
     so they draw where their last tick left them instead of jittering between ticks.
