@@ -69,6 +69,24 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.MENUS, "26.2");
     }
 
+    /** Set by the mod that brings 26.1's babies (Game Drops Backport's {@code babies.babyModels}); on by default. */
+    private static volatile java.util.function.BooleanSupplier babyModelSwitch = () -> true;
+
+    /**
+     * 26.1: babies have their own models and {@code *_baby} textures (26.3's {@code Baby*Model} classes), not the
+     * adult's model shrunk. A backport draws its own mobs' babies so while this is true: 26.1 or later installed
+     * (Game Drops Backport registers it), Core's textures switch on, and the 26.1 mod's own switch
+     * ({@link #setBabyModelSwitch}) on. Read it each frame; it can change in game. Since Core 1.4.4.
+     */
+    public static boolean babyModels() {
+        return Presentation.isAtLeast(LookArea.TEXTURES, "26.1") && babyModelSwitch.getAsBoolean();
+    }
+
+    /** For the mod that brings 26.1's babies: its own switch for {@link #babyModels()}, read each time. */
+    public static void setBabyModelSwitch(java.util.function.BooleanSupplier on) {
+        babyModelSwitch = on == null ? () -> true : on;
+    }
+
     /** 26.3: an options list's section headers are bold, underlined and centered ({@code OptionsList.addHeader}). */
     public static boolean centeredOptionHeaders() {
         return Presentation.isAtLeast(LookArea.MENUS, "26.3");
