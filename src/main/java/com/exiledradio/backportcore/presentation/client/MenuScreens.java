@@ -46,7 +46,9 @@ public final class MenuScreens {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
         GuiScreen gui = event.getGui();
-        if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseFeedback()) {
+        if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseIconRow() && iconSprites()) {
+            pause262(gui, event.getButtonList());
+        } else if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseFeedback()) {
             pause(gui, event.getButtonList());
         } else if (gui instanceof GuiGameOver && VanillaRevisions.hardcoreTitleButton()) {
             Minecraft mc = Minecraft.getMinecraft();
@@ -113,6 +115,108 @@ public final class MenuScreens {
         String bugs = reportBugsLink();
         if (!bugs.isEmpty()) {
             buttons.add(new OptionWidgets.Action(w / 2 + 4, top + 72, 98, I18n.format("menu.reportBugs"), () -> confirmLink(gui, bugs)));
+        }
+    }
+
+    static final String BUG_SPRITE = "textures/gui/sprites/pause_menu/bug.png";
+    static final String FEEDBACK_SPRITE = "textures/gui/sprites/pause_menu/social_interactions.png";
+
+    /** @return whether a backport supplies 26.2's two pause-menu sprites (else the 1.14 text row stays) */
+    static boolean iconSprites() {
+        return com.exiledradio.backportcore.presentation.Presentation.asset(BUG_SPRITE) != null
+                && com.exiledradio.backportcore.presentation.Presentation.asset(FEEDBACK_SPRITE) != null;
+    }
+
+    /**
+     * 26.2's {@code PauseScreen.createPauseMenu}: a two-column grid (cells padded 4, the first row 50 from the top),
+     * aligned at a quarter of the free height: Back to Game; Advancements, Statistics; the icon row (Report Bugs,
+     * Send Feedback; 26.2's Friends and Player Reporting are online services 1.12.2 lacks); Options..., Open to LAN
+     * (World Options... from 26.3, the newest backport's); Forge's Mods row; Save and Quit.
+     */
+    static void pause262(GuiScreen gui, List<GuiButton> buttons) {
+        int w = gui.width;
+        boolean mods = find(buttons, MOD_OPTIONS) != null;
+        int rows = mods ? 6 : 5;
+        int top = VanillaRevisions.pauseGridTop(gui.height, rows) + 50;
+        String bugs = reportBugsLink();
+        ICONS.clear();
+        for (GuiButton b : buttons) {
+            switch (b.id) {
+                case 4:
+                    place(b, w / 2 - 102, top, 204);
+                    break;
+                case 5:
+                    place(b, w / 2 - 102, top + 24, 98);
+                    break;
+                case 6:
+                    place(b, w / 2 + 4, top + 24, 98);
+                    break;
+                case 0:
+                    place(b, w / 2 - 102, top + 72, 98);
+                    break;
+                case 7:
+                    place(b, w / 2 + 4, top + 72, 98);
+                    break;
+                case MOD_OPTIONS:
+                    place(b, w / 2 - 102, top + 96, 204);
+                    b.displayString = I18n.format("fml.menu.mods");
+                    break;
+                case 1:
+                    place(b, w / 2 - 102, top + (mods ? 120 : 96), 204);
+                    break;
+                default:
+                    break;
+            }
+        }
+        // The icon row is centered: 20 + 4 + 20 with both, one button alone without a Report Bugs link.
+        int rowWidth = bugs.isEmpty() ? 20 : 44;
+        int x = w / 2 - rowWidth / 2;
+        if (!bugs.isEmpty()) {
+            ICONS.add(new IconAction(x, top + 48, I18n.format("menu.reportBugs"), BUG_SPRITE, () -> confirmLink(gui, bugs)));
+            x += 24;
+        }
+        ICONS.add(new IconAction(x, top + 48, I18n.format("menu.sendFeedback"), FEEDBACK_SPRITE, () -> confirmLink(gui, FEEDBACK_URL)));
+        buttons.addAll(ICONS);
+    }
+
+    /** The open pause menu's icon buttons (for their tooltips and the client self-test). */
+    public static final List<IconAction> ICONS = new java.util.ArrayList<IconAction>();
+
+    /** 26.2's {@code SpriteIconButton.CenteredIcon}: a blank 20 by 20 button with a 15 by 15 sprite, its name as tooltip. */
+    public static final class IconAction extends OptionWidgets.Action {
+        public final String sprite;
+        public final String tooltip;
+
+        IconAction(int x, int y, String tooltip, String sprite, Runnable action) {
+            super(x, y, 20, "", action);
+            this.sprite = sprite;
+            this.tooltip = tooltip;
+        }
+
+        @Override
+        public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+            if (!this.visible) {
+                return;
+            }
+            super.drawButton(mc, mouseX, mouseY, partialTicks);
+            mc.getTextureManager().bindTexture(new net.minecraft.util.ResourceLocation(this.sprite));
+            net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, this.enabled ? 1.0F : 0.5F);
+            net.minecraft.client.renderer.GlStateManager.enableBlend();
+            net.minecraft.client.gui.Gui.drawModalRectWithCustomSizedTexture(this.x + this.width / 2 - 7, this.y + this.height / 2 - 7,
+                    0.0F, 0.0F, 15, 15, 15.0F, 15.0F);
+            net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+    }
+
+    @SubscribeEvent
+    public void onDraw(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (event.getGui().getClass() != GuiIngameMenu.class) {
+            return;
+        }
+        for (IconAction b : ICONS) {
+            if (b.visible && b.isMouseOver()) {
+                event.getGui().drawHoveringText(b.tooltip, event.getMouseX(), event.getMouseY());
+            }
         }
     }
 

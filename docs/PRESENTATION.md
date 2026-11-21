@@ -175,6 +175,8 @@ change one version made stays made when only a later backport is installed:
 * **Video Settings**: 1.13 removes 3D Anaglyph (off) and numbers GUI Scale (Auto, 1, 2 ... up to what the window
   fits); 1.14 removes Use VBOs (on).
 * **Pause menu** (1.14): 1.14.4's 204-wide grid with Give Feedback and Report Bugs; Forge's Mod Options moves below.
+  26.2: the two become 20 by 20 icon buttons in one row (`VanillaRevisions.pauseIconRow`, `MenuScreens.pause262`), with
+  sprites a backport supplies (`pause_menu/bug`, `pause_menu/social_interactions`).
 * **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
 * **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing

@@ -29,6 +29,8 @@ final class LookSwitchTests {
 
     static void schedule() {
         then(1, "look switches: resolving", world -> {
+            check("look: 26.2's pause grid at a quarter of the free height", com.exiledradio.backportcore.presentation.VanillaRevisions.pauseGridTop(240, 5) == 18
+                    && com.exiledradio.backportcore.presentation.VanillaRevisions.pauseGridTop(480, 6) == 72);
             check("look: on, Latest: the newest installed", Presentation.resolveLook(v("1.21.11"), true, "LATEST").equals(v("1.21.11")));
             check("look: off: 1.12.2", Presentation.resolveLook(v("1.21.11"), false, "LATEST").equals(GameVersion.BASE));
             check("look: Newest Look stops at its version", Presentation.resolveLook(v("1.21.11"), true, "1.16").equals(v("1.16")));

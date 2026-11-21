@@ -1,3 +1,12 @@
+# 1.4.6
+
+*   26.2's pause menu (Game Drops Backport and newer): Report Bugs and Send Feedback become two 20 by 20 icon
+    buttons in one row under Advancements and Statistics, with their names as tooltips; the grid sits at a quarter
+    of the free height as 26.2's does. Shown only when a backport supplies the `pause_menu/bug` and
+    `pause_menu/social_interactions` sprites; the 1.14 text row stays otherwise.
+*   API: `MenuBackground.contentFrame`, the list background and separators of a header-and-footer screen, for a
+    backport's own screens.
+
 # 1.4.5
 
 *   Today's commands 1.12.2 lacks, in `command/`, each behind its own server setting (`commands.*`, read when a world
