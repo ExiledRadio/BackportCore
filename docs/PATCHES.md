@@ -713,7 +713,7 @@ or passes an existing constant through a hook of the same type.
 ## P37. No ground spawns in blocks that hold water
 
 *   **Class**: `net.minecraft.world.WorldEntitySpawner`, method `canCreatureTypeSpawnBody` (Forge's).
-    **Transformer**: `asm/GroundSpawnTransformer`. **Hooks**: `worldgen/GroundSpawnHooks.feet`, `head`. **Since**: 1.4.5.
+    **Transformer**: `asm/GroundSpawnTransformer`. **Hooks**: `worldgen/GroundSpawnHooks.feet`, `head`. **Since**: 1.4.4.
 *   **Vanilla change**: 1.13's `isValidEmptySpawnBlock` also asks for an empty fluid state, so a mob that spawns on the
     ground never spawns in a waterlogged block. 1.12.2 asks only that the feet and head blocks are not liquid material;
     kelp and seagrass (UA's `OCEAN_PLANT`/`SEA_GRASS`) and blocks Fluidlogged API waterlogs are not, so they passed.
