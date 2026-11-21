@@ -36,6 +36,8 @@ public abstract class PresentationOption {
     @Nullable
     private com.exiledradio.backportcore.presentation.LookArea area;
     private boolean loaded;
+    @Nullable
+    private java.util.function.BooleanSupplier available;
 
     /**
      * @param id       unique and permanent: {@code "modid:name"}; it is the key in the options file
@@ -166,9 +168,18 @@ public abstract class PresentationOption {
         return false;
     }
 
-    /** @return true while the version its part of the look resolves at ({@link #area()}) shows it */
+    /** @return true while the version its part of the look resolves at ({@link #area()}) shows it, and it is available */
     public final boolean isShown() {
-        return isShownAt(Presentation.newest(area()));
+        return (this.available == null || this.available.getAsBoolean()) && isShownAt(Presentation.newest(area()));
+    }
+
+    /**
+     * Shows it only while this answers true: a setting this game cannot honor (Borderless fullscreen where LWJGL 3 draws
+     * the window) is left off, as vanilla leaves off a setting a platform lacks. Since Core 1.4.4.
+     */
+    public PresentationOption availableWhen(java.util.function.BooleanSupplier available) {
+        this.available = available;
+        return this;
     }
 
     /**

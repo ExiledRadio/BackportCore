@@ -72,6 +72,7 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Creative order | `v.creativeOrder(new ResourceLocation("modid", "creative_order.txt"))` | One `modid:name` or `modid:name@meta` per line; every tab is sorted by the newest file, unnamed items after. No backport uses it: their items' places come from `creative.CreativePlacement` (`docs/CREATIVE_TABS.md`), and a file here would sort over them. |
 | Command suggestions (1.13) | `v.commandSuggestions(autoSuggest)`, `v.commandSuggestionLook(look)` | Turns on 1.13's suggestion list in the chat box (`presentation.client.ChatSuggestions`). `autoSuggest` is the version's "Command Suggestions" `ToggleOption`, registered with `option` too; off, the list shows on Tab. `SuggestionLook` is the list's colors and rows, plain data, so a later version can draw it its own way (1.13.2's by default). |
 | Option polish | `option.tooltip("options.x.tooltip")`, `option.alsoOn(OptionScreen.VIDEO)`, `slider.zeroKey("options.off")`, `slider.wholeLabel("options.chat.delay", "options.chat.delay_none")` | 1.16's tooltips (wrapped at 200 pixels), one option on two screens (one value), "OFF" at zero, and labels that are one sentence. |
+| Option polish (Core 1.4.4) | `toggle.valueTooltips("x.on.tooltip", "x.off.tooltip")`, `toggle.defaultFollows(() -> ...)`, `option.availableWhen(() -> ...)` | A tooltip for each value of a toggle; a default that follows the installed versions until the player sets it (nothing saved till then); an option shown only while the game can honor it. |
 Client-only registrations, from the backport's client proxy:
 
 | Piece | Call | Notes |
@@ -285,6 +286,37 @@ change one version made stays made when only a later backport is installed:
     1.20.6's is a single color, so without one Core draws that color: black at 64 of 255 for the screens, 112 for lists,
     and the separators a white line at 51 over a black line at 191 (the footer the other way up). A backport needs to
     supply none of them.
+* **Exclusive Fullscreen** (26.1, `Presentation.EXCLUSIVE_FULLSCREEN`, `BorderlessFullscreen`, P42): Core's own option
+  `backportcore:exclusive_fullscreen`, in Display after Fullscreen, with 26.1's two tooltips. On, Fullscreen is 1.12.2's
+  (the monitor changes mode). Off, it is a window without a frame the size of the monitor at its top left corner: LWJGL
+  2 reads `org.lwjgl.opengl.Window.undecorated` each time it makes its window, and `Display.setDisplayMode` with another
+  size makes a new one (the GL context stays), so going in and out sets the property and the size together; the window
+  goes back to where it was. Changing the option while fullscreen switches at once. **Default** (26.3,
+  `VanillaRevisions.borderlessByDefault`): off from 26.3, on at 26.1 and 26.2, following the newest version until the
+  player sets it (`ToggleOption.defaultFollows`; nothing is saved till then). Below 26.1 there is no option and
+  Fullscreen is 1.12.2's. Not shown where Cleanroom's LWJGL 3 (lwjglx) draws the window (`borderlessPossible`), and the
+  toggle is then left alone; P42 also steps aside when `toggleFullscreen` is not 1.12.2's own (not exactly one
+  `Display.setFullscreen`). A launcher's `--fullscreen` argument still starts exclusive (1.12.2 makes that window
+  before any mod loads); F11 twice, or turning the option on and off, then gives the borderless one.
+* **The debug overlay's GUI Scale** (26.3, `DebugScale`): Debug Options' footer has 26.3's 110-wide GUI Scale slider
+  between the profiles and Done (the footer's buttons 4 apart, as 26.3's), from Unchanged and Auto to the largest scale
+  the window fits; saved as `backportcore:debug_gui_scale`. Unchanged draws F3 at the game's scale, Auto (the default)
+  at half the largest scale, a number at that scale (1.12.2's `ScaledResolution` arithmetic, as the game's GUI Scale).
+  As 26.3, the overlay is only ever drawn smaller than the game's scale, never larger. No patch: at the end of Forge's
+  `RenderGameOverlayEvent.Text` (lowest priority, after every mod's lines) Core draws the two columns as Forge's
+  `renderHUDText` does, at that scale and out to the window's right edge, and cancels Forge's drawing; the lagometer
+  (F3 + 2) between its Pre and Post events with the game's GUI Scale set to the overlay's for that moment (its
+  `ScaledResolution` reads it), and Core's network charts (F3 + 3) at it too. With F3 hidden, Always parts are drawn at
+  it as well; other mods' HUD text without F3 is left alone.
+* **Creative tab order** (26.3: Building Blocks runs coal, emerald, lapis, amethyst, redstone and quartz blocks, then
+  iron, gold, diamond and netherite with their bars, doors and plates; Ingredients and the ores follow the same mineral
+  order; Natural Blocks goes Overworld, Nether, End): not built. 26.3
+  reorders runs of minerals inside its own tabs (Ingredients, Natural Blocks, 1.19.3's Building Blocks). 1.12.2's tabs
+  are 1.19.2's (`docs/CREATIVE_TABS.md`), which list items in registry order, so the ores, mineral blocks and ingots
+  are scattered among other items there and no run exists to reorder; there is no Natural Blocks tab. An order file
+  (`Contribution.creativeOrder`) sorts every tab by a full list, so a 26.3 list would regroup each 1.12.2 tab into 26.3's
+  tab layout, which no family version does (Tricky Trials keeps 1.19.2's order); a list of the minerals alone would move
+  them to the front of every tab. Either would be an order no vanilla version had.
 ## What is not covered yet
 
 * 1.21.11's Fullscreen Resolution (1.12.2 goes fullscreen at the desktop's mode), Biome Blend, Prioritize Chunk

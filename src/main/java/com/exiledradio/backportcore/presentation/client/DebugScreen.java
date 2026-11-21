@@ -78,9 +78,13 @@ public final class DebugScreen {
         return true;
     }
 
+    /** True while the last frame's text had Always parts with F3 hidden (the overlay's own scale applies to them). */
+    static boolean alwaysShown;
+
     /** From {@link DebugText.Events}, after the versions' steps: the parts that are on. */
     static void text(RenderGameOverlayEvent.Text event) {
         Minecraft mc = Minecraft.getMinecraft();
+        alwaysShown = false;
         if (mc.gameSettings.showDebugInfo) {
             DebugEntries.apply(event.getLeft(), event.getRight(), true);
             return;
@@ -97,6 +101,7 @@ public final class DebugScreen {
         DebugEntries.apply(left, right, false);
         event.getLeft().addAll(0, left);
         event.getRight().addAll(0, right);
+        alwaysShown = !left.isEmpty() || !right.isEmpty();
     }
 
     private static boolean anyAlwaysText(boolean reduced) {

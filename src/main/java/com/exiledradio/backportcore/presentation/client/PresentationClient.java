@@ -48,6 +48,8 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new NetworkCharts.Events());
         DebugScreen.init();
         RenderOptions.init();
+        com.exiledradio.backportcore.presentation.Presentation.EXCLUSIVE_FULLSCREEN.onChange(on -> BorderlessFullscreen.optionChanged(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(new DebugScale.Events());
     }
 
     /** From Core's load-complete event: the backports' vanilla text and assets take effect. */

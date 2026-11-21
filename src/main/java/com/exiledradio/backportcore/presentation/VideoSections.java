@@ -19,9 +19,12 @@ public final class VideoSections {
     /** The Preset slider, 310 wide on a row of its own at the top of Quality &amp; Performance. */
     public static final String PRESET = "~graphics_preset";
 
-    /** Display: Fullscreen Resolution (not in 1.12.2), Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, Brightness. */
+    /**
+     * Display: Fullscreen Resolution (not in 1.12.2), Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, 26.1's
+     * Exclusive Fullscreen, Brightness.
+     */
     static final List<String> DISPLAY_ENTRIES = Arrays.asList("FRAMERATE_LIMIT", "ENABLE_VSYNC", "~inactivity_fps_limit", "GUI_SCALE",
-            "USE_FULLSCREEN", "GAMMA");
+            "USE_FULLSCREEN", "~exclusive_fullscreen", "GAMMA");
     /**
      * Quality &amp; Performance after the Preset, as {@code qualityOptions}; {@code AO_LEVEL} is OptiFine's Smooth
      * Lighting Level, beside Smooth Lighting.

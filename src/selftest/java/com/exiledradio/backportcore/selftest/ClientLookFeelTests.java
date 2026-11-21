@@ -76,6 +76,7 @@ final class ClientLookFeelTests {
         check("client: 1.20.6's panorama time: ticks, half a tick past seven", com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advance(1100, 1000) == 2.0F
                 && com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advance(5000, 0) == 0.5F
                 && com.exiledradio.backportcore.presentation.client.PanoramaRenderer.advanceSpin(359.9F, 2.0F, 1.0F) < 1.0F);
+        ClientGdLookTests.title(mc, menu);
         mc.displayGuiScreen(menu);
     }
 

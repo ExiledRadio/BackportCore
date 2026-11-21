@@ -803,3 +803,29 @@ or passes an existing constant through a hook of the same type.
     other disc, and an empty jukebox, keep 1.12.2's answer.
 *   **Fails safe**: method not found: skipped, and every disc gives 1.12.2's signal.
 *   **Tested**: transformer chain and SRG names; `GdRequestTests` (13 and wait as before, a test disc with 8, empty 0).
+
+## P42. Borderless fullscreen
+
+*   **Class**: `net.minecraft.client.Minecraft`, method `toggleFullscreen()V` (`func_71352_k`).
+    **Transformer**: `asm/FullscreenTransformer`. **Hook**: `presentation/client/BorderlessFullscreen.borderlessToggle`.
+    **Since**: 1.4.4.
+*   **Vanilla change**: 26.1 added Exclusive Fullscreen (Video Settings, Display); off, Fullscreen is a borderless window
+    the size of the monitor. 26.3 made off the default. 1.12.2's fullscreen is always exclusive (`Display.setFullscreen`).
+*   **Why a patch**: F11, the Fullscreen button and the start with `fullScreen:true` in options.txt all go through
+    `toggleFullscreen`, which changes the monitor's mode itself; no event comes before it. LWJGL 2 makes a window
+    undecorated only when it makes one, so the toggle has to make a new window of the monitor's size with
+    `org.lwjgl.opengl.Window.undecorated` set (`Display.setDisplayMode` with another size makes a new native window and
+    keeps the GL context).
+*   **What changes**: the method starts with `if (BorderlessFullscreen.borderlessToggle(this)) return;` (one branch, an
+    `F_SAME` frame at the head, where the only local is `this`). The hook answers false (vanilla's toggle runs) unless
+    the newest look is 26.1 or later with Exclusive Fullscreen off, or the game is leaving Core's borderless window. It
+    then does what vanilla's method does around the mode: the `fullscreen` flags, the game's size (`resize`), VSync, a
+    frame; leaving puts back the window's size (`tempDisplayWidth`/`Height`), place and resizability (Forge's MC-68754
+    fix).
+*   **Fails safe**: method not found, or not exactly one `Display.setFullscreen(Z)V` call in it (a launcher's or
+    Cleanroom's own method): skipped, and Fullscreen is 1.12.2's. Under Cleanroom's LWJGL 3 the option is not shown and
+    the hook always answers false. An exception inside the hook is logged, the undecorated property is cleared and
+    vanilla's toggle does not run on top of it (the next F11 starts again from the window LWJGL has).
+*   **Tested**: transformer chain and SRG names (`PatchTests`); the client self-test (`ClientGdLookTests`): P42 applied,
+    false below 26.1, and a real round trip on the desktop's monitor: in, an undecorated window of the monitor's size at
+    0, 0 with LWJGL not in exclusive mode; out, the game's window size again, decorated and resizable.

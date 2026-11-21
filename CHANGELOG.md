@@ -34,6 +34,15 @@
     26.1's category abbreviations; Debug Options entries `day_count`, `player_speed` (26.1) and `entity_spawn_counts`
     (an entry's `since` hides newer ones from older looks). 26.3's centered, bold, underlined option headers
     (`VanillaRevisions.centeredOptionHeaders`).
+*   Game Drops Backport's look-and-feel requests: 26.1's Exclusive Fullscreen (`backportcore:exclusive_fullscreen`,
+    Video Settings' Display) and 26.3's borderless default, patch P42 on `Minecraft.toggleFullscreen`
+    (`BorderlessFullscreen`: an undecorated window of the monitor's size through LWJGL 2's
+    `org.lwjgl.opengl.Window.undecorated`; not shown under Cleanroom's LWJGL 3); 26.3's GUI Scale for the debug overlay
+    (Debug Options' footer, Unchanged, Auto by default, 1 ...; `DebugScale`, no patch: F3's columns, the lagometer and
+    the network charts at it, never larger than the game's). 26.3's creative tab mineral order is not built (reasons in
+    `docs/PRESENTATION.md`). API: `ToggleOption.valueTooltips`, `ToggleOption.defaultFollows`,
+    `PresentationOption.availableWhen`; `VanillaRevisions.exclusiveFullscreenOption`, `borderlessByDefault`,
+    `borderlessPossible`, `debugGuiScale`.
 *   Fixed `ArrayIndexOutOfBoundsException` in `Biome.getSpawnableList` with Alex's Mobs (Legacy) 1.7.0 (P36): its
     `AM_WATER_AMBIENT` type is added in pre-init, after C&C's and UA's constructors had initialized `Biome$1` (their
     `SwitchTables.grow`), and its own widener misses the anonymous `Biome$1`. The switch's table lookup now takes the

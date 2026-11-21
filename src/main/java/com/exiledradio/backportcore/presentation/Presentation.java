@@ -117,6 +117,15 @@ public final class Presentation {
     public static final SliderOption CHUNK_FADE = new SliderOption("backportcore:chunk_fade", "options.chunkFade", OptionScreen.VIDEO,
             0.0, 2.0, 0.05, 0.75);
 
+    /**
+     * 26.1's Exclusive Fullscreen (Display, after Fullscreen): on, Fullscreen changes the monitor's mode as 1.12.2's does;
+     * off, it is a borderless window the size of the monitor. Off by default from 26.3, on in 26.1 and 26.2: the default
+     * follows the newest version until the player sets it. Shown only where Core can make the borderless window (LWJGL
+     * 2's display; not Cleanroom's LWJGL 3). Since Core 1.4.4.
+     */
+    public static final ToggleOption EXCLUSIVE_FULLSCREEN = new ToggleOption("backportcore:exclusive_fullscreen",
+            "options.exclusiveFullscreen", OptionScreen.VIDEO, true);
+
     static {
         // The parts of Core's own options that are not their screen's (LookArea): the rest follow their screen.
         PANORAMA_SPEED.area(LookArea.TITLE);
@@ -148,8 +157,13 @@ public final class Presentation {
         CHUNK_FADE.since("1.21.11");
         CHUNK_FADE.tooltip("options.chunkFade.tooltip");
         CHUNK_FADE.wholeLabel("options.chunkFade.seconds", "options.chunkFade.none").decimals(2);
+        EXCLUSIVE_FULLSCREEN.since("26.1");
+        EXCLUSIVE_FULLSCREEN.after("USE_FULLSCREEN");
+        EXCLUSIVE_FULLSCREEN.valueTooltips("options.exclusiveFullscreen.on.tooltip", "options.exclusiveFullscreen.off.tooltip")
+                .defaultFollows(() -> !VanillaRevisions.borderlessByDefault());
+        EXCLUSIVE_FULLSCREEN.availableWhen(VanillaRevisions::borderlessPossible);
         for (PresentationOption o : new PresentationOption[] {GRAPHICS_PRESET, CLOUD_RANGE, CUTOUT_LEAVES, WEATHER_RADIUS, TEXTURE_FILTERING,
-                MAX_ANISOTROPY, VIGNETTE, CHUNK_FADE}) {
+                MAX_ANISOTROPY, VIGNETTE, CHUNK_FADE, EXCLUSIVE_FULLSCREEN}) {
             registerOption(o);
         }
     }

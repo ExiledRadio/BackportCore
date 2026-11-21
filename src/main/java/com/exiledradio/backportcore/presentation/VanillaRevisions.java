@@ -74,6 +74,34 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.MENUS, "26.3");
     }
 
+    /** 26.1: Video Settings' Exclusive Fullscreen; off, Fullscreen is a borderless window. */
+    public static boolean exclusiveFullscreenOption() {
+        return Presentation.isAtLeast(LookArea.VIDEO, "26.1");
+    }
+
+    /** 26.3: Exclusive Fullscreen is off by default, so Fullscreen is borderless unless the player turns it on. */
+    public static boolean borderlessByDefault() {
+        return Presentation.isAtLeast(LookArea.VIDEO, "26.3");
+    }
+
+    /**
+     * Whether this game can make the borderless window: LWJGL 2's {@code Display}, which reads
+     * {@code org.lwjgl.opengl.Window.undecorated} each time it makes the window. Cleanroom's LWJGL 3 (lwjglx) draws the
+     * window through GLFW, where that property means nothing: there Core steps aside and Fullscreen stays the
+     * launcher's. False on a dedicated server.
+     */
+    public static boolean borderlessPossible() {
+        ClassLoader l = VanillaRevisions.class.getClassLoader();
+        return l.getResource("org/lwjgl/opengl/WindowsDisplay.class") != null || l.getResource("org/lwjgl/opengl/LinuxDisplay.class") != null
+                || l.getResource("org/lwjgl/opengl/MacOSXDisplay.class") != null
+                ? l.getResource("org/lwjgl/glfw/GLFW.class") == null : false;
+    }
+
+    /** 26.3: the debug overlay's own GUI Scale (Debug Options), Auto by default: half the largest scale the window fits. */
+    public static boolean debugGuiScale() {
+        return Presentation.isAtLeast(LookArea.DEBUG, "26.3");
+    }
+
     /**
      * 26.2's pause grid top: {@code FrameLayout.alignInRectangle} at a quarter of the free height, the grid being rows
      * of 24 (20 and a 4 padding) with the first 70 (Back to Game's 50 padding).

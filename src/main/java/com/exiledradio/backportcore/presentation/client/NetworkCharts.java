@@ -170,8 +170,10 @@ public final class NetworkCharts {
             }
             Minecraft mc = Minecraft.getMinecraft();
             ScaledResolution res = event.getResolution();
-            int w = res.getScaledWidth();
-            int h = res.getScaledHeight();
+            // 26.3: at the debug overlay's own scale when it is smaller.
+            int[] scaled = DebugScale.begin(mc);
+            int w = scaled != null ? scaled[0] : res.getScaledWidth();
+            int h = scaled != null ? scaled[1] : res.getScaledHeight();
             int half = w / 2;
             GlStateManager.disableDepth();
             if (!mc.isIntegratedServerRunning()) {
@@ -180,6 +182,9 @@ public final class NetworkCharts {
             int pw = DebugCharts.width(half);
             drawChart(mc.fontRenderer, PING, w - pw, pw, h, false);
             GlStateManager.enableDepth();
+            if (scaled != null) {
+                DebugScale.end();
+            }
             frames++;
         }
     }

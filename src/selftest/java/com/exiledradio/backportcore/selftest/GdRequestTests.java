@@ -108,6 +108,41 @@ final class GdRequestTests {
             check("/locate ignores claims", all != null && again != null && again.pos.equals(all.pos), again);
         });
 
+        then(1, "GD Lf #1: Exclusive Fullscreen (26.1) and borderless by default (26.3)", world -> {
+            com.exiledradio.backportcore.presentation.option.ToggleOption ex = com.exiledradio.backportcore.presentation.Presentation.EXCLUSIVE_FULLSCREEN;
+            check("Core registers Exclusive Fullscreen", com.exiledradio.backportcore.presentation.Presentation.option("backportcore:exclusive_fullscreen") == ex, "");
+            check("it is 26.1's, on Video Settings after Fullscreen", ex.since().equals(com.exiledradio.backportcore.presentation.GameVersion.parse("26.1"))
+                    && "USE_FULLSCREEN".equals(ex.after()) && ex.screen() == com.exiledradio.backportcore.presentation.option.OptionScreen.VIDEO, ex.since());
+            check("shown from 26.1, not at 1.21.11", ex.isShownAt(com.exiledradio.backportcore.presentation.GameVersion.parse("26.1"))
+                    && !ex.isShownAt(com.exiledradio.backportcore.presentation.GameVersion.parse("1.21.11")), "");
+            check("below 26.1 (the dummy versions): no option, exclusive as 1.12.2, not borderless by default",
+                    !ex.isShown() && !com.exiledradio.backportcore.presentation.VanillaRevisions.exclusiveFullscreenOption()
+                            && !com.exiledradio.backportcore.presentation.VanillaRevisions.borderlessByDefault() && ex.get(), ex.get());
+            check("its tooltip follows its value (on)", "options.exclusiveFullscreen.on.tooltip".equals(ex.tooltipKey()), ex.tooltipKey());
+            boolean[] newest = {false};
+            com.exiledradio.backportcore.presentation.option.ToggleOption t = new com.exiledradio.backportcore.presentation.option.ToggleOption(
+                    "backportcore_selftest:follows", "x", com.exiledradio.backportcore.presentation.option.OptionScreen.VIDEO, true);
+            t.defaultFollows(() -> !newest[0]).valueTooltips("on.tip", "off.tip");
+            check("a followed default: on while the newest version says so", t.get() && !t.chosen() && "on.tip".equals(t.tooltipKey()), "");
+            newest[0] = true;
+            check("and off once it says otherwise, nothing saved", !t.get() && t.defaultValue() == false && "off.tip".equals(t.tooltipKey())
+                    && com.exiledradio.backportcore.presentation.option.OptionStore.get(t.id()) == null, "");
+            t.set(true);
+            check("set by the player, it keeps the player's value", t.get() && t.chosen()
+                    && "true".equals(com.exiledradio.backportcore.presentation.option.OptionStore.get(t.id())), "");
+            boolean[] can = {false};
+            com.exiledradio.backportcore.presentation.option.ToggleOption u = new com.exiledradio.backportcore.presentation.option.ToggleOption(
+                    "backportcore_selftest:available", "x", com.exiledradio.backportcore.presentation.option.OptionScreen.VIDEO, true);
+            u.availableWhen(() -> can[0]);
+            check("an option that is not available is not shown", !u.isShown(), "");
+            can[0] = true;
+            check("and is once it is", u.isShown(), "");
+            java.util.List<com.exiledradio.backportcore.presentation.VideoSections.Section> sections = com.exiledradio.backportcore.presentation.VideoSections.arrange(
+                    java.util.Arrays.asList("GAMMA", "backportcore:exclusive_fullscreen", "GUI_SCALE", "USE_FULLSCREEN"));
+            check("Video Settings' Display: GUI Scale, Fullscreen, Exclusive Fullscreen, Brightness",
+                    sections.get(0).entries.equals(java.util.Arrays.asList(2, 3, 1, 0)), sections.get(0).entries);
+        });
+
         then(1, "GD stream 7 #4: today's item names", world -> {
             check("cobweb is 1.12.2's web", ModernItems.stack("minecraft:cobweb").getItem() == Item.getItemFromBlock(Blocks.WEB), "");
             ItemStack red = ModernItems.stack("red_dye");

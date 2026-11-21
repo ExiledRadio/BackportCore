@@ -23,7 +23,8 @@ import java.util.List;
  * warning below them, then each entry of {@link DebugEntries} under its category ("Debug Screen Text", "Debug
  * Renderers") with its Off, In F3 (In Overlay from 1.21.11) and Always buttons, and at the bottom the two profiles and
  * Done. 1.21.11's numbers: header 61 and footer 33 pixels, rows 20 tall and 350 wide, the state buttons 60 by 16, the
- * profile buttons 120 wide and Done 60, 8 apart.
+ * profile buttons 120 wide and Done 60, 8 apart. 26.3 puts the overlay's own GUI Scale ({@link DebugScale}, 110 wide)
+ * before Done and the footer's buttons 4 apart.
  */
 @SideOnly(Side.CLIENT)
 public class DebugOptionsScreen extends GuiScreen {
@@ -42,7 +43,12 @@ public class DebugOptionsScreen extends GuiScreen {
     private static final int PERFORMANCE_BUTTON = 2;
     private static final int DONE_BUTTON = 200;
 
+    /** 26.3's {@code debugGuiScale} button width. */
+    static final int SCALE_WIDTH = 110;
+
     private GuiTextField search;
+    @javax.annotation.Nullable
+    private ScaleSlider scaleSlider;
     private OptionList list;
     private List<String> warning = new ArrayList<String>();
     private String query = "";
@@ -66,16 +72,39 @@ public class DebugOptionsScreen extends GuiScreen {
         this.warning = this.fontRenderer.listFormattedStringToWidth(I18n.format("debug.options.warning"), ROW_WIDTH);
         this.list = new OptionList(this.mc, this.width, this.height, HEADER, this.height - FOOTER);
         this.list.refill(this.query);
-        int total = 120 + 8 + 120 + 8 + 60;
+        // 26.3: the overlay's GUI Scale between the profiles and Done, and the footer's buttons 4 apart.
+        boolean scale = com.exiledradio.backportcore.presentation.VanillaRevisions.debugGuiScale();
+        int gap = scale ? 4 : 8;
+        int total = 120 + gap + 120 + gap + (scale ? SCALE_WIDTH + gap : 0) + 60;
         int x = this.width / 2 - total / 2;
         int y = this.height - FOOTER + (FOOTER - 20) / 2;
         GuiButton def = new GuiButton(DEFAULT_BUTTON, x, y, 120, 20, I18n.format("debug.options.profile.default"));
-        GuiButton perf = new GuiButton(PERFORMANCE_BUTTON, x + 128, y, 120, 20, I18n.format("debug.options.profile.performance"));
+        GuiButton perf = new GuiButton(PERFORMANCE_BUTTON, x + 120 + gap, y, 120, 20, I18n.format("debug.options.profile.performance"));
         def.enabled = !DebugEntries.usingProfile(DebugEntries.DEFAULT);
         perf.enabled = !DebugEntries.usingProfile(DebugEntries.PERFORMANCE);
         this.buttonList.add(def);
         this.buttonList.add(perf);
-        this.buttonList.add(new GuiButton(DONE_BUTTON, x + 256, y, 60, 20, I18n.format("gui.done")));
+        int doneX = x + 2 * (120 + gap);
+        this.scaleSlider = null;
+        if (scale) {
+            this.scaleSlider = new ScaleSlider(doneX, y);
+            this.buttonList.add(this.scaleSlider);
+            doneX += SCALE_WIDTH + gap;
+        }
+        this.buttonList.add(new GuiButton(DONE_BUTTON, doneX, y, 60, 20, I18n.format("gui.done")));
+    }
+
+    /** For the client self-test: 26.3's GUI Scale slider, or null before 26.3. */
+    @javax.annotation.Nullable
+    public GuiButton scaleSlider() {
+        return this.scaleSlider;
+    }
+
+    /** @return the slider's text for a value: "GUI Scale: Unchanged", "GUI Scale: Auto", "GUI Scale: 2" */
+    public static String scaleLabel(int value) {
+        String v = value == DebugScale.UNCHANGED ? I18n.format("options.debugGuiScale.unchanged")
+                : value == DebugScale.AUTO ? I18n.format("options.guiScale.auto") : Integer.toString(value);
+        return I18n.format("options.guiScale") + ": " + v;
     }
 
     @Override
@@ -171,6 +200,80 @@ public class DebugOptionsScreen extends GuiScreen {
             y += this.fontRenderer.FONT_HEIGHT;
         }
         super.drawScreen(mouseX, mouseY, partialTicks);
+        if (this.scaleSlider != null && this.scaleSlider.isMouseOver()) {
+            drawHoveringText(this.fontRenderer.listFormattedStringToWidth(I18n.format("options.debugGuiScale.tooltip"), 200), mouseX, mouseY);
+        }
+    }
+
+    /**
+     * 26.3's {@code debugGuiScale} slider ({@code ClampingLazyMaxIntRange} from -1 to the largest scale the window fits):
+     * Unchanged, Auto, 1, 2 ... Drawn as 1.12.2's option sliders.
+     */
+    final class ScaleSlider extends GuiButton {
+        private boolean dragging;
+
+        ScaleSlider(int x, int y) {
+            super(OptionWidgets.nextId(), x, y, SCALE_WIDTH, 20, "");
+            refresh();
+        }
+
+        int top() {
+            return Math.max(1, DebugScale.max(mc));
+        }
+
+        /** @return the shown value, the saved one held to what the window fits */
+        int value() {
+            return Math.min(DebugScale.chosen(), top());
+        }
+
+        void refresh() {
+            this.displayString = scaleLabel(value());
+        }
+
+        /** Sets the value for a slider position, 0 to 1. */
+        void setFraction(double fraction) {
+            double f = Math.max(0.0, Math.min(1.0, fraction));
+            DebugScale.choose((int) Math.round(DebugScale.UNCHANGED + f * (top() - DebugScale.UNCHANGED)));
+            refresh();
+        }
+
+        private double fraction() {
+            return (double) (value() - DebugScale.UNCHANGED) / (double) (top() - DebugScale.UNCHANGED);
+        }
+
+        @Override
+        protected int getHoverState(boolean mouseOver) {
+            return 0;
+        }
+
+        @Override
+        protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
+            if (this.visible) {
+                if (this.dragging) {
+                    setFraction((double) (mouseX - (this.x + 4)) / (double) (this.width - 8));
+                }
+                mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                int knob = this.x + (int) (fraction() * (double) (this.width - 8));
+                drawTexturedModalRect(knob, this.y, 0, 66, 4, 20);
+                drawTexturedModalRect(knob + 4, this.y, 196, 66, 4, 20);
+            }
+        }
+
+        @Override
+        public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+            if (super.mousePressed(mc, mouseX, mouseY)) {
+                setFraction((double) (mouseX - (this.x + 4)) / (double) (this.width - 8));
+                this.dragging = true;
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void mouseReleased(int mouseX, int mouseY) {
+            this.dragging = false;
+        }
     }
 
     /** The entries' list. */

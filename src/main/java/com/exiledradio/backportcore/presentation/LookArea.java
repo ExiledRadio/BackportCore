@@ -25,11 +25,11 @@ public enum LookArea {
     /** The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. */
     OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.20.2", "1.21.9"),
     /** Video Settings: its layout, its removed and added options. */
-    VIDEO("videoSettings", "1.13", "1.14", "1.21.6", "1.21.11"),
+    VIDEO("videoSettings", "1.13", "1.14", "1.21.6", "1.21.11", "26.3"),
     /** Chat: command suggestions, the chat options and look. */
     CHAT("chat", "1.13", "1.14", "1.16"),
     /** F3: the debug keys, the debug screen's lines, Debug Options and the charts. */
-    DEBUG("debug", "1.20.2", "1.21.9", "1.21.11"),
+    DEBUG("debug", "1.20.2", "1.21.9", "1.21.11", "26.3"),
     /** Toasts: the music toast and the newer toasts' textures. */
     TOASTS("toasts", "1.21.6"),
     /** Inventory and creative tabs: the creative order, slot highlights and the container textures. */
