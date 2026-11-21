@@ -24,6 +24,8 @@ final class TestBlocks {
     static Post optional;
     static Post required;
     static Post dry;
+    /** As {@link #optional}, of plant material (nothing stops movement): kelp's and seagrass's shape for spawning. */
+    static Post plant;
     static Legacy legacy;
     static Slab slab;
     static Slab doubleSlab;
@@ -141,7 +143,11 @@ final class TestBlocks {
         private final boolean holds;
 
         Post(String name, Need need, boolean holds) {
-            super(Material.WOOD);
+            this(name, need, holds, Material.WOOD);
+        }
+
+        Post(String name, Need need, boolean holds, Material material) {
+            super(material);
             this.need = need;
             this.holds = holds;
             setRegistryName(SelfTestMod.MOD_ID, name);

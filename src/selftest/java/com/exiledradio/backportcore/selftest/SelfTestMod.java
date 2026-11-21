@@ -50,12 +50,13 @@ public final class SelfTestMod {
         TestBlocks.optional = new TestBlocks.Post("optional", Waterloggable.Need.OPTIONAL, true);
         TestBlocks.required = new TestBlocks.Post("required", Waterloggable.Need.REQUIRED, true);
         TestBlocks.dry = new TestBlocks.Post("dry", Waterloggable.Need.OPTIONAL, false);
+        TestBlocks.plant = new TestBlocks.Post("plant", Waterloggable.Need.OPTIONAL, true, net.minecraft.block.material.Material.PLANTS);
         TestBlocks.legacy = new TestBlocks.Legacy();
         TestBlocks.slab = new TestBlocks.Slab.Half();
         TestBlocks.doubleSlab = new TestBlocks.Slab.Double();
         TestBlocks.dryStairs = new TestBlocks.Stairs("test_dry_stairs");
         TestBlocks.waterStairs = new TestBlocks.WaterStairs();
-        event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.legacy,
+        event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.plant, TestBlocks.legacy,
                 TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
         RequestTests.blocks(event.getRegistry());
     }

@@ -709,3 +709,23 @@ or passes an existing constant through a hook of the same type.
     skipped.
 *   **Tested**: transformer chain and SRG names; `PatchTests` "P36" adds a creature type after the switch ran and
     asks plains for its list.
+
+## P37. No ground spawns in blocks that hold water
+
+*   **Class**: `net.minecraft.world.WorldEntitySpawner`, method `canCreatureTypeSpawnBody` (Forge's).
+    **Transformer**: `asm/GroundSpawnTransformer`. **Hooks**: `worldgen/GroundSpawnHooks.feet`, `head`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.13's `isValidEmptySpawnBlock` also asks for an empty fluid state, so a mob that spawns on the
+    ground never spawns in a waterlogged block. 1.12.2 asks only that the feet and head blocks are not liquid material;
+    kelp and seagrass (UA's `OCEAN_PLANT`/`SEA_GRASS`) and blocks Fluidlogged API waterlogs are not, so they passed.
+    Chunk generation (`performWorldGenSpawning`) places every listed animal with only this check, never
+    `getCanSpawnHere`: Lycanites' bobekos (cold biomes, which include cold oceans) spawned on the sea floor in kelp and
+    floated up.
+*   **Why a patch**: the check is a static method every spawn path (generation, the spawning cycle, other mods) calls;
+    `LivingSpawnEvent.CheckSpawn` cannot tell a ground mob from a modded swimmer that leaves its placement unregistered.
+*   **What changes**: the two `isValidEmptySpawnBlock` results of the on-ground branch pass through
+    `GroundSpawnHooks.feet(valid, world, pos)` and `head(valid, world, pos)`: false when the block (or the one above)
+    holds water (`Waterlogging.hasWater`). The calls stay in place; the stack is the same, so the frames stay valid.
+    `IN_WATER` and placement types with their own predicate (UA's polar bears on ice) are unchanged.
+*   **Fails safe**: method not found, or not exactly two `isValidEmptySpawnBlock` calls in it: skipped.
+*   **Tested**: transformer chain and SRG names; `PatchTests` "P37" (grass floor; dry, waterlogged feet, waterlogged
+    head; in-water unchanged).

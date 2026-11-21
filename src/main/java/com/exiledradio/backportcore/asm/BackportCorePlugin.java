@@ -58,6 +58,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             MapIconTransformer.class.getName(),
             PaneTorchTransformer.class.getName(),
             SpawnListSwitchTransformer.class.getName(),
+            GroundSpawnTransformer.class.getName(),
     };
 
     @Override

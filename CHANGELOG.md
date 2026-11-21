@@ -1,3 +1,11 @@
+# 1.4.5
+
+*   Fixed ground spawns inside blocks that hold water (P37): 1.12.2's on-ground check (`canCreatureTypeSpawnBody`)
+    asks only that the feet and head blocks are not liquid material, so with Fluidlogged API kelp, seagrass and any
+    waterlogged block passed. `performWorldGenSpawning` never calls `getCanSpawnHere`, so Lycanites' own liquid check
+    did not run either: in a Dregora test world 559 of 788 bobekos were in the sea. Both blocks now must hold no water
+    (current Java's `isValidEmptySpawnBlock` fluid check).
+
 # 1.4.4
 
 *   Fixed `ArrayIndexOutOfBoundsException` in `Biome.getSpawnableList` with Alex's Mobs (Legacy) 1.7.0 (P36): its

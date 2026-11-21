@@ -1,3 +1,7 @@
+# 1.4.5
+
+*   **Fixed land animals spawning in the sea** (Lycanites' bobekos in cold oceans, among others): chunk generation put them on the sea floor inside kelp, seagrass and other blocks holding water, and they floated up. A mob that spawns on the ground now needs a spot without water, as in 1.13 and later.
+
 # 1.4.4
 
 *   **Fixed a crash on world load with Alex's Mobs (Legacy)** ("Index 6 out of bounds for length 6" in `getSpawnableList`): a creature type a mod adds late, after the biome spawn lists were first read, now gets its own empty list instead of crashing, whichever mods add types and in whatever order.

@@ -2,13 +2,18 @@ package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.asm.ExtendedFluidStatesTransformer;
+import com.exiledradio.backportcore.waterlog.Waterlogging;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
+import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.util.EnumHelper;
 import org.objectweb.asm.ClassReader;
@@ -73,6 +78,7 @@ final class PatchTests {
             {"net.minecraft.world.storage.MapDecoration", "P34", new String[] {"render"}},
             {"net.minecraft.block.BlockPane", "P35", new String[] {"torchOnPane"}},
             {"net.minecraft.world.biome.Biome", "P36", new String[] {"switchIndex"}},
+            {"net.minecraft.world.WorldEntitySpawner", "P37", new String[] {"feet", "head"}},
     };
 
     private PatchTests() {
@@ -103,6 +109,43 @@ final class PatchTests {
             check("the same list comes back the second time (Forge's modSpawnableLists)", list != null && list == plains.getSpawnableList(late), "");
             check("vanilla types still get their own lists", plains.getSpawnableList(EnumCreatureType.CREATURE) == plains.getSpawnableList(EnumCreatureType.CREATURE)
                     && !plains.getSpawnableList(EnumCreatureType.CREATURE).isEmpty(), "");
+        });
+        then(1, "P37: no ground spawn in a block that holds water", world -> {
+            check("P37 applied when WorldEntitySpawner loaded", "applied".equals(Asm.state("P37")), Asm.state("P37"));
+            EntityLiving.SpawnPlacementType ground = EntityLiving.SpawnPlacementType.ON_GROUND;
+            BlockPos floor = new BlockPos(4400, 150, 4400);
+            BlockPos feet = floor.up();
+            BlockPos head = feet.up();
+            world.setBlockState(floor, Blocks.GRASS.getDefaultState(), 2);
+            world.setBlockState(feet, Blocks.AIR.getDefaultState(), 2);
+            world.setBlockState(head, Blocks.AIR.getDefaultState(), 2);
+            world.setBlockState(head.up(), Blocks.AIR.getDefaultState(), 2);
+            check("control: grass with air above is a ground spawn spot", WorldEntitySpawner.canCreatureTypeSpawnBody(ground, world, feet), "");
+            world.setBlockState(feet, TestBlocks.optional.getDefaultState(), 2);
+            check("control: the same block dry (not liquid material, not a full cube) is still a spot",
+                    !Waterlogging.hasWater(world, feet) && WorldEntitySpawner.canCreatureTypeSpawnBody(ground, world, feet), world.getBlockState(feet));
+            Waterlogging.setWater(world, feet, true, 2);
+            check("the feet block holds water (kelp, seagrass, waterlogged)", Waterlogging.hasWater(world, feet), world.getBlockState(feet));
+            check("water held at the feet: no ground spawn (1.13's fluid check)", !WorldEntitySpawner.canCreatureTypeSpawnBody(ground, world, feet), "");
+            world.setBlockState(feet, Blocks.AIR.getDefaultState(), 2);
+            Waterlogging.placeWithWater(world, head, TestBlocks.optional.getDefaultState(), 2);
+            Waterlogging.setWater(world, head, true, 2);
+            check("water held at the head: no ground spawn", Waterlogging.hasWater(world, head)
+                    && !WorldEntitySpawner.canCreatureTypeSpawnBody(ground, world, feet), world.getBlockState(head));
+            world.setBlockState(head, Blocks.WATER.getDefaultState(), 2);
+            check("in-water spawning is unchanged: water over water", world.setBlockState(feet, Blocks.WATER.getDefaultState(), 2)
+                    && world.setBlockState(floor, Blocks.WATER.getDefaultState(), 2)
+                    && WorldEntitySpawner.canCreatureTypeSpawnBody(EntityLiving.SpawnPlacementType.IN_WATER, world, feet), "");
+            for (BlockPos p : new BlockPos[] {floor, feet, head}) {
+                world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
+            }
+        });
+        then(1, "P37: chunk generation's animals stay out of a kelp bed", world -> {
+            // 16 x 16 columns at y 200: stone, two plant blocks (a kelp column's shape), then water or air.
+            int wet = bed(world, 4800, true);
+            int dry = bed(world, 4832, false);
+            check("generation spawning on the dry bed still places animals (the path works)", dry > 0, dry);
+            check("no animal placed in the waterlogged bed", wet == 0, wet);
         });
         then(1, "patches through the dev transformer chain", world -> {
             for (Object[] c : CLASSES) {
@@ -174,6 +217,23 @@ final class PatchTests {
                                 Asm.state("P34"));
                         continue;
                     }
+                    if (name.endsWith(".WorldEntitySpawner")) {
+                        // Forge moves the spawn spot check into canCreatureTypeSpawnBody; the SRG jar is vanilla's,
+                        // where it is still in canCreatureTypeSpawnAtLocation. P37 must leave it alone there, and
+                        // the SRG name it looks for must be the one vanilla's check calls (twice).
+                        check("SRG P37 on unpatched WorldEntitySpawner: left alone (Forge's canCreatureTypeSpawnBody missing)",
+                                out == raw, Asm.state("P37"));
+                        int srgCalls = 0;
+                        for (MethodNode m : read(raw).methods) {
+                            for (AbstractInsnNode insn = m.instructions.getFirst(); insn != null; insn = insn.getNext()) {
+                                if (insn instanceof MethodInsnNode && "func_185331_a".equals(((MethodInsnNode) insn).name)) {
+                                    srgCalls++;
+                                }
+                            }
+                        }
+                        check("SRG P37: vanilla's spot check calls func_185331_a (isValidEmptySpawnBlock) twice", srgCalls == 2, srgCalls);
+                        continue;
+                    }
                     if (name.endsWith(".GuiSlot")) {
                         // The SRG jar is vanilla's, without Forge's binary patches; P31's list half swaps Forge's
                         // drawContainerBackground call, which a real game has (Forge patches before any transformer).
@@ -198,6 +258,35 @@ final class PatchTests {
         return false;
     }
 
+    /** Builds a 16 x 16 bed at (x, 200, x), runs chunk generation's animal spawning over it, and counts what it placed. */
+    private static int bed(net.minecraft.world.World world, int x0, boolean water) {
+        for (int x = x0; x < x0 + 16; x++) {
+            for (int z = x0; z < x0 + 16; z++) {
+                world.setBlockState(new BlockPos(x, 200, z), Blocks.STONE.getDefaultState(), 2);
+                for (int y = 201; y <= 202; y++) {
+                    BlockPos p = new BlockPos(x, y, z);
+                    world.setBlockState(p, TestBlocks.plant.getDefaultState(), 2);
+                    if (water) {
+                        Waterlogging.setWater(world, p, true, 2);
+                    }
+                }
+                for (int y = 203; y <= 206; y++) {
+                    world.setBlockState(new BlockPos(x, y, z), water ? Blocks.WATER.getDefaultState() : Blocks.AIR.getDefaultState(), 2);
+                }
+            }
+        }
+        java.util.Random random = new java.util.Random(37L);
+        for (int i = 0; i < 400; i++) {
+            WorldEntitySpawner.performWorldGenSpawning(world, Biomes.PLAINS, x0, x0, 16, 16, random);
+        }
+        net.minecraft.util.math.AxisAlignedBB box = new net.minecraft.util.math.AxisAlignedBB(x0, 199, x0, x0 + 16, 210, x0 + 16);
+        List<net.minecraft.entity.passive.EntityAnimal> placed = world.getEntitiesWithinAABB(net.minecraft.entity.passive.EntityAnimal.class, box);
+        for (net.minecraft.entity.passive.EntityAnimal a : placed) {
+            a.setDead();
+        }
+        return placed.size();
+    }
+
     private static IClassTransformer transformer(String patch) throws Exception {
         String cls;
         switch (patch) {
@@ -218,6 +307,7 @@ final class PatchTests {
             case "P34": cls = "MapIconTransformer"; break;
             case "P35": cls = "PaneTorchTransformer"; break;
             case "P36": cls = "SpawnListSwitchTransformer"; break;
+            case "P37": cls = "GroundSpawnTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
