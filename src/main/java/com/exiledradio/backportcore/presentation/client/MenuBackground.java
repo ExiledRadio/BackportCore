@@ -334,7 +334,7 @@ public final class MenuBackground {
     /**
      * A {@code HeaderAndFooterLayout} screen's content frame, for a backport's own screens (26.3's World Options): the
      * in-world or title list background between {@code top} and {@code bottom}, scrolled by {@code scrolled}, and the
-     * header and footer separators, while the newer menu backgrounds are on. Since Core 1.4.6.
+     * header and footer separators, while the newer menu backgrounds are on. Since Core 1.4.5.
      *
      * @return whether it drew (false: the caller keeps 1.12.2's look)
      */
