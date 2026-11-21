@@ -1,3 +1,8 @@
+# 1.4.5
+
+*   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth.
+*   **More of today's commands**: `/random` (with today's saved sequences, so a world gives the same values as in the current game), `/ride`, `/rotate`, `/spectate` and `/teammsg` (or `/tm`). Each command has its own switch in the settings.
+
 # 1.4.4
 
 *   **Fixed land animals spawning in the sea** (Lycanites' bobekos in cold oceans, among others): chunk generation put them on the sea floor inside kelp, seagrass and other blocks holding water, and they floated up. A mob that spawns on the ground now needs a spot without water, as in 1.13 and later.

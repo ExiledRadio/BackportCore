@@ -83,6 +83,7 @@ public final class SelfTestRunner {
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
                     case "gameevents": GameEventTests.schedule(); break;
                     case "snow": SnowTests.schedule(); break;
+                    case "commands": CommandTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -104,6 +105,7 @@ public final class SelfTestRunner {
         SettingsTests.schedule();
         RecipeTests.schedule();
         GameEventTests.schedule();
+        CommandTests.schedule();
         SuggestionTests.schedule();
         SmeltingBookTests.schedule();
         RequestTests.schedule();

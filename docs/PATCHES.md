@@ -729,3 +729,62 @@ or passes an existing constant through a hook of the same type.
 *   **Fails safe**: method not found, or not exactly two `isValidEmptySpawnBlock` calls in it: skipped.
 *   **Tested**: transformer chain and SRG names; `PatchTests` "P37" (grass floor; dry, waterlogged feet, waterlogged
     head; in-water unchanged).
+
+## P38. The server loop at the target tick rate (`/tick`)
+
+*   **Class**: `net.minecraft.server.MinecraftServer`, methods `run` and `updateTimeLightAndEntities`.
+    **Transformer**: `asm/TickTransformer`. **Hooks**: `command/tick/TickHooks.msPerTick`, `runTick`, `functions`.
+    **Since**: 1.4.5.
+*   **Vanilla change**: 1.20.3's `/tick rate` and `/tick sprint`. 26.3's loop waits `nanosecondsPerTick()` between
+    ticks, and while sprinting runs ticks with no wait at all; functions do not run while the game is frozen.
+    1.12.2's loop waits a constant 50 ms.
+*   **Why a patch**: the 50 ms are constants inside the loop; no event can change how long it waits.
+*   **What changes**: `run`'s four `LDC 50L` become `TickHooks.msPerTick()` (the current tick's length in whole
+    milliseconds, carrying the remainder so 30 per second averages 33.3 ms), and its two `this.tick()` calls become
+    `TickHooks.runTick(this)`: one tick a slot, several when a tick is shorter than a millisecond, and while
+    sprinting, ticks back to back for up to 50 ms with that wall time as the slot (so nothing is caught up after a
+    sprint). `updateTimeLightAndEntities`' `getFunctionManager().update()` goes through `TickHooks.functions`. The
+    stack is the same before and after and no local is read, so the frames stay valid. With `/tick` off, or at 20
+    per second, every hook does what the constant and the call did.
+*   **Fails safe**: methods not found, or not exactly four `50L`, two `tick()` and one function update: skipped,
+    and `/tick rate` and `/tick sprint` change nothing (freezing still works).
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `CommandTests` measures 8 and 100 per second, the
+    whole-millisecond slots at 30 per second, and a 400-tick sprint.
+
+## P39. Freezing (`/tick freeze`), both sides
+
+*   **Classes**: `net.minecraft.world.World` (`updateEntityWithOptionalForce`, `updateEntities`) and
+    `net.minecraft.world.WorldServer` (`tick`). **Transformer**: `asm/TickTransformer`. **Hooks**:
+    `TickHooks.skipEntity`, `updateTile`, `frozenWorldTick`. **Since**: 1.4.5.
+*   **Vanilla change**: while frozen (and not stepping), 26.3's `ServerLevel.tick` skips the world border, weather,
+    time, block and fluid ticks, random ticks, spawning, raids and block events; entities skip their tick unless they
+    are players or carry one (`TickRateManager.isEntityFrozen`), and block entities skip theirs (`Level.tickBlockEntities`).
+    The client's level does the same with the client's copy of the state.
+*   **Why a patch**: 1.12.2 has no event before an entity's or a block entity's tick that can cancel it, and none
+    that can stop the world's own tick.
+*   **What changes**: `WorldServer.tick` and `World.updateEntityWithOptionalForce` start with
+    `if (hook(...)) return;` (one branch with an `F_SAME` frame at the head, where the locals are exactly the
+    parameters); while frozen, `frozenWorldTick` still ticks the chunk provider (unloading) and the player chunk map
+    (chunks reach players), as 26.3 does. `updateEntities`' `ITickable.update()` call goes through `updateTile`.
+*   **Fails safe**: methods not found, or not exactly one `ITickable.update` call: skipped.
+*   **Tested**: transformer chain and SRG names; `CommandTests` freezes a pig, a burning furnace and the clock,
+    steps them exactly 3 ticks, and checks a pig carrying a player keeps ticking.
+
+## P40. Freezing on the client
+
+*   **Classes**: `WorldClient` (`tick`), `Minecraft` (`runTick`), `RenderManager` (`renderEntityStatic`),
+    `TileEntityRendererDispatcher` (`render(TileEntity, float, int)`). **Transformer**: `asm/TickTransformer`.
+    **Hooks**: `command/tick/client/ClientTicks`. **Since**: 1.4.5.
+*   **Vanilla change**: 26.3's client follows the server's tick state: while frozen its clock, particles and ambient
+    particles (`animateTick`) wait, and `DeltaTracker` gives frozen entities and block entities a partial tick of 1,
+    so they draw where their last tick left them instead of jittering between ticks.
+*   **Why a patch**: the time setters, particle ticks and the renderers' partial tick are inside these methods.
+*   **What changes**: `WorldClient.tick`'s `setTotalWorldTime` and `setWorldTime`, and `runTick`'s
+    `ParticleManager.updateEffects()` and `WorldClient.doVoidFogParticles(...)`, become static hooks with the same
+    stack; the two renderers start with `partialTicks = hook(arg, partialTicks)` (the parameters read on the first
+    line). The timer's tick length follows the server's rate when it is slower than 20 per second
+    (`Minecraft.getTickTargetMillis`), through reflection, not a patch.
+*   **Fails safe**: any method not found, or not exactly one of each call: skipped, and the client draws frozen
+    things as moving.
+*   **Tested**: transformer chain and SRG names; `ClientTickTests` (rate sync, timer, frozen pig and clock, partial
+    ticks, a step, reset on leaving).

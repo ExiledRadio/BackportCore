@@ -1,5 +1,11 @@
 # 1.4.5
 
+*   Today's commands 1.12.2 lacks, in `command/`, each behind its own server setting (`commands.*`, read when a world
+    loads): 1.20.3's `/tick` (P38 server loop, P39 freezing on both sides, P40 the client; the client's timer follows
+    a server slower than 20 per second; state and steps on channel `backportcore_tick`), 1.20.2's `/random` (26.3's
+    Xoroshiro sequences, checked against the 26.3 jar; saved as `data/backportcore_random_sequences.dat`), 1.19.4's
+    `/ride`, 1.21.2's `/rotate`, 1.15's `/spectate` and 1.14's `/teammsg` (`/tm`). Permission levels as 26.3's.
+    Survey of the rest: `family-notes/COMMANDS.md`.
 *   Fixed ground spawns inside blocks that hold water (P37): 1.12.2's on-ground check (`canCreatureTypeSpawnBody`)
     asks only that the feet and head blocks are not liquid material, so with Fluidlogged API kelp, seagrass and any
     waterlogged block passed. `performWorldGenSpawning` never calls `getCanSpawnHere`, so Lycanites' own liquid check

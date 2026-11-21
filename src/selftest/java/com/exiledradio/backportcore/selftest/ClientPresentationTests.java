@@ -137,8 +137,12 @@ final class ClientPresentationTests {
                         if (ClientCameraTests.done) {
                             ClientCrouchTests.tick(mc);
                         }
+                        if (ClientCrouchTests.done) {
+                            ClientTickTests.tick(mc);
+                        }
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && this.bookChecked(mc)) {
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done
+                            && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);
@@ -151,6 +155,7 @@ final class ClientPresentationTests {
                     break;
                 case 4:
                     this.stage = 5;
+                    ClientTickTests.afterLeaving();
                     backups(mc);
                     break;
                 case 5:

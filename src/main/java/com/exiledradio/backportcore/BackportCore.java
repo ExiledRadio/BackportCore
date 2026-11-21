@@ -109,6 +109,9 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         com.exiledradio.backportcore.advancement.AdventuringTime.register();
         com.exiledradio.backportcore.presentation.PingNetwork.init();
+        // 1.20.3's /tick: the rate and the frozen state reach the client (command/tick/).
+        com.exiledradio.backportcore.command.tick.TickNetwork.init();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
@@ -132,6 +135,7 @@ public final class BackportCore {
             com.exiledradio.backportcore.gameevent.client.VibrationClient.init();
             // 1.20's armor trims, worn and on item icons (smithing/).
             com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.init();
+            com.exiledradio.backportcore.command.tick.client.ClientTicks.init();
         }
     }
 
@@ -190,6 +194,13 @@ public final class BackportCore {
         event.registerServerCommand(new com.exiledradio.backportcore.locate.LocateCommand());
         // 1.15's /seed (click to copy), in place of 1.12.2's.
         event.registerServerCommand(new com.exiledradio.backportcore.command.SeedCommand());
+        // Today's commands 1.12.2 lacks, each behind its own setting (command/).
+        com.exiledradio.backportcore.command.ModernCommands.serverStarting(event);
+    }
+
+    @Mod.EventHandler
+    public void serverStopped(net.minecraftforge.fml.common.event.FMLServerStoppedEvent event) {
+        com.exiledradio.backportcore.command.ModernCommands.serverStopped();
     }
 
     /** Also starts {@code -Dbackportcore.seeddump=<folder>}: the overworld's seed-parity dump (a dev tool). */

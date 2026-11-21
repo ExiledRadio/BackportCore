@@ -44,7 +44,43 @@ public final class CoreConfig {
     @Config.Comment("The backports' crafting recipes in the recipe book, unlocked the way vanilla unlocks its own.")
     public static final Recipes recipes = new Recipes();
 
+    @Setting.Feature(icon = "minecraft:command_block")
+    @Config.LangKey("config.backportcore.commands")
+    @Config.Comment("Commands later versions added, as today's game has them. Each takes effect when a world loads.")
+    public static final Commands commands = new Commands();
+
     private CoreConfig() {
+    }
+
+    public static final class Commands {
+
+        @Config.Comment({
+                "1.20.3's /tick (operators, permission level 3): query, rate, freeze, unfreeze, step and",
+                "sprint. Freezing stops everything but players and what they ride, and the client follows",
+                "the server's tick rate. Off: no /tick, and the server runs at 20 ticks per second."
+        })
+        @Setting.Server
+        public boolean tick = true;
+
+        @Config.Comment("1.20.2's /random: random value, random roll and random reset, with saved sequences.")
+        @Setting.Server
+        public boolean random = true;
+
+        @Config.Comment("1.19.4's /ride: ride mount and ride dismount (permission level 2).")
+        @Setting.Server
+        public boolean ride = true;
+
+        @Config.Comment("1.21.2's /rotate: turn an entity to a rotation or to face a position or entity (permission level 2).")
+        @Setting.Server
+        public boolean rotate = true;
+
+        @Config.Comment("1.15's /spectate: watch an entity in spectator mode, or stop (permission level 2).")
+        @Setting.Server
+        public boolean spectate = true;
+
+        @Config.Comment("1.14's /teammsg and its alias /tm: a message to your own team (everyone may use it).")
+        @Setting.Server
+        public boolean teamMsg = true;
     }
 
     public static final class Recipes {

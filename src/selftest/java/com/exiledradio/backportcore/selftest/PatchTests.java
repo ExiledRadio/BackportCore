@@ -79,6 +79,13 @@ final class PatchTests {
             {"net.minecraft.block.BlockPane", "P35", new String[] {"torchOnPane"}},
             {"net.minecraft.world.biome.Biome", "P36", new String[] {"switchIndex"}},
             {"net.minecraft.world.WorldEntitySpawner", "P37", new String[] {"feet", "head"}},
+            {"net.minecraft.server.MinecraftServer", "P38", new String[] {"msPerTick*4", "runTick*2", "functions"}},
+            {"net.minecraft.world.World", "P39", new String[] {"skipEntity", "updateTile"}},
+            {"net.minecraft.world.WorldServer", "P39", new String[] {"frozenWorldTick"}},
+            {"net.minecraft.client.multiplayer.WorldClient", "P40", new String[] {"setTotalWorldTime", "setWorldTime"}},
+            {"net.minecraft.client.Minecraft", "P40", new String[] {"updateParticles", "animateTick"}},
+            {"net.minecraft.client.renderer.entity.RenderManager", "P40", new String[] {"entityPartialTicks"}},
+            {"net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "P40", new String[] {"tilePartialTicks"}},
     };
 
     private PatchTests() {
@@ -308,6 +315,7 @@ final class PatchTests {
             case "P35": cls = "PaneTorchTransformer"; break;
             case "P36": cls = "SpawnListSwitchTransformer"; break;
             case "P37": cls = "GroundSpawnTransformer"; break;
+            case "P38": case "P39": case "P40": cls = "TickTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -387,7 +395,8 @@ final class PatchTests {
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/worldgen/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/render/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/map/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/mechanics/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/mechanics/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/command/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }
