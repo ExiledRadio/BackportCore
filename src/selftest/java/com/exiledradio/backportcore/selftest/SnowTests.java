@@ -136,19 +136,27 @@ final class SnowTests {
         }
         int[] a = survey(world, off, "without");
         int[] b = survey(world, on, "with");
-        BackportCore.LOGGER.info("SNOW before/after: without the pass {} of {} piece columns snowed ({} could be), with it {} of {} ({} could be)",
-                a[0], a[2], a[1], b[0], b[2], b[1]);
+        BackportCore.LOGGER.info("SNOW before/after: without the pass {} of {} piece columns snowed ({} could be, {} cut later), with it {} of {} ({} could be, {} cut later)",
+                a[0], a[2], a[1], a[5], b[0], b[2], b[1], b[5]);
         check("snow: piece built at both sites", a[2] == PAD * PAD && b[2] == PAD * PAD, a[2] + " / " + b[2]);
-        check("snow: without the pass the piece is bare (1.12's look)", a[1] > PAD * PAD / 2 && a[0] < a[1], a[0] + " snowed, " + a[1] + " open");
+        check("snow: without the pass the piece is bare (1.12's look)", a[1] > (PAD * PAD - a[5]) / 2 && a[0] < a[1],
+                a[0] + " snowed, " + a[1] + " open, " + a[5] + " cut later");
+        // Columns a later chunk's feature cut after the snow (see survey) are left out; they stay a minority.
         check("snow: with the pass every column that can snow did", b[1] == 0 && b[0] > PAD * PAD / 2,
-                b[0] + " snowed, " + b[1] + " open");
+                b[0] + " snowed, " + b[1] + " open, " + b[5] + " cut later");
         check("snow: interiors untouched", b[3] == 0 && a[3] == 0, a[3] + " / " + b[3]);
-        check("snow: snow on the pumpkin and the pillar", b[4] == 2, b[4]);
+        check("snow: snow on the pumpkin and the pillar", b[4] == b[6], b[4] + " of " + b[6]);
     }
 
     /**
+     * Only columns whose top is still the pad's own (its grass, the pillar's top stone or the pumpkin, at the height
+     * the piece built them) are counted: 1.12.2 populates the pad's four population areas one after another, and a
+     * lake or tree of a later one reaches past its own area into one already snowed, cutting it after the snow as it
+     * cuts the terrain around (Village &amp; Pillage's outpost survey counts the same as {@code l}). Those columns are
+     * {@code l} on the map and counted apart.
+     *
      * @return {snowed columns, columns where snow could still be placed, piece columns found, interior blocks changed,
-     * tops snowed of the pumpkin and the pillar}
+     * tops snowed of the pumpkin and the pillar, columns cut later, pumpkin and pillar tops still the pad's}
      */
     private static int[] survey(WorldServer world, ChunkPos c, String name) {
         Pad pad = null;
@@ -163,7 +171,7 @@ final class SnowTests {
         }
         if (pad == null) {
             check("snow: " + name + " site laid out", false, c);
-            return new int[] {0, 0, 0, 0, 0};
+            return new int[] {0, 0, 0, 0, 0, 0, 0};
         }
         StructureBoundingBox box = pad.getBoundingBox();
         int snowed = 0;
@@ -171,12 +179,28 @@ final class SnowTests {
         int columns = 0;
         int interior = 0;
         int tops = 0;
+        int cut = 0;
+        int ownTops = 0;
         StringBuilder map = new StringBuilder();
         for (int z = box.minZ; z <= box.maxZ; ++z) {
             map.append('\n');
             for (int x = box.minX; x <= box.maxX; ++x) {
                 BlockPos top = world.getPrecipitationHeight(new BlockPos(x, 0, z));
                 columns++;
+                boolean pumpkin = x == box.minX && z == box.minZ;
+                boolean pillarTop = x == box.minX + PAD / 2 && z == box.minZ + PAD / 2;
+                Block own = pad.pillar(x, z) ? Blocks.STONE : pumpkin ? Blocks.PUMPKIN : Blocks.GRASS;
+                int ownY = box.minY + (pad.pillar(x, z) ? PILLAR - 1 : pumpkin ? 1 : 0);
+                if (world.getBlockState(top.down()).getBlock() != own || top.getY() - 1 != ownY) {
+                    cut++;
+                    map.append('l');
+                    BackportCore.LOGGER.info("SNOW column {} {} cut after the snow: {} under {}", x, z, world.getBlockState(top.down()),
+                            world.getBlockState(top));
+                    continue;
+                }
+                if (pumpkin || pillarTop) {
+                    ownTops++;
+                }
                 boolean snow = world.getBlockState(top).getBlock() == Blocks.SNOW_LAYER;
                 if (snow) {
                     snowed++;
@@ -203,9 +227,9 @@ final class SnowTests {
                 }
             }
         }
-        BackportCore.LOGGER.info("SNOW top view {} the pass at {} (* snow on grass, # on stone, P on the pumpkin; lower case bare):{}",
+        BackportCore.LOGGER.info("SNOW top view {} the pass at {} (* snow on grass, # on stone, P on the pumpkin; lower case bare; l cut by a later chunk):{}",
                 name, box, map);
-        return new int[] {snowed, open, columns, interior, tops};
+        return new int[] {snowed, open, columns, interior, tops, cut, ownTops};
     }
 
     private static int frozen(World world, BlockPos pos) {
