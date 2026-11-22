@@ -1,5 +1,9 @@
 # 1.4.6
 
+*   26.3's `/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]` (`command/swing/`, setting
+    `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
+    The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's
+    `swingProgress` itself (no patch), `none` holds it still and `stab` draws as `whack`. Kept in 1.4.4 (unreleased).
 *   26.2's pause menu (Game Drops Backport and newer): Report Bugs and Send Feedback become two 20 by 20 icon
     buttons in one row under Advancements and Statistics, with their names as tooltips; the grid sits at a quarter
     of the free height as 26.2's does. Shown only when a backport supplies the `pause_menu/bug` and

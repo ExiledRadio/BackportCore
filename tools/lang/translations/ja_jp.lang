@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=1.19.4 の /ride：ride mount と rid
 backportcore.general.commands.rotate.tooltip=1.21.2 の /rotate：エンティティを指定の向き、または位置やエンティティの方へ向けます（権限レベル 2）。
 backportcore.general.commands.spectate.tooltip=1.15 の /spectate：スペクテイターモードでエンティティを観戦する、またはやめます（権限レベル 2）。
 backportcore.general.commands.teammsg.tooltip=1.14 の /teammsg と別名 /tm：自分のチームへのメッセージ（誰でも使えます）。
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=26.3 の /swing：エンティティに腕を振らせる。アニメーションと時間を指定可能（権限レベル 2）。

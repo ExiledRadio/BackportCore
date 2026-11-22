@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=/ride з 1.19.4: ride mount і ride d
 backportcore.general.commands.rotate.tooltip=/rotate з 1.21.2: повертає сутність на заданий кут або до позиції чи сутності (рівень дозволів 2).
 backportcore.general.commands.spectate.tooltip=/spectate з 1.15: спостерігати за сутністю в режимі спостерігача або припинити (рівень дозволів 2).
 backportcore.general.commands.teammsg.tooltip=/teammsg з 1.14 і його скорочення /tm: повідомлення своїй команді (доступно всім).
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=/swing з 26.3: істоти змахують рукою, з анімацією і тривалістю (рівень дозволів 2).

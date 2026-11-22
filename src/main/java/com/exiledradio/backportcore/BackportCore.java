@@ -111,6 +111,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.presentation.PingNetwork.init();
         // 1.20.3's /tick: the rate and the frozen state reach the client (command/tick/).
         com.exiledradio.backportcore.command.tick.TickNetwork.init();
+        // 26.3's /swing: the animation and its duration reach the client (command/swing/).
+        com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
@@ -136,6 +138,7 @@ public final class BackportCore {
             // 1.20's armor trims, worn and on item icons (smithing/).
             com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.init();
             com.exiledradio.backportcore.command.tick.client.ClientTicks.init();
+            com.exiledradio.backportcore.command.swing.client.ClientSwings.init();
         }
     }
 

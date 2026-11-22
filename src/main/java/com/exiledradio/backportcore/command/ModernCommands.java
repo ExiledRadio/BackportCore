@@ -36,6 +36,9 @@ public final class ModernCommands {
         if (on.teamMsg) {
             event.registerServerCommand(new TeamMsgCommand());
         }
+        if (on.swing) {
+            event.registerServerCommand(new com.exiledradio.backportcore.command.swing.SwingCommand());
+        }
     }
 
     public static void serverStopped() {

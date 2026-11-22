@@ -41,7 +41,7 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
  * Today's commands (command/): {@code /tick} on a real server (freezing entities, block entities and the clock,
  * stepping, the rate the loop runs at, sprinting, query, errors, permission), {@code /random} (26.3's sequences
  * against the 26.3 oracle, ranges, reset, saving), {@code /ride}, {@code /rotate}, {@code /spectate} and
- * {@code /teammsg}. Every command runs through the server's command manager, as typed.
+ * {@code /teammsg}, {@code /swing}. Every command runs through the server's command manager, as typed.
  */
 final class CommandTests {
 
@@ -165,7 +165,7 @@ final class CommandTests {
         then(200, "tick: set up", world -> {
             check("tick: P38 applied (server loop)", "applied".equals(Asm.state("P38")), Asm.state("P38"));
             check("tick: P39 applied (freezing)", "applied".equals(Asm.state("P39")), Asm.state("P39"));
-            for (String name : new String[] {"tick", "random", "ride", "rotate", "spectate", "teammsg", "tm"}) {
+            for (String name : new String[] {"tick", "random", "ride", "rotate", "spectate", "teammsg", "tm", "swing"}) {
                 check("commands: /" + name + " registered", server().getCommandManager().getCommands().containsKey(name), name);
             }
             check("tick: a server manager exists, at 20 per second and running", Ticks.server() != null
@@ -438,9 +438,51 @@ final class CommandTests {
             check("teammsg: the team name suggests /teammsg", name.getStyle().getClickEvent() != null
                     && "/teammsg ".equals(name.getStyle().getClickEvent().getValue()), name);
             board.removeTeam(team);
+            swing(world, gm, none, p);
             pig.setDead();
             zombie.setDead();
             world.setBlockState(furnace, Blocks.AIR.getDefaultState(), 2);
         });
+    }
+
+    /** 26.3's {@code /swing}: messages, hands, animations, durations (Haste), errors, startIfAble. */
+    private static void swing(WorldServer world, Recorder gm, Recorder none, String p) {
+        List<ITextComponent> lines = runAndKeep(gm, "swing " + p);
+        check("swing <pig>: 'Made Pig swing an arm'", gm.keys.contains("commands.swing.success.single")
+                && args("commands.swing.success.single", lines) != null, gm.keys);
+        check("swing: the default duration is 6", com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig) == 6,
+                com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig));
+        check("swing <pig> offhand stab 20t: 20 ticks", gm.run("swing " + p + " offhand stab 20t").contains("commands.swing.success.single")
+                && com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig) == 20, gm.keys);
+        check("swing <pig> mainhand whack 1s: 20 ticks", gm.run("swing " + p + " mainhand whack 1s").contains("commands.swing.success.single")
+                && com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig) == 20, gm.keys);
+        pig.ticksExisted += 3;
+        check("swing: refused while the current swing is under half done (startIfAble), still counted",
+                !com.exiledradio.backportcore.command.swing.Swings.swing(pig, net.minecraft.util.EnumHand.MAIN_HAND,
+                        com.exiledradio.backportcore.command.swing.SwingType.WHACK, 6)
+                        && gm.run("swing " + p).contains("commands.swing.success.single"), gm.keys);
+        pig.ticksExisted += 20;
+        pig.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.HASTE, 200, 1));
+        gm.run("swing " + p + " mainhand whack 10");
+        check("swing with Haste II: 10 - 2 = 8 ticks", com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig) == 8,
+                com.exiledradio.backportcore.command.swing.Swings.activeDuration(pig));
+        pig.removePotionEffect(net.minecraft.init.MobEffects.HASTE);
+        check("swing @e[type=!player]: 'Made %s entities swing their arms'", gm.run("swing @e[type=!player]")
+                .contains("commands.swing.success.multiple"), gm.keys);
+        check("swing <pig> mainhand twirl: unknown animation", gm.run("swing " + p + " mainhand twirl")
+                .contains("argument.swing_animation.invalid"), gm.keys);
+        check("swing <pig> mainhand whack 0: too short", gm.run("swing " + p + " mainhand whack 0")
+                .contains("argument.time.tick_count_too_low"), gm.keys);
+        check("swing <pig> sideways: usage", gm.run("swing " + p + " sideways").contains("commands.generic.usage"), gm.keys);
+        check("swing from the console: needs an entity", gm.run("swing").contains("permissions.requires.entity"), gm.keys);
+        net.minecraft.entity.item.EntityItem item = new net.minecraft.entity.item.EntityItem(world, pig.posX, pig.posY + 2, pig.posZ,
+                new net.minecraft.item.ItemStack(Blocks.DIRT));
+        item.setNoGravity(true);
+        world.spawnEntity(item);
+        check("swing <item>: no living entities", gm.run("swing " + item.getCachedUniqueIdString()).contains("commands.swing.failed.notliving"), gm.keys);
+        item.setDead();
+        check("swing needs level 2", none.run("swing " + p).contains("commands.generic.permission"), none.keys);
+        Recorder pigSource = new Recorder(server(), 2, pig);
+        check("swing with no targets: the command's own entity", pigSource.run("swing").contains("commands.swing.success.single"), pigSource.keys);
     }
 }

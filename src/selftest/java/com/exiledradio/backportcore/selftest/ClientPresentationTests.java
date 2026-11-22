@@ -140,9 +140,12 @@ final class ClientPresentationTests {
                         if (ClientCrouchTests.done) {
                             ClientTickTests.tick(mc);
                         }
+                        if (ClientTickTests.done) {
+                            ClientSwingTests.tick(mc);
+                        }
                     }
                     if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done
-                            && this.bookChecked(mc)) {
+                            && ClientSwingTests.done && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);
