@@ -803,3 +803,19 @@ or passes an existing constant through a hook of the same type.
     other disc, and an empty jukebox, keep 1.12.2's answer.
 *   **Fails safe**: method not found: skipped, and every disc gives 1.12.2's signal.
 *   **Tested**: transformer chain and SRG names; `GdRequestTests` (13 and wait as before, a test disc with 8, empty 0).
+
+## P44. Grass, foliage and water colors under ground
+
+*   **Class**: `net.minecraft.world.biome.BiomeColorHelper` (client), method `getColorAtPos`.
+    **Transformer**: `asm/BiomeColorTransformer`. **Hook**: `worldgen/UndergroundBiomes.colorBiome`. **Since**: 1.4.4.
+    (P42 and P43 are taken on unmerged branches: borderless fullscreen, the off-map player marker.)
+*   **Vanilla change**: since 1.18 biomes are three-dimensional and the 3 by 3 color blend reads the biome at the block,
+    so grass, leaves and water in an underground biome (26.2's sulfur caves) take its colors.
+*   **Why a patch**: the blend asks `IBlockAccess.getBiome`, the column's biome; no Forge event hands over the position
+    with the biome (`BiomeEvent.GetGrassColor` has the biome only).
+*   **What changes**: the one `IBlockAccess.getBiome(pos)` call becomes `UndergroundBiomes.colorBiome(access, pos)`, same
+    stack: the client's underground span there if a backport registered one, else the access's answer. A client
+    holding no spans takes one map check per call.
+*   **Fails safe**: method or call not found: skipped, and colors stay the column's.
+*   **Tested**: transformer chain and SRG names; Game Drops Backport's client test (sulfur caves grass `#aba64f` and
+    water `#34bf89` at a registered span, the column's color above it).

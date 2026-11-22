@@ -104,6 +104,11 @@ public final class BackportCore {
         com.exiledradio.backportcore.recipe.book.SmeltingBooks.init();
         // Game events and vibrations, for every backport that requires them (gameevent/).
         com.exiledradio.backportcore.gameevent.GameEventNetwork.init();
+        com.exiledradio.backportcore.worldgen.UndergroundBiomes.init();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.worldgen.UndergroundBiomes.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.worldgen.DeferredPlacement.Events());
+        net.minecraftforge.fml.common.registry.GameRegistry.registerWorldGenerator(
+                new com.exiledradio.backportcore.worldgen.DeferredPlacement.Generator(), Integer.MAX_VALUE);
         com.exiledradio.backportcore.gameevent.AvoidVibrationTrigger.register();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.gameevent.GameEvents.Events());
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
@@ -130,6 +135,7 @@ public final class BackportCore {
             // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).
             com.exiledradio.backportcore.map.client.MapIconRenderer.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();
+            com.exiledradio.backportcore.worldgen.client.UndergroundBiomesClient.init();
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
             com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();
             com.exiledradio.backportcore.gameevent.client.VibrationClient.init();

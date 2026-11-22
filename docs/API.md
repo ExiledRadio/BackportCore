@@ -754,6 +754,39 @@ pale garden), so the family's biomes registered under vanilla's names (the cherr
 swamp's fog `0x4D7A60`, the pale garden's `0x556980`) need no call; every vanilla biome without its own colors answers
 the defaults; another mod's biome answers null.
 
+`WaterColors.at` reads an underground biome (`UndergroundBiomes`, below) first, since 1.4.4.
+
+## Underground biomes (`worldgen.UndergroundBiomes`, 1.4.4)
+
+A backport's biome under ground, by column and height, in 1.12.2's column biomes: F3's "Biome:" line (at the camera's
+block), the grass, foliage and water color blend (patch P44) and `WaterColors.at` read it.
+
+```java
+UndergroundBiomes.set(world, x, z, fromY, toYExclusive, myBiome);  // server, the column's chunk loaded; null clears
+UndergroundBiomes.setColumn(world, x, z, minY, mask, myBiome);      // every run of a height mask; null mask clears
+Biome b = UndergroundBiomes.at(world, pos);                         // either side, or null
+Biome here = UndergroundBiomes.biomeAt(world, pos);                 // or world.getBiome(pos)
+```
+
+Spans are saved in their chunk (`backportcore_underground`) and sent to each player that sees it (channel
+`backportcore_ub`), again when they change. Register from population: a chunk sent before its columns are set gets
+them when they are. Game Drops Backport's sulfur caves are the user.
+
+## Writes past the population window (`worldgen.DeferredPlacement`, 1.4.4)
+
+A feature from 1.13 on may write anywhere in the 3 by 3 chunks around its own; 1.12 guarantees the chunk and its
+neighbors to +x and +z. Work that reaches further is queued and runs once it can:
+
+```java
+DeferredPlacement.register(new ResourceLocation("mymod", "far_spike"), (world, min, max, data) -> { ... });
+DeferredPlacement.queue(world, id, min, max, data);  // the block box it reads and writes, and its own NBT
+int n = DeferredPlacement.pending(world);
+```
+
+It runs once, at the end of the first server tick at which every chunk the box touches is loaded and it and its
+neighbors to -x, -z and -x -z have populated (nothing later writes there then). It never loads or generates a chunk.
+Waiting entries are saved per dimension (`data/backportcore_deferred.dat`); a handler that is gone keeps its entries.
+
 ## Player poses (`pose.Poses`, `pose.PoseRules`, `pose.PlayerMovement`, `pose.client.PoseClient`)
 
 1.14's player poses on 1.12.2, worked out the way 1.14.4's `PlayerEntity.updatePose` does, on the server
