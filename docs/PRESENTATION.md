@@ -196,6 +196,24 @@ change one version made stays made when only a later backport is installed:
   `placeSpawnEgg`, so a backport ships no egg textures and calls nothing new). The egg's own model is wrapped (an override
   list), not replaced: other mods' eggs, and every egg before 1.21.5, keep 1.12.2's two tinted layers.
 * **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
+* **Question and message screens** (Core 1.4.5, `MessageScreens`, `VanillaRevisions.ConfirmLayout`, `.MessageScreen`,
+  `.DisconnectedLayout`): 1.12.2's own screen objects, their buttons moved on `InitGuiEvent.Post` and their text drawn in
+  place of `drawScreen` (exact classes only; a subclass draws its own). `GuiYesNo`: 1.17 (buttons at
+  `clamp(90 + message + 12, height / 6 + 96, height - 24)`), 1.19.1 (title at `clamp((height - message) / 2 - 29, 10, 80)`,
+  message 20 below, buttons 20 under it), 1.21.6 (26.3's `ConfirmScreen` column: title, message to `width - 50` and 15
+  rows, the 150-wide buttons 4 apart 16 further down, 8 between the three, centered; an empty message has no line).
+  "Saving world" leaving a singleplayer world (`WorldLoadingScreen`, while the internal server saves): 1.13 at 70 over
+  the dirt, 1.20.5 centered in a black box 12 larger with a `0xA0A0A0` frame over the menu background, 1.21.11's box
+  with its top at `height / 2 - 4` (26.3's `FocusableTextWidget`). `GuiDisconnected`: 1.20 (cells padded 10, reason
+  white, 150-wide button), 1.21 (the button 200 wide, padded 2). `GuiMemoryErrorScreen`: 1.20.5's 33-high header and
+  footer, the message in a 300-wide framed box (`outOfMemory.title`, `.message` from a backport's vanilla text).
+  `GuiScreenWorking`: 1.14 drops the second line until there is a stage and progress.
+* **Widgets** (Core 1.4.5, `Widgets`): sliders' handles take the hovered row under the mouse (1.14, P62) and focused text
+  fields a white frame (1.16, P61); 1.20.2's check box from a backport's `widget/checkbox` sprites (17 square, white
+  framed after a click). 26.3's `slider`, `slider_handle`, `text_field`, `scroller` and `scroller_background` sprites
+  are 1.12.2's drawing (with the family's `widgets.png`) pixel for pixel, so only those states differed.
+* **End credits** (1.17, Core 1.4.5, `Credits`): `texts/credits.json` and `postcredits.txt`, when a backport supplies
+  them, read as 26.3's `WinScreen` does into 1.12.2's screen. 26.3's vignette, logo and 256-wide column are not drawn.
 * **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing
   and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.

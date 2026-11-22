@@ -21,7 +21,7 @@ public enum LookArea {
     /** The splash text list. */
     SPLASHES("splashes"),
     /** Menu backgrounds, buttons, the pause and death screens, the world list and the multiplayer warning. */
-    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.20.5", "1.21.2"),
+    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.17", "1.19.1", "1.20", "1.20.2", "1.20.5", "1.21", "1.21.2", "1.21.6", "1.21.11"),
     /** The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. */
     OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.20.2", "1.21.9"),
     /** Video Settings: its layout, its removed and added options. */
@@ -108,7 +108,7 @@ public enum LookArea {
 
     /**
      * @return the area a replaced vanilla asset belongs to, by its path under {@code assets/minecraft/}: the title
-     *         screen's textures, the startup logos, toasts, containers, other GUI textures (menus), everything else
+     *         screen's textures, the startup logos, toasts, containers, other GUI textures and the credits (menus), everything else
      *         (blocks, items, mobs) textures
      */
     public static LookArea ofAsset(String path) {
@@ -125,7 +125,7 @@ public enum LookArea {
         if (p.contains("/container/") || p.contains("recipe_book") || p.contains("recipe_button") || p.contains("slot_highlight")) {
             return INVENTORY;
         }
-        if (p.startsWith("textures/gui/")) {
+        if (p.startsWith("textures/gui/") || p.startsWith("texts/credits") || p.startsWith("texts/postcredits")) {
             return MENUS;
         }
         return TEXTURES;

@@ -94,6 +94,11 @@ final class PatchTests {
             {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
             {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P47", new String[] {"tabCount", "openTab", "tabsOnPage*2",
                     "pageOf", "searchTooltipTab", "isMouseOverTab", "renderCreativeInventoryHoveringText", "drawTab"}},
+            {"net.minecraft.client.gui.GuiTextField", "P61", new String[] {"textFieldFrame"}},
+            {"net.minecraft.client.gui.GuiOptionSlider", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraft.client.gui.GuiSlider", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraft.client.gui.GuiScreenOptionsSounds$Button", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraftforge.fml.client.config.GuiSlider", "P62", new String[] {"sliderHandleRow"}},
     };
 
     private PatchTests() {
@@ -343,7 +348,7 @@ final class PatchTests {
             case "P8": cls = "BiomeSearchTransformer"; break;
             case "P9": cls = "VillageBiomeTransformer"; break;
             case "P10": case "P11": cls = "LayerRulesTransformer"; break;
-            case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
+            case "P12": case "P13": case "P14": case "P15": case "P16": case "P61": case "P62": cls = "ScreenPatchesTransformer"; break;
             case "P17": cls = "ChunkRebuildsTransformer"; break;
             case "P18": cls = "CameraTerrainTransformer"; break;
             case "P31": case "P32": cls = "MenuBackgroundTransformer"; break;

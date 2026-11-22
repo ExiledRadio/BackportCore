@@ -3,6 +3,7 @@ package com.exiledradio.backportcore.presentation.client;
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
 
 import net.minecraft.client.LoadingScreenRenderer;
 import net.minecraft.client.Minecraft;
@@ -24,8 +25,9 @@ import java.lang.reflect.Field;
  * The world-loading screen. 1.12.2 draws it through {@code Minecraft.loadingScreen} from inside
  * {@code launchIntegratedServer}'s wait loop (about five frames a second), not as a GUI screen, so Core puts
  * this subclass in that public field (no patch). While a singleplayer world loads, and only then, it draws the
- * newest installed version's revision ({@link LoadingScreens}); every other use of the loading screen (saving,
- * leaving a world, other mods' progress) is 1.12.2's, untouched.
+ * newest installed version's revision ({@link LoadingScreens}). Leaving a singleplayer world it draws 1.13's
+ * "Saving world" ({@link VanillaRevisions.MessageScreen}) while the internal server saves (since Core 1.4.5). Every
+ * other use of the loading screen (multiplayer, other mods' progress) is 1.12.2's, untouched.
  */
 @SideOnly(Side.CLIENT)
 public final class WorldLoadingScreen extends LoadingScreenRenderer {
@@ -69,6 +71,13 @@ public final class WorldLoadingScreen extends LoadingScreenRenderer {
     @Override
     public void resetProgressAndMessage(String message) {
         this.title = message;
+        if (message != null && !message.isEmpty()) {
+            this.saving = false;
+        }
+        if (this.saving) {
+            drawSaving();
+            return;
+        }
         super.resetProgressAndMessage(message);
     }
 
@@ -85,13 +94,73 @@ public final class WorldLoadingScreen extends LoadingScreenRenderer {
             draw();
             return;
         }
+        // Minecraft.loadWorld(null) leaving a singleplayer world: Forge's "Shutting down internal server..." while the
+        // server saves, then two empty frames. 1.13 on show "Saving world" ({@code GenericMessageScreen}) for all of it.
+        if (!this.saving && isRunning() && this.mc.getIntegratedServer() != null && this.mc.world != null
+                && message != null && message.equals(I18n.format("forge.client.shutdown.internal"))
+                && VanillaRevisions.messageScreen() != VanillaRevisions.MessageScreen.NONE) {
+            this.saving = true;
+        }
+        if (this.saving) {
+            drawSaving();
+            return;
+        }
         super.displayLoadingString(message);
+    }
+
+    /** True from the internal server's shutdown until the loading screen next shows a title. */
+    private boolean saving;
+    /** "Saving world" frames drawn, for the client self-test. */
+    public static volatile int savingFrames;
+
+    /**
+     * One "Saving world" frame ({@code menu.savingLevel}) as the newest version's message screen: over 1.20.5's menu
+     * background (into the main framebuffer, which its blur reads) or over the dirt.
+     */
+    private void drawSaving() {
+        long now = Minecraft.getSystemTime();
+        if (now - this.lastDraw < 50L) {
+            return;
+        }
+        this.lastDraw = now;
+        ScaledResolution resolution = new ScaledResolution(this.mc);
+        int width = resolution.getScaledWidth();
+        int height = resolution.getScaledHeight();
+        Framebuffer main = this.mc.getFramebuffer();
+        GlStateManager.clear(16640);
+        main.bindFramebuffer(true);
+        GlStateManager.matrixMode(5889);
+        GlStateManager.loadIdentity();
+        GlStateManager.ortho(0.0D, resolution.getScaledWidth_double(), resolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
+        GlStateManager.matrixMode(5888);
+        GlStateManager.loadIdentity();
+        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+        GlStateManager.clear(16640);
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        VanillaRevisions.MessageScreen revision = VanillaRevisions.messageScreen();
+        if (MenuBackground.active()) {
+            MenuBackground.drawOutsideWorld(width, height);
+        } else {
+            LoadingScreens.drawDirt(width, height);
+        }
+        GlStateManager.enableBlend();
+        MessageScreens.drawMessage(this.mc.fontRenderer, I18n.format("menu.savingLevel"), width, height, revision);
+        main.unbindFramebuffer();
+        main.framebufferRender(this.mc.displayWidth, this.mc.displayHeight);
+        this.mc.updateDisplay();
+        savingFrames++;
+        Thread.yield();
     }
 
     @Override
     public void setLoadingProgress(int progress) {
         if (loadingWorld()) {
             draw();
+            return;
+        }
+        if (this.saving) {
+            drawSaving();
             return;
         }
         super.setLoadingProgress(progress);

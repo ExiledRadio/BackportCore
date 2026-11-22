@@ -303,6 +303,124 @@ public final class VanillaRevisions {
         }
     }
 
+    // ---- Since Core 1.4.5: the confirm and message screens, the widgets' 26.3 looks and the credits ----
+
+    /** The layout of a yes/no question ({@code ConfirmScreen}; 1.12.2's {@code GuiYesNo}). */
+    public enum ConfirmLayout {
+        /** 1.12.2 to 1.16.5: the title at 70, the message from 90, the buttons at {@code height / 6 + 96}. */
+        CLASSIC,
+        /** 1.17 (21w?): the buttons follow the message, {@code clamp(90 + message + 12, height / 6 + 96, height - 24)}. */
+        BUTTONS_BELOW_1_17,
+        /**
+         * 1.19.1: title and message centered on the screen, the title at {@code clamp((height - message) / 2 - 29, 10, 80)},
+         * the message 20 below it, the buttons {@code clamp(message end + 20, height / 6 + 96, height - 24)}.
+         */
+        CENTERED_1_19_1,
+        /**
+         * 1.21.6 ({@code LinearLayout.vertical().spacing(8)}, centered on the screen): the title, the message (to
+         * {@code width - 50}, 15 rows at most), then the two 150-wide buttons 4 apart, 16 further down.
+         */
+        COLUMN_1_21_6;
+
+        public static ConfirmLayout forVersion(GameVersion v) {
+            return v.isAtLeast("1.21.6") ? COLUMN_1_21_6 : v.isAtLeast("1.19.1") ? CENTERED_1_19_1
+                    : v.isAtLeast("1.17") ? BUTTONS_BELOW_1_17 : CLASSIC;
+        }
+    }
+
+    /** @return the yes/no question layout at the newest installed version */
+    public static ConfirmLayout confirmLayout() {
+        return ConfirmLayout.forVersion(Presentation.newest(LookArea.MENUS));
+    }
+
+    /** One line of text alone on a screen while the game works ({@code GenericMessageScreen}): "Saving world". */
+    public enum MessageScreen {
+        /** 1.12.2: none. Leaving a world shows the loading screen's dirt with Forge's "Shutting down internal server...". */
+        NONE,
+        /** 1.13 ({@code GuiDirtMessageScreen}): "Saving world" over the dirt, centered at 70. */
+        DIRT_1_13,
+        /**
+         * 1.20.5 (24w09a, {@code GenericMessageScreen}): the line centered on the screen (its top at
+         * {@code height / 2 - 4}) in a black box 12 larger on every side with a grey ({@code 0xA0A0A0}) frame.
+         */
+        BOX_1_20_5,
+        /**
+         * 1.21.11 ({@code FocusableTextWidget.builder}): the box itself has its top at {@code height / 2 - 4}, its text
+         * 12 inside it, so the line sits 12 lower than 1.20.5's.
+         */
+        BOX_1_21_11;
+
+        public static MessageScreen forVersion(GameVersion v) {
+            return v.isAtLeast("1.21.11") ? BOX_1_21_11 : v.isAtLeast("1.20.5") ? BOX_1_20_5 : v.isAtLeast("1.13") ? DIRT_1_13 : NONE;
+        }
+    }
+
+    /** @return the message screen at the newest installed version */
+    public static MessageScreen messageScreen() {
+        return MessageScreen.forVersion(Presentation.newest(LookArea.MENUS));
+    }
+
+    /**
+     * 1.14 ({@code ProgressScreen}): a working screen's second line ("Working... 0%") shows only once it has a stage and
+     * some progress; 1.12.2's {@code GuiScreenWorking} draws " 0%" while it waits.
+     */
+    public static boolean progressLineWhenStarted() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.14");
+    }
+
+    /** The disconnected screen's layout ({@code DisconnectedScreen}). */
+    public enum DisconnectedLayout {
+        /** 1.12.2 to 1.19.4: the reason in grey above the middle, the message, a 200-wide button below it. */
+        CLASSIC,
+        /**
+         * 1.20 ({@code GridLayout}, each cell padded 10, centered on the screen): the reason in white, the message
+         * (to {@code width - 50}), a 150-wide button.
+         */
+        GRID_1_20,
+        /** 1.21 ({@code LinearLayout}): as 1.20, the button 200 wide and padded 2. */
+        LINEAR_1_21;
+
+        public static DisconnectedLayout forVersion(GameVersion v) {
+            return v.isAtLeast("1.21") ? LINEAR_1_21 : v.isAtLeast("1.20") ? GRID_1_20 : CLASSIC;
+        }
+    }
+
+    /** @return the disconnected screen's layout at the newest installed version */
+    public static DisconnectedLayout disconnectedLayout() {
+        return DisconnectedLayout.forVersion(Presentation.newest(LookArea.MENUS));
+    }
+
+    /**
+     * 1.20.5 (24w09a, {@code OutOfMemoryScreen} on {@code HeaderAndFooterLayout}): the title in a 33-high header, the
+     * message in a framed box 300 wide in the middle, Back to Title Screen and Quit Game in the footer.
+     */
+    public static boolean outOfMemoryLayout() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.20.5");
+    }
+
+    /** 1.14 ({@code AbstractSliderButton}): a slider's handle takes the hovered button's look while the mouse is on it. */
+    public static boolean sliderHandleHover() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.14");
+    }
+
+    /** 1.16 ({@code EditBox.renderButton}): a focused text field's frame is white (1.12.2's stays grey). */
+    public static boolean textFieldFocusFrame() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.16");
+    }
+
+    /**
+     * 1.20.2 (23w31a, {@code Checkbox}): the check box is drawn from the {@code widget/checkbox} sprites (supplied by a
+     * backport), 17 square ({@code font height + 8}), its label 4 to the right, white-framed once clicked (focused).
+     */
+    public static boolean checkboxSprites() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.20.2");
+    }
+
+    /** 1.17 ({@code WinScreen}): the credits are read from {@code texts/credits.json} (sections, disciplines, titles). */
+    public static boolean jsonCredits() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.17");
+    }
+
     /** @return the color a button's label is drawn in, given 1.12.2's ({@code GuiButton.drawButton}) */
     public static int buttonTextColor(int vanilla) {
         if ((vanilla == 0xE0E0E0 || vanilla == 0xFFFFA0) && whiteButtonText()) {

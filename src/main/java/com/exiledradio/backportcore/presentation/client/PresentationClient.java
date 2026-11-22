@@ -28,6 +28,8 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new StartupScreen.Events());
         MinecraftForge.EVENT_BUS.register(new TitleScreenExtras());
         MinecraftForge.EVENT_BUS.register(new MenuScreens());
+        MinecraftForge.EVENT_BUS.register(new MessageScreens());
+        MinecraftForge.EVENT_BUS.register(new Credits());
         MinecraftForge.EVENT_BUS.register(new SystemToasts());
         MinecraftForge.EVENT_BUS.register(new DarkTitleBar());
         MinecraftForge.EVENT_BUS.register(new BorderlessFullscreen.Events());

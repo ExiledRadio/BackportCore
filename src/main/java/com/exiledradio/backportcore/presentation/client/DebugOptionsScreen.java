@@ -255,8 +255,8 @@ public class DebugOptionsScreen extends GuiScreen {
                 mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 int knob = this.x + (int) (fraction() * (double) (this.width - 8));
-                drawTexturedModalRect(knob, this.y, 0, 66, 4, 20);
-                drawTexturedModalRect(knob + 4, this.y, 196, 66, 4, 20);
+                drawTexturedModalRect(knob, this.y, 0, PresentationHooks.sliderHandleRow(this, 66), 4, 20);
+                drawTexturedModalRect(knob + 4, this.y, 196, PresentationHooks.sliderHandleRow(this, 66), 4, 20);
             }
         }
 

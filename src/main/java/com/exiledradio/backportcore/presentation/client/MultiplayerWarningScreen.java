@@ -78,6 +78,8 @@ public final class MultiplayerWarningScreen extends GuiScreen {
     /** 1.16's 20 by 20 {@code Checkbox}, from {@code textures/gui/checkbox.png} when a version ships it. */
     static final class Checkbox extends GuiButton {
         boolean selected;
+        /** 1.20.2: clicked last (1.12.2 screens have no focus; a click focuses a widget on 26.3's). */
+        boolean focused;
 
         Checkbox(int id, int x, int y, int width, String text, boolean selected) {
             super(id, x, y, width, 20, text);
@@ -85,8 +87,18 @@ public final class MultiplayerWarningScreen extends GuiScreen {
         }
 
         @Override
+        public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+            boolean hit = super.mousePressed(mc, mouseX, mouseY);
+            this.focused = hit;
+            return hit;
+        }
+
+        @Override
         public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
             if (!this.visible) {
+                return;
+            }
+            if (Widgets.drawCheckbox(this, mc, mouseX, mouseY, this.selected, this.focused)) {
                 return;
             }
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;

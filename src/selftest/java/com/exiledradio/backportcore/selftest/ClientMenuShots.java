@@ -6,11 +6,17 @@ import com.exiledradio.backportcore.creative.client.ModernTab;
 import com.exiledradio.backportcore.creative.client.ModernTabs;
 import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
+import com.exiledradio.backportcore.presentation.client.Credits;
 import com.exiledradio.backportcore.presentation.client.MenuBackground;
+import com.exiledradio.backportcore.presentation.client.MessageScreens;
+import com.exiledradio.backportcore.presentation.client.Widgets;
+import com.exiledradio.backportcore.presentation.client.WorldLoadingScreen;
 import com.exiledradio.backportcore.presentation.client.PanoramaRenderer;
 import com.exiledradio.backportcore.presentation.client.PresentationHooks;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiLanguage;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -132,6 +138,7 @@ final class ClientMenuShots {
                     now + " after " + this.yawAt);
             return true;
         });
+        screens263(mc);
         add(null, () -> {
             try {
                 FileUtils.deleteDirectory(new File(mc.gameDir, "saves/" + WORLD));
@@ -224,6 +231,174 @@ final class ClientMenuShots {
             return true;
         });
         creativeTabs(mc);
+        saving(mc);
+    }
+
+    // ---- Core 1.4.5: the question and message screens, widgets and credits (MessageScreens, Widgets, Credits) ----
+
+    private int frames;
+
+    private void screens263(Minecraft mc) {
+        add("confirm", () -> show(new net.minecraft.client.gui.GuiYesNo((r, id) -> mc.displayGuiScreen(new GuiMainMenu()),
+                net.minecraft.client.resources.I18n.format("selectWorld.deleteQuestion"),
+                "'New World' " + net.minecraft.client.resources.I18n.format("selectWorld.deleteWarning"),
+                net.minecraft.client.resources.I18n.format("selectWorld.deleteButton"), net.minecraft.client.resources.I18n.format("gui.cancel"), 0)));
+        add(null, () -> {
+            VanillaRevisions.ConfirmLayout layout = VanillaRevisions.confirmLayout();
+            GuiScreen gui = mc.currentScreen;
+            List<String> lines = MessageScreens.lines(gui);
+            check("confirm: laid out as " + layout, layout == VanillaRevisions.ConfirmLayout.CLASSIC ? lines == null
+                    : lines != null && MessageScreens.confirmFrames > 0, MessageScreens.confirmFrames);
+            if (lines != null) {
+                String title = net.minecraft.client.resources.I18n.format("selectWorld.deleteQuestion");
+                int[] p = MessageScreens.confirmPositions(layout, mc.fontRenderer, gui.width, gui.height, title, lines);
+                GuiButton yes = button(gui, 0);
+                GuiButton no = button(gui, 1);
+                check("confirm: the buttons where " + layout + " puts them", yes != null && no != null && yes.x == p[4] && no.x == p[5]
+                        && yes.y == p[6] && no.y == p[6] && yes.width == 150, (yes == null ? "-" : yes.x + "," + yes.y) + " want " + p[4] + "," + p[6]);
+                if (layout == VanillaRevisions.ConfirmLayout.COLUMN_1_21_6) {
+                    int h = 9 + 8 + lines.size() * 9 + 8 + 36;
+                    check("confirm: 26.3's column is centered (its top half the free height down)", p[1] == (int) ((gui.height - h) * 0.5F), p[1]);
+                }
+            }
+            return true;
+        });
+        add("confirm-empty", () -> show(new net.minecraft.client.gui.GuiYesNo((r, id) -> mc.displayGuiScreen(new GuiMainMenu()),
+                net.minecraft.client.resources.I18n.format("deathScreen.quit.confirm"), "",
+                net.minecraft.client.resources.I18n.format("deathScreen.titleScreen"), net.minecraft.client.resources.I18n.format("deathScreen.respawn"), 0)));
+        add(null, () -> {
+            List<String> lines = MessageScreens.lines(mc.currentScreen);
+            check("confirm: an empty message takes no line (26.3 splits an empty text into none)", lines == null || lines.isEmpty(), lines);
+            return true;
+        });
+        add("disconnected", () -> show(new net.minecraft.client.gui.GuiDisconnected(new net.minecraft.client.gui.GuiMultiplayer(new GuiMainMenu()),
+                "disconnect.lost", new net.minecraft.util.text.TextComponentTranslation("disconnect.timeout"))));
+        add(null, () -> {
+            VanillaRevisions.DisconnectedLayout layout = VanillaRevisions.disconnectedLayout();
+            GuiButton back = button(mc.currentScreen, 0);
+            int want = layout == VanillaRevisions.DisconnectedLayout.GRID_1_20 ? 150 : 200;
+            check("disconnected: drawn as " + layout, layout == VanillaRevisions.DisconnectedLayout.CLASSIC || MessageScreens.disconnectedFrames > 0,
+                    MessageScreens.disconnectedFrames);
+            check("disconnected: the button " + want + " wide", back != null && back.width == want, back == null ? null : back.width);
+            return true;
+        });
+        add("out-of-memory", () -> show(new net.minecraft.client.gui.GuiMemoryErrorScreen()));
+        add(null, () -> {
+            check("out of memory: 1.20.5's layout drawn", !VanillaRevisions.outOfMemoryLayout() || MessageScreens.memoryFrames > 0, MessageScreens.memoryFrames);
+            GuiButton quit = button(mc.currentScreen, 1);
+            check("out of memory: Quit Game in the 33-high footer", !VanillaRevisions.outOfMemoryLayout()
+                    || quit != null && quit.y == mc.currentScreen.height - 27, quit == null ? null : quit.y);
+            return true;
+        });
+        add("working", () -> show(new net.minecraft.client.gui.GuiScreenWorking()));
+        add(null, () -> {
+            check("working: drawn without the empty progress line", !VanillaRevisions.progressLineWhenStarted() || MessageScreens.workingFrames > 0,
+                    MessageScreens.workingFrames);
+            return true;
+        });
+        add("warning-checkbox", () -> {
+            try {
+                java.lang.reflect.Constructor<?> c = Class.forName("com.exiledradio.backportcore.presentation.client.MultiplayerWarningScreen")
+                        .getDeclaredConstructor(GuiScreen.class, String[].class);
+                c.setAccessible(true);
+                return show((GuiScreen) c.newInstance(new GuiMainMenu(),
+                        (Object) new String[] {"multiplayerWarning.header", "multiplayerWarning.message", "multiplayerWarning.check"}));
+            } catch (ReflectiveOperationException e) {
+                failed("warning screen", e);
+                return true;
+            }
+        });
+        add(null, () -> {
+            check("check box: 1.20.2's sprites when supplied (" + Widgets.spriteCheckbox() + ")", !Widgets.spriteCheckbox() || Widgets.checkboxFrames > 0,
+                    Widgets.checkboxFrames);
+            GuiButton box = button(mc.currentScreen, 2);
+            check("check box: 17 high with the sprites", !Widgets.spriteCheckbox() || box != null && box.height == Widgets.BOX, box == null ? null : box.height);
+            return true;
+        });
+        add("text-field", () -> show(new net.minecraft.client.gui.GuiScreenAddServer(new GuiMainMenu(),
+                new net.minecraft.client.multiplayer.ServerData(net.minecraft.client.resources.I18n.format("selectServer.defaultName"), "", false))));
+        add(null, () -> {
+            check("P61 applied", "applied".equals(Asm.state("P61")), Asm.state("P61"));
+            check("P62 applied", "applied".equals(Asm.state("P62")), Asm.state("P62"));
+            net.minecraft.client.gui.GuiTextField field = new net.minecraft.client.gui.GuiTextField(0, mc.fontRenderer, 0, 0, 100, 20);
+            field.setFocused(true);
+            check("a focused text field's frame is white from 1.16", PresentationHooks.textFieldFrame(field, -6250336)
+                    == (VanillaRevisions.textFieldFocusFrame() ? -1 : -6250336));
+            field.setFocused(false);
+            check("an unfocused text field's frame stays grey", PresentationHooks.textFieldFrame(field, -6250336) == -6250336);
+            GuiButton slider = new GuiButton(0, 0, 0, "");
+            net.minecraftforge.fml.common.ObfuscationReflectionHelper.setPrivateValue(GuiButton.class, slider, true, "field_146123_n");
+            check("a hovered slider's handle is the hovered button's row from 1.14",
+                    PresentationHooks.sliderHandleRow(slider, 66) == (VanillaRevisions.sliderHandleHover() ? 86 : 66));
+            return true;
+        });
+        add("credits", () -> {
+            net.minecraft.client.gui.GuiWinGame credits = new net.minecraft.client.gui.GuiWinGame(false, () -> { });
+            show(credits);
+            // Scrolled to the first section (1.12.2's screen starts below the bottom edge).
+            net.minecraftforge.fml.common.ObfuscationReflectionHelper.setPrivateValue(net.minecraft.client.gui.GuiWinGame.class, credits, 700.0F, "field_146581_h");
+            return true;
+        });
+        add(null, () -> {
+            boolean json = VanillaRevisions.jsonCredits() && Presentation.asset("texts/credits.json") != null;
+            List<String> lines = Credits.lastLines;
+            check("credits: 26.3's credits.json when a backport supplies it (" + json + ")", !json || lines != null && lines.size() > 100
+                    && lines.get(0).endsWith("============") && lines.get(1).contains("Mojang Studios"), lines == null ? null : lines.size());
+            mc.displayGuiScreen(new GuiMainMenu());
+            return true;
+        });
+    }
+
+    /** Leaves the world last: "Saving world" is drawn by the loading screen inside loadWorld, so the shot is taken there. */
+    private void saving(Minecraft mc) {
+        if (Loader.isModLoaded("trailsandtalesbackport")) {
+            // Trails & Tales' sign editor (it swaps itself in for GuiEditSign): 26.2's flat oak sign from Game Drops' texture.
+            add("sign", () -> {
+                net.minecraft.util.math.BlockPos at = mc.player.getPosition().offset(mc.player.getHorizontalFacing(), 2).up();
+                mc.getIntegratedServer().getWorld(0).setBlockState(at, Blocks.STANDING_SIGN.getDefaultState());
+                mc.world.setBlockState(at, Blocks.STANDING_SIGN.getDefaultState());
+                net.minecraft.tileentity.TileEntity te = mc.world.getTileEntity(at);
+                if (te instanceof net.minecraft.tileentity.TileEntitySign) {
+                    return show(new net.minecraft.client.gui.inventory.GuiEditSign((net.minecraft.tileentity.TileEntitySign) te));
+                }
+                check("sign: a client sign tile to edit", false, te);
+                return true;
+            });
+            add(null, () -> {
+                check("sign: Trails & Tales' editor open", mc.currentScreen != null && mc.currentScreen.getClass().getSimpleName().equals("SignEditScreen"),
+                        mc.currentScreen);
+                check("sign: vanilla's oak gui/signs texture supplied from 26.2", !Presentation.isAtLeast("26.2")
+                        || Presentation.asset("textures/gui/signs/oak.png") != null, Presentation.asset("textures/gui/signs/oak.png"));
+                mc.displayGuiScreen(null);
+                return true;
+            });
+        }
+        add(null, () -> {
+            this.frames = WorldLoadingScreen.savingFrames;
+            mc.displayGuiScreen(null);
+            mc.world.sendQuittingDisconnectingPacket();
+            mc.loadWorld(null);
+            ScreenShotHelper.saveScreenshot(mc.gameDir, "menu-saving.png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+            mc.displayGuiScreen(new GuiMainMenu());
+            check("leaving the world: Saving world drawn as " + VanillaRevisions.messageScreen(),
+                    VanillaRevisions.messageScreen() == VanillaRevisions.MessageScreen.NONE || WorldLoadingScreen.savingFrames > this.frames,
+                    WorldLoadingScreen.savingFrames);
+            return true;
+        });
+    }
+
+    @javax.annotation.Nullable
+    private static GuiButton button(@javax.annotation.Nullable GuiScreen gui, int id) {
+        if (gui == null) {
+            return null;
+        }
+        List<GuiButton> buttons = net.minecraftforge.fml.common.ObfuscationReflectionHelper.getPrivateValue(GuiScreen.class, gui, "field_146292_n");
+        for (GuiButton b : buttons) {
+            if (b.id == id) {
+                return b;
+            }
+        }
+        return null;
     }
 
     // ---- 1.19.3's creative tabs (creative.client.ModernTabs, P47) ----

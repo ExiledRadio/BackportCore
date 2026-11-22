@@ -966,3 +966,33 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: transformer chain and SRG names (`PatchTests`; vanilla's unpaged screen in the SRG jar is left alone);
     `ClientMenuShots` (the first page's 13 and 14 tabs, each tab's first item and screenshot, books, eggs, every 1.12.2
     stack in a 1.19.3 tab, search, a late mod tab on page 2, the inventory part off).
+
+## P61. A focused text field's white frame
+
+*   **Class**: `net.minecraft.client.gui.GuiTextField`, method `drawTextBox`. **Transformer**:
+    `asm/ScreenPatchesTransformer`. **Hook**: `presentation/client/PresentationHooks.textFieldFrame`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.16 (`EditBox.renderButton`) draws a focused text field's frame white (`-1`); 1.12.2's is grey
+    (`-6250336`) focused or not. 26.3's `text_field` and `text_field_highlighted` sprites are those two frames on black.
+*   **Why a patch**: the frame is one `drawRect` inside `drawTextBox`, which every screen's text field calls; no event.
+*   **What changes**: `this` is loaded before the frame's color constant and the two go through
+    `textFieldFrame(field, color)`, which answers white for a focused field once 1.16 or later is the newest
+    (`VanillaRevisions.textFieldFocusFrame`), else the color. One stack slot more, no local.
+*   **Fails safe**: method missing or not exactly one frame color: skipped, the frame stays grey.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `ClientMenuShots` (the hook focused and not, the Add
+    Server screen's focused Server Name field in `menu-text-field.png`).
+
+## P62. A slider's handle under the mouse
+
+*   **Classes**: `mouseDragged` of `net.minecraft.client.gui.GuiOptionSlider`, `GuiSlider`, `GuiScreenOptionsSounds$Button`
+    and Forge's `net.minecraftforge.fml.client.config.GuiSlider`. **Transformer**: `asm/ScreenPatchesTransformer`.
+    **Hook**: `presentation/client/PresentationHooks.sliderHandleRow`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.14 (`AbstractSliderButton.renderBg`) draws the handle from the hovered button's row of
+    `widgets.png` (86) while the mouse is on the slider; 1.12.2 always draws row 66. 26.3's `slider_handle` and
+    `slider_handle_highlighted` sprites are those rows of the family's `widgets.png`, pixel for pixel.
+*   **Why a patch**: each slider class draws its own handle in `mouseDragged`; no event.
+*   **What changes**: `this` is loaded before each `bipush 66` (two in the vanilla classes, one in Forge's, which draws
+    the handle in one box) and the two go through `sliderHandleRow(button, row)`: 86 while `isMouseOver()` once 1.14 or
+    later is the newest (`VanillaRevisions.sliderHandleHover`), else the row. Core's own sliders call the hook.
+*   **Fails safe**: method missing or not the expected number of rows: that class is skipped, its handle stays 1.12.2's.
+*   **Tested**: transformer chain and SRG names (`PatchTests`, Forge's class in the dev chain only); `ClientMenuShots`
+    (the hook hovered).

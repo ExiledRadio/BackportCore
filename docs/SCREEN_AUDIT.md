@@ -43,21 +43,21 @@ rows and the Cleanroom borderless fullscreen.
 | Splash, panorama, fade-in, overlay | 26.3 / 1.13 | matches | – | – |
 | Accessibility onboarding (first start) | 1.19.4 | missing | 26.3 opens `AccessibilityOnboardingScreen` on the very first start instead of the title screen: "Welcome to Minecraft! Would you like to enable the Narrator or visit the Accessibility Settings?", a Narrator cycle button, "Accessibility Settings...", Continue, over the panorama; the narrator offers itself ("Press enter to enable the narrator"). Then the title screen fades in. | M |
 | Credits & Attribution screen | 1.19.4 | missing | Title "Credits & Attribution"; Credits (opens the End credits), Attribution, Licenses (open minecraft.net links through Confirm Link), Done. Reached from Options and the copyright link. | S |
-| Credits (`WinScreen`) | 1.12.2 (credits.json 1.17) | partly | 26.3 reads `texts/credits.json` (sections, titles, names), draws the vignette (`credits_vignette.png`) and the 26.3 End Poem; ours is 1.12.2's `credits.txt`. The list's contents are Mojang's staff; a backport could ship 26.3's file. | S |
+| Credits (`WinScreen`) | 1.12.2 (credits.json 1.17) | **partly (text matches, Core 1.4.5)** | `texts/credits.json` and `postcredits.txt` read as 26.3's `WinScreen` reads them when a backport supplies them (Game Drops does). 26.3's vignette, logo and 256-wide column are not drawn: 1.12.2's screen scrolls the text. | S |
 | Startup screen (Mojang Studios) | 1.16 | matches | Core's `StartupScreen`. | – |
 | Pause menu | 26.2 / 26.1 | matches | Icon row and World Options... done. The Mods row is Forge's (kept). Server Links (1.21) and Custom Options (1.21.8, server dialogs) need a server that sends them: n/a. | – |
 | Death screen | 1.20.5 (title 1.16.2, buttons 1.15) | matches (code) | "You Died!"/"Game Over!", Score in yellow, Respawn and Title Screen with the quit question, buttons enabled after 20 ticks; Buzzy Bees' hardcore buttons. The draft-report icon is Player Reporting: n/a. | – |
-| Confirm, alert and message screens | 1.20.6 layout | partly | Trails & Tales' `Screens1206` lays out 1.20.6's `ConfirmScreen`, `AlertScreen` and `GenericMessageScreen` for its own world-open flow only. 1.12.2's `GuiYesNo` (delete world, delete server, every mod's confirms) and `GuiScreenWorking` ("Saving world") keep 1.12.2's layout: 26.3 centers title, text and buttons in one column with 8 between rows, the buttons 150 wide. | M |
+| Confirm, alert and message screens | 1.21.6 layout (1.17, 1.19.1 before it) | **matches (Core 1.4.5)** | `MessageScreens`: 1.12.2's own `GuiYesNo` (exact class) laid out as 1.17, 1.19.1 or 1.21.6 (26.3's centered column); "Saving world" when leaving a singleplayer world (1.13 dirt, 1.20.5 and 1.21.11 framed boxes); `GuiScreenWorking` without its lone " 0%" (1.14). Trails & Tales' `Screens1206` still lays out its own world-open questions as 1.20.6's. | – |
 | Menu background, list band, separators | 1.20.5 | matches | Core's `MenuBackground` (P31). | – |
 | Header and footer layout | 1.20.5 | missing | Every 26.3 options-like screen puts its title in a 33-high header (centered at y 13) and its buttons in a 33-high footer, with the list or grid between the separators. 1.12.2's screens keep their own title heights and button rows; the shots show Options' title at y 20 with buttons far below it, and Language's footer two rows tall. Core's `docs/PRESENTATION.md` lists this as not covered. One shared layout helper, then screen by screen. | L |
 | Widgets: buttons | 1.20.2 sprites (art 1.15) | matches | White labels (P12), the 1.15 backport's `widgets.png`. | – |
-| Widgets: check box | 1.16, sprites 1.20.2 | partly | Core's own `Checkbox` draws 1.16's 64-pixel sheet when a backport ships `checkbox.png`; 26.3's four sprites (`widget/checkbox`, `_selected`, `_highlighted`) have the label beside a 17 (not 20) high box since 1.20.2 (code). | S |
-| Widgets: slider, text field, scroll bar | 1.20.2 sprites | partly (code) | 26.3's `widget/slider`, `slider_handle`, `text_field`, `text_field_highlighted` and `scroller`/`scroller_background` sprites; 1.12.2 draws the slider from `widgets.png` and the text field and scroll bar as flat rectangles (grey border, black fill; a 6-wide grey bar). Close in color, different in edges. Worth one shot side by side. | S |
+| Widgets: check box | 1.16, sprites 1.20.2 | **matches (Core 1.4.5)** | `Widgets`: 1.20.2's 17-square box from the `widget/checkbox` sprites (Game Drops supplies 26.3's), label beside it, framed white once clicked. | – |
+| Widgets: slider, text field, scroll bar | 1.20.2 sprites | **matches (Core 1.4.5)** | Compared with 26.3's sprites: track, handle, text field and scroll bar are 1.12.2's drawing (with the family's `widgets.png`) pixel for pixel. What differed were states: the handle under the mouse (1.14, P62) and a focused field's white frame (1.16, P61). | – |
 | Keyboard focus and navigation | 1.19.4 | n/a | Tab/arrow focus, the white focus frame. 1.12.2 screens have no focus; not worth a rewrite. | – |
 | Tooltips (frame and background) | 1.20.5 sprites, per-item style 1.21.2 | partly | Same purple frame on 1.12.2. Missing: tooltips placed below or above a widget (`BelowOrAboveWidgetTooltipPositioner`, menu buttons) and items' own tooltip style (`tooltip_style` component; no vanilla item uses one). Core's options tooltips exist. | S |
-| Disconnected screen | 1.12.2 (buttons 1.21) | partly | 26.3: the reason, then "Back to Server List" or "Back to Title Screen", plus Open Report Directory / Report to Server Admins (1.21, when a report was written or the server sent a link). Ours is 1.12.2's. | S |
+| Disconnected screen | 1.21 (layout 1.20) | **matches (Core 1.4.5)** | 1.20's centered column (reason white), 1.21's 200-wide button; "Back to Server List" is the backports' vanilla text. Open Report Directory / Report to Server Admins need 1.21's disconnect reports and server links: n/a. | – |
 | Connecting screen | 1.12.2 | matches | "Connecting to the server...", "Logging in...". Transfer (1.20.5) is n/a. | – |
-| Out of memory screen | 1.12.2 (`GuiMemoryErrorScreen`) | partly | 26.3 words and lays it out as a message screen (title, text, Back to Title, Quit Game). Rare; low priority. | S |
+| Out of memory screen | 1.20.5 | **matches (Core 1.4.5)** | Header, 300-wide framed message, Back to Title Screen and Quit Game in the footer; `outOfMemory.*` from Game Drops' vanilla text. | – |
 | Ban notices, Realms, telemetry consent, Player Reporting, Social Interactions, Friends (26.2), Dialogs (1.21.6) | 1.16.4 to 26.2 | n/a | Mojang's online services or server-sent dialog packets 1.12.2 servers cannot send. The pause and title icons that would open them already answer with 26.3's "Not available in this version" toast. | – |
 
 ### The multiplayer warning, concretely
@@ -165,8 +165,8 @@ the screen.
 | Villager trading | 1.14 | matches | V&P's `GuiVillagerMerchant`. | – |
 | Horse, donkey, llama | 1.12.2 (slots 1.20.2) | matches (code) | – | – |
 | Nautilus | 26.2 | matches | Tricky Trials' `GuiNautilus`. | – |
-| Book and quill, written book | 1.12.2 (multi-line edit 1.15, page arrows 1.20.2) | partly | V&P's `GuiBookEditor` (code). 26.3's editor has mouse selection, Ctrl + A/C/V, and a separate title screen when signing; 1.12.2's has none of those. Not compared in game. | M |
-| Sign, hanging sign | 1.20 | partly | Trails & Tales' `SignEditScreen`. Game Drops' notes: 26.2 flattened the sign edit screen (drawn flat, no 3D sign), not done; Trails & Tales owns it. | S |
+| Book and quill, written book | 1.12.2 (multi-line edit 1.15, page arrows 1.20.2, sign screen 1.21.6) | **matches (V&P 2.7.4)** | V&P's `GuiBookEditor` already had mouse selection, Shift/drag, Ctrl + A/C/X/V (1.14's editor; the audit misread it). From 1.21.6 signing is 26.3's own screen (`GuiBookSign`). | – |
+| Sign, hanging sign | 1.20 (flat 26.2) | **matches** | Trails & Tales draws 26.2's flat sign (done in 1.0.2); 1.12.2's oak and other mods' vanilla woods now find their texture at vanilla's path, which Game Drops supplies. | – |
 | Command block, structure block | 1.12.2 (layout 1.13) | partly | 1.13's command block screen has suggestions in the command box; ours is 1.12.2's with no suggestions. Structure block layout unchanged since 1.13 aside from Strict (1.21). | M |
 | Jigsaw, test block, test instance | 1.14 / 1.21.5 | n/a | No jigsaw blocks or test framework on 1.12.2 (Core's jigsaw is generation only). | – |
 | Statistics | 1.12.2 (sprites 1.20.2) | matches (code) | 26.3's tabs (General, Items, Mobs) are 1.12.2's. | – |
@@ -260,16 +260,16 @@ Ordered by how often a player sees them, then by size. "S" items first within a 
 14. **Accessibility onboarding** on the first start (M).
 15. **Notification Time** (M), **High Contrast** (M), **Rotate With Minecarts** (S).
 16. **Quit Shortcuts** and **Right Click Emulation** on Controls (S).
-17. **Confirm and message screens** in 1.20.6's layout for 1.12.2's own `GuiYesNo` and "Saving world" (M).
-18. **Disconnected screen** buttons and wording (S); **Out of memory** (S).
-19. **Sign edit screen** 26.2 flat look (S, Trails & Tales); **book editor** selection and signing (M).
-20. **Check box and slider/text field/scroll bar sprites** (S each): compare side by side first.
+17. ~~**Confirm and message screens**~~: done in Core 1.4.5 (`MessageScreens`, 26.3's column from 1.21.6).
+18. ~~**Disconnected screen**, **Out of memory**~~: done in Core 1.4.5 (wording from Game Drops' vanilla text).
+19. ~~**Sign edit screen**, **book editor**~~: the flat sign was in Trails & Tales 1.0.2 (vanilla woods' textures now from Game Drops); V&P 2.7.4 signs on 26.3's own screen.
+20. ~~**Check box and slider/text field/scroll bar**~~: compared with 26.3's sprites; done in Core 1.4.5 (P61, P62, `Widgets`).
 21. **Subtitle text background** (S).
 22. **Music & Sounds: Device** (M), **Directional Audio** (L).
 23. **Debug parts** 1.12.2 has no lines for, and 1.21.9's column arrangement (M).
 24. **Command suggestions**: argument highlighting and usage at the cursor (L, only partly possible).
 25. **Narrator for screens** (L).
-26. **End credits** from 26.3's `credits.json` (S, low value).
+26. ~~**End credits**~~: done in Core 1.4.5 (`Credits`, the file from Game Drops).
 
 Not applicable to 1.12.2 (no action): Realms, Friends, Social Interactions, Player Reporting, telemetry, ban notices,
 chat signing, server-sent dialogs and links, code of conduct, transfers, experiments, data packs, jigsaw and test
