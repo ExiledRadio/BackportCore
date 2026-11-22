@@ -224,11 +224,12 @@ change one version made stays made when only a later backport is installed:
   from y 20. Toggle Crouch and Toggle Sprint (any mod's option of that name) show on Accessibility and Controls.
 * **Accessibility** (1.21.9): Auto-Jump, Toggle Crouch and Toggle Sprint are on Controls only, and "Controls..." sits
   beside Narrator. 1.21.11: View Bobbing joins it from Video Settings.
-* **Video Settings** (1.21.11, `VideoLayout`, `VideoSections`): three sections under their headers (Display: Max
-  Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, Brightness; Quality & Performance: the Preset across the
-  top, then Render Distance, Smooth Lighting, Clouds, Particles, Mipmap Levels, Entity Shadows, Entity Distance, Menu
-  Background Blurriness, Cloud Distance, See-Through Leaves, Texture Filtering, Anisotropic Filtering, Weather Effect
-  Radius; Preferences: Autosave Indicator, Show Vignette, Attack Indicator, Chunk Fade Time; any other entry after
+* **Video Settings** (1.21.11, `VideoLayout`, `VideoSections`): three sections under their headers (Display: Fullscreen
+  Resolution across the top, then Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, Exclusive Fullscreen,
+  Brightness; Quality & Performance: the Preset across the top, then Render Distance, Chunk Builder, Simulation
+  Distance, Smooth Lighting, Clouds, Particles, Mipmap Levels, Entity Shadows, Entity Distance, Menu Background
+  Blurriness, Cloud Distance, See-Through Leaves, Improved Transparency, Texture Filtering, Anisotropic Filtering,
+  Weather Effect Radius; Preferences: Autosave Indicator, Show Vignette, Attack Indicator, Chunk Fade Time; any other entry after
   them). Backport options with those names land in their places; 1.12.2's list draws every row 25 pixels tall, so
   the headers sit on rows of their own. Graphics is gone: **See-Through Leaves** is 1.12.2's Fancy graphics (what draws
   leaves see-through; taken from Graphics the first time), and the rest of what Fancy did has its own option.
@@ -242,6 +243,53 @@ change one version made stays made when only a later backport is installed:
     set on the block atlas with OpenGL's anisotropic filtering. 1.21.11's RGSS is a shader 1.12.2 cannot run.
   * **Show Vignette**: off removes it; on draws it with See-Through Leaves off too.
   * **Chunk Fade Time** (P28): chunks drawn for the first time fade in from the fog color, 0 to 2 seconds.
+* **The Video Settings 1.12.2 lacked entirely** (Core 1.4.5; each saved in Core's `config/backportcore/options.txt` under
+  its 26.3 name, `backportcore:<name>`; the presets set the last three as 26.3's do):
+  * **Fullscreen Resolution** (1.13; 26.3 renames it **Exclusive Fullscreen Mode** and gives it its tooltip,
+    `Presentation.FULLSCREEN_RESOLUTION`, `FullscreenModes`): a 310-wide slider at the top of the list (of Display, with
+    sections), as 1.13 and 26.3 have it, from Current to each of the monitor's modes ("1920x1080@60 (24bit)", from
+    LWJGL 2's `Display.getAvailableDisplayModes`: fullscreen-capable, 24 color bits or more, lowest first in GLFW's
+    order). Saved as vanilla's `fullscreenResolution` (`backportcore:fullscreen_resolution:1920x1080@60:24`, empty for
+    Current). When Fullscreen is exclusive (always below 26.1; with Exclusive Fullscreen on from 26.1), P42's hook
+    enters it at that mode instead of 1.12.2's desktop mode, doing what `toggleFullscreen` does around it; leaving is
+    vanilla's. A new mode while in exclusive fullscreen applies when Video Settings closes, as vanilla's
+    `VideoSettingsScreen.removed`. A saved mode the monitor no longer has is Current. Not shown with OptiFine (its
+    own Fullscreen Mode) or where Cleanroom's LWJGL 3 draws the window (as Exclusive Fullscreen).
+  * **Chunk Builder** (1.18.2, `prioritize_chunk_updates`: Threaded, Semi Blocking, Fully Blocking, with 26.3's three
+    tooltips): P17's setting (`ChunkRebuildHooks.mode`). It is the same setting as the config's
+    `rendering.blockUpdates`: it starts at the config's value, each change is written to the config, and a change in
+    the config screen moves the option. While the option is hidden (below 1.18.2, the Video Settings switch off) the
+    config decides, as before. Default Semi Blocking (the Fancy preset's; the config's default). Not shown where
+    OptiFine, Celeritas, Vintagium or Nothirium replace the renderer (`VanillaRevisions.vanillaRenderer`).
+  * **Simulation Distance** (1.18, 5 to 32 chunks, default 12; P46, `SimulationDistance`): entities, block entities,
+    block and fluid ticks, random ticks and natural spawning happen only near players; loading is unchanged
+    (Render Distance and 1.12.2's rules still load what they did). 26.3's `DistanceManager` puts each player's ticket at
+    level 31 minus the distance, so with the square (chessboard) distance in chunks from a player's chunk: entities,
+    scheduled ticks and spawning up to the distance, block entities and random ticks one chunk further. Entities
+    outside still get their despawn check, as 26.3's `ServerLevel.tick` runs `checkDespawn` before the range test.
+    Spawn chunks and chunks a mod keeps loaded (Forge's chunk tickets, 1.18's forced chunks) always tick. Random ticks
+    stay within 1.12.2's 128 blocks of a player when the distance reaches further (a wider area would cost more than
+    1.12.2 ever did). The game's own server, and a LAN world opened from it, follows the option each tick, as 1.18's
+    `IntegratedServer` does (`max(2, option)`); with the option hidden there is no limit. A dedicated server
+    reads `simulation-distance` from server.properties (1.18's default 10, written there at start) once a 1.18 or later
+    backport is installed. Redstone at the edge: a scheduled tick outside waits (1.12.2 schedules it again, as for an
+    unloaded area) and runs once a player comes near; block updates still reach loaded blocks outside at once, as in
+    1.18. Shown with OptiFine too (it is the server's setting).
+  * **Improved Transparency** (1.21.11, Fabulous! before it; `ImprovedTransparency`; with 26.3's tooltip). The decision,
+    from 1.12.2's `EntityRenderer.renderWorldPass`: particles are drawn first and write depth, then rain and snow
+    (depth not written), then the translucent layer (water, ice, stained glass, slime) with depth writes off, then the
+    clouds when the camera is above them. So particles and clouds behind water already look right, and translucent
+    blocks behind each other are sorted as before; what goes wrong is rain and snow in front of water or glass, which
+    the translucent layer is blended over afterwards, so they look as if behind it. Vanilla's version renders each
+    layer into its own target and blends them by depth with `shaders/post/transparency.json`; on 1.12.2 that would mean
+    moving every layer to other framebuffers (with a depth texture each) inside `renderWorldPass`, and it would break
+    shader mods and every mod that draws in the world. Core does the part that matters with no patch: on, at the end
+    of the world (Forge's `RenderWorldLastEvent`, lowest priority) while rain or snow falls, the translucent layer is
+    drawn once more into the depth buffer only and the weather once more over it. Rain in front of water or glass is
+    then drawn over it; rain behind it fails the depth test and stays tinted. Cost: one more draw of the translucent
+    layer and of the weather each rainy frame. Not done: particles' soft edges cutting into water behind them (they
+    write depth; fixing it means drawing every particle twice), clouds seen through glass from above them. Off by
+    default; the Fabulous! preset turns it on. Not shown where another renderer replaces 1.12.2's.
 * **Video Settings with OptiFine** (`OptiFineVideoScreen`): OptiFine rewrites `GuiVideoSettings` as a fixed grid of
   its twelve settings and six submenu buttons, with no scrolling list. Core recognizes that by its shape (no list among
   the class's fields, not by any name) and opens a subclass of OptiFine's own screen instead: after OptiFine's
@@ -353,9 +401,10 @@ change one version made stays made when only a later backport is installed:
   them to the front of every tab. Either would be an order no vanilla version had.
 ## What is not covered yet
 
-* 1.21.11's Fullscreen Resolution (1.12.2 goes fullscreen at the desktop's mode), Biome Blend, Prioritize Chunk
-  Updates, Simulation Distance and Improved Transparency (no 1.12.2 counterpart; a backport's option of that name is
-  placed and set by the presets), RGSS texture filtering.
+* Biome Blend (no 1.12.2 counterpart; a backport's option of that name is placed and set by the presets), RGSS
+  texture filtering, 26.x's Graphics API (Vulkan). Improved Transparency covers rain and snow only (see above).
+* Exclusive Fullscreen and its mode under Cleanroom: its LWJGL 3 (lwjglx) draws the window through GLFW and has its
+  own fullscreen handling, so Core leaves both off there.
 * The debug parts 1.12.2's screen has no lines for (tps, gpu_utilization, simple_performance_impactors,
   looking_at_fluid, looking_at_entity, heightmap, sound_mood, entity_spawn_counts, chunk_generation_stats, the
   other visualizers), and 1.21.9's arrangement of the parts into the two columns: 1.12.2's order stays.
@@ -365,8 +414,7 @@ change one version made stays made when only a later backport is installed:
   ends. 1.12.2 loads resources in one blocking call, so the bar cannot move during a reload.
 * The world list's search bar (1.13.1): its list, title and focus are private to `GuiWorldSelection`, so it
   would mean replacing the screen.
-* Optimize World (the Flattening's converter), Raw Input (LWJGL 2), Fabulous graphics, Biome Blend: no 1.12.2
-  counterpart.
+* Optimize World (the Flattening's converter), Raw Input (LWJGL 2), Biome Blend: no 1.12.2 counterpart.
 * Command suggestions: 1.13's red highlighting of a wrong argument and the colored arguments (1.12.2's commands do not
   describe their arguments), the usage of the argument at the cursor (the whole command's `getUsage` shows instead),
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.

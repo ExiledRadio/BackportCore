@@ -116,6 +116,30 @@ public final class VanillaRevisions {
                 ? l.getResource("org/lwjgl/glfw/GLFW.class") == null : false;
     }
 
+    /**
+     * Whether 1.12.2's own world renderer draws the chunks: not where OptiFine, Celeritas, Vintagium or Nothirium replace
+     * it (each has its own chunk builder and draws its own translucent layer). Chunk Builder and Improved Transparency
+     * change that renderer, so they show only here. False on a dedicated server. Since Core 1.4.5.
+     */
+    public static boolean vanillaRenderer() {
+        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isClient()) {
+            return false;
+        }
+        if (vanillaRenderer == null) {
+            net.minecraftforge.fml.common.Loader loader = net.minecraftforge.fml.common.Loader.instance();
+            vanillaRenderer = !net.minecraftforge.fml.client.FMLClientHandler.instance().hasOptifine() && !loader.isModLoaded("celeritas")
+                    && !loader.isModLoaded("vintagium") && !loader.isModLoaded("nothirium");
+        }
+        return vanillaRenderer;
+    }
+
+    private static Boolean vanillaRenderer;
+
+    /** 26.3: Fullscreen Resolution is called Exclusive Fullscreen Mode, with a tooltip. */
+    public static boolean exclusiveFullscreenMode() {
+        return Presentation.isAtLeast(LookArea.VIDEO, "26.3");
+    }
+
     /** 26.3: the debug overlay's own GUI Scale (Debug Options), Auto by default: half the largest scale the window fits. */
     public static boolean debugGuiScale() {
         return Presentation.isAtLeast(LookArea.DEBUG, "26.3");

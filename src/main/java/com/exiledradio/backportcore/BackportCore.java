@@ -126,6 +126,7 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.recipe.RecipeUnlocks.Events());
         // Rule 1: another backport's copies become their owner's when the owner is added to a world (ownership/).
@@ -202,6 +203,8 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         SpawnProgress.start();
+        // 1.18's Simulation Distance: the client's option, or server.properties on a dedicated server (simulation/).
+        com.exiledradio.backportcore.simulation.SimulationDistance.serverAboutToStart(event.getServer());
         // A client applies them at its title screen; a dedicated server has none, so here.
         if (event.getSide().isServer()) {
             VersionedDefaults.apply(Presentation.installed(), null);

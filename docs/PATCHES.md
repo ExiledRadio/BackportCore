@@ -338,7 +338,9 @@ or passes an existing constant through a hook of the same type.
 *   **Class**: `net.minecraft.client.renderer.RenderGlobal`, `setupTerrain(Lnet/minecraft/entity/Entity;DLnet/minecraft/client/renderer/culling/ICamera;IZ)V`
     (`func_174970_a`) and `updateChunks(J)V` (`func_174967_a`). **Transformer**: `asm/ChunkRebuildsTransformer`.
     **Hooks**: `render/client/ChunkRebuildHooks.nearbyDistanceSq`, `needsImmediateUpdate`. **Config**:
-    `rendering.blockUpdates` ("Chunk Builder": `NONE`, `PLAYER_AFFECTED`, `NEARBY`; default `PLAYER_AFFECTED`). **Since**: 1.1.0.
+    `rendering.blockUpdates` ("Chunk Builder": `NONE`, `PLAYER_AFFECTED`, `NEARBY`; default `PLAYER_AFFECTED`); from 1.4.5
+    also Video Settings' Chunk Builder (`backportcore:prioritize_chunk_updates`, from 1.18.2), the same setting, which
+    decides while it is shown (`ChunkRebuildHooks.mode`). **Since**: 1.1.0.
 *   **Vanilla**: 1.12.2 rebuilds every changed render chunk whose center is within sqrt(768) blocks of the camera,
     and every chunk the player dirtied (`needsImmediateUpdate`, set by a block change with flag 8, which
     `PlayerControllerMP` uses for the player's own breaking and placing; a change the server sends uses flags 3),
@@ -835,6 +837,10 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: transformer chain and SRG names (`PatchTests`); the client self-test (`ClientGdLookTests`): P42 applied,
     false below 26.1, and a real round trip on the desktop's monitor: in, an undecorated window of the monitor's size at
     0, 0 with LWJGL not in exclusive mode; out, the game's window size again, decorated and resizable.
+*   **1.4.5**: the same hook enters exclusive fullscreen at the mode Fullscreen Resolution (26.3's Exclusive
+    Fullscreen Mode) names, in place of 1.12.2's desktop mode (`FullscreenModes.enter`: the `fullscreen` flags,
+    `Display.setDisplayMode`, `Display.setFullscreen(true)`, then the same size, VSync and frame steps); with Current,
+    or a mode the monitor no longer lists, it answers false as before. Leaving is vanilla's.
 
 ## P44. Grass, foliage and water colors under ground
 
@@ -884,3 +890,37 @@ or passes an existing constant through a hook of the same type.
     set for real. Nothing else is drawn differently.
 *   **Fails safe**: method not found: skipped, and logos stay black in a world.
 *   **Tested**: `ClientMenuShots` (`menu-modlist.png` from the title screen, `menu-ingame-modlist.png` in a world).
+
+## P46. Simulation Distance
+
+*   **Classes**: `net.minecraft.world.World` (`updateEntityWithOptionalForce`, `updateEntities`) and
+    `net.minecraft.world.WorldServer` (`tickUpdates`, `updateBlocks`). **Transformer**: `asm/SimulationTransformer`.
+    **Hooks**: `simulation/SimulationDistance.entityArea`, `tileLoaded`, `scheduledTickLoaded`, `randomTickChunks`.
+    **Since**: 1.4.5.
+*   **Vanilla change**: 1.18 split Simulation Distance from Render Distance. 26.3's `DistanceManager` gives each player's
+    chunk a ticket at level `31 - simulationDistance` that rises by one a chunk: entities, scheduled block and fluid
+    ticks and spawning run where the level is 31 or lower (`inEntityTickingRange`), block entities and random ticks
+    where it is 32 or lower (`inBlockTickingRange`). 1.12.2 ticks everything loaded (entities with a 32-block loaded
+    margin, random ticks within 128 blocks of a player).
+*   **Why a patch**: 1.12.2 has no event before an entity's, a block entity's or a scheduled tick that can hold it back
+    (Forge's `EntityEvent.CanUpdate` can only let an entity in an unloaded area tick), and the random tick loop takes
+    its chunks from `PlayerChunkMap` with no hook. Natural spawning needs none: `WorldEvent.PotentialSpawns` is
+    cancelled outside the distance (`SimulationDistance.Events`).
+*   **What changes**: four calls, each exactly once in its method. In `updateEntityWithOptionalForce` the result of the
+    private `isAreaLoaded(IIIIIIZ)Z` (reached only for a forced update of an entity that is not a player) passes
+    through `entityArea(Z, World, Entity)`: false outside the distance, after the entity's despawn check (26.3's
+    `checkDespawn` runs before its range test), so the method returns as for an unloaded area. In `updateEntities`
+    the `isBlockLoaded(BlockPos, Z)` before a block entity's tick becomes `tileLoaded`; in `tickUpdates` the
+    `isAreaLoaded(BlockPos, BlockPos)` becomes `scheduledTickLoaded` (false: 1.12.2 schedules the tick again for the
+    next tick, as for an unloaded area); in `updateBlocks` Forge's `getPersistentChunkIterable(Iterator)` becomes
+    `randomTickChunks`, which still does the loop's lighting work (`enqueueRelightChecks`, `onTick`) for chunks outside
+    and hands only the chunks inside to thunder, ice and snow and random ticks. Spawn chunks and chunks with Forge
+    chunk tickets always tick. With no distance set (the option hidden, a dedicated server without a 1.18 backport)
+    every hook answers as vanilla. Client worlds are never limited.
+*   **Fails safe**: a method missing, or not exactly one of its call: that class is left alone and the patch is
+    reported skipped (if `World` was patched and `WorldServer` not, entities and block entities are limited and
+    block and random ticks are not).
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `SimulationTests` (distance 3, no players: a pig, a
+    burning furnace and a pressed button at the spawn tick, the same far away hold until the distance is off; the
+    square edges at 4 and 5 chunks with a stand-in player; spawning denied outside; server.properties);
+    `ClientVideoShots` (the option reaches the game's own server).

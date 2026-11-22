@@ -9,8 +9,8 @@ import java.util.Map;
  * name. Vanilla's own settings use the names below; the backports' options use their id's path (the backports
  * name their copies of vanilla options after vanilla's), and a preset sets them only when one is registered.
  *
- * <p>1.12.2 has no Biome Blend, Prioritize Chunk Updates, Simulation Distance or Improved Transparency of its own, and
- * Texture Filtering has no RGSS: Fancy's RGSS is None here (Fabulous! keeps Anisotropic, as vanilla's does away from
+ * <p>1.12.2 has no Biome Blend of its own (a backport's option of that name is set); Chunk Builder, Simulation Distance
+ * and Improved Transparency are Core's own options from 1.4.5. Texture Filtering has no RGSS: Fancy's RGSS is None here (Fabulous! keeps Anisotropic, as vanilla's does away from
  * AMD graphics).
  */
 public final class GraphicsPreset {

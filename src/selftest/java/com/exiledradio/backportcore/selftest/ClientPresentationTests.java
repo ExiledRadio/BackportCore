@@ -311,8 +311,12 @@ final class ClientPresentationTests {
         Field listField = ReflectionHelper.findField(GuiVideoSettings.class, "optionsRowList", "field_146501_h");
         Field rowsField = ReflectionHelper.findField(GuiOptionsRowList.class, "options", "field_148184_k");
         List<?> rows = (List<?>) rowsField.get(listField.get(video));
-        // 16 vanilla entries, less Anaglyph (1.13) and VBOs (1.14), plus the dummy's two and the also-on-Video one.
-        check("client: Video Settings: 17 entries in 9 rows", rows.size() == 9, rows.size());
+        // 16 vanilla entries, less Anaglyph (1.13) and VBOs (1.14), plus the dummy's two and the also-on-Video one, under
+        // 1.13's Fullscreen Resolution, a row of its own at the top.
+        check("client: Video Settings: Fullscreen Resolution, then 17 entries in 9 rows", rows.size() == 10
+                && ((GuiOptionsRowList.Row) rows.get(0)).getClass() == GuiOptionsRowList.Row.class
+                && ReflectionHelper.getPrivateValue(GuiOptionsRowList.Row.class, (GuiOptionsRowList.Row) rows.get(0), "buttonA", "field_148323_b")
+                        instanceof com.exiledradio.backportcore.presentation.client.FullscreenModes.Slider, rows.size());
         boolean anaglyph = false;
         boolean vbo = false;
         boolean numbered = false;

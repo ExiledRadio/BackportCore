@@ -90,6 +90,8 @@ final class PatchTests {
             {"net.minecraft.client.Minecraft", "P42", new String[] {"borderlessToggle"}},
             {"net.minecraft.world.biome.BiomeColorHelper", "P44", new String[] {"colorBiome"}},
             {"net.minecraft.world.storage.MapData", "P43", new String[] {"enter", "facing"}},
+            {"net.minecraft.world.World", "P46", new String[] {"entityArea", "tileLoaded"}},
+            {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
     };
 
     private PatchTests() {
@@ -99,6 +101,8 @@ final class PatchTests {
         then(1, "patches in the running game", world -> {
             check("P1 applied when EntityLivingBase loaded (dev, beside Fluidlogged API)", "applied".equals(Asm.state("P1")), Asm.state("P1"));
             check("coremod is registered with FML", isTransformerRegistered(), "");
+            // Before the SRG run below, which reports P46 skipped on vanilla's (Forge-less) World.
+            check("P46 applied when World and WorldServer loaded", "applied".equals(Asm.state("P46")), Asm.state("P46"));
         });
         then(1, "P36: a creature type added after the spawn list switch ran", world -> {
             check("P36 applied when Biome loaded", "applied".equals(Asm.state("P36")), Asm.state("P36"));
@@ -228,6 +232,27 @@ final class PatchTests {
                                 Asm.state("P34"));
                         continue;
                     }
+                    if ("P46".equals(c[1])) {
+                        // Forge's block entity check (isBlockLoaded(pos, false)) and getPersistentChunkIterable are
+                        // Forge's patches; the SRG jar is vanilla's. P46 must leave it alone there, and the SRG names
+                        // it looks for must be vanilla's.
+                        check("SRG P46 on unpatched " + name + ": left alone (Forge's calls missing)", out == raw, Asm.state("P46"));
+                        ClassNode n = read(raw);
+                        boolean isWorld = name.endsWith(".World");
+                        int srg = 0;
+                        for (MethodNode m : n.methods) {
+                            if (m.name.equals(isWorld ? "func_72866_a" : "func_72955_a")) {
+                                for (AbstractInsnNode insn : m.instructions.toArray()) {
+                                    if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).name.equals(isWorld ? "func_175663_a" : "func_175707_a")) {
+                                        srg++;
+                                    }
+                                }
+                            }
+                        }
+                        check("SRG P46: " + (isWorld ? "updateEntityWithOptionalForce calls func_175663_a" : "tickUpdates calls func_175707_a") + " once",
+                                srg == 1, srg);
+                        continue;
+                    }
                     if (name.endsWith(".WorldEntitySpawner")) {
                         // Forge moves the spawn spot check into canCreatureTypeSpawnBody; the SRG jar is vanilla's,
                         // where it is still in canCreatureTypeSpawnAtLocation. P37 must leave it alone there, and
@@ -324,6 +349,7 @@ final class PatchTests {
             case "P42": cls = "FullscreenTransformer"; break;
             case "P44": cls = "BiomeColorTransformer"; break;
             case "P43": cls = "MapFacingTransformer"; break;
+            case "P46": cls = "SimulationTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -404,7 +430,8 @@ final class PatchTests {
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/render/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/map/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/mechanics/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/command/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/command/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/simulation/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }

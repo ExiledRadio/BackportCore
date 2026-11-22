@@ -114,6 +114,10 @@ public final class OptionsInjector {
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onOpen(GuiOpenEvent event) {
         GuiScreen gui = event.getGui();
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.currentScreen instanceof GuiVideoSettings && !(gui instanceof GuiVideoSettings)) {
+            FullscreenModes.closed(mc);
+        }
         if (gui == null || gui.getClass() != GuiVideoSettings.class || !OptiFineVideoScreen.optiFineShape()) {
             return;
         }
@@ -404,9 +408,18 @@ public final class OptionsInjector {
         VideoOptions.edit(gui, entries, keys);
         insertAfterAnchors(entries, keys, videoOptions(optiFine));
         List<GuiOptionsRowList.Row> rows = new ArrayList<GuiOptionsRowList.Row>();
+        // 1.13's Fullscreen Resolution (26.3's Exclusive Fullscreen Mode): a 310-wide row of its own at the top (of
+        // Display, with sections). OptiFine has its own Fullscreen Mode.
+        GuiButton fullscreen = !optiFine && FullscreenModes.shown() ? FullscreenModes.slider(gui.width / 2 - 155) : null;
+        if (fullscreen != null) {
+            FullscreenModes.opened();
+        }
         if (VideoLayout.active()) {
-            rows.addAll(VideoLayout.rows(gui, entries, keys));
+            rows.addAll(VideoLayout.rows(gui, entries, keys, fullscreen));
             return rows;
+        }
+        if (fullscreen != null) {
+            rows.add(new GuiOptionsRowList.Row(fullscreen, null));
         }
         for (int i = 0; i < entries.size(); i += 2) {
             GuiButton a = entries.get(i);

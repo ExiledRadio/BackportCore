@@ -74,7 +74,13 @@ public final class BorderlessFullscreen {
         try {
             if (!mc.isFullScreen()) {
                 if (!borderless) {
-                    return false;
+                    // 1.12.2's exclusive fullscreen, at the mode Fullscreen Resolution names (else vanilla's, the desktop's).
+                    DisplayMode mode = FullscreenModes.chosen();
+                    if (mode == null) {
+                        return false;
+                    }
+                    FullscreenModes.enter(mc, mode);
+                    return true;
                 }
                 enter(mc);
                 return true;
@@ -152,13 +158,13 @@ public final class BorderlessFullscreen {
     }
 
     /** What vanilla's {@code toggleFullscreen} does after the mode: the game's size, the screen, VSync, a frame. */
-    private static void finish(Minecraft mc, int w, int h) {
+    static void finish(Minecraft mc, int w, int h) {
         mc.resize(w, h);
         Display.setVSyncEnabled(mc.gameSettings.enableVsync);
         mc.updateDisplay();
     }
 
-    private static void setFullscreenField(Minecraft mc, boolean on) throws Exception {
+    static void setFullscreenField(Minecraft mc, boolean on) throws Exception {
         if (fullscreen == null) {
             fullscreen = ReflectionHelper.findField(Minecraft.class, "fullscreen", "field_71431_Q");
         }

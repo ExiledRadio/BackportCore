@@ -34,6 +34,8 @@ public final class SelfTestMod {
                 ClientOptiFineTests.register();
             } else if (ClientMenuShots.active()) {
                 ClientMenuShots.register();
+            } else if (ClientVideoShots.active()) {
+                ClientVideoShots.register();
             } else if (ClientSettingsShots.active()) {
                 ClientSettingsShots.register();
             } else if (ClientTextureTests.version() != null) {
@@ -94,6 +96,9 @@ public final class SelfTestMod {
     public void started(FMLServerStartedEvent event) {
         // Only a dedicated server runs the tests (and stops itself after them); a dev client's world does not.
         if (FMLCommonHandler.instance().getSide().isServer()) {
+            // The test server has no players: with a simulation distance only the spawn chunks would tick. The tests
+            // that want one set it themselves (SimulationTests).
+            com.exiledradio.backportcore.simulation.SimulationDistance.set(0);
             MinecraftForge.EVENT_BUS.register(new SelfTestRunner());
         }
     }

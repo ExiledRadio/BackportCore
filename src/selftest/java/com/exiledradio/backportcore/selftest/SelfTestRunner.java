@@ -87,6 +87,7 @@ public final class SelfTestRunner {
                     case "gamerules": GameRulesTests.schedule(); break;
                     case "boats": BoatTests.schedule(); break;
                     case "poi": PoiLocateTests.schedule(); break;
+                    case "simulation": SimulationTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -111,6 +112,7 @@ public final class SelfTestRunner {
         GameEventTests.schedule();
         CommandTests.schedule();
         GameRulesTests.schedule();
+        SimulationTests.schedule();
         SuggestionTests.schedule();
         SmeltingBookTests.schedule();
         RequestTests.schedule();

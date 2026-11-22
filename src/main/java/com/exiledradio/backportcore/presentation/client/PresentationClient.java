@@ -43,6 +43,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
         MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());
         MinecraftForge.EVENT_BUS.register(new SoundDistances.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.render.client.ImprovedTransparency());
         MinecraftForge.EVENT_BUS.register(new CopyClick());
         MinecraftForge.EVENT_BUS.register(new MenuBackground.Events());
         NetworkCharts.init();
@@ -76,6 +77,7 @@ public final class PresentationClient {
         }
         // Every backport has said its version by now: 1.21.11's leaves, debug key binds and texture filtering.
         VideoLayout.initLeaves(Minecraft.getMinecraft());
+        com.exiledradio.backportcore.render.client.ChunkRebuildHooks.initOption();
         DebugBindings.register();
         RenderOptions.applyAnisotropy();
         VideoOptions.applyForced(Minecraft.getMinecraft());
@@ -91,6 +93,9 @@ public final class PresentationClient {
             if (event.phase == TickEvent.Phase.START) {
                 Minecraft mc = Minecraft.getMinecraft();
                 WorldLoadingScreen.install(mc);
+                // 1.18's Simulation Distance reaches the game's own server (IntegratedServer.tickServer).
+                com.exiledradio.backportcore.presentation.option.SliderOption sim = com.exiledradio.backportcore.presentation.Presentation.SIMULATION_DISTANCE;
+                com.exiledradio.backportcore.simulation.SimulationDistance.fromClient(sim.isShown() ? (int) Math.round(sim.get()) : 0);
                 if (mc.currentScreen instanceof GuiMainMenu) {
                     ClientDefaults.applyOnce(mc);
                 }

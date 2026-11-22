@@ -29,7 +29,8 @@ import java.util.Map;
  * 1.21.11's Video Settings on 1.12.2's screen ({@link VideoSections}): the rows of {@code GuiVideoSettings}' list
  * become the three sections, each under its header, with the Preset slider across the top of Quality &amp;
  * Performance. 1.12.2's list draws every row 25 pixels tall, so the headers sit on rows of their own (1.21.11's are
- * 13 and 31 pixels tall). Fullscreen Resolution is not there (1.12.2 goes fullscreen at the desktop's mode).
+ * 13 and 31 pixels tall). Fullscreen Resolution (26.3's Exclusive Fullscreen Mode) is the 310-wide first row of
+ * Display ({@link FullscreenModes}).
  *
  * <p>The Preset sets the section's settings when let go ({@link #apply}); changing any of them afterwards makes it
  * Custom, as vanilla's {@code setGraphicsPresetToCustom}. See-Through Leaves is 1.12.2's Fancy graphics.
@@ -50,13 +51,23 @@ public final class VideoLayout {
 
     /** Builds the rows from the screen's entries ({@code entries} and {@code keys} in step). */
     public static List<GuiOptionsRowList.Row> rows(GuiScreen gui, List<GuiButton> entries, List<String> keys) {
+        return rows(gui, entries, keys, null);
+    }
+
+    /** As {@link #rows(GuiScreen, List, List)}, with {@code fullscreen} (Fullscreen Resolution) the first row of Display. */
+    public static List<GuiOptionsRowList.Row> rows(GuiScreen gui, List<GuiButton> entries, List<String> keys,
+                                                   @javax.annotation.Nullable GuiButton fullscreen) {
         List<GuiOptionsRowList.Row> rows = new ArrayList<GuiOptionsRowList.Row>();
         int left = gui.width / 2 - 155;
         for (VideoSections.Section s : VideoSections.arrange(keys)) {
-            if (s.entries.isEmpty() && s.preset < 0) {
+            boolean display = fullscreen != null && VideoSections.DISPLAY.equals(s.header);
+            if (s.entries.isEmpty() && s.preset < 0 && !display) {
                 continue;
             }
             rows.add(new HeaderRow(I18n.format(s.header), left));
+            if (display) {
+                rows.add(new GuiOptionsRowList.Row(fullscreen, null));
+            }
             if (s.preset >= 0) {
                 GuiButton preset = new PresetSlider(left, 0);
                 rows.add(new GuiOptionsRowList.Row(preset, null));

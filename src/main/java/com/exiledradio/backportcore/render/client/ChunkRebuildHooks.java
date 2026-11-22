@@ -31,7 +31,7 @@ public final class ChunkRebuildHooks {
      * at once. 768.0 when {@code NEARBY}, as 1.12.2; otherwise no distance qualifies.
      */
     public static double nearbyDistanceSq(double vanilla) {
-        return CoreConfig.rendering.blockUpdates == CoreConfig.BlockUpdates.NEARBY ? vanilla : NEVER;
+        return mode() == CoreConfig.BlockUpdates.NEARBY ? vanilla : NEVER;
     }
 
     /**
@@ -39,6 +39,59 @@ public final class ChunkRebuildHooks {
      * player's own changes, built at once unless {@code NONE}.
      */
     public static boolean needsImmediateUpdate(boolean playerChanged) {
-        return playerChanged && CoreConfig.rendering.blockUpdates != CoreConfig.BlockUpdates.NONE;
+        return playerChanged && mode() != CoreConfig.BlockUpdates.NONE;
+    }
+
+    /**
+     * The Chunk Builder in force: Video Settings' (1.18.2, {@code Presentation.PRIORITIZE_CHUNK_UPDATES}) while it is
+     * shown, else the config's {@code rendering.blockUpdates}. The two are one setting: each change is copied to the other.
+     */
+    public static CoreConfig.BlockUpdates mode() {
+        com.exiledradio.backportcore.presentation.option.CycleOption option = com.exiledradio.backportcore.presentation.Presentation.PRIORITIZE_CHUNK_UPDATES;
+        if (option.isShown()) {
+            return fromOption(option.get());
+        }
+        return CoreConfig.rendering.blockUpdates;
+    }
+
+    static CoreConfig.BlockUpdates fromOption(String name) {
+        return CoreConfig.BlockUpdates.valueOf(name.toUpperCase(java.util.Locale.ROOT));
+    }
+
+    static String toOption(CoreConfig.BlockUpdates mode) {
+        return mode.name().toLowerCase(java.util.Locale.ROOT);
+    }
+
+    /**
+     * From Core's client init: the option starts at the config's value (a player's earlier choice there carries over),
+     * a change of the option is saved to the config, and a change in the config screen moves the option.
+     */
+    public static void initOption() {
+        com.exiledradio.backportcore.presentation.option.CycleOption option = com.exiledradio.backportcore.presentation.Presentation.PRIORITIZE_CHUNK_UPDATES;
+        if (com.exiledradio.backportcore.presentation.option.OptionStore.get(option.id()) == null) {
+            option.set(toOption(CoreConfig.rendering.blockUpdates));
+        }
+        option.onChange(name -> {
+            CoreConfig.BlockUpdates mode = fromOption(name);
+            if (CoreConfig.rendering.blockUpdates != mode) {
+                CoreConfig.rendering.blockUpdates = mode;
+                net.minecraftforge.common.config.ConfigManager.sync(com.exiledradio.backportcore.BackportCore.MOD_ID,
+                        net.minecraftforge.common.config.Config.Type.INSTANCE);
+            }
+        });
+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new ConfigFollower());
+    }
+
+    /** Moves the option to the config's value after the config screen saves (the config's own handler syncs first). */
+    public static final class ConfigFollower {
+        @net.minecraftforge.fml.common.eventhandler.SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.LOW)
+        public void onConfigChanged(net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent event) {
+            if (com.exiledradio.backportcore.BackportCore.MOD_ID.equals(event.getModID())) {
+                String want = toOption(CoreConfig.rendering.blockUpdates);
+                if (!want.equals(com.exiledradio.backportcore.presentation.Presentation.PRIORITIZE_CHUNK_UPDATES.get())) {
+                    com.exiledradio.backportcore.presentation.Presentation.PRIORITIZE_CHUNK_UPDATES.set(want);
+                }
+            }
+        }
     }
 }

@@ -20,7 +20,7 @@ public final class VideoSections {
     public static final String PRESET = "~graphics_preset";
 
     /**
-     * Display: Fullscreen Resolution (not in 1.12.2), Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, 26.1's
+     * Display: Fullscreen Resolution (drawn by Core above the rest, {@code FullscreenModes}), Max Framerate, VSync, Reduce FPS when, GUI Scale, Fullscreen, 26.1's
      * Exclusive Fullscreen, Brightness.
      */
     static final List<String> DISPLAY_ENTRIES = Arrays.asList("FRAMERATE_LIMIT", "ENABLE_VSYNC", "~inactivity_fps_limit", "GUI_SCALE",

@@ -65,6 +65,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             BiomeColorTransformer.class.getName(),
             MapFacingTransformer.class.getName(),
             ModListLogoTransformer.class.getName(),
+            SimulationTransformer.class.getName(),
     };
 
     @Override

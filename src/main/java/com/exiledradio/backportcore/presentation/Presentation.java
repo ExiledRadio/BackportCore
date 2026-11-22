@@ -126,6 +126,43 @@ public final class Presentation {
     public static final ToggleOption EXCLUSIVE_FULLSCREEN = new ToggleOption("backportcore:exclusive_fullscreen",
             "options.exclusiveFullscreen", OptionScreen.VIDEO, true);
 
+    /**
+     * 1.13's Fullscreen Resolution, 26.3's Exclusive Fullscreen Mode (Display, a 310-wide slider at the top): Current
+     * (the monitor's own mode) or one of the monitor's modes, used when Fullscreen changes the monitor's mode. Saved as
+     * vanilla's {@code fullscreenResolution} ("1920x1080@60:24"; empty for Current). It has no button of its own in
+     * the option list: Video Settings draws it ({@code FullscreenModes}). Only where 1.12.2's LWJGL 2 draws the
+     * window, as Exclusive Fullscreen. Since Core 1.4.5.
+     */
+    public static final com.exiledradio.backportcore.presentation.option.TextOption FULLSCREEN_RESOLUTION =
+            new com.exiledradio.backportcore.presentation.option.TextOption("backportcore:fullscreen_resolution", "options.fullscreen.resolution",
+                    OptionScreen.VIDEO, "");
+
+    /**
+     * 1.18's Simulation Distance (Quality &amp; Performance), 5 to 32 chunks: entities, block entities, block ticks and
+     * random ticks run only this far from a player (patch P46, {@code SimulationDistance}). The game's own world (and a
+     * LAN world it opens) takes it from here, as 1.18's integrated server does; a dedicated server takes
+     * {@code simulation-distance} from server.properties. Since Core 1.4.5.
+     */
+    public static final SliderOption SIMULATION_DISTANCE = new SliderOption("backportcore:simulation_distance", "options.simulationDistance",
+            OptionScreen.VIDEO, 5.0, 32.0, 1.0, 12.0);
+    /**
+     * 1.18.2's Chunk Builder (Quality &amp; Performance): which changed chunks are rebuilt at once on the render thread
+     * (patch P17). The same setting as Core's config {@code rendering.blockUpdates}: changing one changes the other.
+     * Not shown where another renderer replaces 1.12.2's (OptiFine, Celeritas, Vintagium, Nothirium). Since Core 1.4.5.
+     */
+    public static final CycleOption PRIORITIZE_CHUNK_UPDATES = new CycleOption("backportcore:prioritize_chunk_updates",
+            "options.prioritizeChunkUpdates", OptionScreen.VIDEO, new String[] {"none", "player_affected", "nearby"},
+            new String[] {"options.prioritizeChunkUpdates.none", "options.prioritizeChunkUpdates.byPlayer", "options.prioritizeChunkUpdates.nearby"},
+            "player_affected");
+    /**
+     * 1.21.11's Improved Transparency (Quality &amp; Performance; Fabulous! graphics before it): rain and snow in front of
+     * water and translucent blocks are drawn over them instead of under them ({@code ImprovedTransparency};
+     * {@code docs/PRESENTATION.md} says what 1.12.2's pipeline allows). Not shown where another renderer replaces
+     * 1.12.2's. Since Core 1.4.5.
+     */
+    public static final ToggleOption IMPROVED_TRANSPARENCY = new ToggleOption("backportcore:improved_transparency",
+            "options.improvedTransparency", OptionScreen.VIDEO, false);
+
     static {
         // The parts of Core's own options that are not their screen's (LookArea): the rest follow their screen.
         PANORAMA_SPEED.area(LookArea.TITLE);
@@ -164,6 +201,23 @@ public final class Presentation {
         EXCLUSIVE_FULLSCREEN.availableWhen(VanillaRevisions::borderlessPossible);
         for (PresentationOption o : new PresentationOption[] {GRAPHICS_PRESET, CLOUD_RANGE, CUTOUT_LEAVES, WEATHER_RADIUS, TEXTURE_FILTERING,
                 MAX_ANISOTROPY, VIGNETTE, CHUNK_FADE, EXCLUSIVE_FULLSCREEN}) {
+            registerOption(o);
+        }
+        // 1.4.5: the Video Settings 26.3 has that 1.12.2 lacked entirely.
+        FULLSCREEN_RESOLUTION.since("1.13");
+        FULLSCREEN_RESOLUTION.availableWhen(VanillaRevisions::borderlessPossible);
+        SIMULATION_DISTANCE.since("1.18");
+        SIMULATION_DISTANCE.after("RENDER_DISTANCE");
+        SIMULATION_DISTANCE.decimals(0).valueKey("options.chunks");
+        PRIORITIZE_CHUNK_UPDATES.since("1.18.2");
+        PRIORITIZE_CHUNK_UPDATES.after("RENDER_DISTANCE");
+        PRIORITIZE_CHUNK_UPDATES.valueTooltips("options.prioritizeChunkUpdates.none.tooltip", "options.prioritizeChunkUpdates.byPlayer.tooltip",
+                "options.prioritizeChunkUpdates.nearby.tooltip");
+        PRIORITIZE_CHUNK_UPDATES.availableWhen(VanillaRevisions::vanillaRenderer);
+        IMPROVED_TRANSPARENCY.since("1.21.11");
+        IMPROVED_TRANSPARENCY.tooltip("options.improvedTransparency.tooltip");
+        IMPROVED_TRANSPARENCY.availableWhen(VanillaRevisions::vanillaRenderer);
+        for (PresentationOption o : new PresentationOption[] {SIMULATION_DISTANCE, PRIORITIZE_CHUNK_UPDATES, IMPROVED_TRANSPARENCY}) {
             registerOption(o);
         }
     }
