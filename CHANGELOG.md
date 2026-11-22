@@ -23,6 +23,11 @@
 
 # 1.4.4
 
+*   API: `structure.ModernJigsaw`, the jigsaw placer of 1.20 to 26.x beside 1.16.5's `Jigsaw` (unchanged):
+    `selection_priority` and `placement_priority`, `pool_aliases` (`ModernJigsaw.PoolAliases`), `Util.shuffle`'s
+    draws, 26.x's nameless feature jigsaws, the expansion hack, junctions for the terrain's beard. Template jigsaws
+    carry their priorities (`ModernTemplate.Jigsaw`, `JigsawElement.Connector`). Game Drops' abandoned camps, Tricky
+    Trials' trial chambers and Trails & Tales' trail ruins now share it, laid out block for block as before.
 *   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
     disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
     `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,

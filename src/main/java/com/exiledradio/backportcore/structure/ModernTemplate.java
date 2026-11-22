@@ -143,9 +143,12 @@ public final class ModernTemplate {
         public final String joint;
         /** The block the jigsaw becomes, as today's game writes a state. */
         public final String finalState;
+        /** 1.20.3+'s {@code placement_priority} and {@code selection_priority}; 0 in older files. */
+        public final int placementPriority;
+        public final int selectionPriority;
 
         Jigsaw(BlockPos pos, EnumFacing front, EnumFacing top, String name, String target, String pool, String joint,
-               String finalState) {
+               String finalState, int placementPriority, int selectionPriority) {
             this.pos = pos;
             this.front = front;
             this.top = top;
@@ -154,6 +157,8 @@ public final class ModernTemplate {
             this.pool = pool;
             this.joint = joint;
             this.finalState = finalState;
+            this.placementPriority = placementPriority;
+            this.selectionPriority = selectionPriority;
         }
     }
 
@@ -255,7 +260,8 @@ public final class ModernTemplate {
             joint = front.getAxis().isHorizontal() ? "aligned" : "rollable";
         }
         String finalState = n.hasKey("final_state") ? n.getString("final_state") : "minecraft:air";
-        return new Jigsaw(pos, front, top, name, n.getString("target"), n.getString("pool"), joint, finalState);
+        return new Jigsaw(pos, front, top, name, n.getString("target"), n.getString("pool"), joint, finalState,
+                n.getInteger("placement_priority"), n.getInteger("selection_priority"));
     }
 
     // ---- loading

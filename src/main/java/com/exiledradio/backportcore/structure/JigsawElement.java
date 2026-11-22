@@ -109,8 +109,20 @@ public abstract class JigsawElement {
         public final String target;
         public final String pool;
         public final String joint;
+        /**
+         * 1.20.3+'s {@code placement_priority} (the order the pieces it opens are worked through) and
+         * {@code selection_priority} (the order the piece's jigsaws are tried); 0 for older files and features.
+         * {@link ModernJigsaw} reads them; {@link Jigsaw} (1.16.5) has none.
+         */
+        public final int placementPriority;
+        public final int selectionPriority;
 
         Connector(BlockPos pos, EnumFacing front, EnumFacing top, String name, String target, String pool, String joint) {
+            this(pos, front, top, name, target, pool, joint, 0, 0);
+        }
+
+        Connector(BlockPos pos, EnumFacing front, EnumFacing top, String name, String target, String pool, String joint,
+                  int placementPriority, int selectionPriority) {
             this.pos = pos;
             this.front = front;
             this.top = top;
@@ -118,6 +130,8 @@ public abstract class JigsawElement {
             this.target = target;
             this.pool = pool;
             this.joint = joint;
+            this.placementPriority = placementPriority;
+            this.selectionPriority = selectionPriority;
         }
 
         /** Today's {@code JigsawBlock.canAttach}: this one (the parent's) takes {@code other} (the child's). */
@@ -188,7 +202,7 @@ public abstract class JigsawElement {
             List<Connector> out = new ArrayList<Connector>(jigsaws.size());
             for (ModernTemplate.Jigsaw j : jigsaws) {
                 out.add(new Connector(ModernTemplate.worldPos(pos, j.pos, placement), rotate(j.front, rotation), rotate(j.top, rotation),
-                        j.name, j.target, j.pool, j.joint));
+                        j.name, j.target, j.pool, j.joint, j.placementPriority, j.selectionPriority));
             }
             return out;
         }
