@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=De kersenboomgaarden, archeologie, snuffelaars, dromedarissen, bamboehout en hangborden van 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=De beproevingskamers, de vlaag, de knots, de vervaardigingsmachine, koperblokken en de bleke tuin van 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=De gouden paardenbloem en de jongen uit 26.x, zwavel en de zwavelkubus, zwavelgrotten, populier, verlaten kampen en menu's.
 
 entity.backportcore.boat.name=Boot
 entity.backportcore.chest_boat.name=Boot met kist

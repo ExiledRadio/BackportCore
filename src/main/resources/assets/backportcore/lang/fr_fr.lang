@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Les bosquets de cerisiers, l'archéologie, les renifleurs, les dromadaires, le bois de bambou et les pancartes suspendues de la 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Les chambres des épreuves, le breeze, la masse, le fabricateur, les blocs de cuivre et le jardin pâle de la 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Le pissenlit doré et les bébés de 26.x, le soufre et le cube de soufre, les grottes de soufre, le peuplier, les camps abandonnés et les menus.
 
 entity.backportcore.boat.name=Bateau
 entity.backportcore.chest_boat.name=Bateau de stockage

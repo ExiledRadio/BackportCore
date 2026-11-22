@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Вишнёвые рощи, археология, нюхачи, верблюды, бамбуковая древесина и подвесные таблички из 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Испытательные камеры, вихрь, булава, сборщик, медные блоки и бледный сад из 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Золотой одуванчик и детёныши из 26.x, сера и серный куб, серные пещеры, тополь, заброшенные лагеря и меню.
 
 entity.backportcore.boat.name=Лодка
 entity.backportcore.chest_boat.name=Грузовая лодка

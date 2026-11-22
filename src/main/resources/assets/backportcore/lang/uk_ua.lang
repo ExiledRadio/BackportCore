@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Вишневі гаї, археологія, нюхачі, верблюди, бамбукова деревина і вивіски з 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Зали випробувань, вітрень, булава, майструвач, блоки міді і блідий сад з 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Золота кульбаба й дитинчата з 26.x, сірка та сірчаний куб, сірчані печери, тополя, покинуті табори й меню.
 
 entity.backportcore.boat.name=Човен
 entity.backportcore.chest_boat.name=Човен зі скринею

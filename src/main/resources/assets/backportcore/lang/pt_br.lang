@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Os cerejais, a arqueologia, farejadores, camelos, a madeira de bambu e as placas suspensas da 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=As câmaras do desafio, o vórtice, a maça, a bancada automática, os blocos de cobre e o jardim pálido da 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=O dente-de-leão dourado e os filhotes de 26.x, o enxofre e o cubo de enxofre, as cavernas de enxofre, o álamo, os acampamentos abandonados e os menus.
 
 entity.backportcore.boat.name=Bote
 entity.backportcore.chest_boat.name=Bote com Baú

@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Los cerezales, la arqueología, los sniffers, los camellos, la madera de bambú y los carteles colgantes de la 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Las cámaras de desafío, el breeze, la maza, el fabricador, los bloques de cobre y el jardín pálido de la 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=El diente de león dorado y las crías de 26.x, el azufre y el cubo de azufre, las cuevas de azufre, el álamo, los campamentos abandonados y los menús.
 
 entity.backportcore.boat.name=Barca
 entity.backportcore.chest_boat.name=Barca con cofre

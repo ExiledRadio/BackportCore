@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Wiśniowe gaje, archeologia, niuchacze, wielbłądy, drewno bambusowe i podwieszane tabliczki z 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Komnaty prób, wichrzyk, buzdygan, wytwarzacz, bloki miedzi i blady ogród z 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Złoty mniszek i młode z 26.x, siarka i sześcian siarki, siarkowe jaskinie, topola, opuszczone obozy i menu.
 
 entity.backportcore.boat.name=Łódka
 entity.backportcore.chest_boat.name=Łódka ze skrzynią

@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=Kirschberghaine, Archäologie, Schnüffler, Dromedare, Bambusholz und Hängeschilder von 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Prüfungskammern, die Böe, der Streitkolben, der Werker, Kupferblöcke und der Blasse Garten von 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Der goldene Löwenzahn und die Jungtiere aus 26.x, Schwefel und der Schwefelwürfel, Schwefelhöhlen, Pappeln, verlassene Lager und Menüs.
 
 entity.backportcore.boat.name=Boot
 entity.backportcore.chest_boat.name=Truhenboot

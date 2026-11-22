@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=1.20 的櫻花樹林、考古、嗅探獸、駱駝、竹材和懸掛式告示牌。
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=1.21 的試煉密室、旋風使者、重錘、合成器、銅方塊和蒼白之園。
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=26.x的金色蒲公英與幼體、硫磺與硫磺立方、硫磺洞穴、白楊、廢棄營地和選單。
 
 entity.backportcore.boat.name=船
 entity.backportcore.chest_boat.name=儲物箱船

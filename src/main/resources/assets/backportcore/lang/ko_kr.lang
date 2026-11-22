@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=1.20의 벚나무 숲, 고고학, 스니퍼, 낙타, 대나무 목재, 매달린 표지판.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=1.21의 시련의 회당, 브리즈, 철퇴, 제작기, 구리 블록, 창백한 정원.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=26.x의 황금 민들레와 새끼들, 유황과 유황 큐브, 유황 동굴, 포플러, 버려진 야영지와 메뉴.
 
 entity.backportcore.boat.name=보트
 entity.backportcore.chest_boat.name=상자가 실린 보트

@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=I boschetti di ciliegi, l'archeologia, i fiutatori, i dromedari, il legno di bambù e le insegne della 1.20.
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=Le camere della sfida, la brezza, la mazza, il fabbricatore, i blocchi di rame e il giardino pallido della 1.21.
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=Il dente di leone dorato e i cuccioli di 26.x, lo zolfo e il cubo di zolfo, le grotte di zolfo, il pioppo, gli accampamenti abbandonati e i menu.
 
 entity.backportcore.boat.name=Barca
 entity.backportcore.chest_boat.name=Barca con baule

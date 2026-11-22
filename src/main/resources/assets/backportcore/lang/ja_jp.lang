@@ -484,6 +484,8 @@ backportcore.settings.family.trailsandtalesbackport=Trails & Tales
 backportcore.settings.family.trailsandtalesbackport.about=1.20のサクラの林、考古学、スニッファー、ラクダ、竹の木材、吊り看板。
 backportcore.settings.family.trickytrialsbackport=Tricky Trials
 backportcore.settings.family.trickytrialsbackport.about=1.21の試練の間、ブリーズ、メイス、自動作業台、銅ブロック、ペールガーデン。
+backportcore.settings.family.gamedropsbackport=Game Drops
+backportcore.settings.family.gamedropsbackport.about=26.xの金のタンポポと子ども、硫黄と硫黄キューブ、硫黄の洞窟、ポプラ、放棄されたキャンプ、メニュー。
 
 entity.backportcore.boat.name=ボート
 entity.backportcore.chest_boat.name=チェスト付きのボート
