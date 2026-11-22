@@ -930,6 +930,28 @@ SmeltingBooks.register(new SmeltingBook(new ResourceLocation("modid", "smoker"),
   come from the backport (`Contribution.replaceAsset`).
 - Packets: `BookNetwork` (`backportcore_rb`), only to clients running Core.
 
+## Babies: the age lock and 26.1's baby models (`mechanics.AgeLockable`, `VanillaRevisions.babyModels`, 1.4.4)
+
+26.1's golden dandelion (Game Drops Backport) locks any `EntityAgeable` baby. A backport's baby that is not one, or
+whose babies start at another age than -24000, implements `AgeLockable`:
+
+```java
+public class EntityTadpole extends EntityCreature implements AgeLockable {
+    public boolean isBaby() { return true; }            // a baby the lock can hold
+    public int getAge() { return this.age; }            // in its own terms (counting up here)
+    public void setAge(int age) { ... }                 // the owner grows it up
+    public int startAge() { return 0; }                 // where the lock puts it back (a snifflet: -48000)
+}
+if (food && !AgeLockable.isLocked(this)) { ... }        // refuse growth food while locked (either side)
+```
+
+The lock is `AgeLocked` (`AgeLockable.LOCKED`) in the mob's Forge data; the mod that has the lock toggles it, holds
+the age and tells clients. An `EntityAgeable` that implements it must agree with `getGrowingAge`/`setGrowingAge`.
+
+26.1 also redrew the babies with their own models. A backport draws its own mobs' babies 26.1's way while
+`VanillaRevisions.babyModels()` (read each frame): 26.1 or later installed, Core's textures switch on, and the switch
+the 26.1 mod hands over with `VanillaRevisions.setBabyModelSwitch(BooleanSupplier)` (Game Drops' `babies.babyModels`).
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

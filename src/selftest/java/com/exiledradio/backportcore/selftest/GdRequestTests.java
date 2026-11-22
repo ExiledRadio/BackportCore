@@ -5,11 +5,15 @@ import com.exiledradio.backportcore.gameevent.GameEvent;
 import com.exiledradio.backportcore.gameevent.GameEventTags;
 import com.exiledradio.backportcore.locate.StructureClaims;
 import com.exiledradio.backportcore.locate.StructureLocate;
+import com.exiledradio.backportcore.mechanics.AgeLockable;
 import com.exiledradio.backportcore.mechanics.JukeboxSignal;
+import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.structure.ModernItems;
 
 import net.minecraft.block.BlockJukebox;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -25,7 +29,7 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 /**
  * Core 1.4.4's answers to Game Drops Backport's requests (docs/CORE_REQUESTS.md there): the jukebox's signal for a
  * disc that gives its own (P41), {@code addDampener}, {@code GameEvent.BOUNCE}, the exploration map search (radius and
- * claims) and today's item names.
+ * claims), today's item names, the age lock's {@code AgeLockable} and the baby model gate.
  */
 final class GdRequestTests {
 
@@ -156,6 +160,21 @@ final class GdRequestTests {
             ModernItems.map("minecraft:iron_chain", () -> new ItemStack(Blocks.IRON_BARS));
             check("a backport's map wins", ModernItems.stack("minecraft:iron_chain").getItem() == Item.getItemFromBlock(Blocks.IRON_BARS), "");
             check("the table has 1.13's renames", ModernItems.tableSize() > 300, ModernItems.tableSize());
+        });
+
+        then(1, "GD stream 1 #2: the age lock's flag and the baby model gate", world -> {
+            EntityPig pig = new EntityPig(world);
+            check("a mob is not locked by default", !AgeLockable.isLocked(pig), "");
+            pig.getEntityData().setBoolean(AgeLockable.LOCKED, true);
+            check("the flag in its Forge data locks it", AgeLockable.isLocked(pig), "");
+            check("the flag is 26.3's name", "AgeLocked".equals(AgeLockable.LOCKED), AgeLockable.LOCKED);
+            boolean has261 = Presentation.installedNewest().isAtLeast("26.1");
+            check("baby models follow 26.1 being installed (a server ignores the look switches)",
+                    VanillaRevisions.babyModels() == has261, Presentation.installedNewest());
+            VanillaRevisions.setBabyModelSwitch(() -> false);
+            check("the 26.1 mod's switch off turns them off", !VanillaRevisions.babyModels(), "");
+            VanillaRevisions.setBabyModelSwitch(null);
+            check("null puts the switch back on", VanillaRevisions.babyModels() == has261, "");
         });
     }
 }
