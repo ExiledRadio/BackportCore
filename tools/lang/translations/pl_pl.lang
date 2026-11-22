@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=/ride z 1.19.4: ride mount i ride dis
 backportcore.general.commands.rotate.tooltip=/rotate z 1.21.2: obraca byt do podanego obrotu albo w stronę pozycji lub bytu (poziom uprawnień 2).
 backportcore.general.commands.spectate.tooltip=/spectate z 1.15: obserwowanie bytu w trybie widza lub zakończenie obserwacji (poziom uprawnień 2).
 backportcore.general.commands.teammsg.tooltip=/teammsg z 1.14 i jego skrót /tm: wiadomość do własnej drużyny (dla wszystkich).
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=/swing z 26.3: sprawia, że byty machają ręką, z animacją i czasem trwania (poziom uprawnień 2).

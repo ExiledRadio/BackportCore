@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=/ride из 1.19.4: ride mount и ride
 backportcore.general.commands.rotate.tooltip=/rotate из 1.21.2: поворачивает сущность на заданный угол или к позиции либо сущности (уровень прав 2).
 backportcore.general.commands.spectate.tooltip=/spectate из 1.15: наблюдать за сущностью в режиме наблюдателя или прекратить (уровень прав 2).
 backportcore.general.commands.teammsg.tooltip=/teammsg из 1.14 и его сокращение /tm: сообщение своей команде (доступно всем).
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=/swing из 26.3: сущности взмахивают рукой, с анимацией и длительностью (уровень прав 2).

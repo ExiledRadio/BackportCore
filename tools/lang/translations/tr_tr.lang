@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=1.19.4'ün /ride komutu: ride mount v
 backportcore.general.commands.rotate.tooltip=1.21.2'nin /rotate komutu: bir varlığı bir dönüşe ya da bir konuma veya varlığa doğru çevirir (izin seviyesi 2).
 backportcore.general.commands.spectate.tooltip=1.15'in /spectate komutu: izleyici modunda bir varlığı izlemek ya da bırakmak (izin seviyesi 2).
 backportcore.general.commands.teammsg.tooltip=1.14'ün /teammsg komutu ve kısaltması /tm: kendi takımına bir mesaj (herkes kullanabilir).
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=26.3'ün /swing komutu: varlıkların kol sallamasını sağlar, animasyon ve süre ile (izin seviyesi 2).

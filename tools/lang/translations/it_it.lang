@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=Il /ride della 1.19.4: ride mount e r
 backportcore.general.commands.rotate.tooltip=Il /rotate della 1.21.2: ruota un'entità verso una rotazione, una posizione o un'entità (livello di permesso 2).
 backportcore.general.commands.spectate.tooltip=Lo /spectate della 1.15: osservare un'entità in modalità spettatore, o smettere (livello di permesso 2).
 backportcore.general.commands.teammsg.tooltip=Il /teammsg della 1.14 e il suo alias /tm: un messaggio alla propria squadra (utilizzabile da tutti).
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=Il /swing della 26.3: fa agitare un braccio alle entità, con un'animazione e una durata (livello di permesso 2).

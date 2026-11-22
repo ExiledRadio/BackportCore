@@ -81,6 +81,10 @@ public final class CoreConfig {
         @Config.Comment("1.14's /teammsg and its alias /tm: a message to your own team (everyone may use it).")
         @Setting.Server
         public boolean teamMsg = true;
+
+        @Config.Comment("26.3's /swing: make entities swing an arm, with an animation and a duration (permission level 2).")
+        @Setting.Server
+        public boolean swing = true;
     }
 
     public static final class Recipes {

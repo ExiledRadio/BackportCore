@@ -173,3 +173,6 @@ backportcore.general.commands.ride.tooltip=1.19.4 的 /ride：ride mount 和 rid
 backportcore.general.commands.rotate.tooltip=1.21.2 的 /rotate：将实体转到指定朝向，或朝向某个位置或实体（权限等级 2）。
 backportcore.general.commands.spectate.tooltip=1.15 的 /spectate：在旁观模式下旁观一个实体，或停止旁观（权限等级 2）。
 backportcore.general.commands.teammsg.tooltip=1.14 的 /teammsg 及其别名 /tm：发给自己队伍的消息（所有人都可使用）。
+backportcore.general.commands.swing=/swing
+commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
+backportcore.general.commands.swing.tooltip=26.3 的 /swing：让实体挥动手臂，可指定动画和持续时间（权限等级 2）。
