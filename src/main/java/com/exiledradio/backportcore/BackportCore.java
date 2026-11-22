@@ -101,6 +101,9 @@ public final class BackportCore {
         PoseNetwork.init();
         com.exiledradio.backportcore.settings.SettingsNetwork.init();
         com.exiledradio.backportcore.presentation.CommandUsageNetwork.init();
+        // The Game Rules screen's server side and Create World's chosen rules (gamerules/).
+        com.exiledradio.backportcore.gamerules.GameRulesNetwork.init();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.gamerules.NewWorldRules());
         com.exiledradio.backportcore.recipe.book.SmeltingBooks.init();
         // Game events and vibrations, for every backport that requires them (gameevent/).
         com.exiledradio.backportcore.gameevent.GameEventNetwork.init();

@@ -73,3 +73,7 @@ commands.tick.step.fail = commands.tick.step.fail
 commands.tick.step.stop.fail = commands.tick.step.stop.fail
 commands.tick.step.stop.success = commands.tick.step.stop.success
 commands.tick.step.success = commands.tick.step.success
+# 26.1 Game Rules search box: vanilla.
+gui.game_rule.search = gui.game_rule.search
+editGamerule.inGame.disabled.tooltip = editGamerule.inGame.disabled.tooltip
+editGamerule.inGame.disabled.hardcore.tooltip = editGamerule.inGame.disabled.hardcore.tooltip

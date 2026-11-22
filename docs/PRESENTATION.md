@@ -183,7 +183,30 @@ change one version made stays made when only a later backport is installed:
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing
   and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.
 * **Accessibility Guide** (1.16.4): at the bottom of Accessibility Settings, beside Done.
-* **World list** (1.13): Edit World's Make Backup (a zip in `.minecraft/backups`) and Open Backups Folder.
+* **World list** (1.13): Edit World's Make Backup (a zip in `.minecraft/backups`) and Open Backups Folder, and
+  Optimize World (Core 1.4.4, `OptimizeWorldScreens`, `worldupgrade.WorldOptimizer`): 1.13's question (Create Backup
+  and Load / I know what I'm doing! / Cancel; 1.14 adds Erase Cached Data, 1.21.2 names the first button Create Backup
+  and Optimize), then 1.13's progress screen (the converted, skipped and total counts, a bar per dimension in 1.16.5's
+  colors, the stage, the counter and percentage, Cancel). Like 1.13's `WorldOptimizer`, it reads every chunk of every
+  dimension (`region`, `DIM-1`, `DIM1`, then any `DIM<n>`), runs it through the game's data fixer (Forge's, with each
+  mod's fixes) and writes back only chunks older than the game (`DataVersion` under 1343 or a mod's `ForgeDataVersion`
+  under that mod's); the rest count as skipped. Erase Cached Data writes every chunk with `LightPopulated` false (the
+  game lights it again) and its height map worked out again from its blocks by `level.dat`'s block ids (1.14 drops
+  `Heightmaps`; 1.12.2 needs one). 26.1's world upgrade screen (`FileFixerProgressScreen`) moves 26.1's own files when
+  an older world opens; a 1.12.2 world has nothing to move, so it has no counterpart.
+* **Game Rules** (1.16, Core 1.4.4, `gamerules/`): Create World's Game Rules button (1.16.5's place: at the left of
+  the main page's last row, More World Options moved to its right) opens `GameRulesScreen`: 1.16's layout (title at
+  y 20, the list from y 43, Done and Cancel), 1.20.5's 33-high header and footer, 26.1's 36-high header with a search
+  box (a rule's id, name, category or description). Rows as 26.x's: the category (bold, yellow; underlined from 26.1),
+  then each rule's name (wrapped at 170) with an ON/OFF button or a 44-wide number box (red while not a valid number;
+  Done is off meanwhile), and the tooltip: the id in yellow, the description, "Default: x". `GameRuleTable` holds
+  26.3's category, order, name key and bounds for 1.12.2's rules and the 33 the backports add (shown on Create World
+  when the mod is installed); `disableElytraMovementCheck` and `disableRaids` show as 26.3's turned-around rules;
+  others show under Miscellaneous by their ids; `gameLoopFunction` (a function name) has no row. The chosen rules wait
+  for the new world's overworld to load (`NewWorldRules`, lowest priority, so after the backports add theirs). In a
+  world, `GameRulesScreen.inWorld(parent)` (26.3's `InWorldGameRulesScreen`, Game Drops Backport's World Options) asks
+  the server on channel `backportcore_rules`, shows "Retrieving game rules...", sends the changed rules on Done (asking
+  first when leaving with changes); the server answers and applies only for permission level 2, as `/gamerule` does.
 * **Controls** (1.18): Options' "Controls..." opens Core's Controls screen (Mouse Settings... and Key Binds..., then
   Toggle Crouch, Toggle Sprint, Attack/Destroy, Use Item/Place Block and Auto-Jump in 1.21.11's order, then the
   backports' Controls options); "Key Binds..." is 1.12.2's key list with its top rows gone, titled Key Binds, the list
