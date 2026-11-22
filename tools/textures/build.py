@@ -15,6 +15,8 @@ A texture goes in only when it still fits 1.12.2's models and UVs:
     changed, leaves 1.12.2's UVs pointing at nothing;
   - and it is not in tables.EXCLUDE or tables.LAYOUT (changes the check cannot see). tables.ACCEPT lets in the
     few that leave only unused parts of the sheet blank, after a look.
+A sheet in tables.SHEETS, whose parts later lines moved into sprites of their own, is put back together first: the
+line's sprites at 1.12.2's places, and where the line's sheet is blank, the look below.
 Everything left out is listed in report.txt with the reason. Keyed-transparency PNGs are rewritten as RGBA
 (png_rgba.py), since 1.12.2 draws their key color black.
 """
@@ -29,7 +31,7 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from layers import REPO, ATLAS, load_jars, follow, pixel_hash  # noqa: E402
 from png_rgba import keyed_to_rgba  # noqa: E402
-from tables import ACCEPT, EXCLUDE, LAYOUT, LOST_MAX, LINES, MODELS  # noqa: E402
+from tables import ACCEPT, EGG_LINE, EXCLUDE, LAYOUT, LOST_MAX, LINES, MODELS, SHEETS  # noqa: E402
 
 PACKS = os.path.join(REPO, 'src', 'main', 'resources', 'backportcore_packs')
 BASE = os.path.join(PACKS, 'modern')
@@ -106,6 +108,46 @@ def base_layer(old):
     return shown
 
 
+def shown_image(o, shown, old, layers):
+    """@return the image the layers below show for 'o'"""
+    at = shown[o][2]
+    if at == '1.12.2':
+        return old.image(o)
+    if at == '1.14':
+        return Image.open(os.path.join(BASE, rel(o))).convert('RGBA')
+    return Image.open(io.BytesIO(layers[at][rel(o)])).convert('RGBA')
+
+
+def sheet(o, jar, im, below):
+    """tables.SHEETS: the line's sheet, the look below where it is blank, and the line's sprites at 1.12.2's places"""
+    if im.size != below.size:
+        return im
+    out = below.copy()
+    out.paste(im, (0, 0), im.getchannel('A').point(lambda a: 255 if a else 0))
+    for x, y, sprite in SHEETS[o]:
+        try:
+            out.paste(jar.image(sprite), (x, y))
+        except KeyError:
+            pass
+    return out
+
+
+def without_sprites(o, im):
+    """@return 'im' with a SHEETS sheet's sprite places cleared: a sprite may leave blank what 1.12.2's icon painted"""
+    if o not in SHEETS:
+        return im
+    out = im.copy()
+    for x, y, sprite in SHEETS[o]:
+        out.paste((0, 0, 0, 0), (x, y, x + 18, y + 18))
+    return out
+
+
+def png_bytes(im):
+    b = io.BytesIO()
+    im.save(b, 'PNG')
+    return b.getvalue()
+
+
 def line_model(jar, template, tex):
     """A line's block model (no parent) as a 1.12.2 model: its elements, every texture variable on the 1.12.2 texture."""
     m = json.loads(jar.read('assets/minecraft/models/block/%s.json' % template))
@@ -129,6 +171,8 @@ def main(check):
         for o, n in sorted(cur.items()):
             why = prefixed(o, EXCLUDE)
             im = jar.image(n)
+            if o in SHEETS:
+                im = sheet(o, jar, im, shown_image(o, shown, old, layers))
             meta = jar.mcmeta(n)
             h = pixel_hash(im)
             if h == shown[o][0] and animation(meta) == shown[o][1]:
@@ -136,7 +180,7 @@ def main(check):
             if why is None:
                 why = prefixed(o, LAYOUT.get(line, ()))
             if why is None:
-                why = misfit(o, old.image(o), im, meta)
+                why = misfit(o, without_sprites(o, old.image(o)), without_sprites(o, im), meta)
                 if why is not None and why.endswith('(parts moved)') and (line, o) in ACCEPT:
                     why = None
             if why is not None:
@@ -148,13 +192,13 @@ def main(check):
             if check and not o.startswith(ATLAS):
                 print('%-5s %-48s %-9s <- %-9s %s  blank %.3f' % (line, o, '%dx%d' % old.image(o).size,
                       '%dx%d' % im.size, n, blank_share(old.image(o), im)))
-            files[rel(o)] = keyed_to_rgba(jar.png(n))
+            files[rel(o)] = png_bytes(im) if o in SHEETS else keyed_to_rgba(jar.png(n))
             if meta is not None:
                 files[rel(o) + '.mcmeta'] = meta
             for model, template in MODELS.get(o, ()):
                 files['assets/minecraft/models/block/%s.json' % model] = line_model(jar, template, o)
             shown[o] = (h, animation(meta), line)
-            report.append('%-5s %-48s <- %s %s' % (line, o, jar.version, n))
+            report.append('%-5s %-48s <- %s %s%s' % (line, o, jar.version, n, ' (and its sprites)' if o in SHEETS else ''))
         for o, n in sorted(gone.items()):
             if prefixed(o, EXCLUDE) is None:
                 left.append('%-5s %-48s %s: gone (split up or removed); stays as %s' % (line, o, n, shown[o][2]))
@@ -180,6 +224,9 @@ def main(check):
     with open(os.path.join(PACKS, 'layers.txt'), 'w', encoding='utf-8', newline='\n') as f:
         f.write('# The texture layers after 1.14\'s (modern/), by version. Written by tools/textures/build.py.\n')
         f.write(''.join(line + '\n' for line, _ in LINES[1:] if layers[line]))
+        # The spawn egg layer is eggs.py's; keep it listed.
+        if os.path.isfile(os.path.join(PACKS, 'modern-' + EGG_LINE, 'index.txt')):
+            f.write(EGG_LINE + '\n')
     with open(REPORT, 'w', encoding='utf-8', newline='\n') as f:
         f.write('# Written by build.py. Layers: %s\n\n## In the layers\n' % ', '.join(counts))
         f.write('\n'.join(report) + '\n\n## Left out\n' + '\n'.join(left) + '\n')

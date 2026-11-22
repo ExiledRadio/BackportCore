@@ -3,9 +3,11 @@ assets/minecraft/models/block/lit_redstone_torch_wall.json
 assets/minecraft/textures/blocks/nether_brick.png
 assets/minecraft/textures/blocks/red_nether_brick.png
 assets/minecraft/textures/blocks/redstone_torch_on.png
+assets/minecraft/textures/entity/blaze.png
 assets/minecraft/textures/entity/projectiles/arrow.png
 assets/minecraft/textures/entity/projectiles/spectral_arrow.png
 assets/minecraft/textures/entity/projectiles/tipped_arrow.png
+assets/minecraft/textures/environment/clouds.png
 assets/minecraft/textures/items/dye_powder_cyan.png
 assets/minecraft/textures/items/dye_powder_gray.png
 assets/minecraft/textures/items/dye_powder_green.png

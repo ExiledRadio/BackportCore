@@ -9,6 +9,12 @@
     family's blocks by name (Village & Pillage's workstations and bell, Buzzy Bees' nests and hives, Nether
     Update's lodestone, Caves & Cliffs' lightning rod and cauldrons) and 1.12.2's beds, brewing stand, cauldron and
     nether portal; `PoiLocate.register`/`tag` for others. Kept in 1.4.4 (unreleased).
+
+*   1.21.5's spawn eggs: from 1.21.5 (textures part of the look) every egg draws its own 26.3 texture, untinted:
+    1.12.2's mobs and the family's mobs (by their placed vanilla egg). Other mods' eggs and every egg before 1.21.5
+    stay tinted. New `modern-1.21.5` texture layer (`tools/textures/eggs.py`), `client/SpawnEggModels`.
+*   Texture layers: 1.14's status effect icons put back into the inventory sheet (from 1.15's layer on), and 1.18's
+    wither, 1.18/1.19's vindicator, 1.20/1.21's blaze and clouds (the parts left blank are ones 1.12.2 never draws).
 *   26.3's `/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]` (`command/swing/`, setting
     `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
     The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's

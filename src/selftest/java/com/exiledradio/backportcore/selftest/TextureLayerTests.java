@@ -41,8 +41,10 @@ final class TextureLayerTests {
             expected.put("1.18.2", "[1.14, 1.15, 1.16, 1.17, 1.18]");                         // Caves & Cliffs
             expected.put("1.19.3", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19]");                   // Wild Update
             expected.put("1.20.3", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20]");             // Trails & Tales
-            expected.put("1.21.11", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21]");      // Tricky Trials
-            expected.put("26.3", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21, 26.3]");
+            expected.put("1.21.4", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21]");
+            expected.put("1.21.5", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21, 1.21.5]"); // the spawn eggs
+            expected.put("1.21.11", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21, 1.21.5]"); // Tricky Trials
+            expected.put("26.3", "[1.14, 1.15, 1.16, 1.17, 1.18, 1.19, 1.20, 1.21, 1.21.5, 26.3]");
             for (Map.Entry<String, String> e : expected.entrySet()) {
                 String got = TextureLayers.active(GameVersion.parse(e.getKey())).toString();
                 check("textures: layers at " + e.getKey(), got.equals(e.getValue()), got);
@@ -64,6 +66,17 @@ final class TextureLayerTests {
                             GameVersion.parse("1.21.11")))));
             check("textures: no .mcmeta for an image whose layer has none", TextureLayers.layerFor(COAL_ORE + ".mcmeta",
                     GameVersion.parse("1.21.11")) == null);
+            check("textures: the spawn egg layer has every 26.3 egg (88)", "1.21.5".equals(String.valueOf(TextureLayers.layerFor(
+                    "assets/minecraft/textures/item/zombified_piglin_spawn_egg.png", GameVersion.parse("1.21.5"))))
+                    && TextureLayers.all().get(TextureLayers.all().size() - 2).files().size() == 88,
+                    TextureLayers.all().get(TextureLayers.all().size() - 2).files().size());
+            check("textures: no egg textures before 1.21.5", TextureLayers.layerFor(
+                    "assets/minecraft/textures/item/zombie_spawn_egg.png", GameVersion.parse("1.21.4")) == null);
+            check("textures: 1.12.2 mobs' eggs by their names today", "minecraft:zombified_piglin_spawn_egg".equals(
+                    com.exiledradio.backportcore.creative.CreativePlacement.modernEggId(new net.minecraft.util.ResourceLocation("zombie_pigman")))
+                    && "minecraft:iron_golem_spawn_egg".equals(com.exiledradio.backportcore.creative.CreativePlacement.modernEggId(
+                            new net.minecraft.util.ResourceLocation("villager_golem")))
+                    && com.exiledradio.backportcore.creative.CreativePlacement.modernEggId(new net.minecraft.util.ResourceLocation("somemod", "fox")) == null);
             check("textures: water is never replaced", TextureLayers.layerFor("assets/minecraft/textures/blocks/water_still.png",
                     GameVersion.parse("26.3")) == null);
 

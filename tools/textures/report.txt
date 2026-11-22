@@ -1,4 +1,4 @@
-# Written by build.py. Layers: 1.15: 8 textures, 1.16: 17 textures, 1.17: 117 textures, 1.18: 36 textures, 1.19: 29 textures, 1.20: 9 textures, 1.21: 20 textures, 26.1: 0 textures, 26.2: 0 textures, 26.3: 5 textures
+# Written by build.py. Layers: 1.15: 9 textures, 1.16: 17 textures, 1.17: 117 textures, 1.18: 38 textures, 1.19: 31 textures, 1.20: 12 textures, 1.21: 22 textures, 26.1: 0 textures, 26.2: 0 textures, 26.3: 5 textures
 
 ## In the layers
 1.15  gui/advancements/backgrounds/adventure           <- 1.15.2 gui/advancements/backgrounds/adventure
@@ -7,6 +7,7 @@
 1.15  gui/advancements/backgrounds/nether              <- 1.15.2 gui/advancements/backgrounds/nether
 1.15  gui/advancements/backgrounds/stone               <- 1.15.2 gui/advancements/backgrounds/stone
 1.15  gui/container/horse                              <- 1.15.2 gui/container/horse
+1.15  gui/container/inventory                          <- 1.15.2 gui/container/inventory (and its sprites)
 1.15  gui/recipe_book                                  <- 1.15.2 gui/recipe_book
 1.15  misc/unknown_pack                                <- 1.15.2 misc/unknown_pack
 1.16  blocks/nether_wart_block                         <- 1.16.5 block/nether_wart_block
@@ -157,11 +158,13 @@
 1.18  blocks/planks_spruce                             <- 1.18.2 block/spruce_planks
 1.18  entity/armorstand/wood                           <- 1.18.2 entity/armorstand/wood
 1.18  entity/illager/illusionist                       <- 1.18.2 entity/illager/illusioner
+1.18  entity/illager/vindicator                        <- 1.18.2 entity/illager/vindicator
 1.18  entity/parrot/parrot_blue                        <- 1.18.2 entity/parrot/parrot_blue
 1.18  entity/parrot/parrot_green                       <- 1.18.2 entity/parrot/parrot_green
 1.18  entity/parrot/parrot_grey                        <- 1.18.2 entity/parrot/parrot_grey
 1.18  entity/parrot/parrot_red_blue                    <- 1.18.2 entity/parrot/parrot_red_blue
 1.18  entity/parrot/parrot_yellow_blue                 <- 1.18.2 entity/parrot/parrot_yellow_blue
+1.18  entity/wither/wither                             <- 1.18.2 entity/wither/wither
 1.18  gui/container/anvil                              <- 1.18.2 gui/container/anvil
 1.18  gui/container/enchanting_table                   <- 1.18.2 gui/container/enchanting_table
 1.18  items/beetroot_seeds                             <- 1.18.2 item/beetroot_seeds
@@ -189,11 +192,13 @@
 1.19  blocks/piston_top_normal                         <- 1.19.4 block/piston_top
 1.19  blocks/piston_top_sticky                         <- 1.19.4 block/piston_top_sticky
 1.19  entity/alex                                      <- 1.19.4 entity/player/slim/alex
+1.19  entity/illager/vindicator                        <- 1.19.4 entity/illager/vindicator
 1.19  entity/llama/llama_brown                         <- 1.19.4 entity/llama/brown
 1.19  entity/llama/llama_creamy                        <- 1.19.4 entity/llama/creamy
 1.19  entity/llama/llama_gray                          <- 1.19.4 entity/llama/gray
 1.19  entity/llama/llama_white                         <- 1.19.4 entity/llama/white
 1.19  entity/steve                                     <- 1.19.4 entity/player/wide/steve
+1.19  gui/container/inventory                          <- 1.19.4 gui/container/inventory (and its sprites)
 1.19  gui/icons                                        <- 1.19.4 gui/icons
 1.19  gui/recipe_book                                  <- 1.19.4 gui/recipe_book
 1.19  gui/toasts                                       <- 1.19.4 gui/toasts
@@ -209,6 +214,7 @@
 1.19  items/oak_boat                                   <- 1.19.4 item/oak_boat
 1.19  items/spruce_boat                                <- 1.19.4 item/spruce_boat
 1.20  blocks/glazed_terracotta_purple                  <- 1.20.6 block/purple_glazed_terracotta
+1.20  entity/blaze                                     <- 1.20.6 entity/blaze
 1.20  entity/cat/black                                 <- 1.20.6 entity/cat/black
 1.20  entity/cow/cow                                   <- 1.20.6 entity/cow/cow
 1.20  entity/cow/mooshroom                             <- 1.20.6 entity/cow/red_mooshroom
@@ -217,12 +223,16 @@
 1.20  entity/llama/llama_creamy                        <- 1.20.6 entity/llama/creamy
 1.20  entity/llama/llama_white                         <- 1.20.6 entity/llama/white
 1.20  entity/wolf/wolf_collar                          <- 1.20.6 entity/wolf/wolf_collar
+1.20  environment/clouds                               <- 1.20.6 environment/clouds
+1.20  gui/container/inventory                          <- 1.20.6 gui/container/inventory (and its sprites)
 1.21  blocks/nether_brick                              <- 1.21.11 block/nether_bricks
 1.21  blocks/red_nether_brick                          <- 1.21.11 block/red_nether_bricks
 1.21  blocks/redstone_torch_on                         <- 1.21.11 block/redstone_torch
+1.21  entity/blaze                                     <- 1.21.11 entity/blaze
 1.21  entity/projectiles/arrow                         <- 1.21.11 entity/projectiles/arrow
 1.21  entity/projectiles/spectral_arrow                <- 1.21.11 entity/projectiles/spectral_arrow
 1.21  entity/projectiles/tipped_arrow                  <- 1.21.11 entity/projectiles/tipped_arrow
+1.21  environment/clouds                               <- 1.21.11 environment/clouds
 1.21  items/dye_powder_cyan                            <- 1.21.11 item/cyan_dye
 1.21  items/dye_powder_gray                            <- 1.21.11 item/gray_dye
 1.21  items/dye_powder_green                           <- 1.21.11 item/green_dye
@@ -352,7 +362,6 @@
 1.15  entity/zombie/zombie_villager                    entity/zombie/zombie_villager: zombie villagers: as villagers
 1.15  entity/zombie_villager/zombie_villager           entity/zombie_villager/zombie_villager: zombie villagers: as villagers
 1.15  font/ascii                                       font/ascii: 6% of what 1.12.2's image paints is blank now (parts moved)
-1.15  gui/container/inventory                          gui/container/inventory: 10% of what 1.12.2's image paints is blank now (parts moved)
 1.15  gui/title/background/panorama_0                  gui/title/background/panorama_0: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
 1.15  gui/title/background/panorama_1                  gui/title/background/panorama_1: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
 1.15  gui/title/background/panorama_2                  gui/title/background/panorama_2: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
@@ -375,27 +384,20 @@
 1.17  items/ruby                                       item/ruby: gone (split up or removed); stays as 1.12.2
 1.17  particle/footprint                               particle/footprint: gone (split up or removed); stays as 1.12.2
 1.18  entity/illager/evoker                            entity/illager/evoker: 13% of what 1.12.2's image paints is blank now (parts moved)
-1.18  entity/illager/vindicator                        entity/illager/vindicator: 14% of what 1.12.2's image paints is blank now (parts moved)
 1.18  entity/minecart                                  entity/minecart: 15% of what 1.12.2's image paints is blank now (parts moved)
 1.18  entity/witch                                     entity/witch: 11% of what 1.12.2's image paints is blank now (parts moved)
-1.18  entity/wither/wither                             entity/wither/wither: 55% of what 1.12.2's image paints is blank now (parts moved)
-1.18  gui/container/inventory                          gui/container/inventory: 8% of what 1.12.2's image paints is blank now (parts moved)
 1.19  entity/illager/vex                               entity/illager/vex: 51% of what 1.12.2's image paints is blank now (parts moved)
 1.19  entity/illager/vex_charging                      entity/illager/vex_charging: 51% of what 1.12.2's image paints is blank now (parts moved)
-1.19  entity/illager/vindicator                        entity/illager/vindicator: 14% of what 1.12.2's image paints is blank now (parts moved)
 1.19  entity/iron_golem                                entity/iron_golem/iron_golem: 5% of what 1.12.2's image paints is blank now (parts moved)
 1.19  gui/container/creative_inventory/tabs            gui/container/creative_inventory/tabs: 1% of what 1.12.2's image paints is blank now (parts moved)
-1.19  gui/container/inventory                          gui/container/inventory: 8% of what 1.12.2's image paints is blank now (parts moved)
 1.19  models/armor/leather_layer_1_overlay             models/armor/leather_layer_1_overlay: 8% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/armorstand/wood                           entity/armorstand/wood: 12% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/bat                                       entity/bat: 34% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/bear/polarbear                            entity/bear/polarbear: 1% of what 1.12.2's image paints is blank now (parts moved)
-1.20  entity/blaze                                     entity/blaze: 11% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/llama/llama_gray                          entity/llama/gray: 1% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/sheep/sheep                               entity/sheep/sheep: 1% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/sheep/sheep_fur                           entity/sheep/sheep_fur: 11% of what 1.12.2's image paints is blank now (parts moved)
 1.20  entity/slime/magmacube                           entity/slime/magmacube: 22% of what 1.12.2's image paints is blank now (parts moved)
-1.20  environment/clouds                               environment/clouds: 80% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/book                                         gui/book: 2% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/container/anvil                              gui/container/anvil: 12% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/container/beacon                             gui/container/beacon: 4% of what 1.12.2's image paints is blank now (parts moved)
@@ -404,7 +406,6 @@
 1.20  gui/container/enchanting_table                   gui/container/enchanting_table: 19% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/container/furnace                            gui/container/furnace: 2% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/container/horse                              gui/container/horse: 17% of what 1.12.2's image paints is blank now (parts moved)
-1.20  gui/container/inventory                          gui/container/inventory: 24% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/recipe_book                                  gui/recipe_book: 28% of what 1.12.2's image paints is blank now (parts moved)
 1.20  gui/title/edition                                gui/title/edition: the title screen: the presentation module's (the backports' titleLogo and startupLogo)
 1.20  font/unicode_page_00                             font/unicode_page_00: gone (split up or removed); stays as 1.12.2
@@ -644,7 +645,6 @@
 1.20  gui/world_selection                              gui/world_selection: gone (split up or removed); stays as 1.12.2
 1.20  map/map_icons                                    map/map_icons: gone (split up or removed); stays as 1.12.2
 1.21  entity/arrow                                     entity/projectiles/arrow: 50% of what 1.12.2's image paints is blank now (parts moved)
-1.21  entity/blaze                                     entity/blaze: 11% of what 1.12.2's image paints is blank now (parts moved)
 1.21  entity/cow/cow                                   entity/cow/temperate_cow: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
 1.21  entity/cow/mooshroom                             entity/cow/red_mooshroom: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
 1.21  entity/ghast/ghast                               entity/ghast/ghast: ghasts: the presentation module's (Tricky Trials' replaceAsset)
@@ -653,7 +653,6 @@
 1.21  entity/pig/pig_saddle                            entity/equipment/pig_saddle/saddle: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
 1.21  entity/sheep/sheep_fur                           entity/sheep/sheep_wool: 11% of what 1.12.2's image paints is blank now (parts moved)
 1.21  entity/slime/magmacube                           entity/slime/magmacube: size 64x64 does not scale to 1.12.2's 64x32 (new UV layout)
-1.21  environment/clouds                               environment/clouds: 72% of what 1.12.2's image paints is blank now (parts moved)
 1.21  gui/container/brewing_stand                      gui/container/brewing_stand: 3% of what 1.12.2's image paints is blank now (parts moved)
 1.21  environment/moon_phases                          environment/moon_phases: gone (split up or removed); stays as 1.12.2
 1.21  items/spawn_egg                                  item/spawn_egg: gone (split up or removed); stays as 1.12.2
