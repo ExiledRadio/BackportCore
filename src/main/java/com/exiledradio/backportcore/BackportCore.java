@@ -125,7 +125,11 @@ public final class BackportCore {
         com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
         // Blocks another installed mod adds under its own names that the backports add too (duplicate/).
         com.exiledradio.backportcore.duplicate.QuarkPairs.preInit();
+        // The family's boats and chest boats (boat/): using one places an entity (entity_place).
+        com.exiledradio.backportcore.gameevent.GameEventEmitters.addEntityPlacer(
+                stack -> stack.getItem() instanceof com.exiledradio.backportcore.boat.ItemWoodBoat);
         if (event.getSide().isClient()) {
+            com.exiledradio.backportcore.boat.client.RenderWoodBoat.register();
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).
             com.exiledradio.backportcore.map.client.MapIconRenderer.init();
