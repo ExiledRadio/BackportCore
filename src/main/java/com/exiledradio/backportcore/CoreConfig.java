@@ -153,6 +153,15 @@ public final class CoreConfig {
         })
         @Setting.Client
         public String reportBugsLink = "https://discord.gg/kxQvMDJBTN";
+
+        @Config.Comment({
+                "Where the pause menu's Give Feedback button goes. By default, the backports' Discord.",
+                "A modpack can point it at its own page. Leave it empty for Mojang's feedback site.",
+                "",
+                "Client only; a server ignores it."
+        })
+        @Setting.Client
+        public String giveFeedbackLink = "https://discord.gg/kxQvMDJBTN";
     }
 
     /**

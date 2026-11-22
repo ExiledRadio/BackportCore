@@ -111,7 +111,7 @@ public final class MenuScreens {
                     break;
             }
         }
-        buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, FEEDBACK_URL)));
+        buttons.add(new OptionWidgets.Action(w / 2 - 102, top + 72, 98, I18n.format("menu.sendFeedback"), () -> confirmLink(gui, feedbackLink())));
         String bugs = reportBugsLink();
         if (!bugs.isEmpty()) {
             buttons.add(new OptionWidgets.Action(w / 2 + 4, top + 72, 98, I18n.format("menu.reportBugs"), () -> confirmLink(gui, bugs)));
@@ -183,7 +183,7 @@ public final class MenuScreens {
         if (!bugs.isEmpty()) {
             ICONS.add(new IconAction(I18n.format("menu.reportBugs"), BUG_SPRITE, () -> confirmLink(gui, bugs)));
         }
-        ICONS.add(new IconAction(I18n.format("menu.sendFeedback"), FEEDBACK_SPRITE, () -> confirmLink(gui, FEEDBACK_URL)));
+        ICONS.add(new IconAction(I18n.format("menu.sendFeedback"), FEEDBACK_SPRITE, () -> confirmLink(gui, feedbackLink())));
         if (com.exiledradio.backportcore.presentation.Presentation.asset(FRIENDS_SPRITE) != null) {
             boolean available = !mc.isDemo();
             IconAction friends = new IconAction(available ? I18n.format("gui.friends.open.tooltip") : null, FRIENDS_SPRITE,
@@ -270,6 +270,12 @@ public final class MenuScreens {
                 event.getGui().drawHoveringText(b.tooltip, event.getMouseX(), event.getMouseY());
             }
         }
+    }
+
+    /** The configured Give Feedback link, or Mojang's feedback site when it is empty. */
+    static String feedbackLink() {
+        String link = com.exiledradio.backportcore.CoreConfig.presentation.giveFeedbackLink;
+        return link == null || link.trim().isEmpty() ? FEEDBACK_URL : link.trim();
     }
 
     /** The configured Report Bugs link, or empty to leave the button out. */
