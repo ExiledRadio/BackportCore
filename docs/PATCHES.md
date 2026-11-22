@@ -844,6 +844,9 @@ or passes an existing constant through a hook of the same type.
     On Cleanroom (LWJGL 3 through lwjglx) the borderless window is lwjglx's own `Display.setBorderless(boolean)`
     (GLFW's windowed mode over the target monitor), found by reflection; `VanillaRevisions.borderlessPossible` is true
     there when it exists. Before 1.4.5 Core stepped aside on Cleanroom and F11 changed the monitor's mode.
+    With OptiFine, `Config.checkDisplayMode` makes the first fullscreen frame exclusive at its own Fullscreen Mode;
+    on entering the borderless window Core sets its `fullscreenModeChecked` (true) and `desktopModeChecked` (false)
+    by reflection, as OptiFine does after its own check, so the window stays borderless.
 
 ## P44. Grass, foliage and water colors under ground
 

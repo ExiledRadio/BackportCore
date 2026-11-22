@@ -108,6 +108,14 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.VIDEO, "26.1");
     }
 
+    /**
+     * 26.3 (its window through SDL3, 26.2's through GLFW): on Windows the title bar takes Windows' dark mode when the
+     * app mode is dark. Since Core 1.4.5.
+     */
+    public static boolean darkTitleBar() {
+        return Presentation.isAtLeast(LookArea.VIDEO, "26.3");
+    }
+
     /** 26.3: Exclusive Fullscreen is off by default, so Fullscreen is borderless unless the player turns it on. */
     public static boolean borderlessByDefault() {
         return Presentation.isAtLeast(LookArea.VIDEO, "26.3");

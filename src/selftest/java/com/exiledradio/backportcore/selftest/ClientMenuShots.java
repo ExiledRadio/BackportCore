@@ -313,9 +313,16 @@ final class ClientMenuShots {
             for (int i = 0; i < Math.min(4, items.size()); i++) {
                 names.append(' ').append(net.minecraft.item.ItemMonsterPlacer.getNamedIdFrom(items.get(i)));
             }
-            // 1.19.3's eggs are by name: the allay (Wild Update) before the bat, else the bat first.
-            String first = Loader.isModLoaded("wildupdatebackport") ? "allay" : "bat";
-            check("Spawn Eggs lists spawn eggs only, by name (" + first + " first)", eggs
+            // 1.19.3's eggs are by name: the allay (Wild Update) before the bat, else the bat first. 26.3's (Game
+            // Drops) start with the farm animals: chicken, cow, pig, sheep.
+            String first = com.exiledradio.backportcore.presentation.Presentation.isAtLeast(
+                    com.exiledradio.backportcore.presentation.LookArea.INVENTORY, "26.3") ? "chicken"
+                    : Loader.isModLoaded("wildupdatebackport") ? "allay" : "bat";
+            String icon = com.exiledradio.backportcore.presentation.Presentation.isAtLeast(
+                    com.exiledradio.backportcore.presentation.LookArea.INVENTORY, "1.21.5") ? "creeper" : "pig";
+            check("Spawn Eggs' tab icon is the " + icon + " spawn egg (the creeper's from 1.21.5)", icon.equals(ModernTabs.spawnEggsIcon()),
+                    ModernTabs.spawnEggsIcon());
+            check("Spawn Eggs lists spawn eggs only, in the installed version's order (" + first + " first)", eggs
                     && String.valueOf(net.minecraft.item.ItemMonsterPlacer.getNamedIdFrom(items.get(0))).endsWith(":" + first), names);
             // Every stack the nine 1.12.2 tabs list is in some 1.19.3 tab.
             Set<String> listed = new HashSet<String>();

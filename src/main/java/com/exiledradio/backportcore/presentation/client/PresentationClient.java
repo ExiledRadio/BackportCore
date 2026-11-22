@@ -29,6 +29,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new TitleScreenExtras());
         MinecraftForge.EVENT_BUS.register(new MenuScreens());
         MinecraftForge.EVENT_BUS.register(new SystemToasts());
+        MinecraftForge.EVENT_BUS.register(new DarkTitleBar());
         MinecraftForge.EVENT_BUS.register(new CreativeOrder());
         MinecraftForge.EVENT_BUS.register(new DebugText.Events());
         MinecraftForge.EVENT_BUS.register(new GameMusic.Events());

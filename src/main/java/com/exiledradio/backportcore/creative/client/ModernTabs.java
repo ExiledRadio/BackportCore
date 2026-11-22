@@ -408,6 +408,11 @@ public final class ModernTabs {
 
     // ---- Icons ----
 
+    /** @return the Spawn Eggs tab's mob: the pig to 1.21.4, the creeper from 1.21.5 */
+    public static String spawnEggsIcon() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.21.5") ? "creeper" : "pig";
+    }
+
     /** @return 1.19.3's icon for {@code def}: the backport item that is it, or 1.12.2's stack of it */
     static ItemStack icon(Def def) {
         for (Placement p : CreativePlacement.all()) {
@@ -439,8 +444,9 @@ public final class ModernTabs {
             case INGREDIENTS:
                 return new ItemStack(Items.IRON_INGOT);
             case SPAWN_EGGS: {
+                // 1.19.3 to 1.21.4: the pig spawn egg; 1.21.5 (its new spawn egg textures) to 26.3: the creeper's.
                 ItemStack egg = new ItemStack(Items.SPAWN_EGG);
-                ItemMonsterPlacer.applyEntityIdToItemStack(egg, new ResourceLocation("minecraft", "pig"));
+                ItemMonsterPlacer.applyEntityIdToItemStack(egg, new ResourceLocation("minecraft", spawnEggsIcon()));
                 return egg;
             }
             default:

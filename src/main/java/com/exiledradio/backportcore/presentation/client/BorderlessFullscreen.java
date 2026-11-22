@@ -119,6 +119,7 @@ public final class BorderlessFullscreen {
             setFullscreenField(mc, true);
             mc.gameSettings.fullScreen = true;
             glfw.invoke(null, true);
+            optifineFullscreenChecked();
             active = true;
             finish(mc, size[0], size[1]);
             entered++;
@@ -137,6 +138,7 @@ public final class BorderlessFullscreen {
         Display.setResizable(false);
         Display.setLocation(0, 0);
         remake(w, h);
+        optifineFullscreenChecked();
         active = true;
         finish(mc, w, h);
         entered++;
@@ -170,6 +172,29 @@ public final class BorderlessFullscreen {
         finish(mc, w, h);
         left++;
         BackportCore.LOGGER.info("Fullscreen: back to a {}x{} window", w, h);
+    }
+
+    /**
+     * OptiFine's {@code Config.checkDisplayMode} runs each frame and, the first frame the game is fullscreen, makes it
+     * exclusive fullscreen at its own Fullscreen Mode ({@code Display.setDisplayMode}, {@code Display.setFullscreen(true)}),
+     * which replaced the borderless window (and an exclusive window minimizes when another window takes focus). Its
+     * check is marked done here, as it marks it itself; leaving fullscreen resets it as before.
+     */
+    private static void optifineFullscreenChecked() {
+        if (!net.minecraftforge.fml.client.FMLClientHandler.instance().hasOptifine()) {
+            return;
+        }
+        try {
+            Class<?> config = Class.forName("Config", false, BorderlessFullscreen.class.getClassLoader());
+            Field checked = config.getDeclaredField("fullscreenModeChecked");
+            checked.setAccessible(true);
+            checked.setBoolean(null, true);
+            Field desktop = config.getDeclaredField("desktopModeChecked");
+            desktop.setAccessible(true);
+            desktop.setBoolean(null, false);
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            BackportCore.LOGGER.warn("Couldn't keep OptiFine from making the borderless window exclusive fullscreen", e);
+        }
     }
 
     /** The size of the monitor lwjglx's borderless window covers (the one the window is on), else the desktop's. */
