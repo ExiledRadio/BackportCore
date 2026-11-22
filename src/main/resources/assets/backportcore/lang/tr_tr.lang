@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21'in sınama odaları
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.x'in altın karahindiba ve yavruları, kükürt ve kükürt küpü, kükürt mağaraları, kavak, terk edilmiş kamplar ve menüler.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Minecraft’a hoş geldiniz!  Metin okuyucuyu açmak veya Erişilebilirlik Ayarlarını ziyaret etmek ister misiniz?
+accessibility.onboarding.screen.narrator=Metin okuyucuyu etkinleştirmek için enter tuşuna basın
+accessibility.onboarding.accessibility.button=Erişilebilirlik Ayarları...
+gui.continue=Devam
+options.notifications.display_time=Bildirim Süresi
+options.notifications.display_time.tooltip=Bildirimlerin ekranda görünür kalacağı süreyi etkiler.
+options.accessibility.high_contrast=Yüksek Karşıtlık
+options.accessibility.high_contrast.tooltip=Arayüz ögelerinin kontrastını arttırır.
+options.accessibility.high_contrast.error.tooltip=Yüksek Kontrast kaynak paketi mevcut değil.
+options.rotateWithMinecart=Vagonlarla dön
+options.rotateWithMinecart.tooltip=Dönen bir Vagonda oyuncunun bakış açısının dönüp dönmemesi. Sadece ’Vagon Geliştirmeleri’ deneysel ayarları açık olan dünyalarda kullanılabilir.
+options.quitShortcuts=Çıkış Kısayolları
+options.quitShortcuts.tooltip=Klavye kısayollarının oyunu kapatabilmesi. Kapalı olduğunda Windows ve Linux'ta Alt + F4, macOS'de Komut + Q oyundan çıkmaz.
+options.ctrlClickEmulatesRightClick=Yalancı Sağ Tık
+options.ctrlClickEmulatesRightClick.tooltip=Açıldığında Kontrol + sol tık kombinasyonu sağ tık olarak algılanır. Sadece macOS için.
+options.audioDevice=Cihaz
+options.audioDevice.default=Varsayılan
+options.directionalAudio=Yönlü Ses
+options.directionalAudio.on.tooltip=Üç boyutlu ses simülasyonunu geliştirmek için HRTF tabanlı yönlü ses kullanır. HRTF uyumlu ses donanımı gerektirir ve en iyi, kulaklık kullanılarak deneyimlenir.
+options.directionalAudio.off.tooltip=Stereo ses
+
 entity.backportcore.boat.name=Tekne
 entity.backportcore.chest_boat.name=Sandıklı Tekne
 

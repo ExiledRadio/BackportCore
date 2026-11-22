@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=Les chambres des épreuv
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Le pissenlit doré et les bébés de 26.x, le soufre et le cube de soufre, les grottes de soufre, le peuplier, les camps abandonnés et les menus.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Bienvenue sur Minecraft !  Souhaitez-vous activer le narrateur ou accéder aux options d'accessibilité ?
+accessibility.onboarding.screen.narrator=Appuyez sur Entrée pour activer le narrateur
+accessibility.onboarding.accessibility.button=Accessibilité...
+gui.continue=Continuer
+options.notifications.display_time=Durée des notifications
+options.notifications.display_time.tooltip=Contrôle la durée d'affichage des notifications à l'écran.
+options.accessibility.high_contrast=Contraste élevé
+options.accessibility.high_contrast.tooltip=Augmente le contraste des éléments de l'interface.
+options.accessibility.high_contrast.error.tooltip=Le pack de ressources "Contraste élevé" n'est pas disponible.
+options.rotateWithMinecart=Tourner avec les wagonnets
+options.rotateWithMinecart.tooltip=Contrôle si la vue du joueur doit suivre les rotations du wagonnet. Seulement disponible dans les mondes où le paramètre expérimental "Améliorations des wagonnets" est activé.
+options.quitShortcuts=Raccourcis pour quitter
+options.quitShortcuts.tooltip=Détermine si les raccourcis clavier peuvent fermer le jeu. Si elle est désactivée, appuyer sur Alt + F4 (sous Windows et Linux) et sur Cmd + Q (sur macOS) ne ferme plus le jeu.
+options.ctrlClickEmulatesRightClick=Émulation du clic droit
+options.ctrlClickEmulatesRightClick.tooltip=Si activée, Ctrl + clic gauche est traitée comme un clic droit. S'applique uniquement sur macOS.
+options.audioDevice=Périphérique
+options.audioDevice.default=Par défaut du système
+options.directionalAudio=Audio directionnel
+options.directionalAudio.on.tooltip=Utilise l'audio directionnel basé sur la HRTF pour améliorer la simulation de la spatialisation sonore. Nécessite du matériel audio compatible avec la HRTF, et est vivement recommandé avec un casque.
+options.directionalAudio.off.tooltip=Son stéréo classique.
+
 entity.backportcore.boat.name=Bateau
 entity.backportcore.chest_boat.name=Bateau de stockage
 

@@ -94,6 +94,12 @@ final class PatchTests {
             {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
             {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P47", new String[] {"tabCount", "openTab", "tabsOnPage*2",
                     "pageOf", "searchTooltipTab", "isMouseOverTab", "renderCreativeInventoryHoveringText", "drawTab"}},
+            {"net.minecraft.client.gui.toasts.GuiToast$ToastInstance", "P50", new String[] {"toastTime"}},
+            {"net.minecraft.client.gui.GuiSubtitleOverlay", "P50", new String[] {"subtitleTime", "subtitleFade"}},
+            {"net.minecraft.client.gui.GuiIngame", "P50", new String[] {"highlightTicks"}},
+            {"net.minecraft.client.Minecraft", "P51", new String[] {"closeRequested"}},
+            // Paulscode's library is not in Forge's SRG jar: the dev chain checks it.
+            {"paulscode.sound.libraries.LibraryLWJGLOpenAL", "P52", new String[] {"createAL"}},
     };
 
     private PatchTests() {
@@ -215,6 +221,9 @@ final class PatchTests {
             try (ZipFile zip = new ZipFile(jar)) {
                 for (Object[] c : CLASSES) {
                     String name = (String) c[0];
+                    if (name.startsWith("paulscode.")) {
+                        continue;
+                    }
                     if (name.startsWith("net.minecraftforge.")) {
                         // Forge's own classes are not in the SRG jar: Forge ships them with Mojang's obfuscated
                         // references, and FML's remapper gives them the same SRG names before these transformers
@@ -359,6 +368,9 @@ final class PatchTests {
             case "P43": cls = "MapFacingTransformer"; break;
             case "P46": cls = "SimulationTransformer"; break;
             case "P47": cls = "CreativeTabsTransformer"; break;
+            case "P50": cls = "NotificationTimeTransformer"; break;
+            case "P51": cls = "QuitShortcutsTransformer"; break;
+            case "P52": cls = "SoundDeviceTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

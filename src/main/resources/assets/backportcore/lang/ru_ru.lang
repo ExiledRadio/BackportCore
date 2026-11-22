@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=Испытательны
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Золотой одуванчик и детёныши из 26.x, сера и серный куб, серные пещеры, тополь, заброшенные лагеря и меню.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Добро пожаловать в Minecraft!  Хотите включить диктора или настроить специальные возможности?
+accessibility.onboarding.screen.narrator=Нажмите Ввод для включения диктора
+accessibility.onboarding.accessibility.button=Специальные возможности...
+gui.continue=Продолжить
+options.notifications.display_time=Время уведомления
+options.notifications.display_time.tooltip=Длительность отображения уведомлений на экране.
+options.accessibility.high_contrast=Контрастный режим
+options.accessibility.high_contrast.tooltip=Увеличивает контрастность элементов интерфейса.
+options.accessibility.high_contrast.error.tooltip=Набор ресурсов высокой контрастности недоступен.
+options.rotateWithMinecart=Поворот с вагонеткой
+options.rotateWithMinecart.tooltip=Должен ли взгляд игрока поворачиваться вместе с вагонеткой. Доступно только в мирах с включённым экспериментом «Улучшения вагонеток».
+options.quitShortcuts=Выход по нажатию
+options.quitShortcuts.tooltip=Могут ли сочетания клавиш закрывать игру. Когда выключено, Alt + F4 на Windows и Linux, и Cmd + Q на macOS, не будут закрывать игру.
+options.ctrlClickEmulatesRightClick=Эмуляция ПКМ
+options.ctrlClickEmulatesRightClick.tooltip=Когда включено, Ctrl + ЛКМ обрабатывается как ПКМ. Затрагивает только macOS.
+options.audioDevice=Устройство
+options.audioDevice.default=По умолчанию
+options.directionalAudio=Позиционируемый звук
+options.directionalAudio.on.tooltip=Использует технологию создания позиционируемого звука для улучшенной имитации пространственного звучания. Требует оборудование с поддержкой бинаурального воспроизведения (HRTF) и лучше всего ощущается в наушниках.
+options.directionalAudio.off.tooltip=Классическое стерео.
+
 entity.backportcore.boat.name=Лодка
 entity.backportcore.chest_boat.name=Грузовая лодка
 

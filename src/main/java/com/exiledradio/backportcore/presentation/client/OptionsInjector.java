@@ -94,7 +94,7 @@ public final class OptionsInjector {
             } else if (c == ScreenChatOptions.class) {
                 appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.CHAT));
             } else if (c == GuiScreenOptionsSounds.class) {
-                appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.SOUNDS));
+                sounds(gui, buttons);
             } else if (c == GuiCustomizeSkin.class) {
                 appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.SKIN));
             } else {
@@ -154,7 +154,7 @@ public final class OptionsInjector {
     @SubscribeEvent
     public void onAction(GuiScreenEvent.ActionPerformedEvent.Pre event) {
         if (event.getButton() instanceof OptionWidgets.Action) {
-            ((OptionWidgets.Action) event.getButton()).action.run();
+            ((OptionWidgets.Action) event.getButton()).press();
             event.setCanceled(true);
         }
     }
@@ -178,6 +178,91 @@ public final class OptionsInjector {
             }
         }
         appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.OPTIONS));
+    }
+
+    /** 1.12.2's Show Subtitles button on Music and Sounds. */
+    private static final int SUBTITLES_BUTTON = 201;
+
+    /**
+     * Music and Sounds. Before 1.18 the options continue 1.12.2's grid. From 1.18 the screen is 26.3's
+     * {@code SoundOptionsScreen}: Master, the categories in two columns (the options that are volumes among them), the
+     * Device row across both columns ({@link SoundDevices}), then Show Subtitles, Directional Audio, Music Frequency and
+     * Music Toast in two columns, and Done below.
+     */
+    private static void sounds(GuiScreen gui, List<GuiButton> buttons) {
+        List<PresentationOption> all = Presentation.optionsOn(OptionScreen.SOUNDS);
+        if (!SoundDevices.deviceShown()) {
+            appendToGrid(gui, buttons, all);
+            return;
+        }
+        List<PresentationOption> volumes = new ArrayList<PresentationOption>();
+        List<PresentationOption> after = new ArrayList<PresentationOption>();
+        for (PresentationOption o : all) {
+            if (o == Presentation.DIRECTIONAL_AUDIO || o == Presentation.MUSIC_FREQUENCY || o == Presentation.MUSIC_TOAST) {
+                after.add(o);
+            } else {
+                volumes.add(o);
+            }
+        }
+        GuiButton subtitles = find(buttons, SUBTITLES_BUTTON);
+        if (subtitles != null) {
+            buttons.remove(subtitles);
+        }
+        appendToGrid(gui, buttons, volumes);
+        int left = gui.width / 2 - 155;
+        int right = gui.width / 2 + 5;
+        int gridEnd = gui.height / 6 - 12;
+        for (GuiButton b : buttons) {
+            if (b.id != DONE_BUTTON && (b.x == left || b.x == right)) {
+                gridEnd = Math.max(gridEnd, b.y);
+            }
+        }
+        int y = gridEnd + 24;
+        buttons.add(new DeviceButton(left, y));
+        y += 24;
+        List<GuiButton> cells = new ArrayList<GuiButton>();
+        if (subtitles != null) {
+            subtitles.width = 150;
+            cells.add(subtitles);
+        }
+        for (PresentationOption o : after) {
+            cells.add(OptionWidgets.create(o, 0, 0));
+        }
+        int lastY = y - 24;
+        for (int i = 0; i < cells.size(); i++) {
+            GuiButton b = cells.get(i);
+            b.x = i % 2 == 0 ? left : right;
+            b.y = y + 24 * (i / 2);
+            lastY = b.y;
+            buttons.add(b);
+        }
+        GuiButton done = find(buttons, DONE_BUTTON);
+        if (done != null) {
+            done.y = Math.max(gui.height / 6 + 168, lastY + 24);
+        }
+    }
+
+    /** 1.18's Device row: "Device: System Default" or the device's name; a press picks the next device (Shift: the one before). */
+    static final class DeviceButton extends OptionWidgets.Action {
+        DeviceButton(int x, int y) {
+            super(x, y, 310, "", null);
+            refresh();
+        }
+
+        void refresh() {
+            String text = I18n.format("options.audioDevice") + ": " + SoundDevices.label(Presentation.SOUND_DEVICE.get());
+            net.minecraft.client.gui.FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+            if (font.getStringWidth(text) > this.width - 8) {
+                text = font.trimStringToWidth(text, this.width - 8 - font.getStringWidth("...")) + "...";
+            }
+            this.displayString = text;
+        }
+
+        @Override
+        void press() {
+            SoundDevices.cycle(GuiScreen.isShiftKeyDown());
+            refresh();
+        }
     }
 
     private static void controls(GuiScreen gui, List<GuiButton> buttons) throws Exception {

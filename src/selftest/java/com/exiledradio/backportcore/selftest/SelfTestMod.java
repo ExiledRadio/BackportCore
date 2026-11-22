@@ -30,6 +30,8 @@ public final class SelfTestMod {
         PresentationTests.register();
         SettingsTests.register();
         if (FMLCommonHandler.instance().getSide().isClient()) {
+            // 1.19.4's accessibility onboarding takes the first title screen: only the menu shots ask for it.
+            OptionsRowsShots.onboardingWanted(ClientMenuShots.active());
             if (ClientOptiFineTests.active()) {
                 ClientOptiFineTests.register();
             } else if (ClientMenuShots.active()) {

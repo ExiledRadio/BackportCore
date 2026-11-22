@@ -68,7 +68,7 @@ public class OptionsListScreen extends GuiScreen {
      * options named after them, whichever mod registers them; others follow.
      */
     static final String[] CONTROLS_ORDER = {"toggle_crouch", "toggle_sprint", "toggle_attack", "toggle_use", "AUTO_JUMP",
-            "sprint_window", "operator_items_tab"};
+            "sprint_window", "quit_shortcuts", "ctrl_click_emulates_right_click", "operator_items_tab"};
 
     /** @return Core's Controls screen (1.18 and later; before, Options opens 1.12.2's own) */
     public static OptionsListScreen controls(GuiScreen parent) {
@@ -95,6 +95,10 @@ public class OptionsListScreen extends GuiScreen {
             if (o == GameSettings.Options.AUTO_JUMP && this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.controlsLeaveAccessibility(newest)) {
                 continue;
             }
+            if (o == GameSettings.Options.TOUCHSCREEN && VanillaRevisions.touchscreenRemoved(newest)) {
+                // 26.2: Touchscreen left Mouse Settings (and the game).
+                continue;
+            }
             entries.add(vanillaButton(o));
             keys.add(o.name());
         }
@@ -112,6 +116,7 @@ public class OptionsListScreen extends GuiScreen {
             entries.add(1, new OptionWidgets.Action(0, 0, 150, I18n.format("controls.keybinds"),
                     () -> this.mc.displayGuiScreen(new net.minecraft.client.gui.GuiControls(this, this.mc.gameSettings))));
         } else if (this.screen == OptionScreen.ACCESSIBILITY && VanillaRevisions.controlsLeaveAccessibility(newest)) {
+            order(entries, keys, VanillaRevisions.ACCESSIBILITY_ORDER);
             // 1.21.9: "Controls..." beside Narrator.
             int at = keys.indexOf(GameSettings.Options.NARRATOR.name());
             entries.add(at + 1, new OptionWidgets.Action(0, 0, 150, I18n.format("options.controls"),

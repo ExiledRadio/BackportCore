@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=Komnaty prób, wichrzyk,
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Złoty mniszek i młode z 26.x, siarka i sześcian siarki, siarkowe jaskinie, topola, opuszczone obozy i menu.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Witaj w Minecraft!  Czy chcesz aktywować narratora lub przejść do sekcji ułatwień dostępu?
+accessibility.onboarding.screen.narrator=Naciśnij enter, aby aktywować narratora
+accessibility.onboarding.accessibility.button=Ułatwienia dostępu…
+gui.continue=Kontynuuj
+options.notifications.display_time=Czas wyświetl. powiad.
+options.notifications.display_time.tooltip=Wpływa na długość czasu, przez jaki wszystkie powiadomienia pozostają widoczne na ekranie.
+options.accessibility.high_contrast=Wysoki kontrast
+options.accessibility.high_contrast.tooltip=Wzmacnia kontrast elementów interfejsu użytkownika
+options.accessibility.high_contrast.error.tooltip=Wysokokontrastowa paczka zasobów jest niedostępna
+options.rotateWithMinecart=Obrót z wagonikiem
+options.rotateWithMinecart.tooltip=Czy widok gracza powinien obracać się wraz z obracającym się wagonikiem. Dostępne tylko w światach z włączonym eksperymentalnym ustawieniem „Ulepszenia wagonika”.
+options.quitShortcuts=Skróty szybkiego zamykania
+options.quitShortcuts.tooltip=Określa, czy skróty klawiaturowe pozwalają zamknąć grę. Po wyłączeniu tej opcji skróty Alt + F4 w systemach Windows i Linux oraz Command + Q w systemie macOS nie będą już powodować zamknięcia gry.
+options.ctrlClickEmulatesRightClick=Emulacja prawego przycisku myszy
+options.ctrlClickEmulatesRightClick.tooltip=Po włączeniu tej opcji kombinacja Control + lewy przycisk myszy jest traktowane jak kliknięcie prawym przyciskiem. Opcja dotyczy wyłącznie systemu macOS.
+options.audioDevice=Urządzenie
+options.audioDevice.default=Domyślne dla systemu
+options.directionalAudio=Dźwięk przestrzenny
+options.directionalAudio.on.tooltip=Wykorzystuje dźwięk przestrzenny oparty na HRTF, aby poprawić symulację dźwięku 3D. Wymaga sprzętu audio zgodnego z HRTF i jest najlepiej doświadczany w słuchawkach.
+options.directionalAudio.off.tooltip=Klasyczny dźwięk stereo
+
 entity.backportcore.boat.name=Łódka
 entity.backportcore.chest_boat.name=Łódka ze skrzynią
 

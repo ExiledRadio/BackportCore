@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=Prüfungskammern, die B�
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Der goldene Löwenzahn und die Jungtiere aus 26.x, Schwefel und der Schwefelwürfel, Schwefelhöhlen, Pappeln, verlassene Lager und Menüs.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Willkommen in Minecraft!  Möchtest du die Sprachausgabe aktivieren oder die Barrierefreiheitseinstellungen besuchen?
+accessibility.onboarding.screen.narrator=Drücke die Eingabetaste, um die Sprachausgabe zu aktivieren.
+accessibility.onboarding.accessibility.button=Barrierefreiheit …
+gui.continue=Fortfahren
+options.notifications.display_time=Benachrichtigungsdauer
+options.notifications.display_time.tooltip=Beeinflusst die Zeitspanne, in der alle Benachrichtigungen auf dem Bildschirm sichtbar bleiben.
+options.accessibility.high_contrast=Hoher Kontrast
+options.accessibility.high_contrast.tooltip=Erhöht den Kontrast von Elementen der Benutzeroberfläche.
+options.accessibility.high_contrast.error.tooltip=Das Ressourcenpaket für hohen Kontrast ist nicht verfügbar.
+options.rotateWithMinecart=Mit Loren mitdrehen
+options.rotateWithMinecart.tooltip=Steuert, ob sich die Blickrichtung des Spielers mit Loren mitdreht. Nur in Welten verfügbar, in denen das Experiment „Lorenverbesse‐ rungen“ eingeschaltet ist.
+options.quitShortcuts=Schließ‐Tastenkürzel
+options.quitShortcuts.tooltip=Ob Tastenkürzel das Spiel schließen können. Wenn deaktiviert, beenden unter Windows und Linux [Alt] + [F4] sowie unter macOS [⌘] + [Q] das Spiel nicht mehr.
+options.ctrlClickEmulatesRightClick=Rechtsklick‐Emulierung
+options.ctrlClickEmulatesRightClick.tooltip=Wenn aktiviert, wird Strg + Linksklick als ein Rechtsklick behandelt. Gilt nur für macOS.
+options.audioDevice=Gerät
+options.audioDevice.default=Systemstandard
+options.directionalAudio=Raumklang
+options.directionalAudio.on.tooltip=Verwendet HRTF‐basierten Raumklang, um die Simulation von 3‐D‐Ton zu verbessern. Erfordert HRTF‐kompatible Audiogeräte und lässt sich am besten mit Kopfhörern erleben.
+options.directionalAudio.off.tooltip=Klassischer Stereoklang
+
 entity.backportcore.boat.name=Boot
 entity.backportcore.chest_boat.name=Truhenboot
 

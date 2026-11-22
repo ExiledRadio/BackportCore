@@ -94,6 +94,7 @@ public final class BackportCore {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.client.ModernTextures.install();
             com.exiledradio.backportcore.presentation.client.VanillaAssetPack.install();
+            com.exiledradio.backportcore.presentation.client.HighContrastPack.install();
         }
     }
 

@@ -102,3 +102,14 @@ backportcore.itemGroup.ingredients = itemGroup.ingredients
 backportcore.itemGroup.spawnEggs = itemGroup.spawnEggs
 backportcore.itemGroup.op = itemGroup.op
 options.operatorItemsTab = options.operatorItemsTab
+# 1.4.5 options rows and onboarding: vanilla text (gui. is ours by prefix).
+gui.continue = gui.continue
+accessibility.onboarding.screen.title = accessibility.onboarding.screen.title
+options.notifications.display_time.tooltip = options.notifications.display_time.tooltip
+options.accessibility.high_contrast.tooltip = options.accessibility.high_contrast.tooltip
+options.accessibility.high_contrast.error.tooltip = options.accessibility.high_contrast.error.tooltip
+options.rotateWithMinecart.tooltip = options.rotateWithMinecart.tooltip
+options.quitShortcuts.tooltip = options.quitShortcuts.tooltip
+options.ctrlClickEmulatesRightClick.tooltip = options.ctrlClickEmulatesRightClick.tooltip
+options.directionalAudio.on.tooltip = options.directionalAudio.on.tooltip
+options.directionalAudio.off.tooltip = options.directionalAudio.off.tooltip

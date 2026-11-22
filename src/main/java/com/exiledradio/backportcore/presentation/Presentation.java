@@ -170,6 +170,80 @@ public final class Presentation {
     public static final ToggleOption OPERATOR_ITEMS_TAB = new ToggleOption("backportcore:operator_items_tab",
             "options.operatorItemsTab", OptionScreen.CONTROLS, false);
 
+    // ---- 1.4.5: the options rows 26.3 has that the family lacked (docs/SCREEN_AUDIT.md) ----
+
+    /**
+     * 1.19.4's Notification Time (Accessibility, after Chat Delay), 0.5x to 10x in tenths: how long toasts, subtitles
+     * and the held item's name stay (patch P50, {@code NotificationTime}).
+     */
+    public static final SliderOption NOTIFICATION_TIME = new SliderOption("backportcore:notification_display_time",
+            "options.notifications.display_time", OptionScreen.ACCESSIBILITY, 0.5, 10.0, 0.1, 1.0);
+    /**
+     * 1.19.4's High Contrast (Accessibility, after Show Subtitles): the built-in High Contrast resource pack, from the
+     * newest installed version that has its art ({@link Contribution#highContrast}); greyed out without one.
+     */
+    public static final ToggleOption HIGH_CONTRAST = new ToggleOption("backportcore:high_contrast",
+            "options.accessibility.high_contrast", OptionScreen.ACCESSIBILITY, false);
+    /**
+     * 1.21.3's Rotate With Minecarts (Accessibility, after Narrator Hotkey): the camera turns with a turning minecart.
+     * Vanilla greys it out outside a world with the Minecart Improvements experiment, which no 1.12.2 world has
+     * ({@link #setMinecartImprovements}).
+     */
+    public static final ToggleOption ROTATE_WITH_MINECART = new ToggleOption("backportcore:rotate_with_minecart",
+            "options.rotateWithMinecart", OptionScreen.ACCESSIBILITY, false);
+    /** 26.3's Quit Shortcuts (Controls): off, Alt + F4 (Cmd + Q on macOS) no longer quits the game (patch P51). */
+    public static final ToggleOption QUIT_SHORTCUTS = new ToggleOption("backportcore:quit_shortcuts", "options.quitShortcuts",
+            OptionScreen.CONTROLS, true);
+    /** 26.3's Right Click Emulation (Controls, macOS only): Control + left click is a right click. */
+    public static final ToggleOption CTRL_CLICK_RIGHT_CLICK = new ToggleOption("backportcore:ctrl_click_emulates_right_click",
+            "options.ctrlClickEmulatesRightClick", OptionScreen.CONTROLS, false);
+    /**
+     * 1.18's Device (Music and Sounds): the OpenAL output device by name, empty for System Default. It has no button of
+     * its own in the option list: Music and Sounds draws it ({@code SoundDevices}), as Video Settings draws Fullscreen
+     * Resolution. Opened by patch P52.
+     */
+    public static final com.exiledradio.backportcore.presentation.option.TextOption SOUND_DEVICE =
+            new com.exiledradio.backportcore.presentation.option.TextOption("backportcore:sound_device", "options.audioDevice",
+                    OptionScreen.SOUNDS, "");
+    /** 1.19's Directional Audio (Music and Sounds, beside Show Subtitles): OpenAL Soft's HRTF (patch P52). */
+    public static final ToggleOption DIRECTIONAL_AUDIO = new ToggleOption("backportcore:directional_audio", "options.directionalAudio",
+            OptionScreen.SOUNDS, false);
+
+    private static volatile java.util.function.BooleanSupplier directionalAudioPossible = () -> false;
+
+    /** Set by the client's sound code once it knows whether this game's OpenAL can do HRTF. */
+    public static void setDirectionalAudioPossible(java.util.function.BooleanSupplier possible) {
+        directionalAudioPossible = possible;
+    }
+
+    static {
+        NOTIFICATION_TIME.since("1.19.4");
+        NOTIFICATION_TIME.after(CHAT_DELAY.id());
+        NOTIFICATION_TIME.tooltip("options.notifications.display_time.tooltip");
+        NOTIFICATION_TIME.decimals(1).valueKey("options.multiplier");
+        HIGH_CONTRAST.since("1.19.4");
+        HIGH_CONTRAST.after("SHOW_SUBTITLES");
+        HIGH_CONTRAST.tooltip("options.accessibility.high_contrast.tooltip");
+        HIGH_CONTRAST.activeWhen(() -> highContrastPack() != null, "options.accessibility.high_contrast.error.tooltip");
+        ROTATE_WITH_MINECART.since("1.21.3");
+        ROTATE_WITH_MINECART.after(NARRATOR_HOTKEY.id());
+        ROTATE_WITH_MINECART.tooltip("options.rotateWithMinecart.tooltip");
+        ROTATE_WITH_MINECART.activeWhen(Presentation::minecartImprovements, null);
+        QUIT_SHORTCUTS.since("26.3");
+        QUIT_SHORTCUTS.tooltip("options.quitShortcuts.tooltip");
+        CTRL_CLICK_RIGHT_CLICK.since("26.3");
+        CTRL_CLICK_RIGHT_CLICK.tooltip("options.ctrlClickEmulatesRightClick.tooltip");
+        CTRL_CLICK_RIGHT_CLICK.availableWhen(VanillaRevisions::macOs);
+        SOUND_DEVICE.since("1.18");
+        DIRECTIONAL_AUDIO.since("1.19");
+        DIRECTIONAL_AUDIO.valueTooltips("options.directionalAudio.on.tooltip", "options.directionalAudio.off.tooltip");
+        DIRECTIONAL_AUDIO.availableWhen(() -> directionalAudioPossible.getAsBoolean());
+        for (PresentationOption o : new PresentationOption[] {NOTIFICATION_TIME, HIGH_CONTRAST, ROTATE_WITH_MINECART, QUIT_SHORTCUTS,
+                CTRL_CLICK_RIGHT_CLICK, DIRECTIONAL_AUDIO}) {
+            registerOption(o);
+        }
+    }
+
     static {
         // The parts of Core's own options that are not their screen's (LookArea): the rest follow their screen.
         OPERATOR_ITEMS_TAB.area(LookArea.INVENTORY);
@@ -316,6 +390,41 @@ public final class Presentation {
             out.addAll(c.texts);
         }
         return out;
+    }
+
+    /**
+     * @return the newest installed version's High Contrast pack folder ({@link Contribution#highContrast}), whatever the
+     *         look settings (the pack is a resource pack the player turns on), or null when none is installed
+     */
+    @Nullable
+    public static ResourceLocation highContrastPack() {
+        ResourceLocation found = null;
+        for (Contribution c : installed()) {
+            if (c.highContrast != null) {
+                found = c.highContrast;
+            }
+        }
+        return found;
+    }
+
+    private static volatile java.util.function.BooleanSupplier minecartImprovements = () -> false;
+
+    /**
+     * Tells Core whether the world the player is in has 1.21.3's Minecart Improvements (the experiment; 1.12.2 has no
+     * such worlds, so by default it never does): Rotate With Minecarts is greyed out otherwise, as vanilla's is, and
+     * turns the camera with the cart only there. For a backport that adds the experiment. Since Core 1.4.5.
+     */
+    public static void setMinecartImprovements(java.util.function.BooleanSupplier inWorld) {
+        minecartImprovements = inWorld;
+    }
+
+    /** @return true while the player's world has Minecart Improvements ({@link #setMinecartImprovements}) */
+    public static boolean minecartImprovements() {
+        try {
+            return minecartImprovements.getAsBoolean();
+        } catch (RuntimeException e) {
+            return false;
+        }
     }
 
     /** @return the title screen's Accessibility icon from 1.14 on, or null when none is to show */

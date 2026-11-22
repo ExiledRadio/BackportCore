@@ -35,16 +35,19 @@ public final class OptionWidgets {
 
     /** @return the button for an option, 150 wide as vanilla's option buttons */
     public static GuiButton create(PresentationOption option, int x, int y) {
+        GuiButton b;
         if (option instanceof SliderOption) {
-            return new Slider((SliderOption) option, x, y);
+            b = new Slider((SliderOption) option, x, y);
+        } else if (option instanceof CycleOption) {
+            b = new Cycle((CycleOption) option, x, y);
+        } else if (option instanceof ToggleOption) {
+            b = new Toggle((ToggleOption) option, x, y);
+        } else {
+            throw new IllegalArgumentException("no button for " + option.getClass().getName());
         }
-        if (option instanceof CycleOption) {
-            return new Cycle((CycleOption) option, x, y);
-        }
-        if (option instanceof ToggleOption) {
-            return new Toggle((ToggleOption) option, x, y);
-        }
-        throw new IllegalArgumentException("no button for " + option.getClass().getName());
+        // Greyed out, as vanilla's inactive widgets (PresentationOption.activeWhen).
+        b.enabled = option.isActive();
+        return b;
     }
 
     /** A button of one of Core's options. */
@@ -81,6 +84,11 @@ public final class OptionWidgets {
         public Action(int x, int y, int width, String text, Runnable action) {
             super(nextId(), x, y, width, 20, text);
             this.action = action;
+        }
+
+        /** What a press does: the action, unless a subclass does more. */
+        void press() {
+            this.action.run();
         }
     }
 

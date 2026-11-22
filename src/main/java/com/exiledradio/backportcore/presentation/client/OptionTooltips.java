@@ -37,7 +37,8 @@ public final class OptionTooltips {
         if (hovered == null) {
             return;
         }
-        String key = ((OptionWidgets.OptionButton) hovered).option().tooltipKey();
+        PresentationOption option = ((OptionWidgets.OptionButton) hovered).option();
+        String key = !option.isActive() && option.inactiveTooltipKey() != null ? option.inactiveTooltipKey() : option.tooltipKey();
         if (key == null) {
             return;
         }

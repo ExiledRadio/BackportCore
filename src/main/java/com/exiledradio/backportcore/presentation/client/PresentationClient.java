@@ -37,6 +37,10 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new MusicClient());
         ChatSuggestions.init();
         MinecraftForge.EVENT_BUS.register(new ControlToggles());
+        MinecraftForge.EVENT_BUS.register(new RightClickEmulation());
+        MinecraftForge.EVENT_BUS.register(new MinecartCamera());
+        MinecraftForge.EVENT_BUS.register(new AccessibilityOnboarding());
+        SoundDevices.init();
         com.exiledradio.backportcore.presentation.Presentation.MUSIC_FREQUENCY.onChange(f -> GameMusic.frequencyChanged());
         MinecraftForge.EVENT_BUS.register(new OptionTooltips());
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
@@ -62,6 +66,9 @@ public final class PresentationClient {
         Minecraft mc = Minecraft.getMinecraft();
         VanillaAssetPack.afterLoading(mc);
         com.exiledradio.backportcore.client.ModernTextures.afterLoading(mc);
+        if (HighContrastPack.active()) {
+            HighContrastPack.reloadTextures();
+        }
         // The game's last resource load ran before the mods: the startup screen fades from here into the title.
         StartupScreen.INSTANCE.onResourceManagerReload(mc.getResourceManager());
     }

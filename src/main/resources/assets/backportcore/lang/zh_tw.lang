@@ -521,6 +521,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21 的試煉密室、�
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.x的金色蒲公英與幼體、硫磺與硫磺立方、硫磺洞穴、白楊、廢棄營地和選單。
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=歡迎遊玩 Minecraft！  需要啟用朗讀功能或是調整協助工具設定嗎？
+accessibility.onboarding.screen.narrator=按下 Enter 以啟用朗讀功能
+accessibility.onboarding.accessibility.button=協助工具設定...
+gui.continue=繼續
+options.notifications.display_time=通知顯示時長
+options.notifications.display_time.tooltip=影響所有通知在畫面中停留的時間長短。
+options.accessibility.high_contrast=高對比度
+options.accessibility.high_contrast.tooltip=提高 UI 控制項的對比度。
+options.accessibility.high_contrast.error.tooltip=無法使用高對比度資源包。
+options.rotateWithMinecart=隨著礦車轉動
+options.rotateWithMinecart.tooltip=玩家的視角是否應隨著礦車的轉向而轉動。僅在啟用「礦車改進」實驗性設定的世界中可用。
+options.quitShortcuts=離開遊戲快捷鍵
+options.quitShortcuts.tooltip=控制是否能使用鍵盤快捷鍵關閉遊戲。設為關閉時，無法使用 Windows 與 Linux 上的 Alt + F4 及 macOS 上的 Command + Q 離開遊戲。
+options.ctrlClickEmulatesRightClick=右鍵模擬
+options.ctrlClickEmulatesRightClick.tooltip=啟用後，Control + 左鍵會被視為右鍵。僅適用於 macOS。
+options.audioDevice=裝置
+options.audioDevice.default=系統預設值
+options.directionalAudio=定向音效
+options.directionalAudio.on.tooltip=使用基於 HRTF 的定向音效，模擬出更生動的 3D 音訊。必須使用相容 HRTF 音訊的硬體，並透過耳機獲得最佳體驗。
+options.directionalAudio.off.tooltip=經典立體音效。
+
 entity.backportcore.boat.name=船
 entity.backportcore.chest_boat.name=儲物箱船
 
