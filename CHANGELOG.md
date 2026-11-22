@@ -30,6 +30,10 @@
     `skip_existing_chunks`, claims saved per dimension); `structure.ModernItems`, today's item names to 1.12.2's item
     and metadata (table from the data fixers: `tools/flattening/items.py`); the abandoned camp, ancient city, desert
     pyramid, mineshaft and warm ocean ruins map sprites; `leaf_litter` owned by Tricky Trials.
+*   26.3's off-map player markers (P43, `map/MapFacing`; with a backport registering 26.3): a player beyond a map's
+    edge (`player_off_map`) or far beyond it (`player_off_limits`) keeps their facing, as on the map (the Nether's
+    spin included), drawn from 26.3's pointed sprites instead of 1.12.2's round dots.
+*   API: `JigsawPools.placer(idOrType)`, the feature placer registered for an id, so a backport can wrap another's.
 *   26.1's F3 (`ModernDebugLines`): "Day #n" split from Local Difficulty, "Speed: n blocks/tick", the spawn line by
     26.1's category abbreviations; Debug Options entries `day_count`, `player_speed` (26.1) and `entity_spawn_counts`
     (an entry's `since` hides newer ones from older looks). 26.3's centered, bold, underlined option headers

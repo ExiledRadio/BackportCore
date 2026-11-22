@@ -5,7 +5,10 @@ import com.exiledradio.backportcore.gameevent.GameEvent;
 import com.exiledradio.backportcore.gameevent.GameEventTags;
 import com.exiledradio.backportcore.locate.StructureClaims;
 import com.exiledradio.backportcore.locate.StructureLocate;
+import com.exiledradio.backportcore.map.MapFacing;
 import com.exiledradio.backportcore.mechanics.JukeboxSignal;
+import com.exiledradio.backportcore.presentation.GameVersion;
+import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.structure.ModernItems;
 
 import net.minecraft.block.BlockJukebox;
@@ -18,6 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.storage.MapData;
+import net.minecraft.world.storage.MapDecoration;
 
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.check;
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
@@ -25,7 +30,7 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 /**
  * Core 1.4.4's answers to Game Drops Backport's requests (docs/CORE_REQUESTS.md there): the jukebox's signal for a
  * disc that gives its own (P41), {@code addDampener}, {@code GameEvent.BOUNCE}, the exploration map search (radius and
- * claims) and today's item names.
+ * claims), today's item names and the off-map player facing (P43).
  */
 final class GdRequestTests {
 
@@ -47,6 +52,30 @@ final class GdRequestTests {
 
     private static int signal(net.minecraft.world.World world, BlockPos pos) {
         return Blocks.JUKEBOX.getComparatorInputOverride(world.getBlockState(pos), world, pos);
+    }
+
+    /** A zoom-0 map at 0, 0 with unlimited tracking and a player marker {@code x} blocks east, facing {@code yaw}. */
+    private static MapData offMap(net.minecraft.world.World world, double x, double yaw) {
+        MapData data = new MapData("backportcore_selftest_facing");
+        data.scale = 0;
+        data.xCenter = 0;
+        data.zCenter = 0;
+        data.unlimitedTracking = true;
+        data.dimension = 0;
+        try {
+            java.lang.reflect.Method m = null;
+            for (java.lang.reflect.Method c : MapData.class.getDeclaredMethods()) {
+                if (c.getParameterCount() == 6 && c.getParameterTypes()[0] == MapDecoration.Type.class) {
+                    m = c;
+                }
+            }
+            m.setAccessible(true);
+            m.invoke(data, MapDecoration.Type.PLAYER, world, "p", x, 0.0D, yaw);
+            return data;
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            check("MapData.updateDecorations by reflection", false, e);
+            return null;
+        }
     }
 
     static void schedule() {
@@ -122,5 +151,52 @@ final class GdRequestTests {
             check("a backport's map wins", ModernItems.stack("minecraft:iron_chain").getItem() == Item.getItemFromBlock(Blocks.IRON_BARS), "");
             check("the table has 1.13's renames", ModernItems.tableSize() > 300, ModernItems.tableSize());
         });
-    }
+    
+        then(1, "GD stream 7: JigsawPools.placer for wrapping another backport's feature", world -> {
+            com.exiledradio.backportcore.structure.JigsawPools.FeaturePlacer p = (w, pos, random, feature) -> { };
+            com.exiledradio.backportcore.structure.JigsawPools.feature("backportcore:selftest_wrapped", p);
+            check("placer returns the registered placer", com.exiledradio.backportcore.structure.JigsawPools.placer("backportcore:selftest_wrapped") == p, "");
+            check("placer of an unregistered id is null", com.exiledradio.backportcore.structure.JigsawPools.placer("backportcore:selftest_none") == null, "");
+        });
+
+        then(1, "GD stream 7: an off-map player keeps their facing (P43)", world -> {
+            check("P43 applied when MapData loaded", "applied".equals(Asm.state("P43")), Asm.state("P43"));
+            boolean had = MapFacing.modern();
+            if (!had) {
+                MapData plain = offMap(world, 1000.0D, 90.0D);
+                MapDecoration d = plain == null ? null : plain.mapDecorations.get("p");
+                check("below 26.3 an off-limits marker keeps 1.12.2's rotation 0", d != null && d.getRotation() == 0, d);
+                Presentation.version("26.3");
+            }
+            try {
+                MapData far = offMap(world, 1000.0D, 90.0D);
+                MapDecoration d = far == null ? null : far.mapDecorations.get("p");
+                // 26.3's calculateRotation: (90 + 8) * 16 / 360 = 4.
+                check("off-limits marker (1000 blocks out) faces east", d != null && d.getType() == MapDecoration.Type.PLAYER_OFF_LIMITS
+                        && d.getRotation() == 4, d);
+                MapData near = offMap(world, 200.0D, -90.0D);
+                d = near == null ? null : near.mapDecorations.get("p");
+                // (-90 - 8) * 16 / 360 = -4 (west).
+                check("off-map marker (200 blocks out) faces west", d != null && d.getType() == MapDecoration.Type.PLAYER_OFF_MAP
+                        && d.getRotation() == -4, d);
+                MapData inside = offMap(world, 10.0D, 90.0D);
+                d = inside == null ? null : inside.mapDecorations.get("p");
+                check("an on-map marker is unchanged", d != null && d.getType() == MapDecoration.Type.PLAYER && d.getRotation() == 4, d);
+                check("26.3's pointed sprites for both off-map markers", MapFacing.spriteOf(MapDecoration.Type.PLAYER_OFF_MAP) != null
+                        && MapFacing.spriteOf(MapDecoration.Type.PLAYER_OFF_LIMITS) != null
+                        && MapFacing.spriteOf(MapDecoration.Type.PLAYER) == null, "");
+            } finally {
+                if (!had) {
+                    try {
+                        java.lang.reflect.Field f = Presentation.class.getDeclaredField("VERSIONS");
+                        f.setAccessible(true);
+                        ((java.util.Map<?, ?>) f.get(null)).remove(GameVersion.parse("26.3"));
+                    } catch (ReflectiveOperationException e) {
+                        check("the test's 26.3 is removed", false, e);
+                    }
+                    check("off-map sprites back to 1.12.2's without 26.3", MapFacing.spriteOf(MapDecoration.Type.PLAYER_OFF_MAP) == null, "");
+                }
+            }
+        });
+}
 }

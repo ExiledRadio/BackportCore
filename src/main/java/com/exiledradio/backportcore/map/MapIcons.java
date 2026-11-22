@@ -87,6 +87,9 @@ public final class MapIcons {
         }
         ResourceLocation sprite = sprite(decoration.getType());
         if (sprite == null) {
+            sprite = MapFacing.sprite(decoration.getType());
+        }
+        if (sprite == null) {
             return false;
         }
         r.draw(sprite, decoration, index);

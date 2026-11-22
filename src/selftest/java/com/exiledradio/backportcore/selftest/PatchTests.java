@@ -87,6 +87,7 @@ final class PatchTests {
             {"net.minecraft.client.renderer.entity.RenderManager", "P40", new String[] {"entityPartialTicks"}},
             {"net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "P40", new String[] {"tilePartialTicks"}},
             {"net.minecraft.block.BlockJukebox", "P41", new String[] {"has", "signal"}},
+            {"net.minecraft.world.storage.MapData", "P43", new String[] {"enter", "facing"}},
     };
 
     private PatchTests() {
@@ -318,6 +319,7 @@ final class PatchTests {
             case "P37": cls = "GroundSpawnTransformer"; break;
             case "P38": case "P39": case "P40": cls = "TickTransformer"; break;
             case "P41": cls = "JukeboxSignalTransformer"; break;
+            case "P43": cls = "MapFacingTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

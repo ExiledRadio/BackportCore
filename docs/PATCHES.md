@@ -803,3 +803,23 @@ or passes an existing constant through a hook of the same type.
     other disc, and an empty jukebox, keep 1.12.2's answer.
 *   **Fails safe**: method not found: skipped, and every disc gives 1.12.2's signal.
 *   **Tested**: transformer chain and SRG names; `GdRequestTests` (13 and wait as before, a test disc with 8, empty 0).
+
+## P43. An off-map player marker keeps its facing
+
+*   **Class**: `net.minecraft.world.storage.MapData`, method `updateDecorations` (`func_191095_a`).
+    **Transformer**: `asm/MapFacingTransformer`. **Hook**: `map/MapFacing.enter`, `facing`. **Since**: 1.4.4.
+*   **Vanilla change**: 26.3's `MapItemSavedData.playerDecorationTypeAndRotation` gives `player_off_map` and
+    `player_off_limits` the same `calculateRotation` as an on-map player (the Nether's spin included) and draws them
+    from pointed sprites; 1.12.2 to 26.2 set their rotation to 0 and draw round dots.
+*   **Why a patch**: the rotation is a local of this private method, chosen in the off-map branch.
+*   **What changes**: the method starts with `MapFacing.enter(world, name, x, z, rotation)` (parameters read at the
+    head, no branch), and its one `new MapDecoration(type, x, y, rotation)` is passed through
+    `MapFacing.facing(decoration)` (same stack shape), which rebuilds an off-map or off-limits player marker with
+    1.12.2's on-map rotation (`shouldMapSpin` for the spin). Only while a backport registers 26.3
+    (`Presentation.installedNewest()`); otherwise the decoration is returned unchanged. On the client, P34's
+    `MapIcons.render` draws the two types from `backportcore:textures/map/decorations/player_off_map.png` and
+    `player_off_limits.png` (26.3's) under the same condition.
+*   **Fails safe**: method not found, or not exactly one `MapDecoration` construction: skipped, and off-map markers
+    stay 1.12.2's.
+*   **Tested**: transformer chain and SRG names; `GdRequestTests` (off-limits and off-map rotations east and west, an
+    on-map marker unchanged, the sprites with and without 26.3).

@@ -90,6 +90,15 @@ public final class JigsawPools {
         FEATURES.put(ModernPalette.full(idOrType), placer);
     }
 
+    /**
+     * @return the placer registered for a configured feature's id or a feature type, or null; for a backport that
+     *         wraps another's placer (Game Drops' bee nests on Trails &amp; Tales' {@code cherry_bees_005}). Post-init.
+     */
+    @Nullable
+    public static synchronized FeaturePlacer placer(String idOrType) {
+        return FEATURES.get(ModernPalette.full(idOrType));
+    }
+
     @Nullable
     static synchronized FeaturePlacer featurePlacer(JsonElement feature) {
         String key = feature.isJsonPrimitive() ? feature.getAsString()
