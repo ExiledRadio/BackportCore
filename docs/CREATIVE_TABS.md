@@ -45,6 +45,44 @@ The table is `src/main/resources/assets/backportcore/creative/vanilla_order.txt`
 `ItemStackTheFlatteningFix.class` (for `legacy_items.txt`, which finds a 1.12.2 stack such as `minecraft:stone@1`
 under today's name, `minecraft:granite`).
 
+Today's `Items` holds some kinds in one field each (the copper lanterns, chains and bars), which `build_tables.py`'s
+field list cannot name one by one, and later drops added more (poplar, sulfur and cinnabar sets, wool and concrete
+stairs and slabs, cushions). `tools/creative/build_order_263.py` completes the table from 26.3's creative menu: each
+item it lists that the table lacks goes with its kind, after the last item sharing the most of its name's ending, in
+that item's tab (a poplar log after the last log, in Building Blocks; copper lanterns after the soul lantern, in
+Decoration Blocks; a tie goes to the tab of the item 26.3 lists before it). A spawn egg goes among the eggs by mob
+name; an item of no kind goes after the item 26.3 lists before it (the sulfur and cinnabar blocks, in Building Blocks).
+
+## From 26.3: 26.3's order
+
+With a backport of 26.3 or later installed (Game Drops Backport) and the inventory part of the look at 26.3, every
+vanilla tab lists its items in the order 26.3's creative menu shows them (`creative.client.ModernOrder`). 26.3 has
+other tabs, so each 1.12.2 tab reads the 26.3 tabs its items come from, its home tabs first, then the rest in the
+creative menu's order (Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks, Tools &
+Utilities, Combat, Food & Drinks, Ingredients, Spawn Eggs):
+
+| 1.12.2 tab | Reads first |
+|---|---|
+| Building Blocks | Building Blocks |
+| Decoration Blocks | (26.3's order: Building, Colored, Natural, Functional...) |
+| Redstone | Redstone Blocks |
+| Transportation, Tools | Tools & Utilities |
+| Miscellaneous | Ingredients |
+| Foodstuffs, Brewing | Food & Drinks |
+| Combat | Combat |
+
+An item 26.3 lists twice (a log in Building Blocks and Natural Blocks) takes the first of those places. Each stack
+is found as the 26.3 item it is: a vanilla stack through `legacy_items.txt`, a backport's by its placement (an item
+placed after another just after that one). The tabs stay 1.12.2's (an item's tab is still its 1.19.2 one). Stacks
+26.3 does not list, other mods' included, follow the rest in the order the tab had (registry order). Before 26.3, or
+with the Look & Feel page's inventory switch off, the tabs keep the order above. Only the tabs' listing changes:
+the search tab, JEI and `getSubItems` do not.
+
+The table is `src/main/resources/assets/backportcore/creative/order_26_3.txt`: `tools/creative/CreativeOrder263.java`
+runs 26.3's own `CreativeModeTabs` from the 26.3 server jar (with its bundled libraries, Java 25) and prints every
+tab; `tools/creative/build_order_263.py` adds the home tabs, the goat horn (its tab needs a data pack reload) and the
+ids 26.3 renamed (`chain` is `iron_chain`).
+
 ## Checking a tab
 
 A client started with `-Dbackportcore.creativeDump=<file>` writes every vanilla tab's list at the first title
@@ -65,4 +103,5 @@ allprojects {
 
 `gradlew runClient -I ctdump.gradle`. In the dump, `*` marks a placed stack, with the stack before it. The end lists
 placements that show nowhere, vanilla stacks the table cannot place (none, in 1.12.2), and whether every placed item
-lists itself for the search tab, for its own tab object and in JEI.
+lists itself for the search tab, for its own tab object and in JEI. From 26.3 it also lists the stacks 26.3's order does
+not name, tab by tab.

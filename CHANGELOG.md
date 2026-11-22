@@ -23,6 +23,19 @@
 
 # 1.4.4
 
+*   26.3's creative order (`creative.client.ModernOrder`): with Game Drops Backport (26.3) the newest version, every
+    vanilla tab lists its items as 26.3's creative menu does, the family's items among vanilla's by the item each
+    stands for. 1.12.2's tabs read 26.3's tabs in order, their home tab first (Redstone reads Redstone Blocks,
+    Miscellaneous reads Ingredients); other mods' items follow in registry order. The table is
+    `creative/order_26_3.txt`, from 26.3's own `CreativeModeTabs` run from the 26.3 jar
+    (`tools/creative/CreativeOrder263.java`, `build_order_263.py`). Older looks, the Look & Feel page's inventory
+    switch off, the search tab and JEI keep their order.
+*   Fixed backport items with no creative tab at all: Core's table lacked 160 of today's items (26.1's copper
+    lanterns, chains and bars, which its registry holds one field per kind; the later drops' poplar, sulfur and
+    cinnabar sets, wool and concrete stairs and slabs, cushions...), so `CreativePlacement.place` found no tab for a backport's
+    item of that name. The table now has every item 26.3's creative menu lists, each with its kind, and spells
+    the dry grasses as the registry does (`short_dry_grass`, `tall_dry_grass`, not 26.1's field names): Tricky
+    Trials' were never placed.
 *   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
     disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
     `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,

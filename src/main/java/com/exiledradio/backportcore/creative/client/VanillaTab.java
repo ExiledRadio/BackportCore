@@ -45,7 +45,7 @@ public final class VanillaTab extends CreativeTabs {
     public void displayAllRelevantItems(NonNullList<ItemStack> items) {
         int start = items.size();
         this.original.displayAllRelevantItems(items);
-        CreativeTabsClient.arrange(items, start);
+        CreativeTabsClient.arrange(this.original, items, start);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.asm.Asm;
+import com.exiledradio.backportcore.creative.client.CreativeTabsClient;
+import com.exiledradio.backportcore.creative.client.ModernOrder;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.LoadingRevision;
 import com.exiledradio.backportcore.presentation.Presentation;
@@ -533,6 +535,79 @@ final class ClientPresentationTests {
                 com.exiledradio.backportcore.presentation.client.CreativeOrder.sorts > sortsBefore && !items.isEmpty()
                         && items.get(0).getItem() == net.minecraft.init.Items.DIAMOND_SWORD, items.isEmpty() ? "empty" : items.get(0));
         mc.displayGuiScreen(null);
+        modernCreativeOrder();
+    }
+
+    /** 26.3's creative order on 1.12.2's tabs (creative.client.ModernOrder), and that it only applies from 26.3. */
+    private static void modernCreativeOrder() {
+        net.minecraft.creativetab.CreativeTabs building = net.minecraft.creativetab.CreativeTabs.BUILDING_BLOCKS;
+        net.minecraft.creativetab.CreativeTabs misc = net.minecraft.creativetab.CreativeTabs.MISC;
+        net.minecraft.creativetab.CreativeTabs redstone = net.minecraft.creativetab.CreativeTabs.REDSTONE;
+        int oakLog = ModernOrder.rank(building, "minecraft:oak_log");
+        int stone = ModernOrder.rank(building, "minecraft:stone");
+        int wool = ModernOrder.rank(building, "minecraft:white_wool");
+        int grass = ModernOrder.rank(building, "minecraft:grass_block");
+        check("client: 26.3 order: Building Blocks reads 26.3's Building Blocks, then Colored, then Natural (a log at its Building place)",
+                oakLog == 0 && stone > oakLog && wool > stone && grass > wool, oakLog + " " + stone + " " + wool + " " + grass);
+        int coal = ModernOrder.rank(misc, "minecraft:coal");
+        int bucket = ModernOrder.rank(misc, "minecraft:bucket");
+        int egg = ModernOrder.rank(misc, "minecraft:pig_spawn_egg");
+        check("client: 26.3 order: Miscellaneous reads Ingredients first, then Tools & Utilities, spawn eggs last",
+                coal >= 0 && bucket > coal && egg > bucket, coal + " " + bucket + " " + egg);
+        int dust = ModernOrder.rank(redstone, "minecraft:redstone");
+        int door = ModernOrder.rank(redstone, "minecraft:spruce_door");
+        check("client: 26.3 order: Redstone reads Redstone Blocks first (redstone dust before the spruce door)",
+                dust >= 0 && door > dust, dust + " " + door);
+        check("client: 26.3 order: renamed ids are found (chain is 26.3's iron chain), unknown ones are not",
+                ModernOrder.rank(building, "minecraft:chain") == ModernOrder.rank(building, "minecraft:iron_chain")
+                        && ModernOrder.rank(building, "minecraft:chain") >= 0 && ModernOrder.rank(building, "minecraft:nonsense") == -1);
+
+        net.minecraft.item.Item other = null;
+        for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {
+            if (!"minecraft".equals(it.getRegistryName().getNamespace())) {
+                other = it;
+                break;
+            }
+        }
+        net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> list = net.minecraft.util.NonNullList.create();
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.GLASS));
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.STONE));
+        list.add(new net.minecraft.item.ItemStack(other));
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.STONE, 1, 1));
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.PLANKS));
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.LOG));
+        list.add(new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.DIRT));
+        CreativeTabsClient.sortModern(building, list, 1);
+        StringBuilder got = new StringBuilder();
+        for (net.minecraft.item.ItemStack s : list) {
+            got.append(s.getItem().getRegistryName()).append('@').append(s.getMetadata()).append(' ');
+        }
+        check("client: 26.3 order: a tab is sorted from where it starts, 26.3's items first, another mod's after",
+                got.toString().trim().equals("minecraft:glass@0 minecraft:log@0 minecraft:planks@0 minecraft:stone@0 minecraft:stone@1 "
+                        + "minecraft:dirt@0 " + other.getRegistryName() + "@0"), got);
+
+        if (!ModernOrder.installed()) {
+            check("client: 26.3 order: no 26.3 backport installed, so it is off (the tabs' own listing is checked with Game Drops)",
+                    !ModernOrder.active());
+            return;
+        }
+        boolean was = com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory;
+        try {
+            com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory = true;
+            net.minecraft.creativetab.CreativeTabs inArray = net.minecraft.creativetab.CreativeTabs.CREATIVE_TAB_ARRAY[building.getIndex()];
+            net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> modern = net.minecraft.util.NonNullList.create();
+            inArray.displayAllRelevantItems(modern);
+            com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory = false;
+            net.minecraft.util.NonNullList<net.minecraft.item.ItemStack> old = net.minecraft.util.NonNullList.create();
+            inArray.displayAllRelevantItems(old);
+            check("client: 26.3 order: with 26.3 installed Building Blocks starts with the oak log; with the inventory part off, stone (1.12.2's)",
+                    ModernOrder.active() == false && !modern.isEmpty() && !old.isEmpty()
+                            && modern.get(0).getItem() == net.minecraft.item.Item.getItemFromBlock(net.minecraft.init.Blocks.LOG)
+                            && old.get(0).getItem() == net.minecraft.item.Item.getItemFromBlock(net.minecraft.init.Blocks.STONE)
+                            && modern.size() == old.size(), (modern.isEmpty() ? "empty" : modern.get(0)) + " / " + (old.isEmpty() ? "empty" : old.get(0)));
+        } finally {
+            com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory = was;
+        }
     }
 
     private static void backups(Minecraft mc) {
