@@ -204,6 +204,8 @@ public final class BorderlessFullscreen {
      * {@code checkWindowResize} only looks while not fullscreen.
      */
     public static final class Events {
+        private int frames;
+
         @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
         public void onRender(net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent event) {
             if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START || VanillaRevisions.lwjglxBorderless() == null
@@ -212,6 +214,9 @@ public final class BorderlessFullscreen {
             }
             Minecraft mc = Minecraft.getMinecraft();
             try {
+                if (active && ++this.frames % 20 == 0) {
+                    Glfw.keepPlaced();
+                }
                 int[] fb = Glfw.framebufferSize();
                 if (fb[0] > 0 && fb[1] > 0 && (fb[0] != mc.displayWidth || fb[1] != mc.displayHeight)) {
                     mc.resize(fb[0], fb[1]);
@@ -261,6 +266,9 @@ public final class BorderlessFullscreen {
             return new int[] {x, y, Math.max(1, w), Math.max(1, h)};
         }
 
+        /** The window's place while borderless: x, y, width, height (height one more on Windows). */
+        private static int[] placed;
+
         static void enterBorderless(int[] monitor) throws ReflectiveOperationException {
             Class<?> g = glfw();
             long window = window();
@@ -268,10 +276,41 @@ public final class BorderlessFullscreen {
             g.getMethod("glfwGetWindowPos", long.class, int[].class, int[].class).invoke(null, window, x, y);
             g.getMethod("glfwGetWindowSize", long.class, int[].class, int[].class).invoke(null, window, w, h);
             saved = new int[] {x[0], y[0], w[0], h[0]};
-            g.getMethod("glfwSetWindowAttrib", long.class, int.class, int.class).invoke(null, window, DECORATED, 0);
             int extra = System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("win") ? 1 : 0;
+            placed = new int[] {monitor[0], monitor[1], monitor[2], monitor[3] + extra};
+            place(g, window);
+        }
+
+        private static void place(Class<?> g, long window) throws ReflectiveOperationException {
+            g.getMethod("glfwSetWindowAttrib", long.class, int.class, int.class).invoke(null, window, DECORATED, 0);
             g.getMethod("glfwSetWindowMonitor", long.class, long.class, int.class, int.class, int.class, int.class, int.class)
-                    .invoke(null, window, 0L, monitor[0], monitor[1], monitor[2], monitor[3] + extra, DONT_CARE);
+                    .invoke(null, window, 0L, placed[0], placed[1], placed[2], placed[3], DONT_CARE);
+        }
+
+        /**
+         * A game started fullscreen toggles while its window is still being made; the launch then shows and places the
+         * window, giving back its frame. Checked while borderless: framed again, or moved or resized, it is placed
+         * again (what a second F11 did by hand).
+         *
+         * @return true if the window had to be placed again
+         */
+        static boolean keepPlaced() throws ReflectiveOperationException {
+            if (placed == null) {
+                return false;
+            }
+            Class<?> g = glfw();
+            long window = window();
+            int decorated = (Integer) g.getMethod("glfwGetWindowAttrib", long.class, int.class).invoke(null, window, DECORATED);
+            int[] x = new int[1], y = new int[1], w = new int[1], h = new int[1];
+            g.getMethod("glfwGetWindowPos", long.class, int[].class, int[].class).invoke(null, window, x, y);
+            g.getMethod("glfwGetWindowSize", long.class, int[].class, int[].class).invoke(null, window, w, h);
+            if (decorated == 0 && x[0] == placed[0] && y[0] == placed[1] && w[0] == placed[2] && h[0] == placed[3]) {
+                return false;
+            }
+            BackportCore.LOGGER.info("Fullscreen: the borderless window was changed (frame {}, {},{} {}x{}); placing it again", decorated,
+                    x[0], y[0], w[0], h[0]);
+            place(g, window);
+            return true;
         }
 
         static void leaveBorderless() throws ReflectiveOperationException {
