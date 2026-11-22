@@ -38,6 +38,7 @@ public final class DarkTitleBar {
     private int applied = -1;
     private int ticks;
     private boolean broken;
+    private int noWindow;
     /** For the client self-test: the last value set (1 dark, 0 light, -1 none). */
     public static volatile int lastSet = -1;
 
@@ -49,6 +50,9 @@ public final class DarkTitleBar {
         try {
             long hwnd = hwnd();
             if (hwnd == 0L) {
+                if (++this.noWindow == 10) {
+                    BackportCore.LOGGER.info("Window title bar: no window handle found ({})", lwjglxWindow != null ? "lwjglx" : "LWJGL 2");
+                }
                 return;
             }
             int want = VanillaRevisions.darkTitleBar() && systemDark() ? 1 : 0;
@@ -57,6 +61,10 @@ public final class DarkTitleBar {
             }
             // A window Core never darkened is light already: nothing to set.
             if (want == 0 && hwnd != this.appliedHwnd) {
+                if (this.appliedHwnd == 0L) {
+                    BackportCore.LOGGER.info("Window title bar: light (26.3 look: {}, Windows dark app mode: {})", VanillaRevisions.darkTitleBar(),
+                            systemDark());
+                }
                 this.appliedHwnd = hwnd;
                 this.applied = 0;
                 return;

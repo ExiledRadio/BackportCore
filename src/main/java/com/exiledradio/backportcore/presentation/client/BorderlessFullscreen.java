@@ -113,17 +113,18 @@ public final class BorderlessFullscreen {
     }
 
     private static void enter(Minecraft mc) throws Exception {
-        java.lang.reflect.Method glfw = VanillaRevisions.lwjglxBorderless();
-        if (glfw != null) {
-            int[] size = lwjglxMonitorSize();
+        if (VanillaRevisions.lwjglxBorderless() != null) {
+            int[] monitor = Glfw.monitorRect();
             setFullscreenField(mc, true);
             mc.gameSettings.fullScreen = true;
-            glfw.invoke(null, true);
+            Glfw.enterBorderless(monitor);
             optifineFullscreenChecked();
             active = true;
-            finish(mc, size[0], size[1]);
+            int[] fb = Glfw.framebufferSize();
+            finish(mc, fb[0], fb[1]);
             entered++;
-            BackportCore.LOGGER.info("Fullscreen: borderless window {}x{} through lwjglx (Exclusive Fullscreen off)", size[0], size[1]);
+            BackportCore.LOGGER.info("Fullscreen: borderless window {}x{} at {},{} through GLFW (Exclusive Fullscreen off; framebuffer {}x{})",
+                    monitor[2], monitor[3], monitor[0], monitor[1], fb[0], fb[1]);
             return;
         }
         DisplayMode desktop = Display.getDesktopDisplayMode();
@@ -148,16 +149,16 @@ public final class BorderlessFullscreen {
     private static void leave(Minecraft mc) throws Exception {
         int w = Math.max(1, field(tempWidth(), mc));
         int h = Math.max(1, field(tempHeight(), mc));
-        java.lang.reflect.Method glfw = VanillaRevisions.lwjglxBorderless();
-        if (glfw != null) {
+        if (VanillaRevisions.lwjglxBorderless() != null) {
             setFullscreenField(mc, false);
             mc.gameSettings.fullScreen = false;
-            // lwjglx puts back the window's own place and size, saved on the way in.
-            glfw.invoke(null, false);
+            // The window's own frame, place and size, saved on the way in.
+            Glfw.leaveBorderless();
             active = false;
-            finish(mc, w, h);
+            int[] fb = Glfw.framebufferSize();
+            finish(mc, fb[0], fb[1]);
             left++;
-            BackportCore.LOGGER.info("Fullscreen: back to a {}x{} window", w, h);
+            BackportCore.LOGGER.info("Fullscreen: back to a window (framebuffer {}x{})", fb[0], fb[1]);
             return;
         }
         setFullscreenField(mc, false);
@@ -197,18 +198,87 @@ public final class BorderlessFullscreen {
         }
     }
 
-    /** The size of the monitor lwjglx's borderless window covers (the one the window is on), else the desktop's. */
-    private static int[] lwjglxMonitorSize() {
-        try {
+    /**
+     * Cleanroom (lwjglx over GLFW): every frame the game's size follows the window's real framebuffer. GLFW resizes a
+     * window through the system's messages, so the size a toggle reads can still be the old one; 1.12.2's own
+     * {@code checkWindowResize} only looks while not fullscreen.
+     */
+    public static final class Events {
+        @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+        public void onRender(net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent event) {
+            if (event.phase != net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START || VanillaRevisions.lwjglxBorderless() == null
+                    || (!active && left == 0)) {
+                return;
+            }
+            Minecraft mc = Minecraft.getMinecraft();
+            try {
+                int[] fb = Glfw.framebufferSize();
+                if (fb[0] > 0 && fb[1] > 0 && (fb[0] != mc.displayWidth || fb[1] != mc.displayHeight)) {
+                    mc.resize(fb[0], fb[1]);
+                }
+            } catch (ReflectiveOperationException | RuntimeException e) {
+                // Leave the size to the game.
+            }
+        }
+    }
+
+    /**
+     * 26.3's borderless window on GLFW (its SDL3 desktop fullscreen): the window without its frame, no monitor attached
+     * (so nothing changes the monitor's mode and nothing minimizes on focus loss), over the monitor it is on, one pixel
+     * taller on Windows (Cleanroom's own fix: some drivers treat a window exactly the monitor's size as exclusive
+     * fullscreen, which flickers when it loses focus). Reflection, since Core compiles against LWJGL 2.
+     */
+    static final class Glfw {
+        private static final int DECORATED = 0x00020005, DONT_CARE = -1;
+        private static int[] saved;
+
+        private static Class<?> glfw() throws ClassNotFoundException {
+            return Class.forName("org.lwjgl.glfw.GLFW", true, BorderlessFullscreen.class.getClassLoader());
+        }
+
+        static long window() throws ReflectiveOperationException {
+            Class<?> display = Class.forName("org.lwjglx.opengl.Display", false, BorderlessFullscreen.class.getClassLoader());
+            return (Long) display.getMethod("getWindow").invoke(null);
+        }
+
+        /** @return x, y, width, height of the monitor the window is on (lwjglx's choice for fullscreen) */
+        static int[] monitorRect() throws ReflectiveOperationException {
             Class<?> display = Class.forName("org.lwjglx.opengl.Display", false, BorderlessFullscreen.class.getClassLoader());
             Object target = display.getMethod("getTargetFullscreenMonitor").invoke(null);
             Object mode = target.getClass().getMethod("vidMode").invoke(target);
+            int x = ((Number) target.getClass().getMethod("x").invoke(target)).intValue();
+            int y = ((Number) target.getClass().getMethod("y").invoke(target)).intValue();
             int w = ((Number) mode.getClass().getMethod("width").invoke(mode)).intValue();
             int h = ((Number) mode.getClass().getMethod("height").invoke(mode)).intValue();
-            return new int[] {Math.max(1, w), Math.max(1, h)};
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            DisplayMode desktop = Display.getDesktopDisplayMode();
-            return new int[] {Math.max(1, desktop.getWidth()), Math.max(1, desktop.getHeight())};
+            return new int[] {x, y, Math.max(1, w), Math.max(1, h)};
+        }
+
+        static void enterBorderless(int[] monitor) throws ReflectiveOperationException {
+            Class<?> g = glfw();
+            long window = window();
+            int[] x = new int[1], y = new int[1], w = new int[1], h = new int[1];
+            g.getMethod("glfwGetWindowPos", long.class, int[].class, int[].class).invoke(null, window, x, y);
+            g.getMethod("glfwGetWindowSize", long.class, int[].class, int[].class).invoke(null, window, w, h);
+            saved = new int[] {x[0], y[0], w[0], h[0]};
+            g.getMethod("glfwSetWindowAttrib", long.class, int.class, int.class).invoke(null, window, DECORATED, 0);
+            int extra = System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("win") ? 1 : 0;
+            g.getMethod("glfwSetWindowMonitor", long.class, long.class, int.class, int.class, int.class, int.class, int.class)
+                    .invoke(null, window, 0L, monitor[0], monitor[1], monitor[2], monitor[3] + extra, DONT_CARE);
+        }
+
+        static void leaveBorderless() throws ReflectiveOperationException {
+            Class<?> g = glfw();
+            long window = window();
+            g.getMethod("glfwSetWindowAttrib", long.class, int.class, int.class).invoke(null, window, DECORATED, 1);
+            int[] s = saved != null ? saved : new int[] {100, 100, 854, 480};
+            g.getMethod("glfwSetWindowMonitor", long.class, long.class, int.class, int.class, int.class, int.class, int.class)
+                    .invoke(null, window, 0L, s[0], s[1], s[2], s[3], DONT_CARE);
+        }
+
+        static int[] framebufferSize() throws ReflectiveOperationException {
+            int[] w = new int[1], h = new int[1];
+            glfw().getMethod("glfwGetFramebufferSize", long.class, int[].class, int[].class).invoke(null, window(), w, h);
+            return new int[] {w[0], h[0]};
         }
     }
 
