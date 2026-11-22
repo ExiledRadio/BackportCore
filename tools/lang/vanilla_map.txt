@@ -79,3 +79,5 @@ commands.tick.step.success = commands.tick.step.success
 gui.game_rule.search = gui.game_rule.search
 editGamerule.inGame.disabled.tooltip = editGamerule.inGame.disabled.tooltip
 editGamerule.inGame.disabled.hardcore.tooltip = editGamerule.inGame.disabled.hardcore.tooltip
+# 26.2 pause menu icon row: vanilla names and tooltips.
+gui.friends.open.tooltip = gui.friends.open.tooltip

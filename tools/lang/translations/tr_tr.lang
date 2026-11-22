@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=1.14'ün /teammsg komutu ve kısal
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=26.3'ün /swing komutu: varlıkların kol sallamasını sağlar, animasyon ve süre ile (izin seviyesi 2).
+backportcore.pauseMenu.unavailable=Bu sürümde kullanılamaz

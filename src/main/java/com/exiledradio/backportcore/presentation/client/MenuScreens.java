@@ -120,8 +120,12 @@ public final class MenuScreens {
 
     static final String BUG_SPRITE = "textures/gui/sprites/pause_menu/bug.png";
     static final String FEEDBACK_SPRITE = "textures/gui/sprites/pause_menu/social_interactions.png";
+    static final String FRIENDS_SPRITE = "textures/gui/sprites/friends/friends.png";
+    static final String PLAYER_REPORTING_SPRITE = "textures/gui/sprites/pause_menu/player_reporting.png";
+    /** The message of a pause-menu button whose online service 1.12.2 does not have. */
+    public static final String UNAVAILABLE_KEY = "backportcore.pauseMenu.unavailable";
 
-    /** @return whether a backport supplies 26.2's two pause-menu sprites (else the 1.14 text row stays) */
+    /** @return whether a backport supplies 26.2's Report Bugs and Give Feedback sprites (else the 1.14 text row stays) */
     static boolean iconSprites() {
         return com.exiledradio.backportcore.presentation.Presentation.asset(BUG_SPRITE) != null
                 && com.exiledradio.backportcore.presentation.Presentation.asset(FEEDBACK_SPRITE) != null;
@@ -129,9 +133,16 @@ public final class MenuScreens {
 
     /**
      * 26.2's {@code PauseScreen.createPauseMenu}: a two-column grid (cells padded 4, the first row 50 from the top),
-     * aligned at a quarter of the free height: Back to Game; Advancements, Statistics; the icon row (Report Bugs,
-     * Send Feedback; 26.2's Friends and Player Reporting are online services 1.12.2 lacks); Options..., Open to LAN
-     * (World Options... from 26.3, the newest backport's); Forge's Mods row; Save and Quit.
+     * aligned at a quarter of the free height: Back to Game; Advancements, Statistics; the icon row; Options..., Open
+     * to LAN (World Options... from 26.3, the newest backport's); Forge's Mods row; Save and Quit.
+     * <p>
+     * The icon row (26.2's and 26.3's {@code LinearLayout.horizontal().spacing(4)}, centered): Report Bugs, Give
+     * Feedback, Friends, Player Reporting, each 20 by 20 with a 15 by 15 sprite and its name as tooltip. Friends
+     * ({@code CommonButtons.friends}) is inactive without a tooltip in a demo. Player Reporting is inactive in a world of
+     * this client's own (singleplayer or LAN host) with no other player in it, its tooltip then "There are no players to
+     * report in this world". Friends and Player Reporting are Mojang's online services, which 1.12.2 does not have:
+     * clicking either shows a system toast, its name over "Not available in this version". Each of the two is left out
+     * when no backport supplies its sprite; Report Bugs is left out without a link ({@code reportBugsLink}).
      */
     static void pause262(GuiScreen gui, List<GuiButton> buttons) {
         int w = gui.width;
@@ -168,27 +179,68 @@ public final class MenuScreens {
                     break;
             }
         }
-        // The icon row is centered: 20 + 4 + 20 with both, one button alone without a Report Bugs link.
-        int rowWidth = bugs.isEmpty() ? 20 : 44;
-        int x = w / 2 - rowWidth / 2;
+        Minecraft mc = Minecraft.getMinecraft();
         if (!bugs.isEmpty()) {
-            ICONS.add(new IconAction(x, top + 48, I18n.format("menu.reportBugs"), BUG_SPRITE, () -> confirmLink(gui, bugs)));
+            ICONS.add(new IconAction(I18n.format("menu.reportBugs"), BUG_SPRITE, () -> confirmLink(gui, bugs)));
+        }
+        ICONS.add(new IconAction(I18n.format("menu.sendFeedback"), FEEDBACK_SPRITE, () -> confirmLink(gui, FEEDBACK_URL)));
+        if (com.exiledradio.backportcore.presentation.Presentation.asset(FRIENDS_SPRITE) != null) {
+            boolean available = !mc.isDemo();
+            IconAction friends = new IconAction(available ? I18n.format("gui.friends.open.tooltip") : null, FRIENDS_SPRITE,
+                    () -> unavailable(I18n.format("gui.friends.open.tooltip")));
+            friends.enabled = available;
+            ICONS.add(friends);
+        }
+        if (com.exiledradio.backportcore.presentation.Presentation.asset(PLAYER_REPORTING_SPRITE) != null) {
+            IconAction reporting = new IconAction(I18n.format("menu.playerReporting"), PLAYER_REPORTING_SPRITE,
+                    () -> unavailable(I18n.format("menu.playerReporting")));
+            if (mc.isIntegratedServerRunning() && mc.player != null && !otherPlayers(mc)) {
+                reporting.enabled = false;
+                reporting.tooltip = I18n.format("menu.playerReporting.no_players");
+            }
+            ICONS.add(reporting);
+        }
+        int x = w / 2 - (ICONS.size() * 24 - 4) / 2;
+        for (IconAction b : ICONS) {
+            b.x = x;
+            b.y = top + 48;
             x += 24;
         }
-        ICONS.add(new IconAction(x, top + 48, I18n.format("menu.sendFeedback"), FEEDBACK_SPRITE, () -> confirmLink(gui, FEEDBACK_URL)));
         buttons.addAll(ICONS);
+    }
+
+    /** {@code getSeenPlayers()} without the player: whether the tab list has anyone else. */
+    private static boolean otherPlayers(Minecraft mc) {
+        if (mc.player.connection == null) {
+            return false;
+        }
+        java.util.UUID self = mc.player.getUniqueID();
+        for (net.minecraft.client.network.NetworkPlayerInfo info : mc.player.connection.getPlayerInfoMap()) {
+            if (!self.equals(info.getGameProfile().getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** A button whose service 1.12.2 lacks: 26.3's system toast, the button's name over "Not available in this version". */
+    static void unavailable(String name) {
+        SystemToasts.addOrUpdate(name, I18n.format(UNAVAILABLE_KEY));
     }
 
     /** The open pause menu's icon buttons (for their tooltips and the client self-test). */
     public static final List<IconAction> ICONS = new java.util.ArrayList<IconAction>();
 
-    /** 26.2's {@code SpriteIconButton.CenteredIcon}: a blank 20 by 20 button with a 15 by 15 sprite, its name as tooltip. */
+    /**
+     * 26.2's {@code SpriteIconButton.CenteredIcon}: a blank 20 by 20 button with a 15 by 15 sprite (one sprite for every
+     * state, so drawn whole on an inactive button too), its tooltip (null for none).
+     */
     public static final class IconAction extends OptionWidgets.Action {
         public final String sprite;
-        public final String tooltip;
+        public String tooltip;
 
-        IconAction(int x, int y, String tooltip, String sprite, Runnable action) {
-            super(x, y, 20, "", action);
+        IconAction(String tooltip, String sprite, Runnable action) {
+            super(0, 0, 20, "", action);
             this.sprite = sprite;
             this.tooltip = tooltip;
         }
@@ -200,7 +252,7 @@ public final class MenuScreens {
             }
             super.drawButton(mc, mouseX, mouseY, partialTicks);
             mc.getTextureManager().bindTexture(new net.minecraft.util.ResourceLocation(this.sprite));
-            net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, this.enabled ? 1.0F : 0.5F);
+            net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             net.minecraft.client.renderer.GlStateManager.enableBlend();
             net.minecraft.client.gui.Gui.drawModalRectWithCustomSizedTexture(this.x + this.width / 2 - 7, this.y + this.height / 2 - 7,
                     0.0F, 0.0F, 15, 15, 15.0F, 15.0F);
@@ -214,7 +266,7 @@ public final class MenuScreens {
             return;
         }
         for (IconAction b : ICONS) {
-            if (b.visible && b.isMouseOver()) {
+            if (b.visible && b.isMouseOver() && b.tooltip != null) {
                 event.getGui().drawHoveringText(b.tooltip, event.getMouseX(), event.getMouseY());
             }
         }

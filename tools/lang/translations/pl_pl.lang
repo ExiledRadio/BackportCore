@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=/teammsg z 1.14 i jego skrót /tm:
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=/swing z 26.3: sprawia, że byty machają ręką, z animacją i czasem trwania (poziom uprawnień 2).
+backportcore.pauseMenu.unavailable=Niedostępne w tej wersji

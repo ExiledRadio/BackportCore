@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=Il /teammsg della 1.14 e il suo al
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=Il /swing della 26.3: fa agitare un braccio alle entità, con un'animazione e una durata (livello di permesso 2).
+backportcore.pauseMenu.unavailable=Non disponibile in questa versione

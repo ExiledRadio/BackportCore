@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=1.14 の /teammsg と別名 /tm：
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=26.3 の /swing：エンティティに腕を振らせる。アニメーションと時間を指定可能（権限レベル 2）。
+backportcore.pauseMenu.unavailable=このバージョンでは利用できません

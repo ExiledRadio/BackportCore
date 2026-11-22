@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=1.14의 /teammsg와 별칭 /tm: �
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=26.3의 /swing: 개체가 팔을 휘두르게 합니다. 애니메이션과 지속 시간 지정 가능 (권한 레벨 2).
+backportcore.pauseMenu.unavailable=이 버전에서는 사용할 수 없습니다

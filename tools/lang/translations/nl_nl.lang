@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=/teammsg uit 1.14 en de alias /tm:
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=/swing uit 26.3: laat entiteiten een arm zwaaien, met een animatie en een duur (machtigingsniveau 2).
+backportcore.pauseMenu.unavailable=Niet beschikbaar in deze versie

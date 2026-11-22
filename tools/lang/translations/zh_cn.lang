@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=1.14 的 /teammsg 及其别名 /tm
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=26.3 的 /swing：让实体挥动手臂，可指定动画和持续时间（权限等级 2）。
+backportcore.pauseMenu.unavailable=此版本中不可用

@@ -176,8 +176,11 @@ change one version made stays made when only a later backport is installed:
 * **Video Settings**: 1.13 removes 3D Anaglyph (off) and numbers GUI Scale (Auto, 1, 2 ... up to what the window
   fits); 1.14 removes Use VBOs (on).
 * **Pause menu** (1.14): 1.14.4's 204-wide grid with Give Feedback and Report Bugs; Forge's Mod Options moves below.
-  26.2: the two become 20 by 20 icon buttons in one row (`VanillaRevisions.pauseIconRow`, `MenuScreens.pause262`), with
-  sprites a backport supplies (`pause_menu/bug`, `pause_menu/social_interactions`).
+  26.2: one row of 20 by 20 icon buttons (`VanillaRevisions.pauseIconRow`, `MenuScreens.pause262`), 26.2's and 26.3's:
+  Report Bugs, Give Feedback, Friends, Player Reporting, with sprites a backport supplies (`pause_menu/bug`,
+  `pause_menu/social_interactions`, `friends/friends`, `pause_menu/player_reporting`). Friends and Player Reporting
+  (Mojang's online services) show 26.3's system toast (`SystemToasts`, sprite `toast/system`): "Not available in this
+  version".
 * **Creative tabs** (26.3, `creative.client.ModernOrder`): every vanilla tab in 26.3's creative order, 1.12.2's tabs
   reading 26.3's (`docs/CREATIVE_TABS.md`). Before 26.3, 1.12.2's order with the backports' items by their neighbors.
 * **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
