@@ -1,5 +1,11 @@
 # 1.4.6
 
+*   26.3's `/locate poi <type|#tag>` (`locate.PoiLocate`): 26.3's 21 types and 3 tags, today's search (256 blocks,
+    `findClosestWithType`), messages and suggestions. 1.12.2 keeps no point of interest index, so the blocks are
+    read: loaded chunks by section palette, unloaded ones from their saves without loading them. Types match the
+    family's blocks by name (Village & Pillage's workstations and bell, Buzzy Bees' nests and hives, Nether
+    Update's lodestone, Caves & Cliffs' lightning rod and cauldrons) and 1.12.2's beds, brewing stand, cauldron and
+    nether portal; `PoiLocate.register`/`tag` for others. Kept in 1.4.4 (unreleased).
 *   26.3's `/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]` (`command/swing/`, setting
     `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
     The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's
