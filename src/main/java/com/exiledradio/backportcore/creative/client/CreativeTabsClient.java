@@ -51,10 +51,17 @@ public final class CreativeTabsClient {
 
     private static final double NONE = Double.NaN;
 
+    /** 1.12.2's nine item tabs, in the tables' order. */
+    static final CreativeTabs[] VANILLA_TABS = {CreativeTabs.BUILDING_BLOCKS, CreativeTabs.DECORATIONS,
+            CreativeTabs.REDSTONE, CreativeTabs.TRANSPORTATION, CreativeTabs.MISC, CreativeTabs.FOOD, CreativeTabs.TOOLS,
+            CreativeTabs.COMBAT, CreativeTabs.BREWING};
+
     private static int builtAt = -1;
     private static Map<Item, List<Placement>> byItem = new IdentityHashMap<Item, List<Placement>>();
     private static Map<ResourceLocation, Placement> byEgg = new HashMap<ResourceLocation, Placement>();
     private static Set<String> eggMods = new HashSet<String>();
+    /** The mods that place items: the backports. */
+    private static Set<String> backportMods = new HashSet<String>();
     private static Map<Placement, Double> keys = new IdentityHashMap<Placement, Double>();
     private static final Map<Item, Map<Integer, Double>> VANILLA = new IdentityHashMap<Item, Map<Integer, Double>>();
     private static final Map<ResourceLocation, Double> VANILLA_EGGS = new HashMap<ResourceLocation, Double>();
@@ -63,10 +70,21 @@ public final class CreativeTabsClient {
     private CreativeTabsClient() {
     }
 
-    /** From Core's init on a client: every block and item is registered, and no tab has been listed. */
+    /**
+     * From Core's init on a client: every block and item is registered, and no tab has been listed. With a backport of
+     * 26.3 or later installed every vanilla tab is replaced, as each may be read in 26.3's order ({@link ModernOrder}).
+     */
     public static void install() {
         int n = 0;
-        for (CreativeTabs tab : placedTabs()) {
+        List<CreativeTabs> tabs = placedTabs();
+        if (ModernOrder.installed()) {
+            for (CreativeTabs tab : VANILLA_TABS) {
+                if (!tabs.contains(tab)) {
+                    tabs.add(tab);
+                }
+            }
+        }
+        for (CreativeTabs tab : tabs) {
             CreativeTabs inArray = CreativeTabs.CREATIVE_TAB_ARRAY[tab.getIndex()];
             if (inArray instanceof VanillaTab) {
                 continue;
@@ -99,6 +117,17 @@ public final class CreativeTabsClient {
             out.add(CreativeTabs.MISC);
         }
         return out;
+    }
+
+    /**
+     * Moves the placed stacks among {@code items} from {@code start} on (a tab's list) to their places; from 26.3 on,
+     * then lists the whole tab in 26.3's order ({@link ModernOrder}).
+     */
+    static void arrange(CreativeTabs tab, NonNullList<ItemStack> items, int start) {
+        arrange(items, start);
+        if (ModernOrder.active()) {
+            sortModern(tab, items, start);
+        }
     }
 
     /** Moves the placed stacks among {@code items} from {@code start} on (a tab's list) to their places. */
@@ -153,6 +182,117 @@ public final class CreativeTabsClient {
                 BackportCore.LOGGER.error("Creative tabs: could not order a tab", e);
             }
         }
+    }
+
+    /**
+     * Lists {@code items} from {@code start} on in 26.3's order for {@code tab} (one of 1.12.2's nine): each stack by
+     * the 26.3 item it is (a backport's by its placement, an item placed after another just after that one), the
+     * stacks of one item in the order they were listed, and the stacks 26.3 does not list after the rest, as they were.
+     */
+    public static void sortModern(CreativeTabs tab, NonNullList<ItemStack> items, int start) {
+        try {
+            rebuild();
+            final List<ItemStack> stacks = new ArrayList<ItemStack>(items.subList(start, items.size()));
+            final double[] keys = new double[stacks.size()];
+            Integer[] order = new Integer[stacks.size()];
+            for (int i = 0; i < keys.length; i++) {
+                double k = modernKey(tab, stacks.get(i));
+                keys[i] = Double.isNaN(k) ? Double.POSITIVE_INFINITY : k;
+                order[i] = i;
+            }
+            // Stable: equal keys (the variants of one item, the stacks 26.3 does not list) keep their order.
+            java.util.Arrays.sort(order, Comparator.comparingDouble(i -> keys[i]));
+            for (int i = 0; i < order.length; i++) {
+                items.set(start + i, stacks.get(order[i]));
+            }
+        } catch (RuntimeException e) {
+            if (WARNED.add("modern")) {
+                BackportCore.LOGGER.error("Creative tabs: could not list a tab in 26.3's order", e);
+            }
+        }
+    }
+
+    /** @return a stack's place in 26.3's order for {@code tab}, or NONE when 26.3 does not list it */
+    static double modernKey(CreativeTabs tab, ItemStack stack) {
+        Placement p = placement(stack);
+        if (p == null) {
+            String id = VanillaOrder.modernId(stack);
+            if (id != null) {
+                return modernRank(tab, id);
+            }
+            // A backport's item it did not place (a mod that places others is a backport) is found by its name, as
+            // an item placed after another is; another mod's item has no place.
+            ResourceLocation mod = stack.getItem().getRegistryName();
+            if (mod == null || !backportMods.contains(mod.getNamespace())) {
+                return NONE;
+            }
+        }
+        if (p == null || p.modernId == null) {
+            // An item placed after another because Core's older table lacks it may be a 26.3 item by its name: its
+            // own (a straw bed), or, for an item with a metadata per dye color, that color's (Game Drops' cushion; its
+            // wool stairs, one item per few colors named after the first, pink_wool_stairs@7 being the gray ones).
+            String id = namedId(stack);
+            double named = id == null ? NONE : modernRank(tab, id);
+            ResourceLocation own = stack.getItem().getRegistryName();
+            if (Double.isNaN(named) && own != null) {
+                named = modernRank(tab, "minecraft:" + own.getPath());
+            }
+            if (!Double.isNaN(named) || p == null) {
+                return named;
+            }
+        }
+        return modernKey(tab, p, 0);
+    }
+
+    private static final String[] DYES = {"white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray",
+            "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"};
+
+    /**
+     * @return the 26.3 id a backport stack's name gives: {@code minecraft:<path>}, or for an item with subtypes the
+     * dye color of its metadata in place of the color its name starts with (or before the name)
+     */
+    @Nullable
+    static String namedId(ItemStack stack) {
+        ResourceLocation name = stack.getItem().getRegistryName();
+        if (name == null) {
+            return null;
+        }
+        String path = name.getPath();
+        int meta = stack.getMetadata();
+        if (!stack.getHasSubtypes() || meta < 0 || meta >= DYES.length) {
+            return "minecraft:" + path;
+        }
+        String rest = path;
+        for (String dye : DYES) {
+            if (path.startsWith(dye + "_") && path.length() - dye.length() - 1 < rest.length()) {
+                rest = path.substring(dye.length() + 1);
+            }
+        }
+        return "minecraft:" + DYES[meta] + "_" + rest;
+    }
+
+    private static double modernKey(CreativeTabs tab, Placement p, int depth) {
+        if (p.modernId != null) {
+            return modernRank(tab, p.modernId);
+        }
+        if (p.anchor == null || depth > 16) {
+            return NONE;
+        }
+        // An item vanilla does not have, after its anchor: a vanilla item, or another backport item.
+        double anchor = modernRank(tab, p.anchor);
+        if (Double.isNaN(anchor)) {
+            Item item = Item.getByNameOrId(p.anchor);
+            List<Placement> list = item == null ? null : byItem.get(item);
+            if (list != null && !list.isEmpty()) {
+                anchor = modernKey(tab, list.get(0), depth + 1);
+            }
+        }
+        return Double.isNaN(anchor) ? NONE : anchor + 0.001 * (depth + 1);
+    }
+
+    private static double modernRank(CreativeTabs tab, String modernId) {
+        int r = ModernOrder.rank(tab, modernId);
+        return r < 0 ? NONE : r;
     }
 
     /**
@@ -250,8 +390,16 @@ public final class CreativeTabsClient {
                 list.add(p);
             }
         }
+        Set<String> mods = new HashSet<String>(CreativePlacement.spawnEggMods());
+        for (Item item : items.keySet()) {
+            if (item.getRegistryName() != null) {
+                mods.add(item.getRegistryName().getNamespace());
+            }
+        }
+        mods.remove("minecraft");
         byItem = items;
         byEgg = eggs;
+        backportMods = mods;
         eggMods = new HashSet<String>(CreativePlacement.spawnEggMods());
         keys = new IdentityHashMap<Placement, Double>();
         builtAt = now;
@@ -408,6 +556,8 @@ public final class CreativeTabsClient {
     private static void dump(PrintWriter w) {
         rebuild();
         Set<String> unmapped = new LinkedHashSet<String>();
+        Set<String> notModern = new LinkedHashSet<String>();
+        boolean modern = ModernOrder.active();
         Set<Placement> shown = new HashSet<Placement>();
         int placedStacks = 0;
         for (CreativeTabs tab : CreativeTabs.CREATIVE_TAB_ARRAY) {
@@ -416,23 +566,28 @@ public final class CreativeTabsClient {
             }
             NonNullList<ItemStack> items = NonNullList.create();
             tab.displayAllRelevantItems(items);
-            w.println("== " + tab.getTabLabel() + " (index " + tab.getIndex() + (tab instanceof VanillaTab ? ", ordered by Core" : "")
+            boolean ours = tab instanceof VanillaTab;
+            w.println("== " + tab.getTabLabel() + " (index " + tab.getIndex()
+                    + (ours ? (modern ? ", in " + ModernOrder.VERSION + "'s order" : ", ordered by Core") : "")
                     + ", " + items.size() + " stacks)");
             String previous = "(start)";
             for (int i = 0; i < items.size(); i++) {
                 ItemStack stack = items.get(i);
                 Placement p = placement(stack);
                 String name = describe(stack);
-                String modern = p != null ? (p.modernId != null ? p.modernId : "after " + p.anchor) : VanillaOrder.modernId(stack);
-                if (p == null && modern != null && VanillaOrder.position(modern) < 0) {
-                    unmapped.add(name + " -> " + modern);
+                String modernName = p != null ? (p.modernId != null ? p.modernId : "after " + p.anchor) : VanillaOrder.modernId(stack);
+                if (p == null && modernName != null && VanillaOrder.position(modernName) < 0) {
+                    unmapped.add(name + " -> " + modernName);
+                }
+                if (modern && ours && Double.isNaN(modernKey(((VanillaTab) tab).original(), stack))) {
+                    notModern.add(tab.getTabLabel() + ": " + name + (modernName == null ? "" : " -> " + modernName));
                 }
                 if (p != null) {
                     shown.add(p);
                     placedStacks++;
-                    w.println(String.format("  %4d * %-48s %-44s after %s", i, name, modern, previous));
+                    w.println(String.format("  %4d * %-48s %-44s after %s", i, name, modernName, previous));
                 } else {
-                    w.println(String.format("  %4d   %-48s %s", i, name, modern == null ? "" : modern));
+                    w.println(String.format("  %4d   %-48s %s", i, name, modernName == null ? "" : modernName));
                 }
                 previous = name;
             }
@@ -450,6 +605,12 @@ public final class CreativeTabsClient {
         w.println("== Vanilla stacks with no place in vanilla's order (fix legacy_items.txt):");
         for (String s : unmapped) {
             w.println("  " + s);
+        }
+        if (modern) {
+            w.println("== Stacks " + ModernOrder.VERSION + "'s order does not list (after the rest of their tab):");
+            for (String s : notModern) {
+                w.println("  " + s);
+            }
         }
         searchAndJei(w);
     }
