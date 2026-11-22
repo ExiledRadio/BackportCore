@@ -88,6 +88,7 @@ final class PatchTests {
             {"net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "P40", new String[] {"tilePartialTicks"}},
             {"net.minecraft.block.BlockJukebox", "P41", new String[] {"has", "signal"}},
             {"net.minecraft.client.Minecraft", "P42", new String[] {"borderlessToggle"}},
+            {"net.minecraft.world.biome.BiomeColorHelper", "P44", new String[] {"colorBiome"}},
     };
 
     private PatchTests() {
@@ -320,6 +321,7 @@ final class PatchTests {
             case "P38": case "P39": case "P40": cls = "TickTransformer"; break;
             case "P41": cls = "JukeboxSignalTransformer"; break;
             case "P42": cls = "FullscreenTransformer"; break;
+            case "P44": cls = "BiomeColorTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

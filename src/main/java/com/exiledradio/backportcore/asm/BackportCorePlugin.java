@@ -62,6 +62,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             TickTransformer.class.getName(),
             JukeboxSignalTransformer.class.getName(),
             FullscreenTransformer.class.getName(),
+            BiomeColorTransformer.class.getName(),
     };
 
     @Override

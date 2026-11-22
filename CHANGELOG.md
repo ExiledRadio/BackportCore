@@ -23,6 +23,12 @@
 
 # 1.4.4
 
+*   Game Drops Backport's sulfur caves: `worldgen.UndergroundBiomes`, a backport's biome by column and height (saved
+    in the chunk as `backportcore_underground`, sent on channel `backportcore_ub`), read by F3's biome line, the grass,
+    foliage and water blend (P44, `BiomeColorHelper.getColorAtPos`) and `WaterColors.at`; `worldgen.DeferredPlacement`,
+    feature work past 1.12's population window run once every chunk it touches is loaded and populated with its -x and
+    -z neighbors (saved per dimension, `data/backportcore_deferred.dat`).
+
 *   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
     disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
     `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,

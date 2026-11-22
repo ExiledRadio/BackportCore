@@ -23,7 +23,8 @@ import java.util.Map;
  * colors with no call; else none ({@code null}: the drawer's own rule, such as a filter over another mod's tint). Every
  * biome vanilla gives the defaults ({@link #DEFAULT_WATER}, {@link #DEFAULT_FOG}) answers them.
  *
- * <p>{@link #at} reads a modern world's own 3D biome first (Caves &amp; Cliffs Backport's 1.18 terrain), so a warm ocean
+ * <p>{@link #at} reads an underground biome a backport registered there first ({@code worldgen.UndergroundBiomes}, since
+ * 1.4.4), then a modern world's own 3D biome (Caves &amp; Cliffs Backport's 1.18 terrain), so a warm ocean
  * there is a warm ocean though its 1.12 column says ocean.
  */
 public final class WaterColors {
@@ -100,6 +101,13 @@ public final class WaterColors {
      */
     @Nullable
     public static int[] at(World world, BlockPos pos) {
+        Biome under = com.exiledradio.backportcore.worldgen.UndergroundBiomes.at(world, pos);
+        if (under != null) {
+            int[] u = of(under);
+            if (u != null) {
+                return u;
+            }
+        }
         Biome biome = world.getBiome(pos);
         synchronized (WaterColors.class) {
             int[] r = REGISTERED.get(biome);
