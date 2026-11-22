@@ -39,6 +39,11 @@
 *   Game Drops Backport's babies (stream 1): `mechanics.AgeLockable` (`isBaby`, `getAge`/`setAge`, `startAge`, the
     `AgeLocked` flag) for babies the golden dandelion locks that are not `EntityAgeable` or start at another age, and
     `VanillaRevisions.babyModels()` / `setBabyModelSwitch`, when a backport draws its babies with 26.1's models.
+
+*   26.3's off-map player markers (P43, `map/MapFacing`; with a backport registering 26.3): a player beyond a map's
+    edge (`player_off_map`) or far beyond it (`player_off_limits`) keeps their facing, as on the map (the Nether's
+    spin included), drawn from 26.3's pointed sprites instead of 1.12.2's round dots.
+*   API: `JigsawPools.placer(idOrType)`, the feature placer registered for an id, so a backport can wrap another's.
 *   26.1's F3 (`ModernDebugLines`): "Day #n" split from Local Difficulty, "Speed: n blocks/tick", the spawn line by
     26.1's category abbreviations; Debug Options entries `day_count`, `player_speed` (26.1) and `entity_spawn_counts`
     (an entry's `since` hides newer ones from older looks). 26.3's centered, bold, underlined option headers

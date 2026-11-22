@@ -4,6 +4,8 @@
 *   **26.x's debug screen lines** with Game Drops Backport: "Day #" on its own line, the player's speed, and the spawn counts by today's mob categories, each one its own entry in Debug Options (off by default, as in 26.3).
 *   **Underground biomes on the debug screen and in colors**: a backport's biome under ground (Game Drops Backport's sulfur caves) is the F3 biome where you stand, and grass, leaves and water there take its colors, as in today's game.
 *   **For world generation**: a backport's features may now finish blocks just past the area 1.12.2 lets a chunk write (far sulfur spikes, the outer tuff of large sulfur springs), once the chunks there have generated; the waiting work is saved with the world.
+
+*   **26.3's map markers** with Game Drops Backport: when you are off the edge of a map, your marker still points the way you face.
 *   **26.3's section headings** in Video Settings with Game Drops Backport: bold, underlined and centered.
 *   **Borderless fullscreen**, as 26.3 has it by default, with Game Drops Backport: Fullscreen is a window without a frame that fills the monitor, so switching to other windows is instant. Turn Exclusive Fullscreen on in Video Settings for 1.12.2's fullscreen. (Not on Cleanroom, which draws its own window.)
 *   **A smaller debug screen**, as in 26.3, with Game Drops Backport: F3 has its own GUI Scale at the bottom of Debug Options (F3 + F6), Auto by default (half the largest scale), or Unchanged for the game's.

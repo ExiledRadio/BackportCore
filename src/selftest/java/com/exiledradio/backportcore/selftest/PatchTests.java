@@ -89,6 +89,7 @@ final class PatchTests {
             {"net.minecraft.block.BlockJukebox", "P41", new String[] {"has", "signal"}},
             {"net.minecraft.client.Minecraft", "P42", new String[] {"borderlessToggle"}},
             {"net.minecraft.world.biome.BiomeColorHelper", "P44", new String[] {"colorBiome"}},
+            {"net.minecraft.world.storage.MapData", "P43", new String[] {"enter", "facing"}},
     };
 
     private PatchTests() {
@@ -322,6 +323,7 @@ final class PatchTests {
             case "P41": cls = "JukeboxSignalTransformer"; break;
             case "P42": cls = "FullscreenTransformer"; break;
             case "P44": cls = "BiomeColorTransformer"; break;
+            case "P43": cls = "MapFacingTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
