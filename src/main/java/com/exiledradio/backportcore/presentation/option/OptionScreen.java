@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
  *
  * <p>The first six are 1.12.2's own screens, which Core adds to through Forge's GUI events. The rest came
  * later; Core builds {@link #ACCESSIBILITY} and {@link #MOUSE} itself once a 1.14 or later backport is
- * installed. The 1.18 and 1.20.5 screens are not built yet: an option placed on one shows on its
+ * installed, and {@link #ONLINE} from 1.18. Key Binds and the 1.20.5 screen are not built yet: an option placed on one shows on its
  * {@link #fallback()} until they are.
  */
 public enum OptionScreen {
@@ -31,8 +31,8 @@ public enum OptionScreen {
     MOUSE("1.14", CONTROLS, true),
     /** Key Binds, 1.18. Not built yet. */
     KEY_BINDS("1.18", CONTROLS, false),
-    /** Online Options, 1.18. Not built yet. */
-    ONLINE("1.18", OPTIONS, false),
+    /** Online Options, 1.18 (Core 1.4.5: reached from Options' "Online..."; Realms Notifications is there). */
+    ONLINE("1.18", OPTIONS, true),
     /** Font Settings, 1.20.5. Not built yet. */
     FONT("1.20.5", OPTIONS, false);
 

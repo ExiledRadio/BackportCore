@@ -17,13 +17,13 @@ public enum LookArea {
     /** The startup screen drawn when resources load (1.14's Mojang bar, 1.16's Mojang Studios). */
     STARTUP("startupScreen", "1.14", "1.16", "1.17"),
     /** The title screen: panorama, its overlay and motion, the logo, the fade-in and the Accessibility button. */
-    TITLE("titleScreen", "1.13", "1.14", "1.20", "1.20.5"),
+    TITLE("titleScreen", "1.13", "1.14", "1.19.4", "1.20", "1.20.5"),
     /** The splash text list. */
     SPLASHES("splashes"),
     /** Menu backgrounds, buttons, the pause and death screens, the world list and the multiplayer warning. */
-    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.20.5", "1.21.2"),
+    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.20.5", "1.21.2", "1.21.9"),
     /** The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. */
-    OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.20.2", "1.21.9"),
+    OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.19.3", "1.19.4", "1.20.2", "1.20.5", "1.21.9"),
     /** Video Settings: its layout, its removed and added options. */
     VIDEO("videoSettings", "1.13", "1.14", "1.21.6", "1.21.11", "26.3"),
     /** Chat: command suggestions, the chat options and look. */
@@ -42,7 +42,7 @@ public enum LookArea {
     /** Sky, fog and clouds: each version's fog, sky color, clouds and sunrise steps. */
     SKY("sky"),
     /** Vanilla's text as each version words it. */
-    WORDING("wording"),
+    WORDING("wording", "1.20.2"),
     /** Vanilla's textures as each version has them (Core's existing {@code textures.modernTextures}). */
     TEXTURES("modernTextures", "1.14");
 

@@ -224,6 +224,29 @@ change one version made stays made when only a later backport is installed:
   world, `GameRulesScreen.inWorld(parent)` (26.3's `InWorldGameRulesScreen`, Game Drops Backport's World Options) asks
   the server on channel `backportcore_rules`, shows "Retrieving game rules...", sends the changed rules on Done (asking
   first when leaving with changes); the server answers and applies only for permission level 2, as `/gamerule` does.
+* **Header and footer** (1.20.5, `client.HeaderFooterLayout`, Core 1.4.5): 26.3's `HeaderAndFooterLayout` for 1.12.2's
+  screens: the title centered in a 33-high header (y 12), the footer's buttons centered at `height - 27` (Done 200
+  wide, or a row 8 apart), the contents between. `attachRows` turns a screen's own button grid into 26.3's
+  `OptionsList` (rows of 25, two 150-wide columns, the list background and separators), the buttons still reaching the
+  screen's `actionPerformed` and Forge's action events; `fitList` puts a 1.12.2 `GuiSlot` between the separators;
+  `contentsTop` places a grid 30 under the header. Applied to Options, Skin Customization, Music & Sounds, Chat
+  Settings, Accessibility, Controls, Mouse Settings, Online Options, Key Binds and Credits & Attribution (the class
+  comment says how to use it on another screen; Language, Resource Packs and Select World are not done yet). Edit
+  World has no header and footer in 26.3: it is one centered column from 1.20.5 (`client.EditWorldScreen`).
+* **Options** (26.3's `OptionsScreen`): 1.18's Online... in Realms Notifications' place (Online Options: the Realms
+  section with Realms Notifications; Allow Server Listing needs 1.18's client information packet field and is left
+  out); 1.19.3's Telemetry Data, greyed out, with 1.20.5's tooltip "Telemetry is disabled."; 1.19.4's Credits &
+  Attribution (Credits rolls 1.12.2's end credits; Attribution and Licenses open Mojang's pages after the link
+  confirmation). From 1.20.5 the screen is 26.3's: a 61-high header with the title and FOV / Online..., the grid
+  30 under it, Done in the footer. In a world Difficulty keeps its place in singleplayer until a backport removes it
+  (26.1 moved it to World Options), and Online... takes it otherwise.
+* **Title screen copyright** (1.19.4): the copyright text opens Credits & Attribution. The Realms button reads
+  "Minecraft Realms" in full from 1.13 (Forge 1.12.2 strips "Minecraft").
+* **Multiplayer warning** (`VanillaRevisions.WarningLayout`): 1.15.2's layout to 1.20.4; 1.20.5's centered column;
+  1.21.9's (26.3's) framed message box, single-spaced, scrolling only when taller than `height - 100`.
+* **Back for Cancel** (1.20.2): Select World's and Play Multiplayer's way back to the title screen. The other words
+  these menus changed (Direct Connection, Open Pack Folder, Available, Selected) are vanilla's keys reworded: a
+  backport's vanilla text.
 * **Controls** (1.18): Options' "Controls..." opens Core's Controls screen (Mouse Settings... and Key Binds..., then
   Toggle Crouch, Toggle Sprint, Attack/Destroy, Use Item/Place Block and Auto-Jump in 1.21.11's order, then the
   backports' Controls options); "Key Binds..." is 1.12.2's key list with its top rows gone, titled Key Binds, the list
@@ -420,10 +443,10 @@ change one version made stays made when only a later backport is installed:
   describe their arguments), the usage of the argument at the cursor (the whole command's `getUsage` shows instead),
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
 * Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
-* Key Binds, Online and Font Settings screens.
+* Font Settings; Key Binds as a screen of Core's own (1.12.2's key list serves, with the header and footer).
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
-  rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers and header-and-footer layouts (1.12.2's screens
-  keep their layouts, only the backgrounds change).
+  rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers, and the header and footer on Language,
+  Resource Packs, Select World and Play Multiplayer (`HeaderFooterLayout` is ready for them).
 ## Command suggestions
 
 On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen

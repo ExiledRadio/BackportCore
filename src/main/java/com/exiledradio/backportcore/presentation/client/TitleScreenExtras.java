@@ -27,7 +27,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *   <li>1.13's fade-in on the game's first title screen: the panorama at once, then the logo, splash, text and
  *       buttons fading in over the next second. Drawn by drawing the panorama again over the finished screen with
  *       the remaining opacity, which blends exactly as vanilla's per-element alpha does;</li>
- *   <li>1.15.2's multiplayer warning before the server list, from the title screen, until it is dismissed for good.</li>
+ *   <li>1.15.2's multiplayer warning before the server list, from the title screen, until it is dismissed for good;</li>
+ *   <li>1.19.4's copyright text as a link to Credits &amp; Attribution ({@code PlainTextButton}; 1.12.2's rolled the end
+ *       credits), and "Minecraft Realms" in full on the Realms button (Forge 1.12.2 shortens it to "Realms" to fit
+ *       beside Mods; modern Forge and vanilla keep the full text, which fits in 98).</li>
  * </ul>
  */
 @SideOnly(Side.CLIENT)
@@ -48,6 +51,13 @@ public final class TitleScreenExtras {
             return;
         }
         TITLE_ICONS.clear();
+        if (Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.TITLE, "1.13")) {
+            for (GuiButton b : event.getButtonList()) {
+                if (b.id == REALMS_BUTTON) {
+                    b.displayString = I18n.format("menu.online");
+                }
+            }
+        }
         if (iconRow((GuiMainMenu) event.getGui(), event.getButtonList())) {
             return;
         }
@@ -58,6 +68,40 @@ public final class TitleScreenExtras {
             event.getButtonList().add(new IconButton(menu.width / 2 + 104, j + 72 + 12, icon, I18n.format("narrator.button.accessibility"),
                     () -> Minecraft.getMinecraft().displayGuiScreen(OptionsListScreen.accessibility(menu))));
         }
+    }
+
+    /** 1.12.2's Realms button id on the title screen. */
+    static final int REALMS_BUTTON = 14;
+    /** 1.12.2's copyright line (not a lang key in 1.12.2). */
+    static final String COPYRIGHT = "Copyright Mojang AB. Do not distribute!";
+
+    /**
+     * 1.19.4: a click on the copyright text opens Credits &amp; Attribution (26.3's {@code PlainTextButton}, as wide as
+     * the text, 10 high, at {@code width - textWidth - 2, height - 10}); 1.12.2's own click there rolls the end credits,
+     * so it is taken first. The underline on hover is 1.12.2's.
+     */
+    @SubscribeEvent
+    public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
+        if (!(event.getGui() instanceof GuiMainMenu) || !org.lwjgl.input.Mouse.getEventButtonState() || org.lwjgl.input.Mouse.getEventButton() != 0
+                || !VanillaRevisions.creditsAndAttribution(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.TITLE))) {
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        net.minecraft.client.gui.GuiScreen gui = event.getGui();
+        int x = org.lwjgl.input.Mouse.getEventX() * gui.width / mc.displayWidth;
+        int y = gui.height - org.lwjgl.input.Mouse.getEventY() * gui.height / mc.displayHeight - 1;
+        if (copyrightAt(gui, x, y)) {
+            event.setCanceled(true);
+            mc.getSoundHandler().playSound(net.minecraft.client.audio.PositionedSoundRecord.getMasterRecord(net.minecraft.init.SoundEvents.UI_BUTTON_CLICK, 1.0F));
+            mc.displayGuiScreen(new CreditsAndAttributionScreen(gui));
+        }
+    }
+
+    /** @return whether (x, y) is on the title screen's copyright text, as 1.12.2's own test */
+    static boolean copyrightAt(net.minecraft.client.gui.GuiScreen gui, int x, int y) {
+        int w = Minecraft.getMinecraft().fontRenderer.getStringWidth(COPYRIGHT);
+        int left = gui.width - w - 2;
+        return x > left && x < left + w && y > gui.height - 10 && y < gui.height;
     }
 
     static final String LANGUAGE_SPRITE = "textures/gui/sprites/icon/language.png";

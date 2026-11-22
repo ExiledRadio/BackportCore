@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.presentation.client;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 
 import net.minecraft.client.Minecraft;
@@ -50,6 +51,8 @@ public final class MenuScreens {
             pause262(gui, event.getButtonList());
         } else if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseFeedback()) {
             pause(gui, event.getButtonList());
+        } else if (gui instanceof net.minecraft.client.gui.GuiWorldSelection || gui instanceof net.minecraft.client.gui.GuiMultiplayer) {
+            backForCancel(gui, event.getButtonList());
         } else if (gui instanceof GuiGameOver && VanillaRevisions.hardcoreTitleButton()) {
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.world != null && mc.world.getWorldInfo().isHardcoreModeEnabled()) {
@@ -63,6 +66,24 @@ public final class MenuScreens {
 
     /** For the client self-test. */
     public static volatile int hardcoreExits;
+
+    /** 1.12.2's id of Select World's and Play Multiplayer's Cancel. */
+    static final int CANCEL_BUTTON = 0;
+
+    /**
+     * 1.20.2 (1.20.1's {@code SelectWorldScreen} and {@code JoinMultiplayerScreen} still said Cancel): their way back
+     * to the title screen reads Back ({@code CommonComponents.GUI_BACK}, 1.12.2's own {@code gui.back}). The other
+     * words those screens changed are the same keys reworded, which the backports' vanilla text carries.
+     */
+    static void backForCancel(GuiScreen gui, List<GuiButton> buttons) {
+        if (!Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.WORDING, "1.20.2")) {
+            return;
+        }
+        GuiButton cancel = find(buttons, CANCEL_BUTTON);
+        if (cancel != null && I18n.format("gui.cancel").equals(cancel.displayString)) {
+            cancel.displayString = I18n.format("gui.back");
+        }
+    }
 
     @SubscribeEvent
     public void onAction(GuiScreenEvent.ActionPerformedEvent.Pre event) {

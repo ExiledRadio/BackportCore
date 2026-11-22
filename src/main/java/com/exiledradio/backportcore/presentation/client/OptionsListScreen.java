@@ -75,6 +75,19 @@ public class OptionsListScreen extends GuiScreen {
         return new OptionsListScreen(parent, "controls.title", OptionScreen.CONTROLS, CONTROLS);
     }
 
+    /** 1.18's Online Options, as far as 1.12.2 has them: Realms Notifications. */
+    public static final GameSettings.Options[] ONLINE = {GameSettings.Options.REALMS_NOTIFICATIONS};
+
+    /**
+     * @return Core's Online Options (1.18, from Options' "Online..."): the Realms section with Realms Notifications.
+     *         26.3's Servers section (Allow Server Listing) is left out: the setting travels in the client information
+     *         packet of 1.18 and later, which 1.12.2's has no field for, so no server could read it. Friends List and
+     *         Xbox Settings are Mojang's online services.
+     */
+    public static OptionsListScreen online(GuiScreen parent) {
+        return new OptionsListScreen(parent, "options.online.title", OptionScreen.ONLINE, ONLINE);
+    }
+
     /** @return Core's Mouse Settings screen */
     public static OptionsListScreen mouse(GuiScreen parent) {
         return new OptionsListScreen(parent, "options.mouse_settings.title", OptionScreen.MOUSE, MOUSE);
@@ -118,9 +131,16 @@ public class OptionsListScreen extends GuiScreen {
                     () -> this.mc.displayGuiScreen(controls(this))));
         }
         boolean footer = this.screen == OptionScreen.ACCESSIBILITY && Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.16.4");
-        int gridBottom = this.height / 6 + 24 * ((entries.size() + 1) / 2 - 1) + 20;
         this.list = null;
         this.rowButtons.clear();
+        if (HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            // 1.20.5's OptionsSubScreen: the title in the header, the options a list between the separators, Done (or the
+            // Accessibility Guide and Done) in the footer.
+            HeaderFooterLayout.title(this, this.title, HeaderFooterLayout.HEADER);
+            scrolling(entries, footer);
+            return;
+        }
+        int gridBottom = this.height / 6 + 24 * ((entries.size() + 1) / 2 - 1) + 20;
         if (gridBottom > (footer ? this.height - 31 : this.height - 28)) {
             scrolling(entries, footer);
             return;
@@ -144,9 +164,14 @@ public class OptionsListScreen extends GuiScreen {
 
     /** 1.16.4's AccessibilityOptionsScreen.createFooter: the guide and Done side by side at the bottom. */
     private void addFooter() {
-        this.buttonList.add(new OptionWidgets.Action(this.width / 2 - 155, this.height - 27, 150, I18n.format("options.accessibility.link"),
-                () -> MenuScreens.confirmLink(this, GUIDE_URL)));
-        this.buttonList.add(new GuiButton(200, this.width / 2 + 5, this.height - 27, 150, 20, I18n.format("gui.done")));
+        GuiButton guide = new OptionWidgets.Action(this.width / 2 - 155, this.height - 27, 150, I18n.format("options.accessibility.link"),
+                () -> MenuScreens.confirmLink(this, GUIDE_URL));
+        GuiButton done = new GuiButton(200, this.width / 2 + 5, this.height - 27, 150, 20, I18n.format("gui.done"));
+        this.buttonList.add(guide);
+        this.buttonList.add(done);
+        if (HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            HeaderFooterLayout.footer(this, guide, done);
+        }
     }
 
     /**
@@ -156,6 +181,10 @@ public class OptionsListScreen extends GuiScreen {
     private void scrolling(List<GuiButton> entries, boolean footer) {
         List<net.minecraft.client.gui.GuiOptionsRowList.Row> rows = new ArrayList<net.minecraft.client.gui.GuiOptionsRowList.Row>();
         int left = this.width / 2 - 155;
+        if (this.screen == OptionScreen.ONLINE) {
+            // 26.3's OnlineOptionsScreen: each section under its header.
+            rows.add(new VideoLayout.HeaderRow(I18n.format("options.online.realms.header"), left));
+        }
         for (int i = 0; i < entries.size(); i += 2) {
             GuiButton a = entries.get(i);
             GuiButton b = i + 1 < entries.size() ? entries.get(i + 1) : null;
@@ -166,11 +195,18 @@ public class OptionsListScreen extends GuiScreen {
             rows.add(new OptionRowList.ButtonRow(a, b));
         }
         this.rowButtons.addAll(entries);
-        this.list = new OptionRowList(this.mc, this.width, this.height, 32, this.height - 32, 25, rows);
+        boolean modern = HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS);
+        int top = modern ? HeaderFooterLayout.HEADER : 32;
+        int bottom = modern ? this.height - HeaderFooterLayout.FOOTER : this.height - 32;
+        this.list = new OptionRowList(this.mc, this.width, this.height, top, bottom, HeaderFooterLayout.ROW, rows);
         if (footer) {
             addFooter();
         } else {
-            this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height - 27, I18n.format("gui.done")));
+            GuiButton done = new GuiButton(200, this.width / 2 - 100, this.height - 27, I18n.format("gui.done"));
+            this.buttonList.add(done);
+            if (modern) {
+                HeaderFooterLayout.footer(this, done);
+            }
         }
     }
 
@@ -274,7 +310,9 @@ public class OptionsListScreen extends GuiScreen {
         if (this.list != null) {
             this.list.drawScreen(mouseX, mouseY, partialTicks);
         }
-        drawCenteredString(this.fontRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
+        if (!HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            drawCenteredString(this.fontRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
+        }
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
