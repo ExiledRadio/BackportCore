@@ -61,7 +61,7 @@ final class RequestTests {
 
             check("items: copper ingot is Caves & Cliffs'", "cavesandcliffsbackport".equals(ItemOwnership.itemOwner("copper_ingot")));
             check("items: honeycomb is Buzzy Bees'", "buzzybeesbackport".equals(ItemOwnership.itemOwner("honeycomb")));
-            check("items: the ominous bottle is Village & Pillage's", "villagerbackport".equals(ItemOwnership.itemOwner("ominous_bottle")));
+            check("items: the ominous bottle is Tricky Trials'", "trickytrialsbackport".equals(ItemOwnership.itemOwner("ominous_bottle")));
             check("effects: Bad Omen is Village & Pillage's", "villagerbackport".equals(ItemOwnership.effectOwner("bad_omen")));
             check("items: absent owner, so a copier registers its own", ItemOwnership.shouldRegisterItem("trickytrialsbackport", "copper_ingot"));
             check("items: no owner and no copy gives null", ItemOwnership.item("copper_ingot", "trickytrialsbackport") == null);
@@ -77,6 +77,15 @@ final class RequestTests {
                     CopyRemapping.target(ForgeRegistries.BLOCKS, new ResourceLocation("trickytrialsbackport", "stone"), null) == null);
             check("remap: nothing when the owner has no such entry",
                     CopyRemapping.target(ForgeRegistries.BLOCKS, new ResourceLocation("trickytrialsbackport", "no_such_block"), "minecraft") == null);
+            // Through Forge's own bus, as a world loads: another family mod's missing copy, an item minecraft owns.
+            ItemOwnership.declareItems("minecraft", "stick");
+            net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping<net.minecraft.item.Item> copy =
+                    new net.minecraftforge.event.RegistryEvent.MissingMappings.Mapping<net.minecraft.item.Item>(
+                            ForgeRegistries.ITEMS, ForgeRegistries.ITEMS, new ResourceLocation("trickytrialsbackport", "stick"), 4000);
+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.RegistryEvent.MissingMappings<net.minecraft.item.Item>(
+                    new ResourceLocation("minecraft", "items"), ForgeRegistries.ITEMS, java.util.Collections.singletonList(copy)));
+            check("remap: a missing copy under another mod's id becomes the owner's as a world loads",
+                    copy.getTarget() == net.minecraft.init.Items.STICK);
         });
         then(1, "oxidation", world -> {
             // Stand-ins for one shape's four stages and two waxed forms.

@@ -41,6 +41,12 @@
 
 # 1.4.5
 
+*   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
+    Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads
+    (`CopyRemapping`), also with Village & Pillage removed.
+*   Fixed: copies were never renamed to their owner's blocks, items and effects when the owner was added to a world.
+    `CopyRemapping` read Forge's `getMappings`, which holds only Backport Core's own missing names; it now reads them
+    all.
 *   Today's commands 1.12.2 lacks, in `command/`, each behind its own server setting (`commands.*`, read when a world
     loads): 1.20.3's `/tick` (P38 server loop, P39 freezing on both sides, P40 the client; the client's timer follows
     a server slower than 20 per second; state and steps on channel `backportcore_tick`), 1.20.2's `/random` (26.3's

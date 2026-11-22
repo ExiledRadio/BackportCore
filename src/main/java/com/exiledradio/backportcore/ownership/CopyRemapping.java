@@ -27,7 +27,8 @@ import javax.annotation.Nullable;
  * effects carry over as they are. Block items follow their blocks' names.
  *
  * <p>Only names under a family mod's id are touched ({@link Family#MEMBERS}); another mod's block of the same name
- * is never taken. The reverse (an owner removed, a copier taking over) is the copier's own.
+ * is never taken. Every mod's missing names are read ({@code getAllMappings}): Forge's {@code getMappings} holds only
+ * the handler's own mod's, which before 1.4.5 left every copy alone. The reverse (an owner removed, a copier taking over) is the copier's own.
  */
 public final class CopyRemapping {
 
@@ -36,7 +37,7 @@ public final class CopyRemapping {
 
     @SubscribeEvent
     public void blocks(RegistryEvent.MissingMappings<Block> event) {
-        for (RegistryEvent.MissingMappings.Mapping<Block> m : event.getMappings()) {
+        for (RegistryEvent.MissingMappings.Mapping<Block> m : event.getAllMappings()) {
             Block owner = target(ForgeRegistries.BLOCKS, m.key, ownerOfBlock(m.key.getPath()));
             if (owner != null) {
                 m.remap(owner);
@@ -47,7 +48,7 @@ public final class CopyRemapping {
 
     @SubscribeEvent
     public void items(RegistryEvent.MissingMappings<Item> event) {
-        for (RegistryEvent.MissingMappings.Mapping<Item> m : event.getMappings()) {
+        for (RegistryEvent.MissingMappings.Mapping<Item> m : event.getAllMappings()) {
             String path = m.key.getPath();
             String ownerId = ItemOwnership.itemProvided(path) ? ItemOwnership.itemOwner(path) : ownerOfBlock(path);
             Item owner = target(ForgeRegistries.ITEMS, m.key, ownerId);
@@ -60,7 +61,7 @@ public final class CopyRemapping {
 
     @SubscribeEvent
     public void effects(RegistryEvent.MissingMappings<Potion> event) {
-        for (RegistryEvent.MissingMappings.Mapping<Potion> m : event.getMappings()) {
+        for (RegistryEvent.MissingMappings.Mapping<Potion> m : event.getAllMappings()) {
             String path = m.key.getPath();
             Potion owner = target(ForgeRegistries.POTIONS, m.key, ItemOwnership.effectProvided(path) ? ItemOwnership.effectOwner(path) : null);
             if (owner != null) {

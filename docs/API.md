@@ -138,7 +138,7 @@ BlockOwnership.provides("yourmod", () -> config.copperEnabled, "copper_block", "
 BlockOwnership.declare("yourmod:switched_off", "tuff");   // the owner itself: "not provided in this game"
 
 // Items and effects (1.2.0): copper ingot and raw copper (Caves & Cliffs), honeycomb (Buzzy Bees),
-// the ominous bottle and Bad Omen (Village & Pillage).
+// Bad Omen (Village & Pillage), the ominous bottle (Tricky Trials, since 1.4.5; Village & Pillage's before).
 Item ingot = ItemOwnership.item("copper_ingot", "yourmod");     // the owner's if provided, else yours, else null
 boolean copy = ItemOwnership.shouldRegisterItem("yourmod", "copper_ingot");
 Potion omen = ItemOwnership.effect("bad_omen", "yourmod");

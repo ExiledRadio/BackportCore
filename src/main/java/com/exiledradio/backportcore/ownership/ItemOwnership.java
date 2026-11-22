@@ -41,8 +41,10 @@ public final class ItemOwnership {
         ITEMS.put("amethyst_shard", "cavesandcliffsbackport");
         // Buzzy Bees (1.15): honeycomb, which waxes copper and makes candles.
         ITEMS.put("honeycomb", "buzzybeesbackport");
-        // Village & Pillage (1.14): the ominous bottle (metadata 0-4 = levels I-V) and Bad Omen, which its raids use.
-        ITEMS.put("ominous_bottle", "villagerbackport");
+        // Tricky Trials (1.21): the ominous bottle (metadata 0-4 = levels I-V), which 1.21 added. Village & Pillage's
+        // until Core 1.4.5; a world's villagerbackport:ominous_bottle becomes Tricky Trials' (CopyRemapping).
+        ITEMS.put("ominous_bottle", "trickytrialsbackport");
+        // Village & Pillage (1.14): Bad Omen, which its raids use.
         EFFECTS.put("bad_omen", "villagerbackport");
     }
 
