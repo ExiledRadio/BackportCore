@@ -92,6 +92,8 @@ final class PatchTests {
             {"net.minecraft.world.storage.MapData", "P43", new String[] {"enter", "facing"}},
             {"net.minecraft.world.World", "P46", new String[] {"entityArea", "tileLoaded"}},
             {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
+            {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P47", new String[] {"tabCount", "openTab", "tabsOnPage*2",
+                    "pageOf", "searchTooltipTab", "isMouseOverTab", "renderCreativeInventoryHoveringText", "drawTab"}},
     };
 
     private PatchTests() {
@@ -225,6 +227,12 @@ final class PatchTests {
                     }
                     byte[] raw = readAll(zip.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
+                    if (name.endsWith(".GuiContainerCreative")) {
+                        // Forge pages the creative tabs (Arrays.copyOfRange, the tab count); the SRG jar is vanilla's,
+                        // which has neither. The patch must leave it alone there; the dev chain above checks the patch.
+                        check("SRG P47 on unpaged GuiContainerCreative: left alone (Forge's paging missing)", out == raw, Asm.state("P47"));
+                        continue;
+                    }
                     if (name.endsWith(".MapDecoration")) {
                         // Forge adds MapDecoration.render(int); the SRG jar is vanilla's, which has none. The patch
                         // must leave it alone there; the dev chain above checks the patch.
@@ -350,6 +358,7 @@ final class PatchTests {
             case "P44": cls = "BiomeColorTransformer"; break;
             case "P43": cls = "MapFacingTransformer"; break;
             case "P46": cls = "SimulationTransformer"; break;
+            case "P47": cls = "CreativeTabsTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
@@ -431,7 +440,8 @@ final class PatchTests {
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/map/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/mechanics/")
                         || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/command/")
-                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/simulation/"))
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/simulation/")
+                        || ((MethodInsnNode) insn).owner.startsWith("com/exiledradio/backportcore/creative/"))
                         || ((MethodInsnNode) insn).owner.startsWith("git/jbredwards/"))) {
                     n++;
                 }

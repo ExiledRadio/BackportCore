@@ -163,8 +163,16 @@ public final class Presentation {
     public static final ToggleOption IMPROVED_TRANSPARENCY = new ToggleOption("backportcore:improved_transparency",
             "options.improvedTransparency", OptionScreen.VIDEO, false);
 
+    /**
+     * 1.19.3's Operator Items Tab (Controls): the creative menu's Operator Utilities tab, for a player allowed commands
+     * (creative.client.ModernTabs). Core's, since Core owns the creative tabs. Since Core 1.4.5.
+     */
+    public static final ToggleOption OPERATOR_ITEMS_TAB = new ToggleOption("backportcore:operator_items_tab",
+            "options.operatorItemsTab", OptionScreen.CONTROLS, false);
+
     static {
         // The parts of Core's own options that are not their screen's (LookArea): the rest follow their screen.
+        OPERATOR_ITEMS_TAB.area(LookArea.INVENTORY);
         PANORAMA_SPEED.area(LookArea.TITLE);
         HIDE_SPLASH_TEXTS.area(LookArea.SPLASHES);
         TEXT_BACKGROUND_OPACITY.area(LookArea.CHAT);
@@ -223,6 +231,9 @@ public final class Presentation {
     }
 
     static {
+        // 1.19.3's Controls: ... Auto-Jump, Operator Items Tab (1.21.9's Attack/Destroy and Use Item come after).
+        OPERATOR_ITEMS_TAB.since("1.19.3");
+        registerOption(OPERATOR_ITEMS_TAB);
         TOGGLE_ATTACK.since("1.21.9");
         TOGGLE_USE.since("1.21.9");
         registerOption(TOGGLE_ATTACK);

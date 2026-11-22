@@ -8,6 +8,7 @@
 *   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own.)
 *   **Borderless fullscreen on Cleanroom**: with Exclusive Fullscreen off (26.3's default), Fullscreen is now a window that fills the monitor there too, so the screen no longer flashes black, other windows stay on their monitors, and the game stays up when you click another window.
 *   **26.2's title screen**: with Game Drops Backport, Friends, Language and Accessibility are one row of icon buttons under Mods and Minecraft Realms, with Options and Quit Game below. Friends says it is not available in this version.
+*   **1.19.3's creative tabs** with Wild Update Backport or any later backport: Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks, Tools & Utilities, Combat, Food & Drinks, Ingredients and Spawn Eggs, each with 1.19.3's items in 1.19.3's order (26.3's with Game Drops Backport). Operator Utilities shows with the new Operator Items Tab in Controls. Other mods' tabs are on the pages after. The Look & Feel inventory switch turns it off.
 
 # 1.4.4
 

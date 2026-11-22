@@ -31,7 +31,7 @@ the switches, for content. A dedicated server ignores the switches: each player 
 | `CHAT` | `chat` | command suggestions, the chat options |
 | `DEBUG` | `debug` | F3 keys, `DebugText`, Debug Options, debug key binds |
 | `TOASTS` | `toasts` | toast textures, Music Toast |
-| `INVENTORY` | `inventory` | creative order, slot highlights (P23), container and recipe book textures |
+| `INVENTORY` | `inventory` | 1.19.3's creative tabs (P47), creative order, slot highlights (P23), container and recipe book textures, Operator Items Tab |
 | `MUSIC` | `music` | menu music, `GameMusic`, the Music and Sounds options, 1.14's sound channels |
 | `SKY` | `sky` | `FogPipeline` |
 | `WORDING` | `wording` | `vanillaText` |
@@ -181,7 +181,13 @@ change one version made stays made when only a later backport is installed:
   `pause_menu/social_interactions`, `friends/friends`, `pause_menu/player_reporting`). Friends and Player Reporting
   (Mojang's online services) show 26.3's system toast (`SystemToasts`, sprite `toast/system`): "Not available in this
   version".
-* **Creative tabs** (26.3, `creative.client.ModernOrder`): every vanilla tab in 26.3's creative order, 1.12.2's tabs
+* **Creative tabs** (1.19.3, `creative.client.ModernTabs`, P47): the creative menu's first page shows 1.19.3's tabs
+  (Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks, Tools & Utilities, Combat,
+  Food & Drinks, Ingredients, Spawn Eggs, Operator Utilities with Controls' Operator Items Tab), each listing 1.19.3's
+  items in 1.19.3's order (26.3's from 26.3), other mods' tabs on the pages after (`docs/CREATIVE_TABS.md`). The tab
+  sprites are the backport's `textures/gui/container/creative_inventory/tabs.png` (Wild Update's, 1.19.3's 26-pixel
+  tabs).
+* **Creative order on 1.12.2's tabs** (26.3, `creative.client.ModernOrder`): every vanilla tab in 26.3's creative order, 1.12.2's tabs
   reading 26.3's (`docs/CREATIVE_TABS.md`). Before 26.3, 1.12.2's order with the backports' items by their neighbors.
 * **Spawn eggs** (1.21.5, `client.SpawnEggModels`): with the textures part at 1.21.5 or later, `minecraft:spawn_egg` draws
   each mob's own egg (`item/<mob>_spawn_egg`, 26.3's, untinted) from the modern pack's `modern-1.21.5` layer
@@ -393,13 +399,9 @@ change one version made stays made when only a later backport is installed:
   it as well; other mods' HUD text without F3 is left alone.
 * **Creative tab order** (26.3: Building Blocks runs coal, emerald, lapis, amethyst, redstone and quartz blocks, then
   iron, gold, diamond and netherite with their bars, doors and plates; Ingredients and the ores follow the same mineral
-  order; Natural Blocks goes Overworld, Nether, End): not built. 26.3
-  reorders runs of minerals inside its own tabs (Ingredients, Natural Blocks, 1.19.3's Building Blocks). 1.12.2's tabs
-  are 1.19.2's (`docs/CREATIVE_TABS.md`), which list items in registry order, so the ores, mineral blocks and ingots
-  are scattered among other items there and no run exists to reorder; there is no Natural Blocks tab. An order file
-  (`Contribution.creativeOrder`) sorts every tab by a full list, so a 26.3 list would regroup each 1.12.2 tab into 26.3's
-  tab layout, which no family version does (Tricky Trials keeps 1.19.2's order); a list of the minerals alone would move
-  them to the front of every tab. Either would be an order no vanilla version had.
+  order; Natural Blocks goes Overworld, Nether, End): from 1.4.5 these runs are 1.19.3's tabs reading 26.3's own
+  lists from 26.3 on (`ModernTabs`, above). An order file (`Contribution.creativeOrder`) is not used for them; it
+  leaves 1.19.3's tabs alone.
 ## What is not covered yet
 
 * Biome Blend (no 1.12.2 counterpart; a backport's option of that name is placed and set by the presets), RGSS
