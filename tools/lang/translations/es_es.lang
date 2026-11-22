@@ -178,3 +178,4 @@ commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animatio
 backportcore.general.commands.swing.tooltip=/swing de la 26.3: hace que las entidades balanceen un brazo, con una animación y una duración (nivel de permiso 2).
 commands.tick.query.rate.running=Vel. de tics objetivo: %s por segundo. Media de tiempo: %s ms (objetivo: %s ms)
 commands.tick.query.rate.sprinting=Vel. de tics objetivo: %s por segundo (ignorado, solo como referencia). Media de tiempo: %s ms
+backportcore.pauseMenu.unavailable=No disponible en esta versión

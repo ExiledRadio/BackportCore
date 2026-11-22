@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=O /teammsg da 1.14 e seu atalho /t
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=O /swing da 26.3: faz entidades balançarem um braço, com uma animação e uma duração (nível de permissão 2).
+backportcore.pauseMenu.unavailable=Indisponível nesta versão

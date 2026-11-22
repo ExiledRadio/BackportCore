@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=/teammsg з 1.14 і його ск�
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=/swing з 26.3: істоти змахують рукою, з анімацією і тривалістю (рівень дозволів 2).
+backportcore.pauseMenu.unavailable=Недоступно в цій версії

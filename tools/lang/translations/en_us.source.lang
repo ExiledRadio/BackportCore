@@ -176,3 +176,4 @@ backportcore.general.commands.rotate.tooltip=1.21.2's /rotate: turn an entity to
 backportcore.general.commands.spectate.tooltip=1.15's /spectate: watch an entity in spectator mode, or stop (permission level 2).
 backportcore.general.commands.teammsg.tooltip=1.14's /teammsg and its alias /tm: a message to your own team (everyone may use it).
 backportcore.general.commands.swing.tooltip=26.3's /swing: make entities swing an arm, with an animation and a duration (permission level 2).
+backportcore.pauseMenu.unavailable=Not available in this version

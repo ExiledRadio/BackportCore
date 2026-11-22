@@ -4,10 +4,17 @@
     `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
     The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's
     `swingProgress` itself (no patch), `none` holds it still and `stab` draws as `whack`. Kept in 1.4.4 (unreleased).
-*   26.2's pause menu (Game Drops Backport and newer): Report Bugs and Send Feedback become two 20 by 20 icon
-    buttons in one row under Advancements and Statistics, with their names as tooltips; the grid sits at a quarter
-    of the free height as 26.2's does. Shown only when a backport supplies the `pause_menu/bug` and
-    `pause_menu/social_interactions` sprites; the 1.14 text row stays otherwise.
+*   26.2's pause menu (Game Drops Backport and newer): one row of 20 by 20 icon buttons under Advancements and
+    Statistics, 4 apart and centered, as 26.2's and 26.3's: Report Bugs, Give Feedback, Friends and Player Reporting,
+    with their names as tooltips; the grid sits at a quarter of the free height as 26.2's does. Friends is inactive
+    in a demo; Player Reporting is inactive in your own world with nobody else in it ("There are no players to report
+    in this world"). Friends and Player Reporting are Mojang's online services: clicking either shows 26.3's system
+    toast, the button's name over "Not available in this version" (18 languages). Shown only when a backport supplies
+    the `pause_menu/bug` and `pause_menu/social_interactions` sprites (the 1.14 text row stays otherwise); Friends
+    and Player Reporting each need theirs (`friends/friends`, `pause_menu/player_reporting`).
+*   26.3's system toast (`presentation.client.SystemToasts`, drawn by Core: 1.12.2's toast slots are 160 wide): a
+    yellow title over white lines split at 200, `max(160, widest) + 30` wide, slid in and out from the right over
+    600 ms and shown 5 s, on the `toast/system` sprite a backport supplies (else 1.12.2's system toast).
 *   API: `MenuBackground.contentFrame`, the list background and separators of a header-and-footer screen, for a
     backport's own screens.
 

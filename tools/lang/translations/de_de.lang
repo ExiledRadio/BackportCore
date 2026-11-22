@@ -176,3 +176,4 @@ backportcore.general.commands.teammsg.tooltip=/teammsg aus 1.14 und sein Kürzel
 backportcore.general.commands.swing=/swing
 commands.backportcore.swing.usage=/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]
 backportcore.general.commands.swing.tooltip=/swing aus 26.3: Wesen einen Arm schwingen lassen, mit Animation und Dauer (Berechtigungsstufe 2).
+backportcore.pauseMenu.unavailable=In dieser Version nicht verfügbar

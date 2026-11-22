@@ -523,6 +523,18 @@ final class ClientPresentationTests {
                 com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink);
         mc.displayGuiScreen(null);
 
+        // 26.3's system toast (the pause menu's Friends and Player Reporting): its size and addOrUpdate.
+        com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate("Friends", "Not available in this version");
+        int[] toast = com.exiledradio.backportcore.presentation.client.SystemToasts.size();
+        check("client: system toast: max(160, widest line) + 30 by 20 + 12 for a one-line message",
+                toast != null && toast[0] == 190 && toast[1] == 32, toast == null ? "none" : toast[0] + "x" + toast[1]);
+        com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate("Player Reporting",
+                "A message longer than two hundred pixels, which splits onto a second line");
+        int[] two = com.exiledradio.backportcore.presentation.client.SystemToasts.size();
+        check("client: system toast: addOrUpdate keeps one toast, a long message wraps at 200 (230 wide, 44 high)",
+                two != null && two[0] <= 230 && two[0] > 190 && two[1] == 44 && "Player Reporting".equals(com.exiledradio.backportcore.presentation.client.SystemToasts.lastTitle),
+                two == null ? "none" : two[0] + "x" + two[1]);
+
         java.lang.reflect.Method orderOf = com.exiledradio.backportcore.presentation.client.CreativeOrder.class.getDeclaredMethod("order", net.minecraft.util.ResourceLocation.class);
         orderOf.setAccessible(true);
         @SuppressWarnings("unchecked")

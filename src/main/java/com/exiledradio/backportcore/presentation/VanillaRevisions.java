@@ -62,8 +62,9 @@ public final class VanillaRevisions {
     }
 
     /**
-     * 26.2: the pause menu's Report Bugs and Send Feedback are 20 by 20 icon buttons in one row under Advancements and
-     * Statistics (sprites {@code pause_menu/bug} and {@code pause_menu/social_interactions}, supplied by a backport).
+     * 26.2: the pause menu's Report Bugs, Give Feedback, Friends and Player Reporting are 20 by 20 icon buttons in one
+     * row under Advancements and Statistics (sprites {@code pause_menu/bug}, {@code pause_menu/social_interactions},
+     * {@code friends/friends} and {@code pause_menu/player_reporting}, supplied by a backport); 26.3's row is the same.
      */
     public static boolean pauseIconRow() {
         return Presentation.isAtLeast(LookArea.MENUS, "26.2");
