@@ -110,6 +110,8 @@ final class ClientMenuShots {
         });
         add("packs", () -> show(new GuiScreenResourcePacks(new GuiMainMenu())));
         add("multiplayer", () -> show(new GuiMultiplayer(new GuiMainMenu())));
+        add(null, () -> show(new net.minecraftforge.fml.client.GuiModList(new GuiMainMenu())));
+        add("modlist", () -> selectCore(mc));
         add(null, () -> {
             float now = PanoramaRenderer.lastAngles()[1];
             this.listAt = MenuBackground.listFrames;
@@ -135,6 +137,8 @@ final class ClientMenuShots {
             check("pause: the blurred world under inworld_menu_background", MenuBackground.worldFrames > this.worldAt, MenuBackground.worldFrames);
             return true;
         });
+        add(null, () -> show(new net.minecraftforge.fml.client.GuiModList(new GuiIngameMenu())));
+        add("ingame-modlist", () -> selectCore(mc));
         add("ingame-video", () -> show(new GuiVideoSettings(new GuiIngameMenu(), mc.gameSettings)));
         add(null, () -> {
             check("in a world: lists as 1.20.5's", MenuBackground.listFrames > this.listAt, MenuBackground.listFrames);
@@ -217,6 +221,22 @@ final class ClientMenuShots {
         ByteBuffer b = BufferUtils.createByteBuffer(16);
         GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK, b);
         return b.get(0) != 0 && b.get(1) != 0 && b.get(2) != 0;
+    }
+
+    private boolean selectCore(Minecraft mc) {
+        try {
+            java.lang.reflect.Field f = net.minecraftforge.fml.client.GuiModList.class.getDeclaredField("mods");
+            f.setAccessible(true);
+            List<?> mods = (List<?>) f.get(mc.currentScreen);
+            for (int i = 0; i < mods.size(); i++) {
+                if (BackportCore.MOD_ID.equals(((net.minecraftforge.fml.common.ModContainer) mods.get(i)).getModId())) {
+                    ((net.minecraftforge.fml.client.GuiModList) mc.currentScreen).selectModIndex(i);
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            failed("modlist", e);
+        }
+        return true;
     }
 
     private void add(String name, Supplier<Boolean> step) {

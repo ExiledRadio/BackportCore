@@ -870,3 +870,17 @@ or passes an existing constant through a hook of the same type.
     stay 1.12.2's.
 *   **Tested**: transformer chain and SRG names; `GdRequestTests` (off-limits and off-map rotations east and west, an
     on-map marker unchanged, the sprites with and without 26.3).
+
+## P45. Mod list logos in a world
+
+*   **Class**: Forge's `net.minecraftforge.fml.client.GuiModList$Info`, method `drawHeader`.
+    **Transformer**: `asm/ModListLogoTransformer`. **Hook**: `presentation/client/PresentationHooks.modListHeader`.
+    **Since**: 1.4.4.
+*   **Bug fixed**: Forge's own. Opened from the pause menu, the mod list drew every logo black: `GuiScrollingList`
+    draws the in-world gradient with vertex colors, which leave OpenGL's current color near black after
+    `GlStateManager.resetColor()`, and `drawHeader` draws the logo with no color of its own. From the title screen the
+    dirt branch's `color(1, 1, 1, 1)` happened to be applied, so logos showed there.
+*   **What changes**: `drawHeader` starts with `modListHeader()`: `resetColor()` then `color(1, 1, 1, 1)`, so white is
+    set for real. Nothing else is drawn differently.
+*   **Fails safe**: method not found: skipped, and logos stay black in a world.
+*   **Tested**: `ClientMenuShots` (`menu-modlist.png` from the title screen, `menu-ingame-modlist.png` in a world).

@@ -397,4 +397,13 @@ public final class PresentationHooks {
                 .appendSibling(new TextComponentTranslation("debug.prefix").setStyle(new Style().setColor(TextFormatting.YELLOW).setBold(true)))
                 .appendText(" ").appendSibling(new TextComponentTranslation(key, args)));
     }
+
+    /**
+     * P45: {@code GuiModList.Info.drawHeader}, before the logo. The in-world list gradient left OpenGL's color near
+     * black while {@code GlStateManager}'s cache says white, so white is set past the cache.
+     */
+    public static void modListHeader() {
+        net.minecraft.client.renderer.GlStateManager.resetColor();
+        net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+    }
 }
