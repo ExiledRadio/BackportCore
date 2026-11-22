@@ -146,6 +146,23 @@ public final class CreativePlacement {
         return Collections.unmodifiableList(new ArrayList<String>(EGG_MODS));
     }
 
+    /**
+     * @return today's vanilla spawn egg for a mob ({@code minecraft:fox_spawn_egg}): a 1.12.2 mob's by its name today, a
+     * placed egg's ({@link #placeSpawnEgg}), a {@link #placeSpawnEggs(String)} mod's by name; null for any other mob
+     */
+    @Nullable
+    public static synchronized String modernEggId(ResourceLocation entity) {
+        if ("minecraft".equals(entity.getNamespace())) {
+            return VanillaOrder.modernEggId(entity);
+        }
+        for (Placement p : PLACEMENTS) {
+            if (entity.equals(p.eggEntity)) {
+                return p.modernId;
+            }
+        }
+        return EGG_MODS.contains(entity.getNamespace()) ? "minecraft:" + entity.getPath() + "_spawn_egg" : null;
+    }
+
     /** {@link #placeSpawnEgg(ResourceLocation)} as the vanilla egg named. */
     public static void placeSpawnEgg(ResourceLocation entity, String modernId) {
         add(new Placement(null, null, ANY, entity, modernId, null, CreativeTabs.MISC));

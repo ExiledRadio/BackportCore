@@ -8,11 +8,13 @@ assets/minecraft/textures/blocks/piston_side.png
 assets/minecraft/textures/blocks/piston_top_normal.png
 assets/minecraft/textures/blocks/piston_top_sticky.png
 assets/minecraft/textures/entity/alex.png
+assets/minecraft/textures/entity/illager/vindicator.png
 assets/minecraft/textures/entity/llama/llama_brown.png
 assets/minecraft/textures/entity/llama/llama_creamy.png
 assets/minecraft/textures/entity/llama/llama_gray.png
 assets/minecraft/textures/entity/llama/llama_white.png
 assets/minecraft/textures/entity/steve.png
+assets/minecraft/textures/gui/container/inventory.png
 assets/minecraft/textures/gui/icons.png
 assets/minecraft/textures/gui/recipe_book.png
 assets/minecraft/textures/gui/toasts.png

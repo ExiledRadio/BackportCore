@@ -47,15 +47,24 @@ final class ClientTextureTests {
 
     private int ticks;
     private boolean done;
+    private int shotTicks = -1;
 
     @Nullable
     static String version() {
         return System.getenv("BACKPORTCORE_TEXTURES");
     }
 
+    /** A family backport's mob (its mod places its eggs by name) and another mod's, as their eggs show. */
+    static final ResourceLocation FAMILY_FOX = new ResourceLocation("bcselftestfamily", "fox");
+    static final ResourceLocation OTHER_FOX = new ResourceLocation("bcselftestother", "fox");
+
     static void register() {
         Presentation.version(version());
         MinecraftForge.EVENT_BUS.register(new ClientTextureTests());
+        // Eggs only: no mob behind them. Before the first stitch, so the family one gets its sprite.
+        net.minecraft.entity.EntityList.ENTITY_EGGS.put(FAMILY_FOX, new net.minecraft.entity.EntityList.EntityEggInfo(FAMILY_FOX, 0xD5B69F, 0xCC6920));
+        net.minecraft.entity.EntityList.ENTITY_EGGS.put(OTHER_FOX, new net.minecraft.entity.EntityList.EntityEggInfo(OTHER_FOX, 0xD5B69F, 0xCC6920));
+        com.exiledradio.backportcore.creative.CreativePlacement.placeSpawnEggs(FAMILY_FOX.getNamespace());
     }
 
     private ClientTextureTests() {
@@ -64,18 +73,143 @@ final class ClientTextureTests {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (event.phase != TickEvent.Phase.END || this.done || !(mc.currentScreen instanceof GuiMainMenu) || ++this.ticks < 40) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (this.shotTicks >= 0) {
+            // The startup screen that ends each reload has faded (two seconds): keep a picture of the eggs, then close.
+            if (++this.shotTicks == 80) {
+                String name = "eggs-" + Presentation.newest() + ".png";
+                net.minecraft.util.ScreenShotHelper.saveScreenshot(mc.gameDir, name, mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+                BackportCore.LOGGER.info("TEXTURE SHOT screenshots/{}", name);
+                BackportCore.LOGGER.info("TEXTURE SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
+                mc.shutdown();
+            }
+            return;
+        }
+        if (this.done || !(mc.currentScreen instanceof GuiMainMenu) || ++this.ticks < 40) {
             return;
         }
         this.done = true;
         try {
             run(mc);
+            spawnEggs(mc);
+            mc.displayGuiScreen(new EggScreen());
+            this.shotTicks = 0;
+            return;
         } catch (Throwable t) {
             SelfTestRunner.fail("client textures threw", t);
             BackportCore.LOGGER.error("client textures", t);
         }
         BackportCore.LOGGER.info("TEXTURE SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
         mc.shutdown();
+    }
+
+    /** @return a spawn egg of one mob */
+    static net.minecraft.item.ItemStack egg(ResourceLocation entity) {
+        net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(net.minecraft.init.Items.SPAWN_EGG);
+        net.minecraft.item.ItemMonsterPlacer.applyEntityIdToItemStack(stack, entity);
+        return stack;
+    }
+
+    /** @return the tint indexes of a model's quads ("[0, 1]" for 1.12.2's egg, "[-1]" for an egg's own texture) */
+    private static String tints(net.minecraft.client.renderer.block.model.IBakedModel model) {
+        java.util.Set<Integer> out = new java.util.TreeSet<Integer>();
+        for (net.minecraft.client.renderer.block.model.BakedQuad q : model.getQuads(null, null, 0L)) {
+            out.add(q.getTintIndex());
+        }
+        return out.toString();
+    }
+
+    /**
+     * 1.21.5's spawn eggs (client.SpawnEggModels): from 1.21.5 every 1.12.2 mob's egg and a family backport's mob's egg
+     * draw their own texture, untinted, from the 1.21.5 layer; another mod's mob's egg, and every egg before 1.21.5, is
+     * 1.12.2's tinted egg.
+     */
+    private static void spawnEggs(Minecraft mc) throws Exception {
+        String newest = Presentation.newest().toString();
+        boolean own = Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.TEXTURES, "1.21.5");
+        net.minecraft.client.renderer.RenderItem items = mc.getRenderItem();
+        int vanilla = 0;
+        int textured = 0;
+        java.util.List<String> wrong = new java.util.ArrayList<String>();
+        for (ResourceLocation entity : net.minecraft.entity.EntityList.ENTITY_EGGS.keySet()) {
+            if (!"minecraft".equals(entity.getNamespace())) {
+                continue;
+            }
+            vanilla++;
+            net.minecraft.client.renderer.block.model.IBakedModel m = items.getItemModelWithOverrides(egg(entity), null, null);
+            ResourceLocation sprite = com.exiledradio.backportcore.client.SpawnEggModels.spriteFor(entity);
+            boolean ownModel = "[-1]".equals(tints(m)) && sprite != null && sprite.toString().equals(m.getParticleTexture().getIconName());
+            if (ownModel) {
+                textured++;
+            }
+            if (ownModel != own) {
+                wrong.add(entity + " " + tints(m) + " " + m.getParticleTexture().getIconName());
+            }
+        }
+        check("client textures: " + (own ? "every 1.12.2 mob's egg is its own texture" : "every egg is 1.12.2's tinted egg") + " at " + newest,
+                vanilla > 40 && wrong.isEmpty(), textured + "/" + vanilla + " own; wrong: " + wrong);
+        String[][] named = {{"minecraft:zombie", "zombie_spawn_egg"}, {"minecraft:zombie_pigman", "zombified_piglin_spawn_egg"},
+                {"minecraft:evocation_illager", "evoker_spawn_egg"}, {"minecraft:mooshroom", "mooshroom_spawn_egg"}};
+        for (String[] n : named) {
+            net.minecraft.client.renderer.block.model.IBakedModel m = items.getItemModelWithOverrides(egg(new ResourceLocation(n[0])), null, null);
+            if (own) {
+                String file = "assets/minecraft/textures/item/" + n[1] + ".png";
+                TextureLayers.Layer layer = TextureLayers.layerFor(file, Presentation.newest());
+                String diff = layer == null ? "no layer has " + file : compare(atlasSprite(mc, "minecraft:item/" + n[1]), layerImage(layer, file));
+                check("client textures: " + n[0] + "'s egg is 26.3's " + n[1] + " (layer " + layer + ")",
+                        diff == null && ("minecraft:item/" + n[1]).equals(m.getParticleTexture().getIconName()), diff + " " + m.getParticleTexture().getIconName());
+            } else {
+                check("client textures: " + n[0] + "'s egg is tinted at " + newest, "[0, 1]".equals(tints(m)), tints(m));
+            }
+        }
+        net.minecraft.client.renderer.block.model.IBakedModel family = items.getItemModelWithOverrides(egg(FAMILY_FOX), null, null);
+        net.minecraft.client.renderer.block.model.IBakedModel other = items.getItemModelWithOverrides(egg(OTHER_FOX), null, null);
+        check("client textures: a family backport's fox egg is " + (own ? "26.3's fox_spawn_egg" : "tinted") + " at " + newest,
+                own ? "minecraft:item/fox_spawn_egg".equals(family.getParticleTexture().getIconName()) && "[-1]".equals(tints(family))
+                        : "[0, 1]".equals(tints(family)), tints(family) + " " + family.getParticleTexture().getIconName());
+        check("client textures: another mod's egg keeps the tinted egg at " + newest, "[0, 1]".equals(tints(other)), tints(other));
+        String eggFile = "assets/minecraft/textures/items/egg.png";
+        check("client textures: the chicken's egg item is 1.14's (26.3's) egg", compare(atlasSprite(mc, "minecraft:items/egg"),
+                layerImage(TextureLayers.layerFor(eggFile, Presentation.newest()), eggFile)) == null);
+    }
+
+    /** Every egg, drawn as an inventory draws its items, for the screenshot. */
+    static final class EggScreen extends net.minecraft.client.gui.GuiScreen {
+
+        @Override
+        public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+            this.drawDefaultBackground();
+            java.util.List<ResourceLocation> mobs = new java.util.ArrayList<ResourceLocation>(net.minecraft.entity.EntityList.ENTITY_EGGS.keySet());
+            this.drawCenteredString(this.fontRenderer, "Spawn eggs at " + Presentation.newest() + " (last two: family fox, other mod's fox)",
+                    this.width / 2, 8, 0xFFFFFF);
+            int perRow = 12;
+            int x0 = this.width / 2 - perRow * 9;
+            for (int i = 0; i < mobs.size(); i++) {
+                int x = x0 + (i % perRow) * 18;
+                int y = 24 + (i / perRow) * 18;
+                drawRect(x - 1, y - 1, x + 17, y + 17, 0xFF8B8B8B);
+            }
+            net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
+            for (int i = 0; i < mobs.size(); i++) {
+                this.itemRender.renderItemAndEffectIntoGUI(egg(mobs.get(i)), x0 + (i % perRow) * 18, 24 + (i / perRow) * 18);
+            }
+            net.minecraft.client.renderer.RenderHelper.disableStandardItemLighting();
+            // Every 1.12.2 effect's icon, as the inventory and the HUD draw it from the inventory sheet.
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.enableBlend();
+            this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+            int y0 = 24 + ((mobs.size() + perRow - 1) / perRow) * 18 + 8;
+            int i = 0;
+            for (net.minecraft.potion.Potion potion : net.minecraft.potion.Potion.REGISTRY) {
+                if (potion.hasStatusIcon() && "minecraft".equals(potion.getRegistryName().getNamespace())) {
+                    int icon = potion.getStatusIconIndex();
+                    this.drawTexturedModalRect(x0 + (i % perRow) * 18, y0 + (i / perRow) * 18, icon % 8 * 18, 198 + icon / 8 * 18, 18, 18);
+                    i++;
+                }
+            }
+        }
     }
 
     private static void run(Minecraft mc) throws Exception {
@@ -95,6 +229,12 @@ final class ClientTextureTests {
         mc.getTextureManager().bindTexture(new ResourceLocation(CAT));
         String diff = compare(bound(), layerImage(catLayer, "assets/minecraft/" + CAT));
         check("client textures: the siamese cat is layer " + catLayer + "'s at " + newest, diff == null, diff);
+        // 1.14's status effect icons, put back into 1.12.2's inventory sheet (tools/textures/build.py, tables.SHEETS).
+        String inv = "assets/minecraft/textures/gui/container/inventory.png";
+        TextureLayers.Layer invLayer = TextureLayers.layerFor(inv, Presentation.newest());
+        mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/inventory.png"));
+        String invDiff = invLayer == null ? "no layer" : compare(bound(), layerImage(invLayer, inv));
+        check("client textures: the inventory sheet (effect icons) is layer " + invLayer + "'s at " + newest, invDiff == null, invDiff);
         // 1.21's lit redstone torch texture has a 4 by 4 head that only 1.21's own model (a stick and six glow
         // quads) shows right; on 1.12.2's crossed planes it was a red square. The 1.21 layer carries the models.
         boolean torch121 = Presentation.isAtLeast("1.21");

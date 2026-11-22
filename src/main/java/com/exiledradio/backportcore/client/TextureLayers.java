@@ -26,7 +26,8 @@ import com.exiledradio.backportcore.presentation.GameVersion;
  * presentation module, and Village & Pillage, which brings it, registers no version. Every later layer ({@code
  * backportcore_packs/modern-<version>}, listed in {@code backportcore_packs/layers.txt}) applies when the newest
  * installed backport ({@code Presentation.newest()}) is that version or later. A file comes from the newest layer
- * that applies and has it. Both are written by {@code tools/textures/build.py}.
+ * that applies and has it. Both are written by {@code tools/textures/build.py}, except the 1.21.5 layer
+ * ({@code tools/textures/eggs.py}): the spawn eggs' own textures, under their 26.3 names, for {@link SpawnEggModels}.
  */
 public final class TextureLayers {
 

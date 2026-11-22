@@ -24,6 +24,11 @@ LINES = [
     ('26.3', '26.3'),
 ]
 
+# The spawn egg layer (eggs.py): from 1.21.5, every egg's own texture as the newest jar has it. Not a line of
+# build.py's (1.12.2 has no file it replaces); build.py keeps it in layers.txt.
+EGG_LINE = '1.21.5'
+EGG_JAR = '26.3'
+
 
 # Names a release line gave a texture the previous line had, {line: {old name: new name}}. Only one-to-one
 # renames; a texture split into several files (the 1.20.2 GUI sprites, 1.15's double chests) is gone from then on
@@ -122,6 +127,28 @@ ACCEPT = {
     ('1.17', 'entity/guardian'): 'blank only where 1.12.2\'s sheet had leftovers no model part uses (the elder '
                                   'guardian\'s 1.12.2 sheet is blank there too) and the "jeb" signature',
     ('1.17', 'entity/guardian_elder'): 'blank only at the "jeb" signature, which no model part uses',
+    ('1.18', 'entity/wither/wither'): 'blank only where 1.12.2\'s sheet is green filler no model part uses',
+    ('1.18', 'entity/illager/vindicator'): 'blank only at the hat (32, 0), which 1.12.2\'s illager model never shows',
+    ('1.19', 'entity/illager/vindicator'): 'as at 1.18: blank only at the hidden hat',
+    ('1.20', 'entity/blaze'): 'blank only below the rods\' 2x8x2 boxes (v 26 to 32), filler in 1.12.2\'s sheet',
+    ('1.21', 'entity/blaze'): 'as at 1.20: blank only below the rods',
+    ('1.20', 'environment/clouds'): 'a cloud map, not a model sheet: any pattern fits (vanilla\'s new clouds)',
+    ('1.21', 'environment/clouds'): 'a cloud map, as at 1.20 (the clouds of 1.21.6 to 1.21.8)',
+}
+
+# 1.12.2 sheets whose parts a later release moved into sprites of their own, {1.12.2 sheet: [(x, y, sprite)]}. build.py
+# puts each line's sprites back at 1.12.2's places and keeps the look below where the line's sheet is blank. The
+# status effect icons (1.12.2's Potion.setIconIndex(x, y): 18 by 18 from (18x, 198 + 18y)) became mob_effect/ files in
+# 1.14; 1.12.2 draws them in the inventory and on the HUD from this sheet.
+_EFFECTS = {
+    'speed': (0, 0), 'slowness': (1, 0), 'haste': (2, 0), 'mining_fatigue': (3, 0), 'strength': (4, 0),
+    'weakness': (5, 0), 'poison': (6, 0), 'regeneration': (7, 0), 'invisibility': (0, 1), 'hunger': (1, 1),
+    'jump_boost': (2, 1), 'nausea': (3, 1), 'night_vision': (4, 1), 'blindness': (5, 1), 'resistance': (6, 1),
+    'fire_resistance': (7, 1), 'water_breathing': (0, 2), 'wither': (1, 2), 'absorption': (2, 2), 'levitation': (3, 2),
+    'glowing': (4, 2), 'luck': (5, 2), 'unluck': (6, 2), 'health_boost': (7, 2),
+}
+SHEETS = {
+    'gui/container/inventory': [(18 * x, 198 + 18 * y, 'mob_effect/' + e) for e, (x, y) in sorted(_EFFECTS.items())],
 }
 
 # Models a texture needs from the line that changed it, {1.12.2 texture: [(1.12.2 block model, that line's model)]}.

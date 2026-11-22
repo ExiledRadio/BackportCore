@@ -116,11 +116,7 @@ public final class VanillaOrder {
         load();
         if (item == Items.SPAWN_EGG) {
             ResourceLocation entity = ItemMonsterPlacer.getNamedIdFrom(stack);
-            if (entity == null || !"minecraft".equals(entity.getNamespace())) {
-                return null;
-            }
-            String today = eggRenames.get(entity.toString());
-            return (today != null ? today : entity.toString()) + "_spawn_egg";
+            return entity == null ? null : modernEggId(entity);
         }
         String key = name.toString();
         String exact = legacy.get(key + "." + stack.getMetadata());
@@ -129,6 +125,20 @@ public final class VanillaOrder {
         }
         String plain = legacy.get(key);
         return plain != null ? plain : key;
+    }
+
+    /**
+     * @return today's spawn egg of a vanilla 1.12.2 mob, by its name today ({@code minecraft:zombie_pigman} lays
+     * {@code minecraft:zombified_piglin_spawn_egg}), or null for another mod's mob
+     */
+    @Nullable
+    public static String modernEggId(ResourceLocation entity) {
+        if (!"minecraft".equals(entity.getNamespace())) {
+            return null;
+        }
+        load();
+        String today = eggRenames.get(entity.toString());
+        return (today != null ? today : entity.toString()) + "_spawn_egg";
     }
 
     private static synchronized void load() {

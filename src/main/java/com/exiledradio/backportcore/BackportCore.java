@@ -152,6 +152,8 @@ public final class BackportCore {
             com.exiledradio.backportcore.gameevent.client.VibrationClient.init();
             // 1.20's armor trims, worn and on item icons (smithing/).
             com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.init();
+            // 1.21.5's spawn eggs, each its own texture (client.SpawnEggModels).
+            com.exiledradio.backportcore.client.SpawnEggModels.init();
             com.exiledradio.backportcore.command.tick.client.ClientTicks.init();
             com.exiledradio.backportcore.command.swing.client.ClientSwings.init();
         }

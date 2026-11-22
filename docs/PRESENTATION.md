@@ -180,6 +180,12 @@ change one version made stays made when only a later backport is installed:
   sprites a backport supplies (`pause_menu/bug`, `pause_menu/social_interactions`).
 * **Creative tabs** (26.3, `creative.client.ModernOrder`): every vanilla tab in 26.3's creative order, 1.12.2's tabs
   reading 26.3's (`docs/CREATIVE_TABS.md`). Before 26.3, 1.12.2's order with the backports' items by their neighbors.
+* **Spawn eggs** (1.21.5, `client.SpawnEggModels`): with the textures part at 1.21.5 or later, `minecraft:spawn_egg` draws
+  each mob's own egg (`item/<mob>_spawn_egg`, 26.3's, untinted) from the modern pack's `modern-1.21.5` layer
+  (`tools/textures/eggs.py`): 1.12.2's mobs by their names today (`zombie_pigman` lays `zombified_piglin_spawn_egg`), a
+  backport's mobs by the vanilla egg their creative placement names (`CreativePlacement.placeSpawnEggs` /
+  `placeSpawnEgg`, so a backport ships no egg textures and calls nothing new). The egg's own model is wrapped (an override
+  list), not replaced: other mods' eggs, and every egg before 1.21.5, keep 1.12.2's two tinted layers.
 * **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
 * **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing

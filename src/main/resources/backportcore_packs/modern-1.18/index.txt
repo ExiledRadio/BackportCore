@@ -12,11 +12,13 @@ assets/minecraft/textures/blocks/log_big_oak_top.png
 assets/minecraft/textures/blocks/planks_spruce.png
 assets/minecraft/textures/entity/armorstand/wood.png
 assets/minecraft/textures/entity/illager/illusionist.png
+assets/minecraft/textures/entity/illager/vindicator.png
 assets/minecraft/textures/entity/parrot/parrot_blue.png
 assets/minecraft/textures/entity/parrot/parrot_green.png
 assets/minecraft/textures/entity/parrot/parrot_grey.png
 assets/minecraft/textures/entity/parrot/parrot_red_blue.png
 assets/minecraft/textures/entity/parrot/parrot_yellow_blue.png
+assets/minecraft/textures/entity/wither/wither.png
 assets/minecraft/textures/gui/container/anvil.png
 assets/minecraft/textures/gui/container/enchanting_table.png
 assets/minecraft/textures/items/beetroot_seeds.png

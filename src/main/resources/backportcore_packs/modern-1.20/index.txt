@@ -1,4 +1,5 @@
 assets/minecraft/textures/blocks/glazed_terracotta_purple.png
+assets/minecraft/textures/entity/blaze.png
 assets/minecraft/textures/entity/cat/black.png
 assets/minecraft/textures/entity/cow/cow.png
 assets/minecraft/textures/entity/cow/mooshroom.png
@@ -7,3 +8,5 @@ assets/minecraft/textures/entity/llama/llama_brown.png
 assets/minecraft/textures/entity/llama/llama_creamy.png
 assets/minecraft/textures/entity/llama/llama_white.png
 assets/minecraft/textures/entity/wolf/wolf_collar.png
+assets/minecraft/textures/environment/clouds.png
+assets/minecraft/textures/gui/container/inventory.png
