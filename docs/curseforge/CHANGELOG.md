@@ -5,7 +5,9 @@
 *   **Simulation Distance** (1.18, Video Settings): mobs, machines, crops and redstone run only this many chunks from a player, however far you can see. Your own worlds follow the setting; a server uses `simulation-distance` in server.properties, as 1.18 does. Spawn chunks and chunks a mod keeps loaded run as before.
 *   **Chunk Builder** (1.18.2, Video Settings): Threaded, Semi Blocking or Fully Blocking, the same setting as Core's config option for it.
 *   **Improved Transparency** (Video Settings, the Fabulous! preset): rain and snow in front of water and glass are drawn over them instead of behind them.
-*   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own, or on Cleanroom.)
+*   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own.)
+*   **Borderless fullscreen on Cleanroom**: with Exclusive Fullscreen off (26.3's default), Fullscreen is now a window that fills the monitor there too, so the screen no longer flashes black, other windows stay on their monitors, and the game stays up when you click another window.
+*   **26.2's title screen**: with Game Drops Backport, Friends, Language and Accessibility are one row of icon buttons under Mods and Minecraft Realms, with Options and Quit Game below. Friends says it is not available in this version.
 
 # 1.4.4
 

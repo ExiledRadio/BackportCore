@@ -841,6 +841,9 @@ or passes an existing constant through a hook of the same type.
     Fullscreen Mode) names, in place of 1.12.2's desktop mode (`FullscreenModes.enter`: the `fullscreen` flags,
     `Display.setDisplayMode`, `Display.setFullscreen(true)`, then the same size, VSync and frame steps); with Current,
     or a mode the monitor no longer lists, it answers false as before. Leaving is vanilla's.
+    On Cleanroom (LWJGL 3 through lwjglx) the borderless window is lwjglx's own `Display.setBorderless(boolean)`
+    (GLFW's windowed mode over the target monitor), found by reflection; `VanillaRevisions.borderlessPossible` is true
+    there when it exists. Before 1.4.5 Core stepped aside on Cleanroom and F11 changed the monitor's mode.
 
 ## P44. Grass, foliage and water colors under ground
 

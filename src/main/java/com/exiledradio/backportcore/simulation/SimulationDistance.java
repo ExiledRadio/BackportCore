@@ -98,6 +98,12 @@ public final class SimulationDistance {
         dedicated = server.isDedicatedServer();
         if (dedicated) {
             int d = Presentation.newest().isAtLeast("1.18") ? Math.max(2, DedicatedProperties.simulationDistance(server)) : 0;
+            String test = selfTest();
+            if (d > 0 && test != null) {
+                // A backport's headless self-test server has no players, so only spawn chunks would tick.
+                BackportCore.LOGGER.info("Simulation distance off for the self-test ({} is set)", test);
+                d = 0;
+            }
             distance = d;
             if (d > 0) {
                 BackportCore.LOGGER.info("Simulation distance {} ({} in server.properties)", d, PROPERTY);
@@ -105,6 +111,18 @@ public final class SimulationDistance {
         } else {
             distance = fromClient <= 0 ? 0 : Math.max(2, fromClient);
         }
+    }
+
+    /** @return the {@code <modid>.selftest} system property a loaded mod's self-test run sets (the family's convention), or null */
+    @javax.annotation.Nullable
+    private static String selfTest() {
+        for (net.minecraftforge.fml.common.ModContainer mod : net.minecraftforge.fml.common.Loader.instance().getActiveModList()) {
+            String key = mod.getModId() + ".selftest";
+            if (System.getProperty(key) != null) {
+                return key;
+            }
+        }
+        return null;
     }
 
     // ---- The rule --------------------------------------------------------------------------------------------------

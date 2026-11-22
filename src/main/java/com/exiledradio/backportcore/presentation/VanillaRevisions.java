@@ -70,6 +70,16 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.MENUS, "26.2");
     }
 
+    /**
+     * 26.2: the title screen's Friends, Language and Accessibility are one centered row of 20 by 20 icon buttons
+     * between Realms and Options/Quit (sprites {@code friends/friends}, {@code icon/language} and
+     * {@code icon/accessibility}, supplied by a backport); 26.1 still had Language left of Options and Accessibility
+     * right of Quit. Forge's half-width Mods button keeps its place beside Realms.
+     */
+    public static boolean titleIconRow() {
+        return Presentation.isAtLeast(LookArea.TITLE, "26.2");
+    }
+
     /** Set by the mod that brings 26.1's babies (Game Drops Backport's {@code babies.babyModels}); on by default. */
     private static volatile java.util.function.BooleanSupplier babyModelSwitch = () -> true;
 
@@ -106,15 +116,37 @@ public final class VanillaRevisions {
     /**
      * Whether this game can make the borderless window: LWJGL 2's {@code Display}, which reads
      * {@code org.lwjgl.opengl.Window.undecorated} each time it makes the window. Cleanroom's LWJGL 3 (lwjglx) draws the
-     * window through GLFW, where that property means nothing: there Core steps aside and Fullscreen stays the
-     * launcher's. False on a dedicated server.
+     * window through GLFW, where that property means nothing; there Core uses lwjglx's own
+     * {@code Display.setBorderless} (a window over the monitor, no mode change) when it has one, and otherwise steps
+     * aside and Fullscreen stays the launcher's. False on a dedicated server.
      */
     public static boolean borderlessPossible() {
         ClassLoader l = VanillaRevisions.class.getClassLoader();
+        if (lwjglxBorderless() != null) {
+            return true;
+        }
         return l.getResource("org/lwjgl/opengl/WindowsDisplay.class") != null || l.getResource("org/lwjgl/opengl/LinuxDisplay.class") != null
                 || l.getResource("org/lwjgl/opengl/MacOSXDisplay.class") != null
                 ? l.getResource("org/lwjgl/glfw/GLFW.class") == null : false;
     }
+
+    /** Cleanroom's lwjglx {@code Display.setBorderless(boolean)}, or null where there is none. Since Core 1.4.5. */
+    @javax.annotation.Nullable
+    public static java.lang.reflect.Method lwjglxBorderless() {
+        if (lwjglxBorderless == null) {
+            java.lang.reflect.Method m = null;
+            try {
+                m = Class.forName("org.lwjglx.opengl.Display", false, VanillaRevisions.class.getClassLoader())
+                        .getMethod("setBorderless", boolean.class);
+            } catch (ReflectiveOperationException | LinkageError e) {
+                // LWJGL 2, an lwjglx without it, or a dedicated server.
+            }
+            lwjglxBorderless = java.util.Optional.ofNullable(m);
+        }
+        return lwjglxBorderless.orElse(null);
+    }
+
+    private static java.util.Optional<java.lang.reflect.Method> lwjglxBorderless;
 
     /**
      * Whether 1.12.2's own world renderer draws the chunks: not where OptiFine, Celeritas, Vintagium or Nothirium replace

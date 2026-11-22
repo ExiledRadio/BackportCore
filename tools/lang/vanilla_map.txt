@@ -81,6 +81,9 @@ editGamerule.inGame.disabled.tooltip = editGamerule.inGame.disabled.tooltip
 editGamerule.inGame.disabled.hardcore.tooltip = editGamerule.inGame.disabled.hardcore.tooltip
 # 26.2 pause menu icon row: vanilla names and tooltips.
 gui.friends.open.tooltip = gui.friends.open.tooltip
+# 26.2 title screen icon row: vanilla tooltips.
+options.language.tooltip = options.language.tooltip
+options.accessibility.tooltip = options.accessibility.tooltip
 options.fullscreen.exclusive.mode.tooltip = options.fullscreen.exclusive.mode.tooltip
 options.prioritizeChunkUpdates.none.tooltip = options.prioritizeChunkUpdates.none.tooltip
 options.prioritizeChunkUpdates.byPlayer.tooltip = options.prioritizeChunkUpdates.byPlayer.tooltip

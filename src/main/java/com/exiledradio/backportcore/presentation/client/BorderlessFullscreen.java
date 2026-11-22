@@ -23,7 +23,10 @@ import java.lang.reflect.Field;
  * each platform's {@code createWindow}). {@code Display.setDisplayMode} with another size destroys the native window and
  * makes a new one, keeping the GL context, so Core sets the property and the monitor's size together, and puts both
  * back on the way out. Nothing changes the monitor's own mode, so leaving is instant and other windows keep their
- * places. Where Cleanroom's LWJGL 3 draws the window, the option is not shown and the toggle is 1.12.2's.
+ * places. Where Cleanroom's LWJGL 3 draws the window, the same window comes from lwjglx's own
+ * {@code Display.setBorderless} (GLFW's windowed mode over the monitor: no mode change, so no black flash, no windows
+ * moved to other monitors, and the game stays up when another window takes focus); an lwjglx without it leaves the
+ * option hidden and the toggle 1.12.2's.
  */
 @SideOnly(Side.CLIENT)
 public final class BorderlessFullscreen {
@@ -110,6 +113,18 @@ public final class BorderlessFullscreen {
     }
 
     private static void enter(Minecraft mc) throws Exception {
+        java.lang.reflect.Method glfw = VanillaRevisions.lwjglxBorderless();
+        if (glfw != null) {
+            int[] size = lwjglxMonitorSize();
+            setFullscreenField(mc, true);
+            mc.gameSettings.fullScreen = true;
+            glfw.invoke(null, true);
+            active = true;
+            finish(mc, size[0], size[1]);
+            entered++;
+            BackportCore.LOGGER.info("Fullscreen: borderless window {}x{} through lwjglx (Exclusive Fullscreen off)", size[0], size[1]);
+            return;
+        }
         DisplayMode desktop = Display.getDesktopDisplayMode();
         int w = Math.max(1, desktop.getWidth());
         int h = Math.max(1, desktop.getHeight());
@@ -131,6 +146,18 @@ public final class BorderlessFullscreen {
     private static void leave(Minecraft mc) throws Exception {
         int w = Math.max(1, field(tempWidth(), mc));
         int h = Math.max(1, field(tempHeight(), mc));
+        java.lang.reflect.Method glfw = VanillaRevisions.lwjglxBorderless();
+        if (glfw != null) {
+            setFullscreenField(mc, false);
+            mc.gameSettings.fullScreen = false;
+            // lwjglx puts back the window's own place and size, saved on the way in.
+            glfw.invoke(null, false);
+            active = false;
+            finish(mc, w, h);
+            left++;
+            BackportCore.LOGGER.info("Fullscreen: back to a {}x{} window", w, h);
+            return;
+        }
         setFullscreenField(mc, false);
         mc.gameSettings.fullScreen = false;
         System.setProperty(UNDECORATED, "false");
@@ -143,6 +170,21 @@ public final class BorderlessFullscreen {
         finish(mc, w, h);
         left++;
         BackportCore.LOGGER.info("Fullscreen: back to a {}x{} window", w, h);
+    }
+
+    /** The size of the monitor lwjglx's borderless window covers (the one the window is on), else the desktop's. */
+    private static int[] lwjglxMonitorSize() {
+        try {
+            Class<?> display = Class.forName("org.lwjglx.opengl.Display", false, BorderlessFullscreen.class.getClassLoader());
+            Object target = display.getMethod("getTargetFullscreenMonitor").invoke(null);
+            Object mode = target.getClass().getMethod("vidMode").invoke(target);
+            int w = ((Number) mode.getClass().getMethod("width").invoke(mode)).intValue();
+            int h = ((Number) mode.getClass().getMethod("height").invoke(mode)).intValue();
+            return new int[] {Math.max(1, w), Math.max(1, h)};
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            DisplayMode desktop = Display.getDesktopDisplayMode();
+            return new int[] {Math.max(1, desktop.getWidth()), Math.max(1, desktop.getHeight())};
+        }
     }
 
     /**

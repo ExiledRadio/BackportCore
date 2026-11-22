@@ -47,12 +47,82 @@ public final class TitleScreenExtras {
         if (!(event.getGui() instanceof GuiMainMenu)) {
             return;
         }
+        TITLE_ICONS.clear();
+        if (iconRow((GuiMainMenu) event.getGui(), event.getButtonList())) {
+            return;
+        }
         ResourceLocation icon = Presentation.titleAccessibilityIcon();
         if (icon != null) {
             GuiMainMenu menu = (GuiMainMenu) event.getGui();
             int j = menu.height / 4 + 48;
             event.getButtonList().add(new IconButton(menu.width / 2 + 104, j + 72 + 12, icon, I18n.format("narrator.button.accessibility"),
                     () -> Minecraft.getMinecraft().displayGuiScreen(OptionsListScreen.accessibility(menu))));
+        }
+    }
+
+    static final String LANGUAGE_SPRITE = "textures/gui/sprites/icon/language.png";
+    static final String ACCESSIBILITY_SPRITE = "textures/gui/sprites/icon/accessibility.png";
+    /** The title screen's 26.2 icon buttons (for their tooltips and the client self-test). */
+    public static final java.util.List<MenuScreens.IconAction> TITLE_ICONS = new java.util.ArrayList<MenuScreens.IconAction>();
+
+    /**
+     * 26.2's {@code TitleScreen.init}: under Singleplayer, Multiplayer and (Forge's) Mods and Minecraft Realms, one row
+     * of 20 by 20 icon buttons, centered with 4 between ({@code getHorizontalPosition}): Friends, Language,
+     * Accessibility; then Options... and Quit Game a row lower. Language and Accessibility are
+     * {@code CommonButtons.language}/{@code accessibility} (a 15 by 15 sprite, tooltips "Change Language" and
+     * "Accessibility Settings"); Friends is Mojang's online service, which 1.12.2 does not have: inactive in a demo,
+     * otherwise a system toast "Not available in this version", as on the pause menu. Friends is left out when no
+     * backport supplies its sprite; the whole row waits for the Language and Accessibility sprites.
+     *
+     * @return whether the row replaced 1.12.2's Language button and 1.14's Accessibility icon
+     */
+    static boolean iconRow(GuiMainMenu menu, java.util.List<GuiButton> buttons) {
+        if (!VanillaRevisions.titleIconRow() || Presentation.asset(LANGUAGE_SPRITE) == null
+                || Presentation.asset(ACCESSIBILITY_SPRITE) == null) {
+            return false;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        int j = menu.height / 4 + 48;
+        for (java.util.Iterator<GuiButton> it = buttons.iterator(); it.hasNext(); ) {
+            GuiButton b = it.next();
+            if (b.id == 5 && b instanceof net.minecraft.client.gui.GuiButtonLanguage) {
+                it.remove();
+            } else if (b.id == 0 || b.id == 4) {
+                // Options... and Quit Game: 1.12.2's j + 84, 26.2's a row under the icons.
+                b.y = j + 96;
+            }
+        }
+        if (Presentation.asset(MenuScreens.FRIENDS_SPRITE) != null) {
+            boolean available = !mc.isDemo();
+            MenuScreens.IconAction friends = new MenuScreens.IconAction(available ? I18n.format("gui.friends.open.tooltip") : null,
+                    MenuScreens.FRIENDS_SPRITE, () -> MenuScreens.unavailable(I18n.format("gui.friends.open.tooltip")));
+            friends.enabled = available;
+            TITLE_ICONS.add(friends);
+        }
+        TITLE_ICONS.add(new MenuScreens.IconAction(I18n.format("options.language.tooltip"), LANGUAGE_SPRITE,
+                () -> mc.displayGuiScreen(new net.minecraft.client.gui.GuiLanguage(menu, mc.gameSettings, mc.getLanguageManager()))));
+        TITLE_ICONS.add(new MenuScreens.IconAction(I18n.format("options.accessibility.tooltip"), ACCESSIBILITY_SPRITE,
+                () -> mc.displayGuiScreen(OptionsListScreen.accessibility(menu))));
+        int count = TITLE_ICONS.size();
+        int x = menu.width / 2 - (count * 20 + (count - 1) * 4) / 2;
+        for (MenuScreens.IconAction b : TITLE_ICONS) {
+            b.x = x;
+            b.y = j + 72;
+            x += 24;
+        }
+        buttons.addAll(TITLE_ICONS);
+        return true;
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onDrawTooltips(GuiScreenEvent.DrawScreenEvent.Post event) {
+        if (!(event.getGui() instanceof GuiMainMenu)) {
+            return;
+        }
+        for (MenuScreens.IconAction b : TITLE_ICONS) {
+            if (b.visible && b.isMouseOver() && b.tooltip != null) {
+                event.getGui().drawHoveringText(b.tooltip, event.getMouseX(), event.getMouseY());
+            }
         }
     }
 

@@ -254,7 +254,7 @@ change one version made stays made when only a later backport is installed:
     enters it at that mode instead of 1.12.2's desktop mode, doing what `toggleFullscreen` does around it; leaving is
     vanilla's. A new mode while in exclusive fullscreen applies when Video Settings closes, as vanilla's
     `VideoSettingsScreen.removed`. A saved mode the monitor no longer has is Current. Not shown with OptiFine (its
-    own Fullscreen Mode) or where Cleanroom's LWJGL 3 draws the window (as Exclusive Fullscreen).
+    own Fullscreen Mode) or where Cleanroom's lwjglx has no `setBorderless` (as Exclusive Fullscreen).
   * **Chunk Builder** (1.18.2, `prioritize_chunk_updates`: Threaded, Semi Blocking, Fully Blocking, with 26.3's three
     tooltips): P17's setting (`ChunkRebuildHooks.mode`). It is the same setting as the config's
     `rendering.blockUpdates`: it starts at the config's value, each change is written to the config, and a change in
@@ -376,8 +376,9 @@ change one version made stays made when only a later backport is installed:
   goes back to where it was. Changing the option while fullscreen switches at once. **Default** (26.3,
   `VanillaRevisions.borderlessByDefault`): off from 26.3, on at 26.1 and 26.2, following the newest version until the
   player sets it (`ToggleOption.defaultFollows`; nothing is saved till then). Below 26.1 there is no option and
-  Fullscreen is 1.12.2's. Not shown where Cleanroom's LWJGL 3 (lwjglx) draws the window (`borderlessPossible`), and the
-  toggle is then left alone; P42 also steps aside when `toggleFullscreen` is not 1.12.2's own (not exactly one
+  Fullscreen is 1.12.2's. Where Cleanroom's LWJGL 3 (lwjglx) draws the window, the borderless window is lwjglx's own
+  `Display.setBorderless` (GLFW's windowed mode over the monitor; since 1.4.5); an lwjglx without it hides the option
+  (`borderlessPossible`) and the toggle is left alone; P42 also steps aside when `toggleFullscreen` is not 1.12.2's own (not exactly one
   `Display.setFullscreen`). A launcher's `--fullscreen` argument still starts exclusive (1.12.2 makes that window
   before any mod loads); F11 twice, or turning the option on and off, then gives the borderless one.
 * **The debug overlay's GUI Scale** (26.3, `DebugScale`): Debug Options' footer has 26.3's 110-wide GUI Scale slider
@@ -403,8 +404,6 @@ change one version made stays made when only a later backport is installed:
 
 * Biome Blend (no 1.12.2 counterpart; a backport's option of that name is placed and set by the presets), RGSS
   texture filtering, 26.x's Graphics API (Vulkan). Improved Transparency covers rain and snow only (see above).
-* Exclusive Fullscreen and its mode under Cleanroom: its LWJGL 3 (lwjglx) draws the window through GLFW and has its
-  own fullscreen handling, so Core leaves both off there.
 * The debug parts 1.12.2's screen has no lines for (tps, gpu_utilization, simple_performance_impactors,
   looking_at_fluid, looking_at_entity, heightmap, sound_mood, entity_spawn_counts, chunk_generation_stats, the
   other visualizers), and 1.21.9's arrangement of the parts into the two columns: 1.12.2's order stays.
