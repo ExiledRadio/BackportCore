@@ -66,7 +66,7 @@ public final class Family {
             new Member("netherupdatebackport", "1.16", "nether-update-backport", 0xE8703A, 1790727, "1.1.1"),
             new Member("cavesandcliffsbackport", "1.17", "caves-and-cliffs-backport", 0xA678F0, 1788326, "1.1.3"),
             new Member("wildupdatebackport", "1.19", "wild-update-backport", 0x7CC85A, 1788320, "1.1.2"),
-            new Member("trailsandtalesbackport", "1.20", "trails-and-tales-backport", 0xF29AC0, 1788323, "1.0.4"),
+            new Member("trailsandtalesbackport", "1.20", "trails-and-tales-backport", 0xF29AC0, 1788323, "1.0.2"),
             new Member("trickytrialsbackport", "1.21", "tricky-trials-backport", 0xE08A4A, 1790743, "1.0.1"),
             new Member("gamedropsbackport", "26.1", "game-drops-backport", 0xE6E08A, 1813758, "1.0.0")));
 
