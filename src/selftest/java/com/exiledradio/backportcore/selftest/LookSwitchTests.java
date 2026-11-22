@@ -116,5 +116,31 @@ final class LookSwitchTests {
             check("page: World Loading Screens first, with its versions", "loadingScreens".equals(loading.name)
                     && "1.13–1.16".equals(LookFeelPage.versions(loading)), loading.name + " " + LookFeelPage.versions(loading));
         });
+        then(1, "look switches: the Family page (1.4.5)", world -> {
+            SettingsModel.Page family = LookFeelPage.familyPage();
+            SettingsModel.Page look = LookFeelPage.page();
+            check("family: every Look & Feel section on it", family.groups.containsAll(look.groups));
+            java.util.Set<SettingsModel.Entry> seen = new java.util.HashSet<SettingsModel.Entry>();
+            boolean once = true;
+            for (SettingsModel.Entry e : family.entries) {
+                once &= seen.add(e);
+            }
+            check("family: each setting once (Core's look switches only in their section)", once, family.entries.size());
+            SettingsModel.Page core = com.exiledradio.backportcore.settings.BackportSettings.page(com.exiledradio.backportcore.BackportCore.MOD_ID);
+            boolean all = true;
+            for (SettingsModel.Entry e : core.entries) {
+                all &= seen.contains(e);
+            }
+            check("family: every Core setting on it", all, core.entries.size() + " Core settings");
+            check("family: Core's own settings come first", family.groups.get(0).page.modid.equals(com.exiledradio.backportcore.BackportCore.MOD_ID)
+                    && family.groups.get(0).toggle != null ? family.groups.get(0).toggle.lookSection == null : family.groups.get(0).entries.get(0).lookSection == null);
+            check("updates: a newer release is found", "1.4.6".equals(com.exiledradio.backportcore.settings.Updates.newer("1.4.5", "1.4.6"))
+                    && "1.10.0".equals(com.exiledradio.backportcore.settings.Updates.newer("1.9.2", "1.10.0")));
+            check("updates: none when up to date or ahead", com.exiledradio.backportcore.settings.Updates.newer("1.4.5", "1.4.5") == null
+                    && com.exiledradio.backportcore.settings.Updates.newer("1.4.6", "1.4.5") == null
+                    && com.exiledradio.backportcore.settings.Updates.newer("1.4.5", "") == null);
+            check("updates: Core itself is up to date with its own table", com.exiledradio.backportcore.settings.Updates.newer(
+                    com.exiledradio.backportcore.BackportCore.MOD_ID) == null);
+        });
     }
 }

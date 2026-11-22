@@ -66,7 +66,7 @@ final class ClientLookSwitchTests {
         try {
             switch (stage) {
                 case 0:
-                    mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), LookFeelPage.ID));
+                    mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), BackportCore.MOD_ID));
                     stage = 1;
                     ticks = 0;
                     break;
@@ -84,7 +84,7 @@ final class ClientLookSwitchTests {
                     // The resources load again (the vanilla text and textures change); then the title screen settles.
                     if (ticks >= 60) {
                         shot(mc, "off-title");
-                        mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), LookFeelPage.ID));
+                        mc.displayGuiScreen(new SettingsScreen(new GuiMainMenu(), BackportCore.MOD_ID));
                         stage = 3;
                         ticks = 0;
                     }
@@ -167,15 +167,20 @@ final class ClientLookSwitchTests {
     }
 
     private static void opened(Minecraft mc) throws ReflectiveOperationException {
-        check("client look: the settings screen opened on the Look & Feel page", mc.currentScreen instanceof SettingsScreen);
+        check("client look: the settings screen opened on the Family page", mc.currentScreen instanceof SettingsScreen);
         Field selected = SettingsScreen.class.getDeclaredField("selected");
         selected.setAccessible(true);
         Field rows = SettingsScreen.class.getDeclaredField("rows");
         rows.setAccessible(true);
         List<?> r = (List<?>) rows.get(mc.currentScreen);
-        check("client look: the page's rows: the master switch first, every section open", LookFeelPage.ID.equals(selected.get(mc.currentScreen))
-                && r.size() >= LookFeelPage.page().entries.size() && r.get(0).getClass().getSimpleName().equals("GroupRow"),
-                selected.get(mc.currentScreen) + " " + r.size() + " rows for " + LookFeelPage.page().entries.size() + " settings");
+        int groups = 0;
+        for (Object row : r) {
+            groups += row.getClass().getSimpleName().equals("GroupRow") ? 1 : 0;
+        }
+        check("client look: the Family page holds Core's settings and every Look & Feel section (1.4.5)",
+                BackportCore.MOD_ID.equals(selected.get(mc.currentScreen)) && groups == LookFeelPage.familyPage().groups.size()
+                        && LookFeelPage.familyPage().groups.containsAll(LookFeelPage.page().groups),
+                selected.get(mc.currentScreen) + " " + groups + " group rows for " + LookFeelPage.familyPage().groups.size() + " groups");
         check("client look: every Core switch shows its versions", LookFeelPage.versions(entry("loadingScreens")) != null
                 && LookFeelPage.versions(entry("titleScreen")) != null, LookFeelPage.versions(entry("loadingScreens")));
         check("client look: on, the game looks like 1.16", Presentation.newest().equals(GameVersion.parse("1.16"))

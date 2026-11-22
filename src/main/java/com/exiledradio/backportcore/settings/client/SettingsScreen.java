@@ -62,7 +62,6 @@ public class SettingsScreen extends GuiScreen {
     final Map<Entry, String[]> staged = new LinkedHashMap<Entry, String[]>();
     private final Set<Group> expanded = new HashSet<Group>();
     private final List<Row> rows = new ArrayList<Row>();
-    private boolean lookOpened;
 
     private GuiTextField search;
     private String query = "";
@@ -96,9 +95,6 @@ public class SettingsScreen extends GuiScreen {
         this.parent = parent;
         for (Family.Member m : Family.MEMBERS) {
             this.side.add(m.modid);
-            if (m.modid.equals(BackportCore.MOD_ID)) {
-                this.side.add(LookFeelPage.ID);
-            }
         }
         for (String id : BackportSettings.modids()) {
             if (!this.side.contains(id)) {
@@ -165,7 +161,8 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private Page page() {
-        return LookFeelPage.ID.equals(this.selected) ? LookFeelPage.page() : BackportSettings.page(this.selected);
+        // The Family page holds the Look & Feel sections too.
+        return BackportCore.MOD_ID.equals(this.selected) ? LookFeelPage.familyPage() : BackportSettings.page(this.selected);
     }
 
     /** @return the Look &amp; Feel page's master switch, as this screen shows it (with its staged change), or true */
@@ -284,9 +281,11 @@ public class SettingsScreen extends GuiScreen {
     }
 
     private void buildPage(Page page) {
-        if (page.modid.equals(LookFeelPage.ID) && !this.lookOpened) {
-            this.lookOpened = true;
-            this.expanded.addAll(page.groups);
+        // Newer releases: every outdated family mod on the Family page, a mod's own on its page.
+        for (Family.Member m : com.exiledradio.backportcore.settings.Updates.outdated()) {
+            if (BackportCore.MOD_ID.equals(page.modid) || m.modid.equals(page.modid)) {
+                this.rows.add(new UpdateRow(m));
+            }
         }
         if (SettingsClient.remote() && hasServerEntries(page)) {
             if (SettingsClient.serverValues() == null) {
@@ -437,10 +436,12 @@ public class SettingsScreen extends GuiScreen {
             String name = SettingsClient.modName(id);
             if (ih >= 20) {
                 this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, name, tw), tx, y + 2, installed ? SettingsStyle.TEXT : SettingsStyle.DIM);
+                String newer = installed ? com.exiledradio.backportcore.settings.Updates.newer(id) : null;
                 String sub = LookFeelPage.ID.equals(id) ? I18n.format("backportcore.settings.look.sub")
+                        : newer != null ? I18n.format("backportcore.settings.update.short", newer)
                         : installed ? (m != null && !m.version.isEmpty() ? m.version + "  " : "") + modVersion(id)
                         : I18n.format("backportcore.settings.notInstalled");
-                this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, sub, tw), tx, y + 11, SettingsStyle.DIM);
+                this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, sub, tw), tx, y + 11, newer != null ? SettingsStyle.CHANGED : SettingsStyle.DIM);
             } else {
                 this.fontRenderer.drawString(SettingsStyle.trim(this.fontRenderer, name, tw), tx, y + (ih - 8) / 2, installed ? SettingsStyle.TEXT : SettingsStyle.DIM);
             }
@@ -813,6 +814,36 @@ public class SettingsScreen extends GuiScreen {
                 cx -= 2;
             }
             return cx;
+        }
+    }
+
+    /** A newer release of a family mod: click to open its CurseForge page. */
+    final class UpdateRow extends Row {
+        final Family.Member member;
+        final String text;
+
+        UpdateRow(Family.Member member) {
+            this.member = member;
+            this.h = 16;
+            String newer = com.exiledradio.backportcore.settings.Updates.newer(member.modid);
+            this.text = I18n.format("backportcore.settings.update.row", SettingsClient.modName(member.modid), newer, modVersion(member.modid));
+        }
+
+        @Override
+        void draw(int x, int y, int w, int mouseX, int mouseY, boolean hover, float partialTicks) {
+            String t = SettingsStyle.trim(SettingsScreen.this.fontRenderer, this.text, w - 12);
+            SettingsScreen.this.fontRenderer.drawString(hover ? "§n" + t : t, x + 6, y + 4, SettingsStyle.CHANGED);
+        }
+
+        @Override
+        void hover() {
+            SettingsScreen.this.hoverLines.add(I18n.format("backportcore.settings.getIt"));
+        }
+
+        @Override
+        boolean click(int mouseX, int mouseY) {
+            com.exiledradio.backportcore.presentation.client.MenuScreens.confirmLink(SettingsScreen.this, this.member.curseForgeUrl());
+            return true;
         }
     }
 

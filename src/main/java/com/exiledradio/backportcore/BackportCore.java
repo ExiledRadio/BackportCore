@@ -62,6 +62,8 @@ import org.apache.logging.log4j.Logger;
         acceptedMinecraftVersions = "[1.12.2]",
         // Waterlogging is Fluidlogged API's, on both sides, when it is installed (see waterlog/). Optional: this
         // only orders it first. Never bundled.
+        // Newer releases, read by Forge's update check and Backport Core's settings screen.
+        updateJSON = "https://raw.githubusercontent.com/ExiledRadio/BackportCore/main/updates/backportcore.json",
         dependencies = "after:fluidlogged_api@[3.3.3,)",
         // Its one channel carries only poses, and only while a backport has them on; that backport requires
         // itself on both sides. Without one, a client without the library can join a server that has it.

@@ -1,3 +1,8 @@
+# 1.4.5
+
+*   **Update notices**: the settings screen shows when a newer version of Backport Core or any installed backport is out, on the Family page and the mod's own page, with a link to CurseForge. It uses Forge's update check, or the versions this Core knows when that check is off or offline.
+*   **Look & Feel is now part of the Family page**, after Core's own settings, instead of its own tab.
+
 # 1.4.4
 
 *   **Music discs from the backports give their own comparator signal** from a jukebox, as today's game does (Game Drops Backport's Bounce gives 8); 1.12.2's twelve discs are unchanged.

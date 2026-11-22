@@ -214,6 +214,42 @@ public final class LookFeelPage {
         p.setValidValues(values.toArray(new String[0]));
     }
 
+    @Nullable
+    private static SettingsModel.Page family;
+
+    /**
+     * @return the Family page: Core's own settings that are not part of the look, then this page's sections (Core's
+     *         look switches appear once, in their section). Built once.
+     */
+    public static synchronized SettingsModel.Page familyPage() {
+        if (family == null) {
+            SettingsModel.Page core = BackportSettings.page(BackportCore.MOD_ID);
+            SettingsModel.Page p = new SettingsModel.Page(BackportCore.MOD_ID);
+            if (core != null) {
+                for (SettingsModel.Group g : core.groups) {
+                    SettingsModel.Group c = new SettingsModel.Group(g.page, g.path, g.langKey, g.comment, g.parentLangKey, g.icon);
+                    if (g.toggle != null && g.toggle.lookSection == null) {
+                        c.toggle = g.toggle;
+                    }
+                    for (SettingsModel.Entry e : g.entries) {
+                        if (e.lookSection == null) {
+                            c.entries.add(e);
+                        }
+                    }
+                    if (c.toggle != null || !c.entries.isEmpty()) {
+                        p.groups.add(c);
+                    }
+                }
+            }
+            p.groups.addAll(page().groups);
+            for (SettingsModel.Group g : p.groups) {
+                p.entries.addAll(g.all());
+            }
+            family = p;
+        }
+        return family;
+    }
+
     /** @return the page, built once from the other pages' settings */
     public static synchronized SettingsModel.Page page() {
         if (page == null) {

@@ -40,13 +40,24 @@ Core reads the `@Config` classes Forge already knows (`ConfigManager.getModConfi
 A mod outside the family registers with `BackportSettings.register(modid)` (or names its classes) in
 pre-init or init.
 
-## Look & Feel page (Core 1.4.0)
+## Look & Feel (Core 1.4.0; part of the Family page since 1.4.5)
 
-Below Backport Core in the side list. It holds no settings of its own: each row is a setting of another page (the same
+On the Family page (Backport Core's), after Core's own settings; Core's look switches show only there
+(`LookFeelPage.familyPage()`). It holds no settings of its own: each row is a setting of another page (the same
 Forge property), listed when it is Core's `lookAndFeel`, `textures.modernTextures` or `presentation.panorama`, carries
 `@Setting.Look(section)`, or is in `LookFeelPage.KNOWN`. The master switch heads it; the sections start open. A look
 setting is a Client setting wherever it shows. A row shows the versions its part comes from; with the master switch
 off, the others are dimmed and keep their values.
+
+## Update notices (Core 1.4.5)
+
+`settings/Updates.newer(modid)`: Forge's update check first (each family mod's `@Mod(updateJSON)`, the files in this
+repo's `updates/<modid>.json`, read once at startup unless Forge's `version_checking` config is off); when it has no
+answer, `Family.Member.latest`. The Family page lists every outdated family mod, a mod's page its own, and the side list
+shows "Update: x". A row opens the mod's CurseForge page.
+
+**On every release of a family mod:** set its version in `updates/<modid>.json` (both promos and a line under
+`1.12.2`) and push Core's `main`, then set `latest` in `Family.MEMBERS` for the next Core build.
 
 ## Servers
 
