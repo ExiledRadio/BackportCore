@@ -37,6 +37,7 @@ public final class PresentationClient {
         com.exiledradio.backportcore.presentation.Presentation.MUSIC_FREQUENCY.onChange(f -> GameMusic.frequencyChanged());
         MinecraftForge.EVENT_BUS.register(new OptionTooltips());
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.gamerules.client.GameRulesClient());
         MinecraftForge.EVENT_BUS.register(new RenderOptions.Events());
         MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
         MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());

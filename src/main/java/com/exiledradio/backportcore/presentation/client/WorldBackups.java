@@ -34,8 +34,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * 1.13's Edit World buttons (17w47a): Make Backup (a zip of the world in {@code .minecraft/backups}, named
  * {@code yyyy-MM-dd_HH-mm-ss_<folder>.zip}, as 1.13's {@code SaveFormat.createBackup}) and Open Backups Folder, at
- * 1.13.2's positions in {@code GuiWorldEdit}. Optimize World (the Flattening's converter) has no 1.12.2
- * counterpart, so its row stays empty.
+ * 1.13.2's positions in {@code GuiWorldEdit}, then Optimize World ({@link OptimizeWorldScreens}, Core 1.4.4).
  */
 @SideOnly(Side.CLIENT)
 public final class WorldBackups {
@@ -77,6 +76,29 @@ public final class WorldBackups {
             dir.mkdirs();
             OpenGlHelper.openFile(dir);
         }));
+        if (OptimizeWorldScreens.available()) {
+            GuiScreen worldList = lastScreen(gui);
+            buttons.add(new OptionWidgets.Action(x, top + 120, 200, I18n.format("selectWorld.edit.optimize"),
+                    () -> Minecraft.getMinecraft().displayGuiScreen(new OptimizeWorldScreens.Confirm(gui, worldList, worldId))));
+        }
+    }
+
+    /** Edit World's {@code lastScreen} (the world list), by its type: Optimize World goes back there. */
+    static GuiScreen lastScreen(GuiScreen editWorld) {
+        for (java.lang.reflect.Field f : GuiWorldEdit.class.getDeclaredFields()) {
+            if (f.getType() == GuiScreen.class) {
+                try {
+                    f.setAccessible(true);
+                    GuiScreen s = (GuiScreen) f.get(editWorld);
+                    if (s != null) {
+                        return s;
+                    }
+                } catch (IllegalAccessException e) {
+                    break;
+                }
+            }
+        }
+        return editWorld;
     }
 
     public static File backupsDir() {

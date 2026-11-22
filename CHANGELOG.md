@@ -23,6 +23,20 @@
 
 # 1.4.4
 
+*   The Game Rules screen 1.12.2 never had (`gamerules/`), as the newest installed version draws it: 1.16's
+    (Create World's Game Rules button beside More World Options; the rules under their categories, a name with an
+    ON/OFF button or a number box, the rule's id, description and default as its tooltip), 1.20.5's header and footer,
+    26.1's search box. 1.12.2's rules and the backports' (33, each shown when its mod is installed) under 26.3's names,
+    categories and order; `disableElytraMovementCheck` and `disableRaids` as 26.3's Do elytra movement check and Do
+    raids, turned around; another mod's rules under Miscellaneous by their ids. The chosen rules go to the new world
+    once every backport has added its own. In a world (Game Drops Backport's World Options, 26.3), the server's own
+    rules: channel `backportcore_rules`, permission level 2, applied as `/gamerule` applies them. API:
+    `GameRulesScreen.inWorld(parent)`, `available()`, `permitted(mc)`.
+*   1.13's Optimize World in Edit World (`worldupgrade.WorldOptimizer`, `OptimizeWorldScreens`): 1.13's question
+    (1.14's Erase Cached Data box, 1.21.2's "Create Backup and Optimize"), then its progress screen. Every chunk of every
+    dimension goes through the game's data fixer (Forge's, with each mod's fixes) and is written back when older than
+    the game (`DataVersion` or a mod's `ForgeDataVersion`); Erase Cached Data writes every chunk, drops its light and
+    works its height map out again from its blocks.
 *   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
     disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
     `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,

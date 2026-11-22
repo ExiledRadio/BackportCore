@@ -140,8 +140,11 @@ final class ClientPresentationTests {
                         if (ClientCrouchTests.done) {
                             ClientTickTests.tick(mc);
                         }
+                        if (ClientTickTests.done) {
+                            ClientGameRulesTests.inWorldTick(mc);
+                        }
                     }
-                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done
+                    if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done && ClientGameRulesTests.inWorldDone
                             && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
@@ -170,6 +173,13 @@ final class ClientPresentationTests {
                     ClientPackListTests.tick(mc);
                     if (ClientPackListTests.done) {
                         this.stage = 7;
+                    }
+                    break;
+                case 7:
+                    // Core 1.4.4's Game Rules on Create World, and Optimize World.
+                    ClientGameRulesTests.tick(mc);
+                    if (ClientGameRulesTests.done) {
+                        this.stage = 8;
                         BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
                         mc.shutdown();
                     }
