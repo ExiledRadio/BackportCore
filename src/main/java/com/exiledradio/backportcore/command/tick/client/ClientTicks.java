@@ -5,10 +5,13 @@ import com.exiledradio.backportcore.command.tick.TickRateManager;
 import com.exiledradio.backportcore.command.tick.Ticks;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ReportedException;
 import net.minecraft.util.Timer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -27,6 +30,12 @@ import java.lang.reflect.Field;
  * entities (P39, shared with the server), particles, ambient particles, the clock and the day (P40), and each
  * frozen entity and every block entity draws at the end of its last tick ({@code DeltaTracker}'s partial tick
  * of 1 for them, P40), so nothing jitters between ticks.
+ *
+ * <p>26.3 asks for the tick length every frame ({@code DeltaTracker.Timer.advanceGameTime}), so with no world (the
+ * title screen and its menus) the game is back at 20 per second on the very next frame; this does the same at the
+ * start of every frame. And 26.3 gives a screen its mouse and keys every frame (GLFW callbacks), where 1.12.2 does
+ * it once a tick ({@code GuiScreen.handleInput} in {@code runTick}): while the client ticks slower than 20 per
+ * second, an open screen also gets its input every frame, so menus answer as fast as ever.
  */
 public final class ClientTicks {
 
@@ -76,6 +85,32 @@ public final class ClientTicks {
             tickLength = ObfuscationReflectionHelper.findField(Timer.class, "field_194149_e");
         }
         return tickLength;
+    }
+
+    /** Whether an open screen gets its input every frame: only while the client ticks slower than 20 per second. */
+    public static boolean screenInputEachFrame(boolean inWorld, boolean screenOpen, TickRateManager manager) {
+        return screenOpen && tickTargetMillis(inWorld, manager) > DEFAULT_TICK_MILLIS;
+    }
+
+    /**
+     * The start of every frame: the timer's tick length for the state now, and while the client ticks slower than
+     * 20 per second, the open screen's mouse and keys ({@code runTick}'s {@code handleInput}, with its crash report).
+     */
+    static void frame() {
+        syncTimer();
+        Minecraft mc = Minecraft.getMinecraft();
+        GuiScreen screen = mc.currentScreen;
+        if (screenInputEachFrame(mc.world != null, screen != null, Ticks.client())) {
+            try {
+                screen.handleInput();
+            } catch (Throwable t) {
+                CrashReport report = CrashReport.makeCrashReport(t, "Updating screen events");
+                report.makeCategory("Affected screen").addCrashSection("Screen name", screen.getClass().getCanonicalName());
+                throw new ReportedException(report);
+            }
+            // A screen closed, or a world left, by that input: the tick length for the new state.
+            syncTimer();
+        }
     }
 
     static void syncTimer() {
@@ -153,6 +188,13 @@ public final class ClientTicks {
                 Ticks.client().tick();
             }
             syncTimer();
+        }
+
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public void onRenderTick(TickEvent.RenderTickEvent event) {
+            if (event.phase == TickEvent.Phase.START) {
+                frame();
+            }
         }
 
         @SubscribeEvent

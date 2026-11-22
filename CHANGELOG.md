@@ -10,6 +10,12 @@
     `pause_menu/social_interactions` sprites; the 1.14 text row stays otherwise.
 *   API: `MenuBackground.contentFrame`, the list background and separators of a header-and-footer screen, for a
     backport's own screens.
+*   Fixed `/tick rate` below 20 slowing menus and the title screen. 1.12.2 gives a screen its mouse and keys once a
+    tick, so every open screen answered at the server's rate; 26.3 gives them every frame. While the client ticks
+    slower than 20 per second, an open screen now also gets its input every frame. The timer's tick length is now
+    set at the start of every frame, as 26.3's `DeltaTracker` asks for it, so leaving a slowed world is back at 20
+    per second on the title screen's first frame instead of after one slow tick. As in 26.3, the world, the player
+    and screen ticks still run at the server's rate; freezing never stops players.
 
 # 1.4.5
 

@@ -783,11 +783,17 @@ or passes an existing constant through a hook of the same type.
     `ParticleManager.updateEffects()` and `WorldClient.doVoidFogParticles(...)`, become static hooks with the same
     stack; the two renderers start with `partialTicks = hook(arg, partialTicks)` (the parameters read on the first
     line). The timer's tick length follows the server's rate when it is slower than 20 per second
-    (`Minecraft.getTickTargetMillis`), through reflection, not a patch.
+    (`Minecraft.getTickTargetMillis`), through reflection, not a patch, set at the start of every frame
+    (`RenderTickEvent`) as 26.3's `DeltaTracker.Timer.advanceGameTime` asks for it each frame; with no world it is
+    always 50 ms. As in 26.3, the whole client tick runs at that rate, the player and screen ticks included; only
+    freezing exempts players. 1.12.2 reads a screen's mouse and keys once a tick (`runTick`'s `handleInput`), 26.3
+    every frame, so while the tick is longer than 50 ms an open screen also gets `handleInput` every frame (same
+    event, no patch).
 *   **Fails safe**: any method not found, or not exactly one of each call: skipped, and the client draws frozen
     things as moving.
-*   **Tested**: transformer chain and SRG names; `ClientTickTests` (rate sync, timer, frozen pig and clock, partial
-    ticks, a step, reset on leaving).
+*   **Tested**: transformer chain and SRG names; `ClientTickTests` (rate sync, timer, screen input every frame
+    while slowed, the title screen at 50 ms on its first frame, the player ticking on both sides while frozen,
+    frozen pig and clock, partial ticks, a step, reset on leaving).
 
 ## P41. A jukebox's comparator signal for discs added after 1.12.2
 
