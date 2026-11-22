@@ -18,7 +18,7 @@ tasks name it with `-Dfml.coreMods.load`.
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
-    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`).
+    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`, `creative/client/CreativeScreenHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
     with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
@@ -924,3 +924,39 @@ or passes an existing constant through a hook of the same type.
     burning furnace and a pressed button at the spawn tick, the same far away hold until the distance is off; the
     square edges at 4 and 5 chunks with a stand-in player; spawning denied outside; server.properties);
     `ClientVideoShots` (the option reaches the game's own server).
+
+## P47. 1.19.3's creative tabs
+
+*   **Class**: `net.minecraft.client.gui.inventory.GuiContainerCreative` (`initGui`, `drawScreen`,
+    `drawGuiContainerBackgroundLayer`, `renderToolTip`, `isMouseOverTab`, `renderCreativeInventoryHoveringText`,
+    `drawTab`). **Transformer**: `asm/CreativeTabsTransformer`. **Hooks**: `creative/client/CreativeScreenHooks`.
+    **Since**: 1.4.5.
+*   **Vanilla change**: 1.19.3 (22w42a) replaced the creative tabs (`CreativeModeTabs`): Building Blocks, Colored Blocks,
+    Natural Blocks, Functional Blocks, Redstone Blocks, Saved Hotbars and Search on top, Tools & Utilities, Combat,
+    Food & Drinks, Ingredients, Spawn Eggs, Operator Utilities and the Survival Inventory below. Seven tabs to a row,
+    26 pixels wide and 27 apart (`getTabX`: `27 * column`, or `imageWidth - 27 * (7 - column) + 1` aligned right), where
+    1.12.2 has six 28 wide (`28 * column + column`, or `xSize - 28 * (6 - column) + 2`). The icon sits 5 pixels in, not 6.
+*   **Why a patch**: the screen places every tab by 1.12.2's arithmetic in three protected methods and picks a page's tabs
+    by index range in two others, with no event; 1.19.3's first page holds 13 or 14 tabs where 1.12.2's holds 12. A
+    subclass of the screen cannot reach its private `setCurrentCreativeTab` or the static `selectedTabIndex` that every
+    other mod's code reads.
+*   **What changes**: in `initGui` the one `CREATIVE_TAB_ARRAY.length` (the page count) becomes `tabCount(array)` and the
+    one `CREATIVE_TAB_ARRAY[i]` (the tab it opens on) `openTab(array, i)`, each an instruction replaced by a static call
+    taking and leaving the same stack; in `drawScreen` and `drawGuiContainerBackgroundLayer` Forge's one
+    `Arrays.copyOfRange` (the page's tabs) becomes `tabsOnPage` with the same arguments, and in the background the one
+    `getTabPage()` (is the open tab on the page shown) `pageOf(tab)`; in `renderToolTip` the one
+    `Item.getCreativeTab()` (the search tab's tooltip line) becomes `searchTooltipTab(item)`; the whole bodies of
+    `isMouseOverTab`, `renderCreativeInventoryHoveringText` and `drawTab` become one call each to the hook of that name.
+    Until 1.19.3's tabs are on (`ModernTabs.active`: the inventory part at 1.19.3 or later) every hook runs 1.12.2's code
+    line for line, with Core's eleven added tabs (made at load complete, after every mod's) on no page and left out of
+    the count. A tab another mod makes after Core's keeps the place it would have had without them (`compact`). The
+    tab sprites are the backport's `tabs.png` (Wild Update's, 1.19.3's); with only an older sheet the hooks draw 1.12.2's
+    sprites cut to 26 pixels.
+*   **Fails safe**: a method missing, or not exactly one of each changed instruction: the class is left alone, the patch
+    is reported skipped, and `ModernTabs.install` adds no tabs, so the screen stays 1.12.2's.
+*   **Other mods**: the three replaced bodies drop any earlier transformer's changes to them (none known); a mod that
+    replaces the screen keeps its own. Items keep their 1.12.2 tabs, so `getSubItems`, the search tab and JEI are as
+    before.
+*   **Tested**: transformer chain and SRG names (`PatchTests`; vanilla's unpaged screen in the SRG jar is left alone);
+    `ClientMenuShots` (the first page's 13 and 14 tabs, each tab's first item and screenshot, books, eggs, every 1.12.2
+    stack in a 1.19.3 tab, search, a late mod tab on page 2, the inventory part off).

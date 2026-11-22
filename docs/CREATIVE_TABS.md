@@ -83,6 +83,47 @@ runs 26.3's own `CreativeModeTabs` from the 26.3 server jar (with its bundled li
 tab; `tools/creative/build_order_263.py` adds the home tabs, the goat horn (its tab needs a data pack reload) and the
 ids 26.3 renamed (`chain` is `iron_chain`).
 
+## From 1.19.3: 1.19.3's tabs
+
+With the inventory part of the look at 1.19.3 or later (Wild Update Backport and every later backport), the creative
+menu's first page shows 1.19.3's tabs instead of 1.12.2's nine (`creative.client.ModernTabs`, drawn by patch P47):
+
+| Row | Tabs, left to right |
+|---|---|
+| Top | Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks; Saved Hotbars and Search at the right end |
+| Bottom | Tools & Utilities, Combat, Food & Drinks, Ingredients, Spawn Eggs; Operator Utilities and the Survival Inventory at the right end |
+
+Operator Utilities shows with Controls' Operator Items Tab on (1.19.3's option, off by default) for a player allowed
+commands (level 2), and lists the operator items 1.12.2 has: command blocks, the command block minecart, the structure
+block and void, the barrier. Tabs are 1.19.3's size (26 pixels, 27 apart); their sprites are 1.19.3's `tabs.png`, which
+Wild Update Backport supplies (`Contribution.replaceAsset`). Without it, 1.12.2's sprites are cut to that width.
+
+**Contents.** Each tab lists what 1.19.3's lists, in its order (`creative/tabs_1_19_3.txt`); from 26.3 on, what 26.3's
+lists (`order_26_3.txt`'s own tabs). The stacks are those the nine 1.12.2 tabs list, the backports' placed items
+included, each found as the item it is today (as for 26.3's order above), and each in every tab that lists that item
+(a log in Building Blocks and Natural Blocks). Enchanted books are 1.19.3's: every enchantment's book at its top level,
+at the end of Ingredients. A stack neither table lists (another mod's item in a vanilla tab) goes after the rest of
+the tab its 1.12.2 tab leads to:
+
+| 1.12.2 tab | 1.19.3 tab |
+|---|---|
+| Building Blocks | Building Blocks |
+| Decoration Blocks | Functional Blocks |
+| Redstone | Redstone Blocks |
+| Transportation, Tools | Tools & Utilities |
+| Combat | Combat |
+| Foodstuffs, Brewing | Food & Drinks |
+| Miscellaneous | Ingredients (a spawn egg: Spawn Eggs) |
+
+**Other mods.** Their own tabs are untouched and follow on page 2 on, ten to a page, as 1.12.2 Forge pages them. Every
+item keeps its 1.12.2 tab, so `getSubItems`, the search tab and JEI list as before; the search tab's tooltip names the
+first 1.19.3 tab the item is in. Core's eleven tabs are added to `CreativeTabs.CREATIVE_TAB_ARRAY` at load complete,
+after every mod's, and are on no page while the look is older.
+
+The table is built by `tools/creative/build_tabs_1193.py` from 1.19.3's `CreativeModeTabs`, decompiled with Mojang's
+names (each `accept(Items.X)`, each generated set as its item: fireworks, goat horns, suspicious stew, potions, tipped
+arrows, enchanted books). Items added after 1.19.3 go in their 26.3 tab, after the item 26.3 lists before them.
+
 ## Checking a tab
 
 A client started with `-Dbackportcore.creativeDump=<file>` writes every vanilla tab's list at the first title

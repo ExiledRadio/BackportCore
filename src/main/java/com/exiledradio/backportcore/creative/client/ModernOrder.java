@@ -43,6 +43,7 @@ public final class ModernOrder {
     private static final String FILE = "/assets/backportcore/creative/order_26_3.txt";
 
     private static Map<String, Map<String, Integer>> ranks;
+    private static Map<String, Map<String, Integer>> ownTabs;
     private static Map<String, String> aliases;
 
     private ModernOrder() {
@@ -71,6 +72,27 @@ public final class ModernOrder {
         String id = aliases.containsKey(modernId) ? aliases.get(modernId) : modernId;
         Integer r = order.get(id);
         return r == null ? -1 : r;
+    }
+
+    /**
+     * @return the place of today's item {@code modernId} in 26.3's own tab {@code tab26} ({@code building_blocks},
+     * ...: that tab's list alone), or -1 when that tab does not list it. {@link ModernTabs} reads 26.3's tabs so.
+     */
+    public static int tabRank(String tab26, String modernId) {
+        load();
+        Map<String, Integer> order = ownTabs.get(tab26);
+        if (order == null) {
+            return -1;
+        }
+        Integer r = order.get(alias(modernId));
+        return r == null ? -1 : r;
+    }
+
+    /** @return the id 26.3 knows {@code modernId} by (an older id 26.3 renamed becomes 26.3's) */
+    public static String alias(String modernId) {
+        load();
+        String a = aliases.get(modernId);
+        return a != null ? a : modernId;
     }
 
     private static synchronized void load() {
@@ -131,6 +153,17 @@ public final class ModernOrder {
             }
             out.put(e.getKey(), order);
         }
+        Map<String, Map<String, Integer>> own = new HashMap<String, Map<String, Integer>>();
+        for (Map.Entry<String, List<String>> e : tabs.entrySet()) {
+            Map<String, Integer> order = new HashMap<String, Integer>();
+            for (String id : e.getValue()) {
+                if (!order.containsKey(id)) {
+                    order.put(id, order.size());
+                }
+            }
+            own.put(e.getKey(), order);
+        }
+        ownTabs = own;
         aliases = renamed;
         ranks = out;
     }

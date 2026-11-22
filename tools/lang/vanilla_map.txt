@@ -86,3 +86,16 @@ options.prioritizeChunkUpdates.none.tooltip = options.prioritizeChunkUpdates.non
 options.prioritizeChunkUpdates.byPlayer.tooltip = options.prioritizeChunkUpdates.byPlayer.tooltip
 options.prioritizeChunkUpdates.nearby.tooltip = options.prioritizeChunkUpdates.nearby.tooltip
 options.improvedTransparency.tooltip = options.improvedTransparency.tooltip
+# 1.19.3's creative tabs (Core keys, so 1.12.2's own itemGroup.redstone and itemGroup.tools keep their words).
+backportcore.itemGroup.buildingBlocks = itemGroup.buildingBlocks
+backportcore.itemGroup.coloredBlocks = itemGroup.coloredBlocks
+backportcore.itemGroup.natural = itemGroup.natural
+backportcore.itemGroup.functional = itemGroup.functional
+backportcore.itemGroup.redstone = itemGroup.redstone
+backportcore.itemGroup.tools = itemGroup.tools
+backportcore.itemGroup.combat = itemGroup.combat
+backportcore.itemGroup.foodAndDrink = itemGroup.foodAndDrink
+backportcore.itemGroup.ingredients = itemGroup.ingredients
+backportcore.itemGroup.spawnEggs = itemGroup.spawnEggs
+backportcore.itemGroup.op = itemGroup.op
+options.operatorItemsTab = options.operatorItemsTab

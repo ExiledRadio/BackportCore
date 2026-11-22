@@ -212,13 +212,27 @@ public final class CreativeTabsClient {
         }
     }
 
+    /** One table's places for today's item ids: an id's place, or -1 when the table does not list it. */
+    interface Ranker {
+        int rank(String modernId);
+    }
+
     /** @return a stack's place in 26.3's order for {@code tab}, or NONE when 26.3 does not list it */
     static double modernKey(CreativeTabs tab, ItemStack stack) {
+        return modernKey(id -> ModernOrder.rank(tab, id), stack);
+    }
+
+    /**
+     * @return a stack's place in a table ({@link ModernTabs}' tabs use this too): by the item it is today (a vanilla
+     * stack through {@code legacy_items.txt}, a backport's by its placement or name, one placed after another just
+     * after that one), or NONE when the table does not list it
+     */
+    static double modernKey(Ranker table, ItemStack stack) {
         Placement p = placement(stack);
         if (p == null) {
             String id = VanillaOrder.modernId(stack);
             if (id != null) {
-                return modernRank(tab, id);
+                return modernRank(table, id);
             }
             // A backport's item it did not place (a mod that places others is a backport) is found by its name, as
             // an item placed after another is; another mod's item has no place.
@@ -232,16 +246,16 @@ public final class CreativeTabsClient {
             // own (a straw bed), or, for an item with a metadata per dye color, that color's (Game Drops' cushion; its
             // wool stairs, one item per few colors named after the first, pink_wool_stairs@7 being the gray ones).
             String id = namedId(stack);
-            double named = id == null ? NONE : modernRank(tab, id);
+            double named = id == null ? NONE : modernRank(table, id);
             ResourceLocation own = stack.getItem().getRegistryName();
             if (Double.isNaN(named) && own != null) {
-                named = modernRank(tab, "minecraft:" + own.getPath());
+                named = modernRank(table, "minecraft:" + own.getPath());
             }
             if (!Double.isNaN(named) || p == null) {
                 return named;
             }
         }
-        return modernKey(tab, p, 0);
+        return modernKey(table, p, 0);
     }
 
     private static final String[] DYES = {"white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray",
@@ -271,27 +285,27 @@ public final class CreativeTabsClient {
         return "minecraft:" + DYES[meta] + "_" + rest;
     }
 
-    private static double modernKey(CreativeTabs tab, Placement p, int depth) {
+    private static double modernKey(Ranker table, Placement p, int depth) {
         if (p.modernId != null) {
-            return modernRank(tab, p.modernId);
+            return modernRank(table, p.modernId);
         }
         if (p.anchor == null || depth > 16) {
             return NONE;
         }
         // An item vanilla does not have, after its anchor: a vanilla item, or another backport item.
-        double anchor = modernRank(tab, p.anchor);
+        double anchor = modernRank(table, p.anchor);
         if (Double.isNaN(anchor)) {
             Item item = Item.getByNameOrId(p.anchor);
             List<Placement> list = item == null ? null : byItem.get(item);
             if (list != null && !list.isEmpty()) {
-                anchor = modernKey(tab, list.get(0), depth + 1);
+                anchor = modernKey(table, list.get(0), depth + 1);
             }
         }
         return Double.isNaN(anchor) ? NONE : anchor + 0.001 * (depth + 1);
     }
 
-    private static double modernRank(CreativeTabs tab, String modernId) {
-        int r = ModernOrder.rank(tab, modernId);
+    private static double modernRank(Ranker table, String modernId) {
+        int r = table.rank(modernId);
         return r < 0 ? NONE : r;
     }
 
@@ -368,7 +382,7 @@ public final class CreativeTabsClient {
         return at;
     }
 
-    private static void rebuild() {
+    static void rebuild() {
         int now = CreativePlacement.changes();
         if (now == builtAt) {
             return;
@@ -406,7 +420,7 @@ public final class CreativeTabsClient {
     }
 
     @Nullable
-    private static Placement placement(ItemStack stack) {
+    static Placement placement(ItemStack stack) {
         Item item = stack.getItem();
         if (item == Items.SPAWN_EGG) {
             ResourceLocation entity = ItemMonsterPlacer.getNamedIdFrom(stack);
@@ -515,6 +529,7 @@ public final class CreativeTabsClient {
      * mod (JEI's ingredient list too) has finished loading.
      */
     public static void loadComplete() {
+        ModernTabs.install();
         String file = System.getProperty(DUMP);
         if (file != null && !file.isEmpty()) {
             net.minecraftforge.common.MinecraftForge.EVENT_BUS.register(new DumpAtTitle());

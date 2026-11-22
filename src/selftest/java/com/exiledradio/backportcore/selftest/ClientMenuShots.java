@@ -1,6 +1,9 @@
 package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.creative.client.CreativeScreenHooks;
+import com.exiledradio.backportcore.creative.client.ModernTab;
+import com.exiledradio.backportcore.creative.client.ModernTabs;
 import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.client.MenuBackground;
@@ -17,8 +20,15 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 import net.minecraft.client.gui.GuiVideoSettings;
 import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldSettings;
@@ -36,7 +46,10 @@ import org.lwjgl.opengl.GL11;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 /**
@@ -210,6 +223,238 @@ final class ClientMenuShots {
             mc.displayGuiScreen(null);
             return true;
         });
+        creativeTabs(mc);
+    }
+
+    // ---- 1.19.3's creative tabs (creative.client.ModernTabs, P47) ----
+
+    private CreativeTabs late;
+    private boolean inventoryWas;
+
+    private void creativeTabs(Minecraft mc) {
+        add(null, () -> {
+            check("P47 applied", "applied".equals(Asm.state("P47")), Asm.state("P47"));
+            check("1.19.3's tabs are installed and on (1.20.5 or later)", ModernTabs.installed() && ModernTabs.active(),
+                    Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.INVENTORY));
+            // A tab another mod makes after Core's: it pages as if Core's were not in the array.
+            this.late = new CreativeTabs("backportcore_selftest_late") {
+                @Override
+                public ItemStack createIcon() {
+                    return new ItemStack(Items.APPLE);
+                }
+            };
+            int mods = 0;
+            for (CreativeTabs t : CreativeTabs.CREATIVE_TAB_ARRAY) {
+                if (t.getIndex() >= 12 && !(t instanceof ModernTab)) {
+                    mods++;
+                }
+            }
+            int compact = CreativeScreenHooks.compact(this.late);
+            check("a late mod tab keeps the place it would have had (index " + this.late.getIndex() + ")", compact == 12 + mods - 1, compact);
+            return true;
+        });
+        add("creative-building", () -> show(new GuiContainerCreative(mc.player)));
+        add(null, () -> {
+            GuiContainerCreative gui = creative(mc);
+            CreativeTabs open = gui == null ? null : CreativeTabs.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
+            check("the creative screen opens on 1.19.3's Building Blocks", open == ModernTabs.tab(ModernTabs.Def.BUILDING_BLOCKS), open);
+            List<ItemStack> items = items(gui);
+            check("Building Blocks starts with the oak log (1.19.3's order)",
+                    items.size() > 100 && items.get(0).getItem() == Item.getItemFromBlock(Blocks.LOG), describe(items, 4));
+            Object[] page = CreativeScreenHooks.tabsOnPage(CreativeTabs.CREATIVE_TAB_ARRAY, 0, 12);
+            check("the first page: 10 of 1.19.3's tabs (Operator Utilities off), Saved Hotbars, Search, the inventory", page.length == 13, page.length);
+            Object[] page1 = CreativeScreenHooks.tabsOnPage(CreativeTabs.CREATIVE_TAB_ARRAY, 12, Math.min(22, CreativeTabs.CREATIVE_TAB_ARRAY.length));
+            check("the late mod tab is on page 2 (with no other mod tabs, its first slot)", Arrays.asList(page1).contains(this.late), Arrays.toString(page1));
+            check("getSubItems untouched: stone's tab is still 1.12.2's Building Blocks",
+                    Item.getItemFromBlock(Blocks.STONE).getCreativeTab() == CreativeTabs.BUILDING_BLOCKS, "");
+            return true;
+        });
+        tab(mc, "creative-colored", ModernTabs.Def.COLORED_BLOCKS, "minecraft:wool@0");
+        tab(mc, "creative-natural", ModernTabs.Def.NATURAL_BLOCKS, "minecraft:grass@0");
+        tab(mc, "creative-functional", ModernTabs.Def.FUNCTIONAL_BLOCKS, "minecraft:torch@0");
+        tab(mc, "creative-redstone", ModernTabs.Def.REDSTONE_BLOCKS, "minecraft:redstone@0");
+        tab(mc, "creative-tools", ModernTabs.Def.TOOLS_AND_UTILITIES, "minecraft:wooden_shovel@0");
+        tab(mc, "creative-combat", ModernTabs.Def.COMBAT, "minecraft:wooden_sword@0");
+        tab(mc, "creative-food", ModernTabs.Def.FOOD_AND_DRINKS, "minecraft:apple@0");
+        tab(mc, "creative-ingredients", ModernTabs.Def.INGREDIENTS, "minecraft:coal@0");
+        add(null, () -> {
+            List<ItemStack> items = items(creative(mc));
+            int books = 0;
+            for (ItemStack s : items) {
+                books += s.getItem() == Items.ENCHANTED_BOOK ? 1 : 0;
+            }
+            int enchantments = 0;
+            for (net.minecraft.enchantment.Enchantment e : net.minecraft.enchantment.Enchantment.REGISTRY) {
+                enchantments += e.type != null ? 1 : 0;
+            }
+            int lastBook = -1;
+            for (int i = 0; i < items.size(); i++) {
+                if (items.get(i).getItem() == Items.ENCHANTED_BOOK) {
+                    lastBook = i;
+                }
+            }
+            // After the books only stacks no table lists (in this run, none from vanilla).
+            StringBuilder after = new StringBuilder();
+            for (int i = lastBook + 1; i < items.size(); i++) {
+                after.append(' ').append(key(items.get(i)));
+            }
+            check("Ingredients has every enchantment's book at its top level, last of 1.19.3's items", books == enchantments && lastBook >= 0,
+                    books + " of " + enchantments + "; after them:" + after);
+            return true;
+        });
+        tab(mc, "creative-eggs", ModernTabs.Def.SPAWN_EGGS, null);
+        add(null, () -> {
+            List<ItemStack> items = items(creative(mc));
+            boolean eggs = !items.isEmpty();
+            for (ItemStack s : items) {
+                eggs &= s.getItem() instanceof net.minecraft.item.ItemMonsterPlacer;
+            }
+            StringBuilder names = new StringBuilder();
+            for (int i = 0; i < Math.min(4, items.size()); i++) {
+                names.append(' ').append(net.minecraft.item.ItemMonsterPlacer.getNamedIdFrom(items.get(i)));
+            }
+            // 1.19.3's eggs are by name: the allay (Wild Update) before the bat, else the bat first.
+            String first = Loader.isModLoaded("wildupdatebackport") ? "allay" : "bat";
+            check("Spawn Eggs lists spawn eggs only, by name (" + first + " first)", eggs
+                    && String.valueOf(net.minecraft.item.ItemMonsterPlacer.getNamedIdFrom(items.get(0))).endsWith(":" + first), names);
+            // Every stack the nine 1.12.2 tabs list is in some 1.19.3 tab.
+            Set<String> listed = new HashSet<String>();
+            for (ModernTabs.Def d : ModernTabs.Def.values()) {
+                NonNullList<ItemStack> l = NonNullList.create();
+                ModernTabs.tab(d).displayAllRelevantItems(l);
+                for (ItemStack s : l) {
+                    listed.add(key(s));
+                }
+            }
+            List<String> lost = new ArrayList<String>();
+            for (CreativeTabs t : new CreativeTabs[] {CreativeTabs.BUILDING_BLOCKS, CreativeTabs.DECORATIONS, CreativeTabs.REDSTONE,
+                    CreativeTabs.TRANSPORTATION, CreativeTabs.MISC, CreativeTabs.FOOD, CreativeTabs.TOOLS, CreativeTabs.COMBAT, CreativeTabs.BREWING}) {
+                NonNullList<ItemStack> l = NonNullList.create();
+                t.displayAllRelevantItems(l);
+                for (ItemStack s : l) {
+                    if (s.getItem() != Items.ENCHANTED_BOOK && !listed.contains(key(s))) {
+                        lost.add(key(s));
+                    }
+                }
+            }
+            check("every stack of 1.12.2's nine tabs is in a 1.19.3 tab", lost.isEmpty(), lost);
+            return true;
+        });
+        add("creative-search", () -> {
+            selectTab(mc, CreativeTabs.SEARCH);
+            List<ItemStack> items = items(creative(mc));
+            check("Search lists as before (1.12.2's search tab)", items.size() > 500, items.size());
+            check("the search tooltip names 1.19.3's tab: stone is in Building Blocks",
+                    CreativeScreenHooks.searchTooltipTab(Item.getItemFromBlock(Blocks.STONE)) == ModernTabs.tab(ModernTabs.Def.BUILDING_BLOCKS), "");
+            return true;
+        });
+        add("creative-inventory", () -> selectTab(mc, CreativeTabs.INVENTORY));
+        add("creative-page2", () -> {
+            setPage(1);
+            return selectTab(mc, this.late);
+        });
+        add(null, () -> {
+            setPage(0);
+            Presentation.OPERATOR_ITEMS_TAB.set(true);
+            check("Operator Items Tab shows from 1.19.3", Presentation.OPERATOR_ITEMS_TAB.isShown(), "");
+            mc.player.setPermissionLevel(4); // as an operator (the test world has no cheats)
+            check("the player may use commands", mc.player.canUseCommand(2, ""), "");
+            return show(new GuiContainerCreative(mc.player));
+        });
+        add("creative-op", () -> selectTab(mc, ModernTabs.tab(ModernTabs.Def.OP_BLOCKS)));
+        add(null, () -> {
+            List<ItemStack> items = items(creative(mc));
+            check("Operator Utilities: the command block first, the barrier last (1.12.2 has no jigsaw, debug stick or light)", !items.isEmpty()
+                    && items.get(0).getItem() == Item.getItemFromBlock(Blocks.COMMAND_BLOCK)
+                    && key(items.get(items.size() - 1)).equals("minecraft:barrier@0"), describe(items, 8));
+            check("the first page has Operator Utilities", CreativeScreenHooks.tabsOnPage(CreativeTabs.CREATIVE_TAB_ARRAY, 0, 12).length == 14, "");
+            Presentation.OPERATOR_ITEMS_TAB.set(false);
+            this.inventoryWas = com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory;
+            com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory = false;
+            check("the inventory part off: 1.19.3's tabs off", !ModernTabs.active(), "");
+            mc.refreshResources(); // as the Look & Feel switch does: 1.12.2's tab sprites back
+            return show(new GuiContainerCreative(mc.player));
+        });
+        add("creative-1-12-2", () -> {
+            GuiContainerCreative gui = creative(mc);
+            CreativeTabs open = gui == null ? null : CreativeTabs.CREATIVE_TAB_ARRAY[gui.getSelectedTabIndex()];
+            check("off, the screen opens on 1.12.2's Building Blocks", open != null && open.getIndex() == CreativeTabs.BUILDING_BLOCKS.getIndex(), open);
+            Object[] page = CreativeScreenHooks.tabsOnPage(CreativeTabs.CREATIVE_TAB_ARRAY, 0, 12);
+            boolean ours = false;
+            for (Object o : page) {
+                ours |= o instanceof ModernTab;
+            }
+            check("off, the first page is 1.12.2's twelve", page.length == 12 && !ours, page.length);
+            check("off, the added tabs are not counted as pages",
+                    CreativeScreenHooks.tabCount(CreativeTabs.CREATIVE_TAB_ARRAY) == CreativeTabs.CREATIVE_TAB_ARRAY.length - 11, "");
+            return true;
+        });
+        add(null, () -> {
+            com.exiledradio.backportcore.CoreConfig.lookAndFeel.inventory = this.inventoryWas;
+            mc.refreshResources();
+            mc.displayGuiScreen(null);
+            return true;
+        });
+    }
+
+    private void tab(Minecraft mc, String shot, ModernTabs.Def def, String first) {
+        add(shot, () -> selectTab(mc, ModernTabs.tab(def)));
+        if (first != null) {
+            add(null, () -> {
+                List<ItemStack> items = items(creative(mc));
+                check(def.id + " starts with " + first + " (1.19.3's first item 1.12.2 has)", !items.isEmpty() && key(items.get(0)).equals(first),
+                        describe(items, 4));
+                return true;
+            });
+        }
+    }
+
+    private boolean selectTab(Minecraft mc, CreativeTabs tab) {
+        GuiContainerCreative gui = creative(mc);
+        if (gui == null) {
+            check("the creative screen is open", false, mc.currentScreen);
+            return true;
+        }
+        try {
+            java.lang.reflect.Method set = net.minecraftforge.fml.relauncher.ReflectionHelper.findMethod(GuiContainerCreative.class,
+                    "setCurrentCreativeTab", "func_147050_b", CreativeTabs.class);
+            set.invoke(gui, tab);
+        } catch (ReflectiveOperationException e) {
+            failed("select " + tab, e);
+        }
+        return true;
+    }
+
+    private void setPage(int page) {
+        try {
+            net.minecraftforge.fml.relauncher.ReflectionHelper.findField(GuiContainerCreative.class, "tabPage").setInt(null, page);
+        } catch (ReflectiveOperationException e) {
+            failed("page " + page, e);
+        }
+    }
+
+    @javax.annotation.Nullable
+    private static GuiContainerCreative creative(Minecraft mc) {
+        return mc.currentScreen instanceof GuiContainerCreative ? (GuiContainerCreative) mc.currentScreen : null;
+    }
+
+    private static List<ItemStack> items(@javax.annotation.Nullable GuiContainerCreative gui) {
+        if (gui == null) {
+            return new ArrayList<ItemStack>();
+        }
+        return ((GuiContainerCreative.ContainerCreative) gui.inventorySlots).itemList;
+    }
+
+    private static String key(ItemStack s) {
+        return s.getItem().getRegistryName() + "@" + s.getMetadata();
+    }
+
+    private static String describe(List<ItemStack> items, int n) {
+        StringBuilder b = new StringBuilder(items.size() + ":");
+        for (int i = 0; i < Math.min(n, items.size()); i++) {
+            b.append(' ').append(key(items.get(i)));
+        }
+        return b.toString();
     }
 
     private static boolean show(GuiScreen screen) {

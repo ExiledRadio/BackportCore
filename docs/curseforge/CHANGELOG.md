@@ -6,6 +6,7 @@
 *   **Chunk Builder** (1.18.2, Video Settings): Threaded, Semi Blocking or Fully Blocking, the same setting as Core's config option for it.
 *   **Improved Transparency** (Video Settings, the Fabulous! preset): rain and snow in front of water and glass are drawn over them instead of behind them.
 *   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own, or on Cleanroom.)
+*   **1.19.3's creative tabs** with Wild Update Backport or any later backport: Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks, Tools & Utilities, Combat, Food & Drinks, Ingredients and Spawn Eggs, each with 1.19.3's items in 1.19.3's order (26.3's with Game Drops Backport). Operator Utilities shows with the new Operator Items Tab in Controls. Other mods' tabs are on the pages after. The Look & Feel inventory switch turns it off.
 
 # 1.4.4
 

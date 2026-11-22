@@ -64,7 +64,9 @@ public final class CreativeOrder {
                 selectedTab = ReflectionHelper.findField(GuiContainerCreative.class, "selectedTabIndex", "field_147058_w");
             }
             int tab = selectedTab.getInt(null);
-            if (tab == CreativeTabs.SEARCH.getIndex() || tab == CreativeTabs.INVENTORY.getIndex()) {
+            if (tab == CreativeTabs.SEARCH.getIndex() || tab == CreativeTabs.INVENTORY.getIndex()
+                    || CreativeTabs.CREATIVE_TAB_ARRAY[tab] instanceof com.exiledradio.backportcore.creative.client.ModernTab) {
+                // 1.19.3's tabs list in their own version's order.
                 return;
             }
             NonNullList<ItemStack> items = ((GuiContainerCreative.ContainerCreative) gui.inventorySlots).itemList;

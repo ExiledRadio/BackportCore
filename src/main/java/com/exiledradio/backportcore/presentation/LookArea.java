@@ -32,8 +32,11 @@ public enum LookArea {
     DEBUG("debug", "1.20.2", "1.21.9", "1.21.11", "26.3"),
     /** Toasts: the music toast and the newer toasts' textures. */
     TOASTS("toasts", "1.21.6"),
-    /** Inventory and creative tabs: the creative order (26.3's, creative.client.ModernOrder), slot highlights and the container textures. */
-    INVENTORY("inventory", "1.21.2", "26.3"),
+    /**
+     * Inventory and creative tabs: 1.19.3's creative tabs (creative.client.ModernTabs), the creative order (26.3's,
+     * creative.client.ModernOrder), slot highlights and the container textures.
+     */
+    INVENTORY("inventory", "1.19.3", "1.21.2", "26.3"),
     /** Sounds and music: the menu music, the in-game music, the music options. */
     MUSIC("music", "1.14", "1.21.6"),
     /** Sky, fog and clouds: each version's fog, sky color, clouds and sunrise steps. */
