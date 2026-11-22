@@ -76,6 +76,51 @@ public final class WaterRules {
         SectionFluidStates.register();
     }
 
+    /** Set when Fluidlogged API is about to apply its configs; the next server tick clears its flow overrides. */
+    private static volatile boolean flowOverridesPending;
+
+    /**
+     * Fluidlogged API's built-in list gives every {@code BlockLeaves} (and hopper, spawner) a "fluid always flows out"
+     * override, asked before the block's own {@code canFluidFlow}. {@code Apply} comes just before it applies its
+     * configs (which first resets every override), so the overrides are cleared on the next tick, for the states of
+     * every {@link Waterloggable} block that answers {@link Waterloggable#waterFlowsThrough} itself.
+     */
+    @SubscribeEvent
+    public static void configsApplied(git.jbredwards.fluidlogged_api.api.event.FluidloggedAPIConfigsEvent.Apply event) {
+        flowOverridesPending = true;
+    }
+
+    @SubscribeEvent
+    public static void serverTick(net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent event) {
+        if (event.phase == net.minecraftforge.fml.common.gameevent.TickEvent.Phase.START && flowOverridesPending) {
+            flowOverridesPending = false;
+            clearFlowOverrides();
+        }
+    }
+
+    /** Hands flow back to {@link Waterloggable#waterFlowsThrough} for each block that overrides it. */
+    public static void clearFlowOverrides() {
+        int states = 0;
+        for (Block block : net.minecraftforge.fml.common.registry.ForgeRegistries.BLOCKS) {
+            if (!(block instanceof Waterloggable)) {
+                continue;
+            }
+            try {
+                if (block.getClass().getMethod("waterFlowsThrough", IBlockState.class, net.minecraft.world.IBlockAccess.class,
+                        net.minecraft.util.math.BlockPos.class, net.minecraft.util.EnumFacing.class).getDeclaringClass() == Waterloggable.class) {
+                    continue;
+                }
+            } catch (NoSuchMethodException e) {
+                continue;
+            }
+            for (IBlockState state : block.getBlockState().getValidStates()) {
+                git.jbredwards.fluidlogged_api.mod.asm.iface.ICanFluidFlowHandler.Accessor.setOverride(state, null);
+                states++;
+            }
+        }
+        BackportCore.LOGGER.debug("Waterlogging: {} states answer water flow themselves", states);
+    }
+
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void fluidloggable(FluidloggableEvent event) {
         if (decide(event.state, event.fluidState) == Boolean.FALSE) {

@@ -61,6 +61,13 @@ public interface FluidloggedWaterloggable extends IFluidloggable {
     }
 
     @Override
+    default boolean canFluidFlow(@Nonnull net.minecraft.world.IBlockAccess world, @Nonnull BlockPos pos, @Nonnull IBlockState here,
+                                 @Nonnull net.minecraft.util.EnumFacing side) {
+        Boolean flows = ((Waterloggable) this).waterFlowsThrough(here, world, pos, side);
+        return flows != null ? flows : IFluidloggable.super.canFluidFlow(world, pos, here, side);
+    }
+
+    @Override
     default boolean overrideApplyDefaultsSetting() {
         return true;
     }

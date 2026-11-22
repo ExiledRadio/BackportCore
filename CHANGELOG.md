@@ -1,5 +1,8 @@
 # 1.4.6
 
+*   API: `Waterloggable.waterFlowsThrough(state, world, pos, side)`, handed to Fluidlogged API as `canFluidFlow` (null
+    keeps its face-shape rule). A full collision box answers false, as 26.3's `canPassThroughWall`: water kept in leaves
+    stays there.
 *   26.3's `/locate poi <type|#tag>` (`locate.PoiLocate`): 26.3's 21 types and 3 tags, today's search (256 blocks,
     `findClosestWithType`), messages and suggestions. 1.12.2 keeps no point of interest index, so the blocks are
     read: loaded chunks by section palette, unloaded ones from their saves without loading them. Types match the

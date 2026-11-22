@@ -68,6 +68,17 @@ public interface Waterloggable {
     }
 
     /**
+     * @return whether water may flow across {@code side} of this state, into or out of it; null (the default) leaves it
+     * to Fluidlogged API's own answer, by the face's shape. A block with a full collision box answers false, as 26.3's
+     * {@code FlowingFluid.canPassThroughWall} stops flow through full faces: waterlogged leaves keep their water.
+     * Asked only with Fluidlogged API.
+     */
+    @javax.annotation.Nullable
+    default Boolean waterFlowsThrough(IBlockState state, IBlockAccess world, BlockPos pos, net.minecraft.util.EnumFacing side) {
+        return null;
+    }
+
+    /**
      * Called after this position's water came or went (not when flowing water only changes level): a
      * bucket, flowing water, a command or generation through {@link Waterlogging}. Coral starts its death timer
      * here, sea pickles relight, campfires go out. Server and client both; check {@code world.isRemote} for
