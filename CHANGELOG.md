@@ -68,6 +68,14 @@
     draws, 26.x's nameless feature jigsaws, the expansion hack, junctions for the terrain's beard. Template jigsaws
     carry their priorities (`ModernTemplate.Jigsaw`, `JigsawElement.Connector`). Game Drops' abandoned camps, Tricky
     Trials' trial chambers and Trails & Tales' trail ruins now share it, laid out block for block as before.
+
+*   The family's one boat registry (`boat/`; Wild Update's request 4, Tricky Trials' #9, Game Drops' 5): `BoatWood`
+    (vanilla's six woods and each backport's, by id), `backportcore:boat` and `backportcore:chest_boat` (1.19's chest
+    boat: 27 slots, one seat, hoppers, contents dropped on removal), `ItemWoodBoat`, `client.RenderWoodBoat` (boat,
+    chest boat, raft, chest raft), and `Boats.renamed`: a backport's old boat entity names become registry aliases
+    when a world that has them loads, so saved boats keep their wood, chest and passengers. Using a boat is
+    `entity_place`.
+
 *   Game Drops Backport's requests (its `docs/CORE_REQUESTS.md`): patch P41, a jukebox's comparator signal from the
     disc's own `int comparatorSignal()` (found by name; `mechanics/JukeboxSignal`); `GameEventTags.addDampener(Block)`;
     `GameEvent.BOUNCE` (frequency 2, in 1.20's vibration and warden lists); `StructureLocate.nearest(world, from,

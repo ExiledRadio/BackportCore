@@ -1012,6 +1012,29 @@ the age and tells clients. An `EntityAgeable` that implements it must agree with
 `VanillaRevisions.babyModels()` (read each frame): 26.1 or later installed, Core's textures switch on, and the switch
 the 26.1 mod hands over with `VanillaRevisions.setBabyModelSwitch(BooleanSupplier)` (Game Drops' `babies.babyModels`).
 
+## Boats (`boat.*`, 1.4.4)
+
+One boat and one boat with chest for the whole family (Wild Update's request 4, Tricky Trials' #9, Game Drops' 5):
+`backportcore:boat` (`EntityWoodBoat`, id 0) and `backportcore:chest_boat` (`EntityWoodChestBoat`, id 1), drawn by
+`client.RenderWoodBoat` (1.20's boat, chest boat, raft and chest raft models).
+
+- Woods: `BoatWood.register(new ResourceLocation(modid, "cherry"), () -> planks, raft)` while registering items, then
+  `setTextures(boat, chestBoat)` (128 x 64 and 128 x 128, 1.20's layout) and `setBoatItem` / `setChestBoatItem`.
+  Vanilla's six (`minecraft:oak` ... `minecraft:dark_oak`, `BoatWood.of(type)`) are Core's, with vanilla's boat items;
+  Wild Update gives them chest boats. `BoatWood.get(id)` falls back to oak; `find(id)` returns null. A bare name
+  (`"cherry"`) is the one registered wood with that name.
+- Items: `new ItemWoodBoat(wood, chest)` under the owner's own name: vanilla's placement, stacks to 1, burns 1200.
+  Using one is `entity_place` (Core adds the placer).
+- Entities: the wood is synced and saved as `Wood` (its id, kept as read when its mod is gone: an oak boat until it is
+  back). A raft's rider sits at 0.25. A crash drops the wood's planks. The chest boat is 1.19's: 27 slots, one seat
+  0.15 forward, opened sneaking or when the seat is taken, contents dropped whenever it is removed for good (not on
+  a dimension change), and an `IInventory` for hoppers.
+- Old saves: `Boats.renamed(oldEntityName, chest)` in pre-init. Core's data fixer (data version 1) renames the entity
+  as it is read, wherever it was saved: chunks, passengers, spawners, a player's `RootVehicle`; the tags (wood, chest,
+  riders) are the same. Core also remaps the name in `MissingMappings` (no missing-entries prompt, and an alias for
+  that session; Forge 1.12.2 does not keep aliases, its bug 4894). A world with several old names logs Forge's
+  "registered twice" warning once, the first time it loads.
+
 ## Helpers
 
 `util.BlockStates.props/with/withOrSame` - states by property name, as blockstate and structure files write them.

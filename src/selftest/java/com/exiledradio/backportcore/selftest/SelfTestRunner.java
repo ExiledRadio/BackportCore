@@ -85,6 +85,7 @@ public final class SelfTestRunner {
                     case "snow": SnowTests.schedule(); break;
                     case "commands": CommandTests.schedule(); break;
                     case "gamerules": GameRulesTests.schedule(); break;
+                    case "boats": BoatTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -115,6 +116,7 @@ public final class SelfTestRunner {
         TtRequestTests.schedule();
         GdRequestTests.schedule();
         GdWorldgenTests.schedule();
+        BoatTests.schedule();
         LookFeelTests.schedule();
         LookSwitchTests.schedule();
         TextureLayerTests.schedule();
