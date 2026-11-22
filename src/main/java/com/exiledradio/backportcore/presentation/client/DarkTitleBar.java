@@ -112,7 +112,7 @@ public final class DarkTitleBar {
         ClassLoader loader = DarkTitleBar.class.getClassLoader();
         if (VanillaRevisions.lwjglxBorderless() != null || lwjglxWindow != null) {
             if (lwjglxWindow == null) {
-                lwjglxWindow = Class.forName("org.lwjglx.opengl.Display", false, loader).getMethod("getWindow");
+                lwjglxWindow = org.lwjgl.opengl.Display.class.getMethod("getWindow");
                 glfwWindow = Class.forName("org.lwjgl.glfw.GLFWNativeWin32", true, loader).getMethod("glfwGetWin32Window", long.class);
             }
             long window = (Long) lwjglxWindow.invoke(null);

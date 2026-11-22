@@ -237,13 +237,21 @@ public final class BorderlessFullscreen {
         }
 
         static long window() throws ReflectiveOperationException {
-            Class<?> display = Class.forName("org.lwjglx.opengl.Display", false, BorderlessFullscreen.class.getClassLoader());
-            return (Long) display.getMethod("getWindow").invoke(null);
+            // Display.class, not the name: Cleanroom redirects this reference to the lwjglx class the game uses, where
+            // a lookup by name can load a second, empty copy (window 0).
+            Class<?> display = Display.class;
+            long window = (Long) display.getMethod("getWindow").invoke(null);
+            if (window == 0L) {
+                throw new IllegalStateException("no GLFW window from " + display.getName());
+            }
+            return window;
         }
 
         /** @return x, y, width, height of the monitor the window is on (lwjglx's choice for fullscreen) */
         static int[] monitorRect() throws ReflectiveOperationException {
-            Class<?> display = Class.forName("org.lwjglx.opengl.Display", false, BorderlessFullscreen.class.getClassLoader());
+            // Display.class, not the name: Cleanroom redirects this reference to the lwjglx class the game uses, where
+            // a lookup by name can load a second, empty copy (window 0).
+            Class<?> display = Display.class;
             Object target = display.getMethod("getTargetFullscreenMonitor").invoke(null);
             Object mode = target.getClass().getMethod("vidMode").invoke(target);
             int x = ((Number) target.getClass().getMethod("x").invoke(target)).intValue();

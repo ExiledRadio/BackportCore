@@ -144,7 +144,9 @@ public final class VanillaRevisions {
         if (lwjglxBorderless == null) {
             java.lang.reflect.Method m = null;
             try {
-                m = Class.forName("org.lwjglx.opengl.Display", false, VanillaRevisions.class.getClassLoader())
+                // Cleanroom serves lwjglx's Display under LWJGL 2's own name (its LWJGLTransformer), and that class holds
+                // the game's window; "org.lwjglx.opengl.Display" by name would be a second, empty copy.
+                m = Class.forName("org.lwjgl.opengl.Display", false, VanillaRevisions.class.getClassLoader())
                         .getMethod("setBorderless", boolean.class);
             } catch (ReflectiveOperationException | LinkageError e) {
                 // LWJGL 2, an lwjglx without it, or a dedicated server.
