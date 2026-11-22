@@ -2,8 +2,14 @@ package com.exiledradio.backportcore.boat;
 
 import com.exiledradio.backportcore.BackportCore;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.datafix.FixTypes;
+import net.minecraft.util.datafix.IFixableData;
+import net.minecraftforge.common.util.ModFixs;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -21,10 +27,17 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <h2>Boats saved before (Core 1.4.4)</h2>
  * Each backport had its own two entities ({@code wildupdatebackport:boat}, {@code trailsandtalesbackport:chest_boat},
- * ...). A backport names its old ones with {@link #renamed}; when a world that has them loads, Forge asks
- * {@code MissingMappings} for them and each becomes an alias of Core's, which the world keeps. Every saved boat is then
- * read by Core's entity: in chunks, carrying passengers, under a player who logged out riding it, and in a spawner. Its
- * wood, its chest's items, its passengers, damage and position are all in the same tags.
+ * ...). A backport names its old ones with {@link #renamed}, and two things move them:
+ * <ul>
+ *   <li>Core's data fixer (Forge's {@code ModFixs}, Core's data version 1): every entity saved before it, in a chunk,
+ *       riding another, in a spawner or under a player who logged out riding it ({@code RootVehicle}), has its old name
+ *       replaced by Core's as it is read. Its wood, its chest's items, its passengers, damage and position are all in
+ *       the same tags.</li>
+ *   <li>{@code MissingMappings}: the world's registry lists the old names, so Forge asks for them; each is remapped to
+ *       Core's, which also makes it an alias for that session (anything else that saved an entity, another mod's item
+ *       holding a mob for one). Forge 1.12.2 saves aliases wrongly (its bug 4894) and drops them on the next load,
+ *       which is why the fixer is the real move.</li>
+ * </ul>
  */
 @Mod.EventBusSubscriber(modid = BackportCore.MOD_ID)
 public final class Boats {
@@ -39,6 +52,63 @@ public final class Boats {
     public static volatile int remapped;
 
     private Boats() {
+    }
+
+    /** Core's data version; 1 renames the backports' old boat entities. */
+    public static final int DATA_VERSION = 1;
+
+    /** From Core's pre-init: the fixer that renames saved boats. */
+    public static void registerFixes() {
+        ModFixs fixes = FMLCommonHandler.instance().getDataFixer().init(BackportCore.MOD_ID, DATA_VERSION);
+        fixes.registerFix(FixTypes.ENTITY, new IFixableData() {
+            @Override
+            public int getFixVersion() {
+                return 1;
+            }
+
+            @Override
+            public NBTTagCompound fixTagCompound(NBTTagCompound tag) {
+                rename(tag);
+                return tag;
+            }
+        });
+        // A player who logged out riding a boat: vanilla walks no fixes into RootVehicle.
+        fixes.registerFix(FixTypes.PLAYER, new IFixableData() {
+            @Override
+            public int getFixVersion() {
+                return 1;
+            }
+
+            @Override
+            public NBTTagCompound fixTagCompound(NBTTagCompound tag) {
+                if (tag.hasKey("RootVehicle", 10) && tag.getCompoundTag("RootVehicle").hasKey("Entity", 10)) {
+                    renameAll(tag.getCompoundTag("RootVehicle").getCompoundTag("Entity"));
+                }
+                return tag;
+            }
+        });
+    }
+
+    /** Renames one saved entity's id, if it is a backport's old boat name. @return true if it was */
+    public static boolean rename(NBTTagCompound entity) {
+        if (!entity.hasKey("id", 8)) {
+            return false;
+        }
+        ResourceLocation to = RENAMED.get(new ResourceLocation(entity.getString("id")));
+        if (to == null) {
+            return false;
+        }
+        entity.setString("id", to.toString());
+        return true;
+    }
+
+    /** {@link #rename} for an entity and everything riding it. */
+    public static void renameAll(NBTTagCompound entity) {
+        rename(entity);
+        NBTTagList riders = entity.getTagList("Passengers", 10);
+        for (int i = 0; i < riders.tagCount(); i++) {
+            renameAll(riders.getCompoundTagAt(i));
+        }
     }
 
     /**

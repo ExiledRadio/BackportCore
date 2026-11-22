@@ -92,6 +92,31 @@ final class BoatTests {
             check("a bare name finds a backport's wood", BoatWood.find("teak") == teak, BoatWood.find("teak"));
             check("old names map to Core's", Boats.renamedTo(new ResourceLocation("nobody", "boat")) == null, "");
             Boats.renamed(new ResourceLocation("backportcore_selftest", "old_chest_boat"), true);
+            NBTTagCompound old = new NBTTagCompound();
+            old.setString("id", "backportcore_selftest:old_chest_boat");
+            NBTTagList riders = new NBTTagList();
+            NBTTagCompound rider = new NBTTagCompound();
+            rider.setString("id", "backportcore_selftest:old_chest_boat");
+            riders.appendTag(rider);
+            old.setTag("Passengers", riders);
+            NBTTagCompound fixed = net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer()
+                    .process(net.minecraft.util.datafix.FixTypes.ENTITY, old);
+            check("the data fixer renames an old saved boat", Boats.CHEST_BOAT.toString().equals(fixed.getString("id")), fixed);
+            check("and one riding it", Boats.CHEST_BOAT.toString().equals(fixed.getTagList("Passengers", 10).getCompoundTagAt(0).getString("id")), fixed);
+            NBTTagCompound player = new NBTTagCompound();
+            NBTTagCompound root = new NBTTagCompound();
+            NBTTagCompound vehicle = new NBTTagCompound();
+            vehicle.setString("id", "backportcore_selftest:old_chest_boat");
+            root.setTag("Entity", vehicle);
+            player.setTag("RootVehicle", root);
+            NBTTagCompound fixedPlayer = net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer()
+                    .process(net.minecraft.util.datafix.FixTypes.PLAYER, player);
+            check("and the boat a logged-out player rides", Boats.CHEST_BOAT.toString().equals(
+                    fixedPlayer.getCompoundTag("RootVehicle").getCompoundTag("Entity").getString("id")), fixedPlayer);
+            NBTTagCompound pig = new NBTTagCompound();
+            pig.setString("id", "minecraft:pig");
+            check("other entities are left alone", "minecraft:pig".equals(net.minecraftforge.fml.common.FMLCommonHandler.instance()
+                    .getDataFixer().process(net.minecraft.util.datafix.FixTypes.ENTITY, pig).getString("id")), "");
             check("a renamed chest boat loads as Core's chest boat",
                     Boats.CHEST_BOAT.equals(Boats.renamedTo(new ResourceLocation("backportcore_selftest", "old_chest_boat"))), "");
             check("boat items burn 1200 ticks", TileEntityFurnace.getItemBurnTime(new ItemStack(teakChestBoat)) == 1200,

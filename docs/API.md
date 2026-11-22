@@ -947,10 +947,11 @@ One boat and one boat with chest for the whole family (Wild Update's request 4, 
   back). A raft's rider sits at 0.25. A crash drops the wood's planks. The chest boat is 1.19's: 27 slots, one seat
   0.15 forward, opened sneaking or when the seat is taken, contents dropped whenever it is removed for good (not on
   a dimension change), and an `IInventory` for hoppers.
-- Old saves: `Boats.renamed(oldEntityName, chest)` in pre-init. Core remaps the name in `MissingMappings`, which makes
-  it a registry alias the world keeps, so chunks, passengers, a player's `RootVehicle` and spawners all load Core's
-  entity with the same tags. A world with several old names logs Forge's "registered twice" warning once for the
-  second and later ones (each still becomes an alias).
+- Old saves: `Boats.renamed(oldEntityName, chest)` in pre-init. Core's data fixer (data version 1) renames the entity
+  as it is read, wherever it was saved: chunks, passengers, spawners, a player's `RootVehicle`; the tags (wood, chest,
+  riders) are the same. Core also remaps the name in `MissingMappings` (no missing-entries prompt, and an alias for
+  that session; Forge 1.12.2 does not keep aliases, its bug 4894). A world with several old names logs Forge's
+  "registered twice" warning once, the first time it loads.
 
 ## Helpers
 
