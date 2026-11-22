@@ -4,19 +4,23 @@
 *   **26.x's debug screen lines** with Game Drops Backport: "Day #" on its own line, the player's speed, and the spawn counts by today's mob categories, each one its own entry in Debug Options (off by default, as in 26.3).
 *   **Underground biomes on the debug screen and in colors**: a backport's biome under ground (Game Drops Backport's sulfur caves) is the F3 biome where you stand, and grass, leaves and water there take its colors, as in today's game.
 *   **For world generation**: a backport's features may now finish blocks just past the area 1.12.2 lets a chunk write (far sulfur spikes, the outer tuff of large sulfur springs), once the chunks there have generated; the waiting work is saved with the world.
-
 *   **26.3's map markers** with Game Drops Backport: when you are off the edge of a map, your marker still points the way you face.
 *   **26.3's section headings** in Video Settings with Game Drops Backport: bold, underlined and centered.
 *   **Borderless fullscreen**, as 26.3 has it by default, with Game Drops Backport: Fullscreen is a window without a frame that fills the monitor, so switching to other windows is instant. Turn Exclusive Fullscreen on in Video Settings for 1.12.2's fullscreen. (Not on Cleanroom, which draws its own window.)
 *   **A smaller debug screen**, as in 26.3, with Game Drops Backport: F3 has its own GUI Scale at the bottom of Debug Options (F3 + F6), Auto by default (half the largest scale), or Unchanged for the game's.
-
 *   **One boat for every backport's wood**: mangrove, cherry, bamboo rafts, pale oak and poplar boats, and every boat with chest, are now one boat and one boat with chest shared by the whole family, looking and handling as before. Boats already in your worlds are kept, with their wood, what is in their chests and whoever rides them.
 *   **For the backports**: today's explorer map icons (abandoned camp, ancient city, desert pyramid, mineshaft, warm ocean ruins), explorer maps that lead to a new structure each time, today's item names in loot read from newer files, wool stairs and slabs that muffle vibrations, and the bounce game event.
-*   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth.
+*   **1.20.3's `/tick`**, the debugging favorite, as today's game has it: `/tick query`, `rate`, `freeze`, `unfreeze`, `step` and `sprint` (operators). Freezing stops everything but players and what they ride, a step runs a few ticks at a time, a sprint runs as fast as the server can and reports how fast it went, and your client follows the server's tick rate so animations and movement stay smooth, while menus and the title screen always run at full speed.
 *   **More of today's commands**: `/random` (with today's saved sequences, so a world gives the same values as in the current game), `/ride`, `/rotate`, `/spectate`, `/teammsg` (or `/tm`) and 26.3's `/swing`, which makes mobs and players swing an arm, with a stab or no animation and a duration of your choice. Each command has its own switch in the settings.
-*   **26.2's pause menu**: with a backport that supplies its icons (Game Drops Backport), Report Bugs and Send Feedback become two icon buttons in one row under Advancements and Statistics.
+*   **26.3's pause menu row**: with a backport that supplies its icons (Game Drops Backport), Report Bugs, Give Feedback, Friends and Player Reporting are four icon buttons under Advancements and Statistics. Friends and Player Reporting say they are not available in this version.
 *   **Fixed land animals spawning in the sea** (Lycanites' bobekos in cold oceans, among others): chunk generation put them on the sea floor inside kelp, seagrass and other blocks holding water, and they floated up. A mob that spawns on the ground now needs a spot without water, as in 1.13 and later.
 *   **Fixed a crash on world load with Alex's Mobs (Legacy)** ("Index 6 out of bounds for length 6" in `getSpawnableList`): a creature type a mod adds late, after the biome spawn lists were first read, now gets its own empty list instead of crashing, whichever mods add types and in whatever order.
+*   **26.3's `/locate poi`**: finds the nearest point of interest of a type or tag within 256 blocks (beds, nether portals, brewing stands, cauldrons, and the backports' workstations, bells, bee nests, lodestones and lightning rods), as today's game does, including areas you visited that are no longer loaded.
+*   **A Game Rules screen**, as the newest installed version draws it, with 26.1's search; with Game Drops Backport also in a world, from World Options. **Optimize World** in Edit World, as in 1.13.
+*   **Today's creative order**: with Game Drops Backport, every creative tab lists its items in 26.3's order.
+*   **1.21.5's spawn eggs**: from 1.21.5 on, every spawn egg has its own texture, for vanilla's mobs and every backport's. The status effect icons are today's too.
+*   **Water stays in waterlogged leaves**, as in today's game (with Fluidlogged API).
+*   **The backports' structures** (camps, trial chambers, trail ruins) are laid out by one shared modern jigsaw placer, block for block as before.
 
 # 1.4.3
 

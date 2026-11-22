@@ -53,7 +53,8 @@ public final class Family {
             new Member("cavesandcliffsbackport", "1.17", "caves-and-cliffs-backport", 0xA678F0, 1788326),
             new Member("wildupdatebackport", "1.19", "wild-update-backport", 0x7CC85A, 1788320),
             new Member("trailsandtalesbackport", "1.20", "trails-and-tales-backport", 0xF29AC0, 1788323),
-            new Member("trickytrialsbackport", "1.21", "tricky-trials-backport", 0xE08A4A, 1790743)));
+            new Member("trickytrialsbackport", "1.21", "tricky-trials-backport", 0xE08A4A, 1790743),
+            new Member("gamedropsbackport", "26.1", "game-drops-backport", 0xE6E08A, 1813758)));
 
     private Family() {
     }
