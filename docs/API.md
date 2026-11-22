@@ -743,6 +743,53 @@ layers the biome is the column's 1:4 cell (today's noise biome at its quart), re
 id no registered biome has is not found at once, as `possibleBiomes` does. A world whose generator knows its own
 biomes in three dimensions (Caves & Cliffs' 1.18 terrain) answers through `source`.
 
+### Points of interest (`locate.PoiLocate`, 1.4.4)
+
+`/locate poi <id>` and `/locate poi #<tag>`, 26.3's point of interest form: "The nearest minecraft:home is at
+[x, ~, z] (n blocks away)", the distance horizontal and the height "~" as the structure form's, the click putting
+`/tp @s x ~ z` in the chat box; "Could not find a point of interest of type "x" within a reasonable distance" when
+nothing is in range; an unknown id or tag gets today's argument messages (type `minecraft:point_of_interest_type`).
+Completion as the other forms'.
+
+All 21 of 26.3's types are known whether or not their block exists (as in today's registry), and 26.3's three tags
+(`#minecraft:acquirable_job_site`, `#minecraft:bee_home`, `#minecraft:village`, which holds the first). A type is a
+set of block states, as today's `PoiTypes`. Core matches them by registry name, so the family needs no call:
+
+| Type | Blocks | From |
+|---|---|---|
+| `home` | head half of any `BlockBed` | 1.12.2 |
+| `cleric` | `brewing_stand` | 1.12.2 |
+| `leatherworker` | `cauldron` (every level), `water_cauldron`, `lava_cauldron`, `powder_snow_cauldron` | 1.12.2, Caves & Cliffs |
+| `nether_portal` | `minecraft:portal`, `nether_portal` | 1.12.2 |
+| `armorer` `butcher` `cartographer` `farmer` `fisherman` `fletcher` `librarian` `mason` `shepherd` `toolsmith` `weaponsmith` | `blast_furnace` `smoker` `cartography_table` `composter` `barrel` `fletching_table` `lectern` `stonecutter` `loom` `smithing_table` `grindstone` | Village & Pillage (smithing table copies: Nether Update, Trails & Tales) |
+| `meeting` | `bell` | Village & Pillage |
+| `beehive`, `bee_nest` | `beehive`, `bee_nest` | Buzzy Bees |
+| `lodestone` | `lodestone` | Nether Update |
+| `lightning_rod` | `lightning_rod` and its 7 weathered and waxed names | Caves & Cliffs (Tricky Trials' copper) |
+| `test_instance` | `test_instance_block` | none |
+
+Every state of those blocks counts, under `minecraft:` or a family member's mod id (`settings.Family`); another
+mod's block of the same name does not. A backport adds others, or another mod's blocks, with:
+
+```java
+PoiLocate.register("minecraft:meeting", myBell);                    // every state of these blocks
+PoiLocate.register("mymod:shrine", state -> state.getBlock() == SHRINE && state.getValue(LIT));
+PoiLocate.tag("#minecraft:bee_home", "mymod:hollow_log");           // tags hold types and #tags
+```
+
+A state two types claim is the first registered's (26.3 refuses such a state). `PoiLocate.typeOf(state)`,
+`members(key)`, `ids()`, `tags()` and `nearest(world, origin, key)` are public for other uses.
+
+The search is 26.3's `PoiManager.findClosestWithType(type, origin, 256, ANY)` from the block the source is in: the
+chunks within `floorDiv(256, 16) + 1` of the origin's, points within 256 on x and z and within 256 by `distSqr`, the
+nearest winning. 1.12.2 keeps no point of interest index, so the blocks are read: a loaded chunk's sections whose
+palette holds a wanted state, and an unloaded chunk from its save (the copy waiting to be written first, else the
+region file), without loading it. Saved chunks are read once and kept until the chunk loads (dropped at
+`ChunkEvent.Load` and world unload). Self-test timings: 35 x 35 loaded chunks about 1 ms, 35 x 35 saved chunks
+read the first time about 0.6 s, then about 1 ms. Sections in another format than 1.12.2's (an id-extending mod's
+saves) are skipped. Village & Pillage's own `WorkstationIndex` is not asked: it covers loaded chunks and job sites
+only, and lags behind the world by design.
+
 ### Adventuring Time (`advancement.AdventuringTime`, 1.3.2)
 
 `minecraft:adventure/adventuring_time` follows vanilla's later lists as far as the installed backports bring their

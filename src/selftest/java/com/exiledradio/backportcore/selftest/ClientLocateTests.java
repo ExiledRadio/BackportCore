@@ -41,7 +41,7 @@ final class ClientLocateTests {
             {"/locate structure #minecraft:v", "/locate structure #minecraft:v", null},
             {"/locate structure strong", "/locate structure minecraft:stronghold", null},
             {"/locate structure end", "/locate structure minecraft:end_city", null},
-            // Only today's two forms: "str" is "structure" (1.12.2's "Stronghold" came first before).
+            // Only today's forms: "str" is "structure" (1.12.2's "Stronghold" came first before).
             {"/locate str", "/locate structure", null},
             {"/locate Strong", "/locate Strong", null},
     };

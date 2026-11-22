@@ -87,6 +87,7 @@ public final class SelfTestMod {
         LocateTests.init();
         FlatTests.init();
         BiomeLocateTests.init();
+        PoiLocateTests.init();
     }
 
     @Mod.EventHandler

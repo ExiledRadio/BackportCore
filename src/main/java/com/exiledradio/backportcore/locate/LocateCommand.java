@@ -38,6 +38,8 @@ import java.util.Locale;
  *   <li>{@code /locate biome <id>} and {@code /locate biome #<tag>}: today's biome form over {@link BiomeLocate}'s ids
  *       ("The nearest minecraft:cherry_grove is at [x, y, z] (n blocks away)", with the height and the distance in
  *       three dimensions, as today's).</li>
+ *   <li>{@code /locate poi <id>} and {@code /locate poi #<tag>}: today's point of interest form over {@link PoiLocate}
+ *       ("The nearest minecraft:home is at [x, ~, z] (n blocks away)"), 256 blocks around the source.</li>
  * </ul>
  * Search and position are today's ({@link StructureLocate}, {@link BiomeLocate}). The reply is sent only to the one who asked,
  * following the {@code sendCommandFeedback} rule, as today's {@code sendSuccess(..., false)}.
@@ -46,6 +48,9 @@ public final class LocateCommand extends CommandBase {
 
     static final String STRUCTURE = "structure";
     static final String BIOME = "biome";
+    static final String POI = "poi";
+    /** Today's registry name for point of interest types. */
+    static final String POI_REGISTRY = "minecraft:point_of_interest_type";
     /** Today's registry name for biomes, as its "not found" messages name it. */
     static final String BIOME_REGISTRY = "minecraft:worldgen/biome";
 
@@ -88,6 +93,10 @@ public final class LocateCommand extends CommandBase {
             locateBiome(server, sender, level, from, args[1]);
             return;
         }
+        if (args.length == 2 && POI.equalsIgnoreCase(args[0])) {
+            locatePoi(server, sender, level, args[1]);
+            return;
+        }
         throw new WrongUsageException(getUsage(sender));
     }
 
@@ -109,6 +118,30 @@ public final class LocateCommand extends CommandBase {
         String name = tag ? printable + " (" + found.id + ")" : printable;
         log(name, start);
         reply(server, sender, from, found.pos, name, true, "commands.locate.biome.success");
+    }
+
+    /**
+     * Today's {@code locatePoi}: from the block the source is in ({@code BlockPos.containing}), 256 blocks around it
+     * ({@link PoiLocate}); the distance shown is horizontal and the height "~", as the structure form's.
+     */
+    private static void locatePoi(MinecraftServer server, ICommandSender sender, WorldServer world, String key)
+            throws CommandException {
+        boolean tag = key.startsWith("#");
+        if (!StructureLocate.isIdLike(key) || !PoiLocate.known(key)) {
+            String bare = tag ? key.substring(1) : key;
+            throw new CommandException(tag ? "argument.resource_tag.not_found" : "argument.resource.not_found",
+                    StructureLocate.isIdLike(key) ? StructureLocate.normalize(bare) : bare, POI_REGISTRY);
+        }
+        String printable = StructureLocate.normalize(key);
+        BlockPos from = new BlockPos(sender.getPositionVector());
+        long start = System.nanoTime();
+        PoiLocate.Found found = PoiLocate.nearest(world, from, printable);
+        if (found == null) {
+            throw new CommandException("commands.locate.poi.not_found", printable);
+        }
+        String name = tag ? printable + " (" + found.id + ")" : printable;
+        log(name, start);
+        reply(server, sender, from, found.pos, name, false, "commands.locate.poi.success");
     }
 
     private static StructureLocate.Found search(WorldServer world, BlockPos from, String key, String printable)
@@ -181,6 +214,7 @@ public final class LocateCommand extends CommandBase {
             List<String> options = new ArrayList<String>();
             options.add(STRUCTURE);
             options.add(BIOME);
+            options.add(POI);
             return getListOfStringsMatchingLastWord(args, options);
         }
         if (args.length == 2 && STRUCTURE.equalsIgnoreCase(args[0])) {
@@ -188,6 +222,9 @@ public final class LocateCommand extends CommandBase {
         }
         if (args.length == 2 && BIOME.equalsIgnoreCase(args[0])) {
             return completeIds(args[1], BiomeLocate.ids(), BiomeLocate.tags());
+        }
+        if (args.length == 2 && POI.equalsIgnoreCase(args[0])) {
+            return completeIds(args[1], PoiLocate.ids(), PoiLocate.tags());
         }
         return Collections.emptyList();
     }
