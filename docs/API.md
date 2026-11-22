@@ -574,6 +574,33 @@ public static final class BastionStart extends StructureStart {
   `ModernProcessors.tag("minecraft:doors", names...)` adds to a `tag_match` tag.
 - **Block names** are today's: a 1.16 file's `minecraft:chain` is read as `minecraft:iron_chain` (26.x renamed it).
 
+### Today's jigsaw rules (`ModernJigsaw`, 1.4.4)
+
+`Jigsaw` stays 1.16.5's (bastions, villages). `ModernJigsaw` is the placer of 1.20 to 26.x (`JigsawPlacement`'s
+`Placer`), for a structure that lays out its own start piece (the stub: start height, projection, padding and biome
+checks stay the structure's) and then hands it over:
+
+```java
+public class MyPiece extends JigsawPiece implements ModernJigsaw.Joined { ... }   // keeps addJunction's junctions
+
+Map<String, String> aliases = ModernJigsaw.PoolAliases.read(json.getAsJsonArray("pool_aliases")).resolve(seed, origin);
+List<MyPiece> pieces = ModernJigsaw.of(MyPiece::new).maxDepth(size)
+        .priorities(true)          // 1.20.3+: selection_priority and placement_priority
+        .aliases(aliases)          // 1.20.5+: pool_aliases (direct, random, random_group)
+        .namelessFeatures(true)    // 26.x: a feature element's jigsaw joins any jigsaw
+        .expansionHack(false)      // use_expansion_hack
+        .surface(ground)           // terrain_matching pieces; null takes the joint's own height
+        .assemble(start, bounds, random);   // bounds: max_distance_from_center, cut to the world as the version does
+```
+
+- Every shuffle is `Util.shuffle` (n - 1 draws); 1.16.5's pool shuffle is fastutil's, one more. The pieces opened by a
+  jigsaw are worked through by its `placement_priority`, first in, first out within one. Each join records today's
+  junctions on both pieces, for `TerrainAdaptation`'s beard. Every piece gets today's pivot.
+- Template jigsaws carry their priorities (`ModernTemplate.Jigsaw` and `JigsawElement.Connector`:
+  `placementPriority`, `selectionPriority`, 0 in older files).
+- Game Drops' abandoned camps (26.3), Tricky Trials' trial chambers (1.21.11) and Trails & Tales' trail ruins (1.20.1)
+  are laid out with it.
+
 ### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.1.0)
 
 ```java
