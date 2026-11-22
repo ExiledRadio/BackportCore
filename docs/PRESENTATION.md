@@ -224,6 +224,33 @@ change one version made stays made when only a later backport is installed:
   world, `GameRulesScreen.inWorld(parent)` (26.3's `InWorldGameRulesScreen`, Game Drops Backport's World Options) asks
   the server on channel `backportcore_rules`, shows "Retrieving game rules...", sends the changed rules on Done (asking
   first when leaving with changes); the server answers and applies only for permission level 2, as `/gamerule` does.
+* **Create New World** (1.19.4, 23w05a; Core 1.4.5, `VanillaRevisions.createWorldTabs`, `presentation.client.CreateWorldTabs`):
+  one screen of three tabs laid out as 26.3's `CreateWorldScreen`. Game: World Name (its box 208 wide, the save folder
+  as its tooltip), Game Mode, Difficulty, Allow Commands, a column 210 wide. World: World Type and Customize (150 each,
+  10 apart), the seed (308, "Leave blank for a random seed" while empty), Generate Structures and Bonus Chest (44-wide
+  ON/OFF at the right). More: Game Rules (Core's Game Rules screen), then any button another mod added. Each tab's
+  content sits a sixth of the way down the free height; the tab bar is up to 400 wide less 28, three even tabs; Create
+  New World and Cancel in the footer. Data Packs and Experiments are left out (no 1.12.2 counterpart).
+  * 1.12.2's `GuiCreateWorld` stays the screen and its fields stay authoritative: its own buttons are moved onto the
+    tabs each frame (their words rewritten as 26.3's, "Game Mode: Survival"), its own `actionPerformed` changes the
+    settings and makes the world, so the settings are 1.12.2's for the same choices (Creative still turns commands on
+    until Allow Commands is clicked; Hardcore locks Allow Commands and Bonus Chest off). The Game tab is 1.12.2's main
+    page (name box), World and More its More World Options page (seed box). Only `drawScreen` is replaced. A subclass
+    of `GuiCreateWorld` keeps its own screen.
+  * Difficulty (on the Game tab from 23w05a) starts at the Difficulty option, which is what 1.12.2 gives a new world;
+    another choice waits for the new world's first tick (`gamerules.NewWorldDifficulty`, as the in-game Difficulty
+    button sets it); joining then copies it into the option, as 1.12.2 does for any world. Hard and inactive in Hardcore.
+  * Before 1.20.5: 1.19.4's light dirt (`light_dirt_background.png` from a pack, else 1.12.2's dirt at 0.3), a black
+    tab bar with a full-width separator, 1.19.4's dirt tabs (`tab_button.png` from a pack, else drawn), a 36-high
+    footer, buttons 10 apart. From 1.20.5: the blurred panorama with `menu_background` below the tab bar only
+    (`tab_header_background.png` is clear), separators beside the tabs, the `widget/tab*` sprites (from a pack, else
+    the same pixels drawn), the selected tab's inside in the menu background, a 33-high footer, buttons 8 apart. 1.20.5
+    (24w04a): "Allow Commands" (`selectWorld.allowCommands.new`). 1.21.11 (25w42a): the selected tab's label over its
+    background. 26.2's `MenuTabBar` is the same look.
+  * Keys: Escape goes back (1.12.2's screen ignored it), Ctrl + Tab / Ctrl + Shift + Tab and Ctrl + 1 to 3 change tabs,
+    Enter makes the world. Shift + click on Difficulty goes back. Tabs make no click sound.
+  * Text: the tab titles, "Save folder: %s", "Allow Commands" and the game mode and difficulty tooltips are in Core's
+    lang (26.3's words in 18 languages); 1.12.2's labels lose their colons ("World Type:").
 * **Controls** (1.18): Options' "Controls..." opens Core's Controls screen (Mouse Settings... and Key Binds..., then
   Toggle Crouch, Toggle Sprint, Attack/Destroy, Use Item/Place Block and Auto-Jump in 1.21.11's order, then the
   backports' Controls options); "Key Binds..." is 1.12.2's key list with its top rows gone, titled Key Binds, the list
@@ -423,7 +450,7 @@ change one version made stays made when only a later backport is installed:
 * Key Binds, Online and Font Settings screens.
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
   rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers and header-and-footer layouts (1.12.2's screens
-  keep their layouts, only the backgrounds change).
+  keep their layouts, only the backgrounds change; Create New World and Game Rules are the exceptions).
 ## Command suggestions
 
 On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen

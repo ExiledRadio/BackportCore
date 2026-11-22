@@ -223,6 +223,14 @@ public final class MenuBackground {
 
     /** A screen's background, once a frame: the panorama outside a world, the blur, then the menu texture. */
     static void drawScreen(@Nullable GuiScreen screen) {
+        drawScreen(screen, 0);
+    }
+
+    /**
+     * The screen's background with {@code menu_background.png} only from {@code top} down: 1.20.5's Create World draws
+     * its tab header over the bare blurred panorama ({@code tab_header_background.png} is clear). Since Core 1.4.5.
+     */
+    static void drawScreen(@Nullable GuiScreen screen, int top) {
         if (drawnThisFrame) {
             return;
         }
@@ -242,7 +250,7 @@ public final class MenuBackground {
             GlStateManager.disableDepth();
         }
         blur(mc, mc.getRenderPartialTicks());
-        tile(mc.world == null ? MENU : INWORLD_MENU, MENU_COLOR, 0, 0, width, height, 0, 0);
+        tile(mc.world == null ? MENU : INWORLD_MENU, MENU_COLOR, 0, top, width, height - top, 0, 0);
         if (mc.world == null) {
             menuFrames++;
         } else {
@@ -358,7 +366,7 @@ public final class MenuBackground {
         separator(mc, world ? INWORLD_FOOTER : FOOTER, slot.left, slot.bottom, slot.right - slot.left, false);
     }
 
-    private static void separator(Minecraft mc, String name, int x, int y, int width, boolean header) {
+    static void separator(Minecraft mc, String name, int x, int y, int width, boolean header) {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
                 GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);

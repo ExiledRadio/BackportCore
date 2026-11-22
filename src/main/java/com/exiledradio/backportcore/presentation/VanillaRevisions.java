@@ -310,4 +310,31 @@ public final class VanillaRevisions {
         }
         return vanilla;
     }
+
+    // ---- Since Core 1.4.5: the tabbed Create New World screen ----
+
+    /**
+     * 1.19.4 (23w05a, {@code CreateWorldScreen}'s {@code GameTab}, {@code WorldTab} and {@code MoreTab}): Create New
+     * World is one screen of three tabs (Game: name, Game Mode, Difficulty, Allow Cheats; World: World Type, Customize,
+     * seed, Generate Structures, Bonus Chest; More: Game Rules), with Create New World and Cancel below; 1.12.2's main
+     * page and More World Options page are gone. Difficulty was on the Game tab from the first snapshot. Until 1.20.5
+     * the screen is light dirt under a black tab bar (36 high footer); from 1.20.5 ({@link #menuBackgrounds}) the
+     * blurred panorama, a clear tab header, 33 high footer. 26.2's {@code MenuTabBar} draws as 26.1's tabs did.
+     */
+    public static boolean createWorldTabs() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.19.4");
+    }
+
+    /** 1.20.5 (24w04a): "Allow Cheats" is "Allow Commands" ({@code selectWorld.allowCommands.new}). */
+    public static boolean allowCommandsWording() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.20.5");
+    }
+
+    /**
+     * 1.21.11 (25w42a, {@code TabButton.renderWidget}): the selected tab's label is drawn over its menu background;
+     * before, the background was drawn over the label.
+     */
+    public static boolean tabLabelOverBackground() {
+        return Presentation.isAtLeast(LookArea.MENUS, "1.21.11");
+    }
 }

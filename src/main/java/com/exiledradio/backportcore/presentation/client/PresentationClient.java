@@ -41,6 +41,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new OptionTooltips());
         MinecraftForge.EVENT_BUS.register(new WorldBackups());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.gamerules.client.GameRulesClient());
+        MinecraftForge.EVENT_BUS.register(new CreateWorldTabs());
         MinecraftForge.EVENT_BUS.register(new RenderOptions.Events());
         MinecraftForge.EVENT_BUS.register(new DebugScreen.Events());
         MinecraftForge.EVENT_BUS.register(new SoundChannels.Events());
