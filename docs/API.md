@@ -632,6 +632,8 @@ List<MyPiece> pieces = ModernJigsaw.of(MyPiece::new).maxDepth(size)
 
 ### Data-driven structures (`DataStructures`, `DataPacks`, `DataPlacement`, `HeightProviders`, `DataTags`, 1.4.5)
 
+For porters, a step-by-step guide is [PORTING_STRUCTURES.md](PORTING_STRUCTURES.md).
+
 Core generates the jigsaw structures today's data files describe. Porting a modern jigsaw structure mod is copying its
 `data/` folder into a 1.12.2 jar (any mod jar; the `@Mod` class can be empty), or into a structure pack: a folder,
 `.zip` or `.jar` in `config/backportcore/structures/`, laid out like a datapack (`data/` at its root or inside one top
