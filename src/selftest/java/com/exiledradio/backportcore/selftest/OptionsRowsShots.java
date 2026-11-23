@@ -212,6 +212,15 @@ final class OptionsRowsShots {
         if (gui instanceof OptionsListScreen && ((OptionsListScreen) gui).rowButtons() != null) {
             out.addAll(((OptionsListScreen) gui).rowButtons());
         }
+        // A 1.12.2 screen whose buttons the header and footer moved into its scrolling list (Music & Sounds from 1.20.5).
+        List<GuiButton> rows = com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.rowButtons(gui);
+        if (rows != null) {
+            for (GuiButton b : rows) {
+                if (!out.contains(b)) {
+                    out.add(b);
+                }
+            }
+        }
         return out;
     }
 

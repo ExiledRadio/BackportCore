@@ -271,8 +271,8 @@ final class ClientMenuShots {
             return true;
         });
         screenGaps(mc);
+        // creativeTabs leaves the world through saving() (the Saving world screen), then shows Edit World.
         creativeTabs(mc);
-        saving(mc);
     }
 
     // ---- Core 1.4.5: the question and message screens, widgets and credits (MessageScreens, Widgets, Credits) ----
@@ -990,12 +990,8 @@ final class ClientMenuShots {
             mc.displayGuiScreen(null);
             return true;
         });
-        // Edit World of the shots' world, once it is closed.
-        add(null, () -> {
-            mc.world.sendQuittingDisconnectingPacket();
-            mc.loadWorld(null);
-            return show(new GuiMainMenu());
-        });
+        // Edit World of the shots' world, once it is closed: leaving it is the Saving world step.
+        saving(mc);
         add("edit-world", () -> show(new net.minecraft.client.gui.GuiWorldEdit(new GuiWorldSelection(new GuiMainMenu()), WORLD)));
         add(null, () -> {
             check("Edit World opens as 1.20.5's column", !com.exiledradio.backportcore.presentation.client.EditWorldScreen.active()
