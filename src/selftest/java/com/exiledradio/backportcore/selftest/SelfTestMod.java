@@ -82,6 +82,12 @@ public final class SelfTestMod {
         }
     }
 
+    /** Before Core reads today's data files (load complete): the data-structure tests' drop-in packs. */
+    @Mod.EventHandler
+    public void preInit(net.minecraftforge.fml.common.event.FMLPreInitializationEvent event) {
+        DataStructureTests.preInit();
+    }
+
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         Waterlogging.migrateStoredProperty(TestBlocks.legacy, TestBlocks.Legacy.WATERLOGGED);

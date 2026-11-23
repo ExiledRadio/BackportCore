@@ -1,0 +1,29 @@
+{
+  "values": [
+    "#bcst_data:tiny_land",
+    {
+      "id": "minecraft:not_a_biome",
+      "required": false
+    },
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_forest",
+    "minecraft:snowy_plains",
+    "minecraft:swamp",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands",
+    "minecraft:eroded_badlands",
+    "minecraft:mushroom_fields",
+    "minecraft:beach",
+    "minecraft:river",
+    "minecraft:stony_shore",
+    "minecraft:snowy_beach",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:ice_spikes",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:windswept_savanna"
+  ]
+}

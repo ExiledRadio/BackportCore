@@ -38,6 +38,9 @@ import java.util.Set;
  * <li>{@code assets/<namespace>/structures/<path>.nbt} (or {@code structure/}): the templates, read
  * by {@link ModernTemplate}.</li>
  * </ul>
+ * Each is also found where today's game keeps it, {@code data/<namespace>/worldgen/...} and
+ * {@code data/<namespace>/structure/<path>.nbt} (or {@code structures/}), in any mod jar or a structure pack in
+ * {@code config/backportcore/structures/} ({@link DataPacks}); {@code assets/} is looked in first.
  * Mojang's files name everything {@code minecraft:...} (pools, the templates in them, the pools their
  * jigsaw blocks point at). A mod ships them unchanged under its own namespace and lists it with
  * {@link #source}: a name that is not found under its own namespace is looked for in each source in
@@ -333,7 +336,8 @@ public final class JigsawPools {
     private static boolean exists(String namespace, String folder, String path, String ext) {
         InputStream in = JigsawPools.class.getResourceAsStream("/assets/" + namespace + "/" + folder + "/" + path + ext);
         if (in == null) {
-            return false;
+            // Today's datapack layout, in a jar or a structure pack (DataPacks).
+            return DataPacks.exists("data/" + namespace + "/" + folder + "/" + path + ext);
         }
         try {
             in.close();
@@ -353,6 +357,11 @@ public final class JigsawPools {
         for (String namespace : namespaces) {
             String path = "/assets/" + namespace + "/" + folder + "/" + id.getPath() + ext;
             InputStream in = JigsawPools.class.getResourceAsStream(path);
+            if (in == null) {
+                // Today's datapack layout, in a jar or a structure pack (DataPacks).
+                path = "data/" + namespace + "/" + folder + "/" + id.getPath() + ext;
+                in = DataPacks.open(path);
+            }
             if (in == null) {
                 continue;
             }

@@ -269,7 +269,8 @@ public final class ModernTemplate {
     /**
      * @param id {@code yourmod:shipwreck/rightsideup_full}, read from
      *           {@code assets/yourmod/structures/shipwreck/rightsideup_full.nbt} (or today's folder name,
-     *           {@code structure/})
+     *           {@code structure/}), else today's datapack place, {@code data/yourmod/structure/...} (or
+     *           {@code structures/}) in a jar or a structure pack ({@link DataPacks})
      * @return the template; an empty one, logged, if the file is missing or unreadable
      */
     public static ModernTemplate load(ResourceLocation id) {
@@ -280,9 +281,10 @@ public final class ModernTemplate {
             }
         }
         ModernTemplate template = null;
-        for (String folder : new String[] {"structures", "structure"}) {
-            String path = "/assets/" + id.getNamespace() + "/" + folder + "/" + id.getPath() + ".nbt";
-            InputStream in = ModernTemplate.class.getResourceAsStream(path);
+        for (String place : new String[] {"/assets/%s/structures/", "/assets/%s/structure/", "data/%s/structure/", "data/%s/structures/"}) {
+            String path = String.format(place, id.getNamespace()) + id.getPath() + ".nbt";
+            // Today's datapack layout (data/) is read from a jar or a structure pack (DataPacks).
+            InputStream in = path.startsWith("/") ? ModernTemplate.class.getResourceAsStream(path) : DataPacks.open(path);
             if (in == null) {
                 continue;
             }

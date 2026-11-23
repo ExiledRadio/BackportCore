@@ -627,6 +627,54 @@ List<MyPiece> pieces = ModernJigsaw.of(MyPiece::new).maxDepth(size)
 - Game Drops' abandoned camps (26.3), Tricky Trials' trial chambers (1.21.11) and Trails & Tales' trail ruins (1.20.1)
   are laid out with it.
 
+### Data-driven structures (`DataStructures`, `DataPacks`, `DataPlacement`, `HeightProviders`, `DataTags`, 1.4.5)
+
+Core generates the jigsaw structures today's data files describe. Porting a modern jigsaw structure mod is copying its
+`data/` folder into a 1.12.2 jar (any mod jar; the `@Mod` class can be empty), or into a structure pack: a folder,
+`.zip` or `.jar` in `config/backportcore/structures/`, laid out like a datapack (`data/` at its root or inside one top
+folder). A pack's file replaces a jar's file of the same path.
+
+Read at load complete, after every backport registered its own structures:
+
+- `data/<ns>/worldgen/structure_set/*.json` and the structures they name, `worldgen/structure/*.json`.
+- Pools, processor lists and templates through `JigsawPools` and `ModernTemplate`, which now also look in
+  `data/<ns>/worldgen/template_pool`, `worldgen/processor_list` and `structure/` (or `structures/`), after `assets/`.
+- Biome tags from `data/<ns>/tags/worldgen/biome`, merged over every jar and pack (`replace` honored, nested tags
+  resolved), plus what backports gave `BiomeLocate.tag`. Core ships 26.3's biome tags (`#minecraft:is_ocean`,
+  `#minecraft:has_structure/...`). Structure tags (`tags/worldgen/structure`) go to `/locate structure #tag`.
+
+Supported, as 26.3 has it:
+
+- `minecraft:jigsaw`: `start_pool` (through `pool_aliases`), `size`, `start_height` (any height provider: constant,
+  uniform, biased_to_bottom, very_biased_to_bottom, trapezoid, weighted_list; anchors absolute, above_bottom,
+  below_top, relative_to_sea_level), `start_jigsaw_name`, `project_start_to_heightmap` (`OCEAN_FLOOR*` is the sea bed,
+  the rest the surface, from `TerrainHeights`), `max_distance_from_center` (int or `{horizontal, vertical}`),
+  `use_expansion_hack`, `pool_aliases`, `dimension_padding`, `liquid_settings`, `terrain_adaptation` (registered with
+  `TerrainAdaptation`), `biomes` (id, list or `#tag`), `spawn_overrides` (monster, creature, ambient, water_creature;
+  `piece` or `full`). Assembly is `ModernJigsaw` with 26.3's rules, from `StructureRandoms.start`.
+- `random_spread`: `spacing`, `separation`, `salt`, `spread_type`, `frequency` with `frequency_reduction_method`
+  (default, legacy_type_1/2/3), `exclusion_zone` (around a loaded set, or 26.3's vanilla set of that id), `locate_offset`.
+- A set of several structures picks as 26.3's `ChunkGenerator.createStructures`: weighted draws from
+  `setLargeFeatureSeed`, each structure tried with a fresh start random, dropped when it has no valid start.
+
+Heights: anchors resolve against the world's own heights (1.12.2's overworld is 0 to 255). An `absolute` height below
+the world's bottom moves up proportionally, `minY + (y + 64) * height / 384`, as trial chambers do; nothing moves in a
+world that reaches y -64. Dimensions: the overworld, the nether for nether biomes, the end for end biomes.
+
+Skipped, each logged: other placement types (`concentric_rings`), other structure types (vanilla's hardcoded ones),
+structure ids a backport or 1.12.2 already generates (`StructureLocate.ids()`, `Structures.has`), and ids, sets or
+`namespace:*` in the config's `structure.blacklist`. `structure.dataStructures` turns it all off. `step` is not used:
+every structure is built from Core's populate driver.
+
+Each set is a `ScatteredStructure`; its kind is the structure's id (or the set's id for several), and `/locate
+structure <id>` finds each structure. Starts save as `BCData` with their structure's id, pieces as `BCDataPiece`
+(`DataStructures.Piece`: junctions and liquid settings). `DataStructures.sets()`, `structures()`, `skipped()`,
+`choose(set, world, x, z)` and `startOf(def, world, x, z)` answer what loaded and what starts where; none loads a chunk.
+
+What a porter still does by hand: feature pool elements need a `JigsawPools.feature` placer, loot tables and
+entities in templates need 1.12.2 counterparts (`ModernPalette.lootTable`, `ModernPalette.entity`), blocks 1.12.2
+lacks need `ModernPalette.map` or `fallback`, and biome ids of mods that are not today's names need `BiomeLocate.biome`.
+
 ### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.1.0)
 
 ```java

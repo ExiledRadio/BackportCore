@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 2,
+    "separation": 2,
+    "spacing": 8
+  },
+  "structures": [
+    {
+      "structure": "bcst_data:hardcoded",
+      "weight": 1
+    }
+  ]
+}
