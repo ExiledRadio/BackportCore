@@ -393,6 +393,20 @@ final class ClientVideoShots {
             return true;
         });
         add(null, () -> {
+            // 1.18.2: a render chunk the frustum moves is marked for a rebuild (P67). Moves one 16 blocks up and back.
+            check("P67 applied", "applied".equals(Asm.state("P67")), Asm.state("P67"));
+            net.minecraft.client.renderer.ViewFrustum frustum = net.minecraftforge.fml.relauncher.ReflectionHelper
+                    .getPrivateValue(net.minecraft.client.renderer.RenderGlobal.class, mc.renderGlobal, "viewFrustum", "field_175008_n");
+            net.minecraft.client.renderer.chunk.RenderChunk rc = frustum.renderChunks[0];
+            BlockPos at = rc.getPosition().toImmutable();
+            rc.clearNeedsUpdate();
+            rc.setPosition(at.getX(), at.getY() + 16, at.getZ());
+            boolean moved = rc.needsUpdate();
+            rc.setPosition(at.getX(), at.getY(), at.getZ());
+            check("1.18.2: a moved render chunk is rebuilt", moved && rc.needsUpdate(), "needsUpdate after the move: " + moved);
+            return true;
+        });
+        add(null, () -> {
             check("P65 applied", "applied".equals(Asm.state("P65")), Asm.state("P65"));
             // 26.1's lightmap beside 1.12.2's: the Overworld by day and by night, a torch-lit cave, the Nether, the End.
             EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);

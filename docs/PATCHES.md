@@ -1168,3 +1168,20 @@ or passes an existing constant through a hook of the same type.
 *   **What changes**: before the one `renderItemAndEffectIntoGUI` call, `aload 1` and the hook, which leaves the stack
     as it was. From 1.13 (the toasts' look, `VanillaRevisions.recipeToastIcon`) it draws the crafting table.
 *   **Fails safe**: method missing or not exactly one item draw: left as 1.12.2's, one log line.
+
+## P67. Moved render chunks are rebuilt
+
+*   **Class**: `net.minecraft.client.renderer.chunk.RenderChunk`, `setPosition(int, int, int)`. **Transformer**:
+    `asm/RenderChunkMoveTransformer`. **Hook**: none (a field store). **Since**: 1.4.5.
+*   **Vanilla change**: as the camera moves, `ViewFrustum.updateChunkPositions` moves render chunks to new positions.
+    1.12.2's `setPosition` empties one (`stopCompileTask`: `CompiledChunk.DUMMY`) and leaves `needsUpdate` as it
+    was; 1.18.2's `setOrigin` calls `reset()`, which also sets `dirty = true`. 1.12.2 counted on the chunk packet for
+    the new position to mark it. When that data was already on the client (the server a little ahead of the camera,
+    fast travel, turning back), the section stayed `DUMMY`: it draws nothing, and `isVisible` is false on every
+    face, so the culling walk stops there and the sky shows through the ground below it until F3 + A. Measured with
+    Frontier's flight test (five minutes back and forth at 1.6 blocks a tick, render distance 24): 250 to 430
+    stuck sections per pass at the far edge of the view.
+*   **Why a patch**: the render chunk is moved inside `RenderGlobal.setupTerrain`; no event follows it.
+*   **What changes**: right after the one `stopCompileTask()` call, `this.needsUpdate = true` (the field alone, as
+    1.18.2 sets `dirty` and leaves `playerChanged`). Not a setting: a fix, always on.
+*   **Fails safe**: method or field missing, or not exactly one `stopCompileTask` call: left as 1.12.2's, one log line.
