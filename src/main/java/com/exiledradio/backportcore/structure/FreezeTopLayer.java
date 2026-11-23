@@ -28,7 +28,8 @@ import java.util.Map;
  * (Core's {@link ScatteredStructure}s and Village &amp; Pillage's outposts from Forge's world generators; everything in
  * Caves &amp; Cliffs' 1.18 terrain, which snows while it generates the chunk). Whoever builds a structure after the snow
  * calls {@link #afterBuilding} once its pieces are in; a chunk generator that snows before its structures calls
- * {@link #area}. Only each column's top block is touched (the block under the precipitation height turns to ice, a
+ * {@link #area}. {@link #afterBuilding} first takes the leaves off the trees the structure cut ({@link CutTrees}).
+ * Only each column's top block is touched (the block under the precipitation height turns to ice, a
  * snow layer goes on top), never an interior; grass, podzol and mycelium look snowy by themselves in 1.12.
  *
  * <p>The rules are today's ({@code Biome.shouldFreeze}, {@code Biome.shouldSnow}): ice on still water, a snow layer in
@@ -93,14 +94,15 @@ public final class FreezeTopLayer {
      * @return how many blocks it set
      */
     public static int afterBuilding(World world, MapGenStructure structure, int chunkX, int chunkZ) {
-        if (!enabled) {
-            return 0;
-        }
         return afterBuilding(world, starts(structure).values(), chunkX, chunkZ);
     }
 
-    /** {@link #afterBuilding(World, MapGenStructure, int, int)} over starts the caller keeps itself. */
+    /**
+     * {@link #afterBuilding(World, MapGenStructure, int, int)} over starts the caller keeps itself. The trees the
+     * structure cut lose their leaves first ({@link CutTrees}), so no snow is left lying on a leaf that goes.
+     */
     public static int afterBuilding(World world, Collection<StructureStart> starts, int chunkX, int chunkZ) {
+        CutTrees.afterBuilding(world, starts, chunkX, chunkZ);
         if (!enabled) {
             return 0;
         }

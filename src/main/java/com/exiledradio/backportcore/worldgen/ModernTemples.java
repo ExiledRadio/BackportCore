@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.worldgen;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.structure.CutTrees;
 import com.exiledradio.backportcore.structure.ScatteredPlacement;
 
 import net.minecraft.init.Biomes;
@@ -70,6 +71,16 @@ public final class ModernTemples extends MapGenScatteredFeature {
             return 3;
         }
         return -1;
+    }
+
+    /** A jungle temple or swamp hut cuts the trees its neighbors grew into its space: their leaves go too. */
+    @Override
+    public synchronized boolean generateStructure(World world, java.util.Random random, ChunkPos chunk) {
+        boolean placed = super.generateStructure(world, random, chunk);
+        if (placed) {
+            CutTrees.afterBuilding(world, this.structureMap.values(), chunk.x, chunk.z);
+        }
+        return placed;
     }
 
     @Override

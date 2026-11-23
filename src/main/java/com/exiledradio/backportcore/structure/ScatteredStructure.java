@@ -293,6 +293,8 @@ public abstract class ScatteredStructure extends MapGenStructure {
                     // Lays out every start within range; the primer is never touched by a structure.
                     structure.generate(world, chunkX, chunkZ, null);
                     if (structure.generateStructure(world, random, chunk)) {
+                        // Built after the chunk's trees: the ones it cut lose their leaves, before the snow goes on.
+                        CutTrees.afterBuilding(world, structure.structureMap.values(), chunkX, chunkZ);
                         any |= FreezeTopLayer.cover(built, structure.structureMap.values(), chunkX, chunkZ);
                     }
                 } catch (RuntimeException e) {
