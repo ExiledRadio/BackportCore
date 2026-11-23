@@ -20,8 +20,8 @@ public enum LookArea {
     TITLE("titleScreen", "1.13", "1.14", "1.20", "1.20.5"),
     /** The splash text list. */
     SPLASHES("splashes"),
-    /** Menu backgrounds, buttons, the pause and death screens, the world list and the multiplayer warning. */
-    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.20.5", "1.21.2"),
+    /** Menu backgrounds, buttons, the pause and death screens, the world list, Create New World and the multiplayer warning. */
+    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.19.4", "1.20.5", "1.21.2", "1.21.11"),
     /** The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. */
     OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.20.2", "1.21.9"),
     /** Video Settings: its layout, its removed and added options. */

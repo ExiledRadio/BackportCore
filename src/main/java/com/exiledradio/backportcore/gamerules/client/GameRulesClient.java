@@ -36,8 +36,9 @@ public final class GameRulesClient {
 
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
-        if (!(event.getGui() instanceof GuiCreateWorld) || !GameRulesScreen.available()) {
-            return;
+        if (!(event.getGui() instanceof GuiCreateWorld) || !GameRulesScreen.available()
+                || com.exiledradio.backportcore.presentation.client.CreateWorldTabs.applies(event.getGui())) {
+            return; // 1.19.4's tabbed screen has its own Game Rules button, on the More tab
         }
         final GuiScreen gui = event.getGui();
         for (GuiButton b : event.getButtonList()) {

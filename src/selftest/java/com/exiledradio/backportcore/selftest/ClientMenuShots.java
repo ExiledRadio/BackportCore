@@ -6,6 +6,7 @@ import com.exiledradio.backportcore.creative.client.ModernTab;
 import com.exiledradio.backportcore.creative.client.ModernTabs;
 import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.presentation.client.CreateWorldTabs;
 import com.exiledradio.backportcore.presentation.client.MenuBackground;
 import com.exiledradio.backportcore.presentation.client.PanoramaRenderer;
 import com.exiledradio.backportcore.presentation.client.PresentationHooks;
@@ -132,16 +133,25 @@ final class ClientMenuShots {
                     now + " after " + this.yawAt);
             return true;
         });
+        // The world is made on 1.19.4's tabbed Create New World (CreateWorldTabs), by clicks, as a player would.
+        createWorld(mc);
+        add(null, () -> mc.world != null && mc.player != null && ++this.waited > 4);
         add(null, () -> {
-            try {
-                FileUtils.deleteDirectory(new File(mc.gameDir, "saves/" + WORLD));
-            } catch (java.io.IOException e) {
-                failed("delete world", e);
-            }
-            mc.launchIntegratedServer(WORLD, WORLD, new WorldSettings(20261116L, GameType.CREATIVE, true, false, WorldType.DEFAULT));
+            net.minecraft.world.storage.WorldInfo info = mc.getIntegratedServer().getWorld(0).getWorldInfo();
+            check("create world: Creative, as 1.12.2's screen makes it", info.getGameType() == GameType.CREATIVE && !info.isHardcoreModeEnabled(),
+                    info.getGameType());
+            check("create world: the typed seed", info.getSeed() == 20261116L, info.getSeed());
+            check("create world: structures on, Default", info.isMapFeaturesEnabled() && info.getTerrainType() == WorldType.DEFAULT,
+                    info.getTerrainType().getName());
+            check("create world: commands on (1.12.2 turns them on with Creative)", info.areCommandsAllowed());
+            check("create world: the world's name and folder", WORLD.equals(info.getWorldName())
+                    && WORLD.equals(mc.getIntegratedServer().getFolderName()), info.getWorldName());
+            check("create world: the chosen Difficulty", info.getDifficulty() == this.chosenDifficulty
+                    && com.exiledradio.backportcore.gamerules.NewWorldDifficulty.lastApplied == this.chosenDifficulty, info.getDifficulty());
+            check("create world: the Difficulty option follows the joined world (1.12.2's handleJoinGame)",
+                    mc.gameSettings.difficulty == this.chosenDifficulty, mc.gameSettings.difficulty);
             return true;
         });
-        add(null, () -> mc.world != null && mc.player != null && ++this.waited > 4);
         add("pause", () -> {
             this.worldAt = MenuBackground.worldFrames;
             return show(new GuiIngameMenu());
@@ -224,6 +234,160 @@ final class ClientMenuShots {
             return true;
         });
         creativeTabs(mc);
+    }
+
+    // ---- 1.19.4's Create New World (presentation.client.CreateWorldTabs) ----
+
+    private net.minecraft.client.gui.GuiCreateWorld create;
+    private net.minecraft.world.EnumDifficulty optionDifficulty;
+    private net.minecraft.world.EnumDifficulty chosenDifficulty;
+
+    private void createWorld(Minecraft mc) {
+        add(null, () -> {
+            try {
+                FileUtils.deleteDirectory(new File(mc.gameDir, "saves/" + WORLD));
+            } catch (java.io.IOException e) {
+                failed("delete world", e);
+            }
+            this.optionDifficulty = mc.gameSettings.difficulty;
+            this.create = new net.minecraft.client.gui.GuiCreateWorld(new GuiWorldSelection(new GuiMainMenu()));
+            return show(this.create);
+        });
+        add("create-game", () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            int w = g.width;
+            int h = g.height;
+            check("create world: the tabbed screen, Game tab first", CreateWorldTabs.applies(g) && CreateWorldTabs.tab(g) == CreateWorldTabs.GAME
+                    && CreateWorldTabs.frames > 0, CreateWorldTabs.frames);
+            check("create world: Difficulty starts at the Difficulty option (1.12.2's new worlds take it)",
+                    CreateWorldTabs.difficulty(g) == mc.gameSettings.difficulty, CreateWorldTabs.difficulty(g));
+            net.minecraft.client.gui.GuiButton mode = byId(g, 2);
+            net.minecraft.client.gui.GuiButton cheats = byId(g, 6);
+            net.minecraft.client.gui.GuiButton difficulty = CreateWorldTabs.difficultyButton(g);
+            check("create world: Game Mode: Survival", "Game Mode: Survival".equals(mode.displayString), mode.displayString);
+            check("create world: Difficulty: " + mc.gameSettings.difficulty, difficulty.displayString.equals("Difficulty: "
+                    + net.minecraft.client.resources.I18n.format(mc.gameSettings.difficulty.getTranslationKey())), difficulty.displayString);
+            check("create world: Allow Commands: OFF (1.20.5's words)", "Allow Commands: OFF".equals(cheats.displayString), cheats.displayString);
+            int gx = (w - 210) / 2;
+            check("create world: Game tab column 210 wide at the middle, 28 apart", mode.x == gx && mode.width == 210 && difficulty.x == gx
+                    && difficulty.y == mode.y + 28 && cheats.y == difficulty.y + 28, mode.x + "," + mode.y + " " + difficulty.y + " " + cheats.y);
+            net.minecraft.client.gui.GuiButton createButton = byId(g, 0);
+            net.minecraft.client.gui.GuiButton cancel = byId(g, 1);
+            boolean modern = MenuBackground.active();
+            int fy = modern ? h - 27 : h - 28;
+            int fx = (int) (0.5F * (w - (modern ? 308 : 310)));
+            check("create world: Create New World and Cancel in the footer", createButton.x == fx && createButton.y == fy && cancel.y == fy
+                    && cancel.x == fx + (modern ? 158 : 160), createButton.x + "," + createButton.y + " " + cancel.x);
+            List<net.minecraft.client.gui.GuiButton> tabs = CreateWorldTabs.tabButtons(g);
+            int tabsWidth = Math.min(400, w) - 28;
+            check("create world: three tabs along the top", tabs.size() == 3 && tabs.get(0).y == 0 && tabs.get(1).x == tabs.get(0).x + tabs.get(0).width
+                    && tabs.get(0).width % 2 == 0 && tabs.get(0).width >= tabsWidth / 3, tabs.isEmpty() ? "none" : tabs.get(0).x + "+" + tabs.get(0).width);
+            check("create world: Game, World, More", tabs.size() == 3 && "Game".equals(tabs.get(0).displayString)
+                    && "World".equals(tabs.get(1).displayString) && "More".equals(tabs.get(2).displayString));
+            check("create world: only the Game tab's buttons show", mode.visible && !byId(g, 5).visible && !byId(g, 4).visible
+                    && !byId(g, 3).visible && (CreateWorldTabs.gameRulesButton(g) == null || !CreateWorldTabs.gameRulesButton(g).visible));
+            return true;
+        });
+        add(null, () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            click(g, byId(g, 2));
+            return true;
+        });
+        add("create-game-hardcore", () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            net.minecraft.client.gui.GuiButton difficulty = CreateWorldTabs.difficultyButton(g);
+            net.minecraft.client.gui.GuiButton cheats = byId(g, 6);
+            check("create world: Hardcore", "Game Mode: Hardcore".equals(byId(g, 2).displayString), byId(g, 2).displayString);
+            check("create world: Hardcore locks Difficulty at Hard", !difficulty.enabled && "Difficulty: Hard".equals(difficulty.displayString),
+                    difficulty.displayString);
+            check("create world: Hardcore turns Allow Commands off", !cheats.enabled && "Allow Commands: OFF".equals(cheats.displayString),
+                    cheats.displayString);
+            return true;
+        });
+        add(null, () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            click(g, byId(g, 2));
+            this.chosenDifficulty = this.optionDifficulty == net.minecraft.world.EnumDifficulty.PEACEFUL
+                    ? net.minecraft.world.EnumDifficulty.EASY : net.minecraft.world.EnumDifficulty.PEACEFUL;
+            for (int i = 0; i < 4 && CreateWorldTabs.difficulty(g) != this.chosenDifficulty; i++) {
+                click(g, CreateWorldTabs.difficultyButton(g));
+            }
+            check("create world: Difficulty cycles", CreateWorldTabs.difficulty(g) == this.chosenDifficulty, CreateWorldTabs.difficulty(g));
+            setText(g, "worldNameField", "field_146333_g", WORLD);
+            try {
+                net.minecraftforge.fml.relauncher.ReflectionHelper.findMethod(net.minecraft.client.gui.GuiCreateWorld.class, "calcSaveDirName",
+                        "func_146314_g").invoke(g);
+            } catch (Exception e) {
+                failed("calcSaveDirName", e);
+            }
+            click(g, CreateWorldTabs.tabButtons(g).get(1));
+            return true;
+        });
+        add("create-world", () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            net.minecraft.client.gui.GuiButton type = byId(g, 5);
+            net.minecraft.client.gui.GuiButton customize = byId(g, 8);
+            net.minecraft.client.gui.GuiButton features = byId(g, 4);
+            net.minecraft.client.gui.GuiButton bonus = byId(g, 7);
+            check("create world: the World tab", CreateWorldTabs.tab(g) == CreateWorldTabs.WORLD && type.visible && customize.visible
+                    && !byId(g, 2).visible, CreateWorldTabs.tab(g));
+            check("create world: Creative, and it turned Allow Commands on (1.12.2's rule)", "Game Mode: Creative".equals(byId(g, 2).displayString)
+                    && "Allow Commands: ON".equals(byId(g, 6).displayString), byId(g, 2).displayString + " / " + byId(g, 6).displayString);
+            check("create world: World Type: Default", "World Type: Default".equals(type.displayString), type.displayString);
+            check("create world: Customize beside it, off for Default", customize.x == type.x + 160 && customize.y == type.y && !customize.enabled);
+            check("create world: the switches, 44 wide at the right", features.width == 44 && features.x == type.x + 310 - 44
+                    && "ON".equals(features.displayString) && bonus.y == features.y + 24 && "OFF".equals(bonus.displayString),
+                    features.x + "," + features.y + " " + features.displayString + " " + bonus.displayString);
+            return true;
+        });
+        add(null, () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            setText(g, "worldSeedField", "field_146335_h", "20261116");
+            click(g, CreateWorldTabs.tabButtons(g).get(2));
+            return true;
+        });
+        add("create-more", () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            net.minecraft.client.gui.GuiButton rules = CreateWorldTabs.gameRulesButton(g);
+            check("create world: the More tab's Game Rules", CreateWorldTabs.tab(g) == CreateWorldTabs.MORE && rules != null && rules.visible
+                    && rules.width == 210 && "Game Rules".equals(rules.displayString) && !byId(g, 5).visible);
+            return true;
+        });
+        add(null, () -> {
+            net.minecraft.client.gui.GuiCreateWorld g = this.create;
+            click(g, byId(g, 0));
+            check("create world: Create New World left the screen", mc.currentScreen != g, mc.currentScreen);
+            this.create = null;
+            return true;
+        });
+    }
+
+    private static net.minecraft.client.gui.GuiButton byId(GuiScreen g, int id) {
+        for (net.minecraft.client.gui.GuiButton b : CreateWorldTabs.buttons(g)) {
+            if (b.id == id) {
+                return b;
+            }
+        }
+        throw new IllegalStateException("no button " + id);
+    }
+
+    /** A left click in the middle of the button, through the screen's own mouseClicked (and Forge's events). */
+    private void click(GuiScreen g, net.minecraft.client.gui.GuiButton b) {
+        try {
+            net.minecraftforge.fml.relauncher.ReflectionHelper.findMethod(GuiScreen.class, "mouseClicked", "func_73864_a", int.class, int.class,
+                    int.class).invoke(g, b.x + b.width / 2, b.y + b.height / 2, 0);
+        } catch (Exception e) {
+            failed("click " + b.displayString, e);
+        }
+    }
+
+    private void setText(GuiScreen g, String mcp, String srg, String text) {
+        try {
+            ((net.minecraft.client.gui.GuiTextField) net.minecraftforge.fml.relauncher.ReflectionHelper.findField(
+                    net.minecraft.client.gui.GuiCreateWorld.class, mcp, srg).get(g)).setText(text);
+        } catch (Exception e) {
+            failed("set " + mcp, e);
+        }
     }
 
     // ---- 1.19.3's creative tabs (creative.client.ModernTabs, P47) ----

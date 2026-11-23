@@ -41,6 +41,16 @@
 
 # 1.4.5
 
+*   1.19.4's Create New World (23w05a; `presentation.client.CreateWorldTabs`, the menus part): tabs Game (World Name,
+    Game Mode, Difficulty, Allow Commands), World (World Type and Customize, the seed, Generate Structures, Bonus
+    Chest) and More (Game Rules, and other mods' buttons), Create New World and Cancel below, laid out as 26.3's.
+    1.12.2's `GuiCreateWorld` stays the screen and makes the world, so the settings are 1.12.2's and other mods'
+    buttons, events and reflection keep working. Difficulty starts at the Difficulty option (1.12.2's new worlds take
+    it); another choice is set on the new world's first tick (`gamerules.NewWorldDifficulty`).
+    1.19.4's light dirt before 1.20.5, the blurred panorama and the tab sprites a backport supplies (else drawn) from
+    1.20.5; "Allow Commands" from 1.20.5; the selected tab's label over its background from 1.21.11. Escape goes
+    back, Ctrl + Tab changes tabs. 13 new lang keys, 26.3's words in 18 languages.
+
 *   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
     Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads
     (`CopyRemapping`), also with Village & Pillage removed.
