@@ -4,6 +4,7 @@ import com.exiledradio.backportcore.presentation.Contribution;
 import com.exiledradio.backportcore.presentation.DebugKeys;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.GraphicsPreset;
+import com.exiledradio.backportcore.presentation.LightmapColors;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.VideoSections;
@@ -107,6 +108,136 @@ final class LookFeelTests {
             Contribution removing = Presentation.detached("1.31").removeDebugKey(200);
             check("F3: a backport can still remove it", !DebugKeys.map(Arrays.asList(Presentation.detached("1.30"), removing)).containsKey(200));
         });
+        then(1, "26.1's lightmap against 26.3's lightmap.fsh", world -> lightmap());
+    }
+
+    /**
+     * {@link LightmapColors} against a plain transcription of 26.3's {@code lightmap.fsh} (doubles, GLSL's order),
+     * for 26.3's own inputs per dimension, plus a few values worked out by hand.
+     */
+    private static void lightmap() {
+        check("lightmap: 26.1 is in the sky's versions",
+                Arrays.asList(com.exiledradio.backportcore.presentation.LookArea.SKY.coreVersions()).contains(v("26.1")));
+        Object[][] cases = {
+                // label, dimension, day time, rain, thunder, flicker, night vision, darkness, boss, brightness
+                {"Overworld noon", "overworld", 6000F, 0F, 0F, 0F, 0F, 0F, 0F, 0.5F},
+                {"Overworld midnight", "overworld", 18000F, 0F, 0F, 0.03F, 0F, 0F, 0F, 0F},
+                {"Overworld dusk, rain", "overworld", 12500F, 1F, 0F, -0.02F, 0F, 0F, 0F, 1F},
+                {"Overworld dawn, thunder", "overworld", 200F, 1F, 1F, 0.05F, 0F, 0F, 0F, 0.5F},
+                {"Overworld night, Night Vision", "overworld", 16000F, 0F, 0F, 0F, 1F, 0F, 0F, 0.5F},
+                {"Overworld, Darkness pulse", "overworld", 6000F, 0F, 0F, 0F, 0F, 0.3F, 0F, 0.2F},
+                {"Overworld, boss fog", "overworld", 6000F, 0F, 0F, 0F, 0F, 0F, 0.7F, 0.5F},
+                {"Nether", "nether", 0F, 0F, 0F, 0.01F, 0F, 0F, 0F, 0.5F},
+                {"End", "end", 0F, 0F, 0F, -0.01F, 0F, 0F, 0F, 0.5F},
+        };
+        int worst = 0;
+        String where = "";
+        boolean opaque = true;
+        for (Object[] c : cases) {
+            LightmapColors.Inputs in = new LightmapColors.Inputs();
+            String dim = (String) c[1];
+            if ("nether".equals(dim)) {
+                LightmapColors.nether(in);
+            } else if ("end".equals(dim)) {
+                LightmapColors.end(in);
+            } else {
+                LightmapColors.overworld(in, (Float) c[2], (Float) c[3], (Float) c[4], false);
+            }
+            in.blockFactor = (Float) c[5] + 1.4F;
+            in.nightVision = (Float) c[6];
+            in.darknessScale = (Float) c[7];
+            in.bossDarkening = (Float) c[8];
+            in.brightness = (Float) c[9];
+            int[] out = new int[256];
+            LightmapColors.compute(in, null, out);
+            double[] want = new double[3];
+            for (int i = 0; i < 256; i++) {
+                shader(in, i % 16, i / 16, want);
+                for (int k = 0; k < 3; k++) {
+                    int got = out[i] >> (16 - 8 * k) & 0xFF;
+                    int expect = (int) Math.round(Math.max(0, Math.min(1, want[k])) * 255.0);
+                    if (Math.abs(got - expect) > worst) {
+                        worst = Math.abs(got - expect);
+                        where = c[0] + " sky " + i / 16 + " block " + i % 16 + ": " + got + " vs " + expect;
+                    }
+                }
+                opaque &= (out[i] >>> 24) == 0xFF;
+            }
+        }
+        check("lightmap: every cell within 1/255 of lightmap.fsh (9 cases, 256 cells)", worst <= 1, worst + " " + where);
+        check("lightmap: opaque", opaque);
+
+        // By hand, from 26.3's attribute values.
+        LightmapColors.Inputs in = new LightmapColors.Inputs();
+        LightmapColors.overworld(in, 18000F, 0F, 0F, false);
+        in.brightness = 0F;
+        int[] out = new int[256];
+        LightmapColors.compute(in, null, out);
+        // Midnight, sky 15, block 0: #0a0a0a + #7a7aff * 0.24 = (0.154, 0.154, 0.279).
+        check("lightmap: midnight sky light is blue (39, 39, 71)", (out[15 * 16] & 0xFFFFFF) == (39 << 16 | 39 << 8 | 71),
+                Integer.toHexString(out[15 * 16]));
+        check("lightmap: Overworld darkness is #0a0a0a", (out[0] & 0xFFFFFF) == 0x0A0A0A, Integer.toHexString(out[0]));
+        LightmapColors.overworld(in, 6000F, 0F, 0F, false);
+        LightmapColors.compute(in, null, out);
+        check("lightmap: noon sky light 15 is white", (out[255] & 0xFFFFFF) == 0xFFFFFF, Integer.toHexString(out[255]));
+        int torch = out[12];
+        check("lightmap: torch light (block 12, sky 0) is warm: red > green > blue",
+                (torch >> 16 & 0xFF) > (torch >> 8 & 0xFF) && (torch >> 8 & 0xFF) > (torch & 0xFF), Integer.toHexString(torch));
+        LightmapColors.nether(in);
+        LightmapColors.compute(in, null, out);
+        check("lightmap: the Nether's darkness is #302821, its sky light none", (out[0] & 0xFFFFFF) == 0x302821
+                && out[15 * 16] == out[0], Integer.toHexString(out[0]) + " " + Integer.toHexString(out[15 * 16]));
+        LightmapColors.end(in);
+        LightmapColors.compute(in, null, out);
+        check("lightmap: the End's darkness is #3f473f", (out[0] & 0xFFFFFF) == 0x3F473F, Integer.toHexString(out[0]));
+
+        // The day timeline (day.json): day 730 to 11270, night 13140 to 22860, linear between, wrapping at 24000.
+        check("lightmap: day timeline", LightmapColors.dayAlpha(6000F) == 0F && LightmapColors.dayAlpha(18000F) == 1F
+                        && Math.abs(LightmapColors.dayAlpha(12205F) - 0.5F) < 1e-4F && Math.abs(LightmapColors.dayAlpha(23795F) - 0.5F) < 1e-4F,
+                LightmapColors.dayAlpha(12205F) + " " + LightmapColors.dayAlpha(23795F));
+        float worstTime = 0F;
+        for (int t = 0; t < 24000; t += 250) {
+            // 1.12.2's WorldProvider.calculateCelestialAngle.
+            float f = t / 24000.0F - 0.25F;
+            if (f < 0.0F) {
+                f++;
+            }
+            float f1 = f;
+            f = 1.0F - (float) ((Math.cos(f * Math.PI) + 1.0D) / 2.0D);
+            f = f1 + (f - f1) / 3.0F;
+            float back = LightmapColors.dayTimeOfCelestialAngle(f);
+            float d = Math.abs(back - t);
+            worstTime = Math.max(worstTime, Math.min(d, 24000F - d));
+        }
+        check("lightmap: the sun's angle gives back the time of day (within 2 ticks)", worstTime <= 2F, worstTime);
+    }
+
+    /** 26.3's lightmap.fsh, line by line, in doubles. */
+    private static void shader(LightmapColors.Inputs in, int blockIndex, int skyIndex, double[] out) {
+        double blockLevel = blockIndex / 15.0;
+        double skyLevel = skyIndex / 15.0;
+        double blockBrightness = blockLevel / (4.0 - 3.0 * blockLevel) * in.blockFactor;
+        double skyBrightness = skyLevel / (4.0 - 3.0 * skyLevel) * in.skyFactor;
+        double parabolic = (2.0 * blockLevel - 1.0) * (2.0 * blockLevel - 1.0);
+        double[] color = new double[3];
+        for (int k = 0; k < 3; k++) {
+            color[k] = Math.max(in.ambientColor[k], in.nightVisionColor[k] * in.nightVision);
+            color[k] += in.skyLightColor[k] * skyBrightness;
+            double tint = in.blockLightTint[k] + (1.0 - in.blockLightTint[k]) * 0.9 * parabolic;
+            color[k] += tint * blockBrightness;
+        }
+        double[] boss = {0.7, 0.6, 0.6};
+        for (int k = 0; k < 3; k++) {
+            color[k] = color[k] + (color[k] * boss[k] - color[k]) * in.bossDarkening;
+            color[k] = Math.max(0.0, Math.min(1.0, color[k] - in.darknessScale));
+        }
+        double max = Math.max(color[0], Math.max(color[1], color[2]));
+        double inv = 1.0 - max;
+        double scaled = 1.0 - inv * inv * inv * inv;
+        for (int k = 0; k < 3; k++) {
+            double notGamma = max == 0.0 ? 0.0 : color[k] * (scaled / max);
+            out[k] = color[k] + (notGamma - color[k]) * in.brightness;
+        }
     }
 
     private static List<String> names(List<String> keys, List<Integer> idx) {

@@ -127,6 +127,15 @@ public final class VanillaRevisions {
     }
 
     /**
+     * 26.1's lightmap ({@code presentation.LightmapColors}, 26.3's {@code lightmap.fsh}): block light tinted warm yellow
+     * that turns white toward full brightness, sky light that turns blue at night, and each dimension's ambient light
+     * added under both, in place of 1.12.2's formula. Read each time the lightmap updates. Since Core 1.4.5.
+     */
+    public static boolean modernLightmap() {
+        return Presentation.isAtLeast(LookArea.SKY, "26.1");
+    }
+
+    /**
      * 26.3 (its window through SDL3, 26.2's through GLFW): on Windows the title bar takes Windows' dark mode when the
      * app mode is dark. Since Core 1.4.5.
      */

@@ -109,6 +109,7 @@ final class PatchTests {
             {"net.minecraft.client.gui.recipebook.GuiRecipeBook", "P58", new String[] {"recipeSearchBox"}},
             {"net.minecraft.client.gui.GuiSubtitleOverlay", "P59", new String[] {"subtitleBoxColor"}},
             {"net.minecraft.client.Minecraft", "P60", new String[] {"profilerPie"}},
+            {"net.minecraft.client.renderer.EntityRenderer", "P65", new String[] {"modernLightmap"}},
     };
 
     private PatchTests() {
@@ -381,6 +382,7 @@ final class PatchTests {
             case "P51": cls = "QuitShortcutsTransformer"; break;
             case "P52": cls = "SoundDeviceTransformer"; break;
             case "P57": case "P58": case "P59": case "P60": cls = "ScreenPatchesTransformer"; break;
+            case "P65": cls = "LightmapTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

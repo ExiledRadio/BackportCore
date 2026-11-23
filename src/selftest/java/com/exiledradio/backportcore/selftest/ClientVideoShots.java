@@ -7,7 +7,9 @@ import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.client.FullscreenModes;
 import com.exiledradio.backportcore.presentation.client.DropSwing;
+import com.exiledradio.backportcore.presentation.LightmapColors;
 import com.exiledradio.backportcore.presentation.client.ModernClouds;
+import com.exiledradio.backportcore.presentation.client.ModernLightmap;
 import com.exiledradio.backportcore.presentation.client.OptionWidgets;
 import com.exiledradio.backportcore.render.client.ChunkRebuildHooks;
 import com.exiledradio.backportcore.render.client.ImprovedTransparency;
@@ -268,6 +270,195 @@ final class ClientVideoShots {
                     (DropSwing.swings - this.framesAt) + " swings, swinging " + mc.player.isSwingInProgress);
             return true;
         });
+        add(null, () -> {
+            check("P65 applied", "applied".equals(Asm.state("P65")), Asm.state("P65"));
+            // 26.1's lightmap beside 1.12.2's: the Overworld by day and by night, a torch-lit cave, the Nether, the End.
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            this.scene = new BlockPos(p.posX, 4, p.posZ).add(0, 0, 40);
+            BlockPos scene = this.scene;
+            // Torches on the flat ground, two rows down the view, and a dark stone room at the far end for the cave.
+            onServer(mc, () -> {
+                WorldServer w = mc.getIntegratedServer().getWorld(0);
+                for (int z = 4; z <= 16; z += 6) {
+                    w.setBlockState(scene.add(-3, 0, z), Blocks.TORCH.getDefaultState(), 3);
+                    w.setBlockState(scene.add(3, 0, z), Blocks.TORCH.getDefaultState(), 3);
+                }
+                room(w, scene.add(0, 60, 0), Blocks.STONE.getDefaultState());
+                w.setWorldTime(6000L);
+                p.connection.setPlayerLocation(scene.getX() + 0.5, scene.getY() + 3, scene.getZ() + 0.5, 0.0F, 25.0F);
+            });
+            return true;
+        });
+        lightPair("day", 6, null);
+        add(null, () -> {
+            onServer(mc, () -> mc.getIntegratedServer().getWorld(0).setWorldTime(18000L));
+            return true;
+        });
+        lightPair("night", 6, null);
+        add(null, () -> {
+            BlockPos scene = this.scene;
+            onServer(mc, () -> {
+                mc.getIntegratedServer().getWorld(0).setWorldTime(6000L);
+                EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+                p.connection.setPlayerLocation(scene.getX() + 0.5, scene.getY() + 61, scene.getZ() - 6.5, 0.0F, 20.0F);
+            });
+            return true;
+        });
+        add(null, () -> {
+            // 1.12.2 leaves sky light in a room closed in the open air; relight it on both sides.
+            BlockPos room = this.scene.add(0, 60, 0);
+            onServer(mc, () -> relight(mc.getIntegratedServer().getWorld(0), room));
+            relight(mc.world, room);
+            return true;
+        });
+        lightPair("cave", 4, () -> {
+            int sky = mc.world.getLightFor(net.minecraft.world.EnumSkyBlock.SKY, new BlockPos(mc.player));
+            check("cave: no sky light in the room", sky == 0, sky);
+        });
+        add(null, () -> {
+            this.waited = 0;
+            onServer(mc, () -> mc.getIntegratedServer().getPlayerList().getPlayers().get(0)
+                    .changeDimension(-1, (world, entity, yaw) -> entity.setLocationAndAngles(8.5, 71, 0.5, 0.0F, 20.0F)));
+            return true;
+        });
+        add(null, () -> mc.world != null && mc.world.provider.isNether() && mc.player != null && pause(4));
+        add(null, () -> {
+            // The room after arriving: 1.12.2 places a player who changes dimension once more after the teleporter.
+            onServer(mc, () -> {
+                WorldServer n = mc.getIntegratedServer().getWorld(-1);
+                room(n, new BlockPos(8, 70, 8), Blocks.NETHERRACK.getDefaultState());
+                n.setBlockState(new BlockPos(8, 70, 14), Blocks.GLOWSTONE.getDefaultState(), 3);
+                EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+                p.connection.setPlayerLocation(8.5, 71, 0.5, 0.0F, 20.0F);
+            });
+            return true;
+        });
+        lightPair("nether", 6, () -> check("Nether: darkness is 26.3's #302821 ambient light", cell(mc, 0) == expected(mc, "nether", 0),
+                Integer.toHexString(cell(mc, 0)) + " want " + Integer.toHexString(expected(mc, "nether", 0))));
+        add(null, () -> {
+            this.waited = 0;
+            onServer(mc, () -> mc.getIntegratedServer().getPlayerList().getPlayers().get(0)
+                    .changeDimension(1, (world, entity, yaw) -> entity.setLocationAndAngles(200.5, 67, 199.5, 0.0F, 25.0F)));
+            return true;
+        });
+        add(null, () -> mc.world != null && mc.world.provider.getDimension() == 1 && mc.player != null && pause(4));
+        add(null, () -> {
+            // An end stone floor far from the island (past the dragon fight's 192 blocks), torches down the view.
+            onServer(mc, () -> {
+                WorldServer e = mc.getIntegratedServer().getWorld(1);
+                BlockPos at = new BlockPos(200, 64, 200);
+                for (int x = -10; x <= 10; x++) {
+                    for (int z = -2; z <= 18; z++) {
+                        e.setBlockState(at.add(x, -1, z), Blocks.END_STONE.getDefaultState(), 2);
+                        if (x == -10 || x == 10) {
+                            for (int y = 0; y <= 3; y++) {
+                                e.setBlockState(at.add(x, y, z), Blocks.END_STONE.getDefaultState(), 2);
+                            }
+                        }
+                    }
+                }
+                for (int z = 4; z <= 16; z += 6) {
+                    e.setBlockState(at.add(-3, 0, z), Blocks.TORCH.getDefaultState(), 3);
+                    e.setBlockState(at.add(3, 0, z), Blocks.TORCH.getDefaultState(), 3);
+                }
+                EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+                p.connection.setPlayerLocation(200.5, 67, 199.5, 0.0F, 25.0F);
+            });
+            return true;
+        });
+        add(null, () -> mc.world != null && mc.world.provider.getDimension() == 1 && mc.player != null && pause(8));
+        lightPair("end", 6, () -> check("End: darkness is 26.3's #3f473f ambient light", cell(mc, 0) == expected(mc, "end", 0),
+                Integer.toHexString(cell(mc, 0)) + " want " + Integer.toHexString(expected(mc, "end", 0))));
+    }
+
+    private BlockPos scene;
+
+    /** Two shots of one place: {@code light-<name>-26.1} with the sky's look on, {@code -1.12.2} with it off. */
+    private void lightPair(String name, int settle, Runnable checks) {
+        Minecraft mc = Minecraft.getMinecraft();
+        add(null, () -> {
+            // A pause menu (the window lost focus) stops the ticks that ask for a lightmap update.
+            mc.gameSettings.pauseOnLostFocus = false;
+            if (mc.currentScreen != null) {
+                mc.displayGuiScreen(null);
+            }
+            return pause(settle);
+        });
+        add(null, () -> {
+            this.framesAt = ModernLightmap.frames;
+            return true;
+        });
+        add("light-" + name + "-26.1", () -> true);
+        add(null, () -> {
+            check(name + ": 26.1's lightmap fills the frames", VanillaRevisions.modernLightmap() && ModernLightmap.frames > this.framesAt,
+                    ModernLightmap.frames - this.framesAt);
+            if (checks != null) {
+                checks.run();
+            }
+            CoreConfig.lookAndFeel.sky = false;
+            this.framesAt = ModernLightmap.frames;
+            return true;
+        });
+        add(null, () -> pause(2));
+        add("light-" + name + "-1.12.2", () -> true);
+        add(null, () -> {
+            check(name + ": sky look off, 1.12.2's lightmap", !VanillaRevisions.modernLightmap() && ModernLightmap.frames == this.framesAt,
+                    ModernLightmap.frames - this.framesAt);
+            CoreConfig.lookAndFeel.sky = true;
+            return mc.world != null;
+        });
+    }
+
+    /** A closed room, 13 by 6 by 17 inside, its door side toward -z, one torch on its floor at the far end. */
+    private static void room(net.minecraft.world.World w, BlockPos at, net.minecraft.block.state.IBlockState wall) {
+        for (int x = -7; x <= 7; x++) {
+            for (int y = -1; y <= 6; y++) {
+                for (int z = -10; z <= 8; z++) {
+                    boolean shell = x == -7 || x == 7 || y == -1 || y == 6 || z == -10 || z == 8;
+                    w.setBlockState(at.add(x, y, z), shell ? wall : Blocks.AIR.getDefaultState(), 2);
+                }
+            }
+        }
+        w.setBlockState(at.add(0, 0, 5), Blocks.TORCH.getDefaultState(), 3);
+        w.setBlockState(at.add(-4, 0, -2), Blocks.TORCH.getDefaultState(), 3);
+    }
+
+    /** Runs world edits on the integrated server's thread (the client thread would race its chunk map). */
+    private static void onServer(Minecraft mc, Runnable task) {
+        mc.getIntegratedServer().addScheduledTask(task);
+    }
+
+    /** Rechecks the sky light of every block inside {@link #room}, twice (the darkening spreads one pass at a time). */
+    private static void relight(net.minecraft.world.World w, BlockPos at) {
+        for (int pass = 0; pass < 2; pass++) {
+            for (int y = 5; y >= 0; y--) {
+                for (int x = -6; x <= 6; x++) {
+                    for (int z = -9; z <= 7; z++) {
+                        w.checkLightFor(net.minecraft.world.EnumSkyBlock.SKY, at.add(x, y, z));
+                    }
+                }
+            }
+        }
+    }
+
+    private static int cell(Minecraft mc, int index) {
+        int[] colors = ReflectionHelper.getPrivateValue(net.minecraft.client.renderer.EntityRenderer.class, mc.entityRenderer,
+                "lightmapColors", "field_78504_Q");
+        return colors[index] & 0xFFFFFF;
+    }
+
+    /** @return a block 0 cell (no flicker in it) as {@link LightmapColors} gives it for the dimension at the Brightness option */
+    private static int expected(Minecraft mc, String dimension, int index) {
+        LightmapColors.Inputs in = new LightmapColors.Inputs();
+        if ("nether".equals(dimension)) {
+            LightmapColors.nether(in);
+        } else {
+            LightmapColors.end(in);
+        }
+        in.brightness = mc.gameSettings.gammaSetting;
+        int[] out = new int[256];
+        LightmapColors.compute(in, null, out);
+        return out[index] & 0xFFFFFF;
     }
 
     /** @return the ids of Core's options with a button on the open screen, in order */

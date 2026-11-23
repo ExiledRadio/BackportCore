@@ -162,6 +162,11 @@ public final class PresentationHooks {
         return ModernClouds.render(partialTicks, x, y, z);
     }
 
+    /** P65: at the head of {@code EntityRenderer.updateLightmap}: true when 26.1's lightmap was filled instead. */
+    public static boolean modernLightmap(net.minecraft.client.renderer.EntityRenderer renderer, float partialTicks) {
+        return ModernLightmap.update(renderer, partialTicks);
+    }
+
     /** P26: the fast clouds' -256 and 256. */
     public static int cloudFast(int vanilla) {
         return RenderOptions.cloudFast(vanilla);

@@ -1119,3 +1119,40 @@ or passes an existing constant through a hook of the same type.
     Before 1.20.2 the hook calls the private method.
 *   **Fails safe**: not exactly one call: skipped; 1.12.2's pie.
 *   **Tested**: transformer chain and SRG names; `ClientMenuShots` (the pie's box above the charts).
+
+## P65. 26.1's lightmap
+
+*   **Class**: `net.minecraft.client.renderer.EntityRenderer`, `updateLightmap(F)V`. **Transformer**:
+    `asm/LightmapTransformer`. **Hook**: `PresentationHooks.modernLightmap` (`presentation/client/ModernLightmap`,
+    the formula in `presentation/LightmapColors`). **Since**: 1.4.5.
+*   **Vanilla change**: 26.1 rewrote the lightmap (26.3's `lightmap.fsh` and `LightmapRenderStateExtractor`): the same
+    brightness curve as 1.12.2 (`level / (4 - 3 level)`), with block light tinted by `visual/block_light_tint`
+    (`#FFD88C`) and mixed toward white by `0.9 (2 level - 1)^2`, sky light colored by `visual/sky_light_color` and
+    scaled by `visual/sky_light_factor` (the day timeline: white and 1 by day, `#7A7AFF` and 0.24 at night; rain and
+    thunder blend toward the night's by 5/16 and 0.527), each dimension's `visual/ambient_light_color` added under
+    both (Overworld `#0A0A0A`, Nether `#302821`, End `#3F473F`; the Nether and the End have no sky light), Night
+    Vision as a floor of `#999999`, Darkness subtracted before the clamp, then the Brightness option's curve. 1.12.2
+    multiplied its own ambient term into the curve and drew the End with a fixed formula.
+*   **Why a patch**: the lightmap is computed inside the private `updateLightmap`, called from `renderWorld` each frame
+    the flag is set; no event comes between the flag and the upload.
+*   **What changes**: at the head, `if (PresentationHooks.modernLightmap(this, partialTicks)) return;` (one branch past a
+    `return`, an `F_SAME` frame). From 26.1 (the sky's look, `VanillaRevisions.modernLightmap`) the hook fills
+    `lightmapColors` with 26.1's colors, uploads them and clears the flag; otherwise 1.12.2's method runs. Other mods'
+    dimensions: `isNether()` takes the Nether's values, the End's provider the End's, any other with sky light the
+    Overworld's timeline set by its own sun (`getCelestialAngle`) and weather, one without sky light the Overworld's
+    ambient light only. Forge's `WorldProvider.getLightmapColors` is still called for every cell, after the boss
+    darkening and before the clamp, as 1.12.2 calls it. Wild Update's Darkness (which fills 1.12.2's lightmap itself
+    before each frame) is read from `DarknessClient.factor`; while it is above 0 a highest-priority render tick listener
+    fills 26.1's lightmap first with 26.3's Darkness steps, so Wild Update finds nothing to do.
+*   **OptiFine**: its `updateLightmap` starts with the same update check, then its Custom Colors, then 1.12.2's loop;
+    the hook goes in ahead of all of it. It steps aside (one log line per reason) while a shader pack is loaded and where
+    Custom Colors has a lightmap for the dimension (`lightmap/world<id>.png`), so OptiFine's method runs. Dynamic
+    Lights changes the light levels, not the lightmap, and works with either.
+*   **Fails safe**: method missing, not starting with `aload 0; getfield lightmapUpdateNeeded` then `ifeq` (the dev
+    build, OptiFine) or `ifne` (the released game, over a `return`), or a frame at
+    its head: skipped, 1.12.2's lightmap. The hook keeps 1.12.2's when the renderer's fields cannot be read.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `LookFeelTests` checks all 256 cells against a
+    transcription of `lightmap.fsh` for nine cases (Overworld noon, midnight, dusk in rain, dawn in thunder, Night
+    Vision, Darkness, boss fog, Nether, End), within 1/255, and 26.3's values by hand; `ClientVideoShots` shoots each
+    of the Overworld by day and night, a torch-lit room, the Nether and the End with 26.1's lightmap and with 1.12.2's
+    (`video-light-*-26.1.png`, `video-light-*-1.12.2.png`).
