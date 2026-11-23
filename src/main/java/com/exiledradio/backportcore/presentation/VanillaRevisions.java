@@ -282,6 +282,68 @@ public final class VanillaRevisions {
         return v.isAtLeast("1.20.5");
     }
 
+    // ---- Since Core 1.4.5: 26.3's menus (docs/SCREEN_AUDIT.md sections 1 to 4) ----
+
+    /**
+     * 1.20.5 ({@code HeaderAndFooterLayout} on the options screens; 1.20.1's Options and sub-screens still placed their
+     * buttons from {@code height / 6} with the title at 15 or 20, 1.20.6's use the layout): a 33-high header with the
+     * title centered in it, a 33-high footer with Done, and the screen's list or grid between. Edit World became one
+     * centered column in the same release. See {@code client.HeaderFooterLayout}.
+     */
+    public static boolean headerAndFooter(GameVersion v) {
+        return v.isAtLeast("1.20.5");
+    }
+
+    /** 1.18 (21w37a): Options' "Online..." in Realms Notifications' place, opening Online Options. */
+    public static boolean onlineOptions(GameVersion v) {
+        return v.isAtLeast("1.18");
+    }
+
+    /**
+     * 1.19.3 (not in 1.19's lang, in 1.19.4's): Options' "Telemetry Data...". Until 1.20.4 it opened the Telemetry Data
+     * Collection screen, Mojang's data collection, which 1.12.2 does not have; Core shows it greyed out.
+     */
+    public static boolean telemetryButton(GameVersion v) {
+        return v.isAtLeast("1.19.3");
+    }
+
+    /**
+     * 1.20.5 (not in 1.20.4's lang, in 1.20.6's): with telemetry off, Telemetry Data is greyed out with the tooltip
+     * "Telemetry is disabled.", which is what a game without Mojang's telemetry shows.
+     */
+    public static boolean telemetryDisabledTooltip(GameVersion v) {
+        return v.isAtLeast("1.20.5");
+    }
+
+    /**
+     * 1.19.4 (23w03a): the Credits &amp; Attribution screen (Credits, Attribution, Licenses), from Options and from the
+     * title screen's copyright text, which became a {@code PlainTextButton} (underlined while hovered).
+     */
+    public static boolean creditsAndAttribution(GameVersion v) {
+        return v.isAtLeast("1.19.4");
+    }
+
+    /** The multiplayer warning's layout. */
+    public enum WarningLayout {
+        /** 1.15.2 to 1.20.4: the title at 25, 30, the message from y 70, 18 a line, the check box and buttons below. */
+        CLASSIC,
+        /**
+         * 1.20.5 to 1.21.8: one centered column, 8 apart ({@code FrameLayout.centerInRectangle}): the title, the message
+         * centered in {@code width - 100} ({@code FocusableTextWidget}, 1.21.8's last), the check box, the buttons.
+         */
+        COLUMN_1_20_5,
+        /**
+         * 1.21.9 (26.3's): the same column with the message in a {@code FittingMultiLineTextWidget}: the
+         * {@code widget/text_field} frame, {@code width - 100} wide, shrunk to the text, 4 inside, single-spaced,
+         * scrolling only when taller than {@code height - 100}.
+         */
+        BOXED_1_21_9;
+
+        public static WarningLayout forVersion(GameVersion v) {
+            return v.isAtLeast("1.21.9") ? BOXED_1_21_9 : v.isAtLeast("1.20.5") ? COLUMN_1_20_5 : CLASSIC;
+        }
+    }
+
     /** 1.20.2 (23w31a): the Narrator Hotkey option (Accessibility); off, Ctrl + B no longer toggles the narrator. */
     public static boolean narratorHotkeyOption(GameVersion v) {
         return v.isAtLeast("1.20.2");

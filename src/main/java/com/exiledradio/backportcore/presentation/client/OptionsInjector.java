@@ -93,10 +93,13 @@ public final class OptionsInjector {
                 controls(gui, buttons);
             } else if (c == ScreenChatOptions.class) {
                 appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.CHAT));
+                subScreen(gui, buttons, ScreenChatOptions.class, "chatTitle", "field_146401_i");
             } else if (c == GuiScreenOptionsSounds.class) {
                 appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.SOUNDS));
+                subScreen(gui, buttons, GuiScreenOptionsSounds.class, "title", "field_146507_a");
             } else if (c == GuiCustomizeSkin.class) {
                 appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.SKIN));
+                subScreen(gui, buttons, GuiCustomizeSkin.class, "title", "field_175360_f");
             } else {
                 return;
             }
@@ -159,7 +162,44 @@ public final class OptionsInjector {
         }
     }
 
+    /**
+     * 1.20.5's {@code OptionsSubScreen} for 1.12.2's Chat Settings, Music &amp; Sounds and Skin Customization: the title in
+     * the header, every button but Done a row of the list between the separators, Done (200 wide) in the footer.
+     */
+    private static void subScreen(GuiScreen gui, List<GuiButton> buttons, Class<?> owner, String... titleFields) {
+        if (!HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            return;
+        }
+        GuiButton done = find(buttons, DONE_BUTTON);
+        List<GuiButton> rows = new ArrayList<GuiButton>();
+        for (GuiButton b : buttons) {
+            if (b != done && b.visible) {
+                rows.add(b);
+            }
+        }
+        String title = HeaderFooterLayout.takeTitle(gui, owner, titleFields);
+        if (title != null) {
+            HeaderFooterLayout.title(gui, title, HeaderFooterLayout.HEADER);
+        }
+        HeaderFooterLayout.attachRows(gui, buttons, rows);
+        if (done != null) {
+            done.width = 200;
+            HeaderFooterLayout.footer(gui, done);
+        }
+    }
+
+    /** 1.12.2's GuiOptions ids: Difficulty, its lock, Skin Customization ... Resource Packs. */
+    private static final int DIFFICULTY_BUTTON = 108;
+    private static final int LOCK_BUTTON = 109;
+    /** 26.3's Options header: the title and the FOV / Online... row, 8 apart, centered in 61. */
+    static final int OPTIONS_HEADER = 61;
+
+    /** For the client self-test: the last Options screen's Telemetry Data button. */
+    @Nullable
+    public static volatile GuiButton telemetry;
+
     private static void options(GuiScreen gui, List<GuiButton> buttons) {
+        com.exiledradio.backportcore.presentation.GameVersion newest = Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS);
         if (VanillaRevisions.keyBindsScreen(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS))) {
             // 1.18: "Controls..." opens the Controls screen; 1.12.2's key list is Key Binds behind it.
             GuiButton controls = find(buttons, CONTROLS_BUTTON);
@@ -177,7 +217,122 @@ public final class OptionsInjector {
                         () -> Minecraft.getMinecraft().displayGuiScreen(OptionsListScreen.accessibility(gui))));
             }
         }
+        if (VanillaRevisions.onlineOptions(newest)) {
+            online(gui, buttons);
+        }
+        // 1.19.3's Telemetry Data (greyed out: 1.12.2 has no telemetry) and 1.19.4's Credits & Attribution, the last row.
+        List<GuiButton> added = new ArrayList<GuiButton>();
+        telemetry = null;
+        if (VanillaRevisions.telemetryButton(newest)) {
+            GuiButton t = new OptionWidgets.Action(0, 0, 150, I18n.format("options.telemetry"), () -> { });
+            t.enabled = false;
+            added.add(t);
+            telemetry = t;
+        }
+        if (VanillaRevisions.creditsAndAttribution(newest)) {
+            added.add(new OptionWidgets.Action(0, 0, 150, I18n.format("options.credits_and_attribution"),
+                    () -> Minecraft.getMinecraft().displayGuiScreen(new CreditsAndAttributionScreen(gui))));
+        }
+        if (HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            options263(gui, buttons, added);
+            return;
+        }
+        // Before 1.20.5: 1.19.4's grid, the new buttons a fifth row under Resource Packs, Done where it was.
+        int y = gui.height / 6 + 144 - 6;
+        for (int i = 0; i < added.size(); i++) {
+            GuiButton b = added.get(i);
+            b.x = gui.width / 2 - 155 + i % 2 * 160;
+            b.y = y;
+        }
+        buttons.addAll(added);
         appendToGrid(gui, buttons, Presentation.optionsOn(OptionScreen.OPTIONS));
+    }
+
+    /**
+     * 1.18's "Online..." ({@code OptionsScreen.createOnlineButton}): in Realms Notifications' place beside FOV, which
+     * moves to Online Options. In a world 1.18 to 1.21.11 keep Difficulty there in singleplayer and show Online...
+     * otherwise; 26.1 moved Difficulty to World Options (a backport takes it off the screen), and Online... is there.
+     */
+    private static void online(GuiScreen gui, List<GuiButton> buttons) {
+        Minecraft mc = Minecraft.getMinecraft();
+        int x = gui.width / 2 + 5;
+        int y = gui.height / 6 - 12;
+        GuiButton realms = find(buttons, GameSettings.Options.REALMS_NOTIFICATIONS.getOrdinal());
+        GuiButton difficulty = find(buttons, DIFFICULTY_BUTTON);
+        if (realms != null) {
+            buttons.remove(realms);
+        } else if (difficulty != null && !mc.isSingleplayer()) {
+            buttons.remove(difficulty);
+            GuiButton lock = find(buttons, LOCK_BUTTON);
+            if (lock != null) {
+                buttons.remove(lock);
+            }
+        } else if (difficulty != null || occupied(buttons, x, y)) {
+            return;
+        }
+        buttons.add(new OptionWidgets.Action(x, y, 150, I18n.format("options.online"),
+                () -> mc.displayGuiScreen(OptionsListScreen.online(gui))));
+    }
+
+    /**
+     * 26.3's {@code OptionsScreen.init}: a 61-high header with the title and, 8 below it, FOV and Online...; the grid
+     * of 150-wide buttons (4 apart across, 24 a row) from 30 under the header ({@link HeaderFooterLayout#contentsTop});
+     * Done, 200 wide, in the footer. The grid is 1.12.2's buttons in their order, then Telemetry Data and Credits &amp;
+     * Attribution, then anything another mod added to the grid, then the backports' options.
+     */
+    private static void options263(GuiScreen gui, List<GuiButton> buttons, List<GuiButton> added) {
+        int headerTop = (OPTIONS_HEADER - (9 + HeaderFooterLayout.SPACING + 20)) / 2;
+        int rowY = headerTop + 9 + HeaderFooterLayout.SPACING;
+        String title = HeaderFooterLayout.takeTitle(gui, GuiOptions.class, "title", "field_146442_a");
+        if (title != null) {
+            HeaderFooterLayout.titleAt(gui, title, headerTop);
+        }
+        int firstRow = gui.height / 6 - 12;
+        int gridTop = gui.height / 6 + 42;
+        int doneY = gui.height / 6 + 168;
+        GuiButton done = null;
+        List<GuiButton> grid = new ArrayList<GuiButton>();
+        for (GuiButton b : buttons) {
+            if (b.id == DONE_BUTTON && b.y == doneY) {
+                done = b;
+            } else if (b.y == firstRow) {
+                b.y = rowY;
+            } else if (b.y >= gridTop && b.y < doneY) {
+                grid.add(b);
+            }
+        }
+        java.util.Collections.sort(grid, (a, b) -> a.y != b.y ? Integer.compare(a.y, b.y) : Integer.compare(a.x, b.x));
+        // Telemetry Data and Credits & Attribution follow Accessibility Settings, before anything another mod added.
+        int at = Math.min(grid.size(), 8);
+        grid.addAll(at, added);
+        buttons.addAll(added);
+        for (PresentationOption o : Presentation.optionsOn(OptionScreen.OPTIONS)) {
+            GuiButton b = OptionWidgets.create(o, 0, 0);
+            grid.add(b);
+            buttons.add(b);
+        }
+        int rows = (grid.size() + 1) / 2;
+        int top = HeaderFooterLayout.contentsTop(gui, OPTIONS_HEADER, rows * 24);
+        for (int i = 0; i < grid.size(); i++) {
+            GuiButton b = grid.get(i);
+            b.x = gui.width / 2 - 155 + i % 2 * 160;
+            b.y = top + 24 * (i >> 1);
+        }
+        if (done != null) {
+            done.width = 200;
+            HeaderFooterLayout.footer(gui, done);
+        }
+    }
+
+    /** Each frame of Options: Telemetry Data's tooltip, "Telemetry is disabled." (1.20.5). */
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onDrawOptions(GuiScreenEvent.DrawScreenEvent.Post event) {
+        GuiButton t = telemetry;
+        if (event.getGui().getClass() != GuiOptions.class || t == null || !t.visible || !t.isMouseOver()
+                || !VanillaRevisions.telemetryDisabledTooltip(Presentation.newest(com.exiledradio.backportcore.presentation.LookArea.OPTIONS))) {
+            return;
+        }
+        event.getGui().drawHoveringText(OptionTooltips.lines(I18n.format("options.telemetry.disabled")), event.getMouseX(), event.getMouseY());
     }
 
     private static void controls(GuiScreen gui, List<GuiButton> buttons) throws Exception {
@@ -236,8 +391,23 @@ public final class OptionsInjector {
             controlsTitle = ReflectionHelper.findField(GuiControls.class, "screenTitle", "field_146495_a");
             controlsList = ReflectionHelper.findField(GuiControls.class, "keyBindingList", "field_146494_r");
         }
-        controlsTitle.set(gui, I18n.format("controls.keybinds.title"));
         Object list = controlsList.get(gui);
+        if (HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS)) {
+            // 1.20.5's KeyBindsScreen: the title in the header, the list between the separators, Reset Keys and Done
+            // (150 each, 8 apart) in the footer.
+            controlsTitle.set(gui, "");
+            HeaderFooterLayout.title(gui, I18n.format("controls.keybinds.title"), HeaderFooterLayout.HEADER);
+            if (list instanceof net.minecraft.client.gui.GuiSlot) {
+                HeaderFooterLayout.fitList((net.minecraft.client.gui.GuiSlot) list, gui);
+            }
+            GuiButton reset = find(buttons, 201);
+            GuiButton done = find(buttons, DONE_BUTTON);
+            if (reset != null && done != null) {
+                HeaderFooterLayout.footer(gui, reset, done);
+            }
+            return;
+        }
+        controlsTitle.set(gui, I18n.format("controls.keybinds.title"));
         if (list instanceof net.minecraft.client.gui.GuiSlot) {
             ((net.minecraft.client.gui.GuiSlot) list).top = 20;
         }
@@ -360,6 +530,10 @@ public final class OptionsInjector {
         }
         if (gui instanceof OptionsListScreen) {
             return ((OptionsListScreen) gui).rowButtons();
+        }
+        List<GuiButton> attached = HeaderFooterLayout.rowButtons(gui);
+        if (attached != null) {
+            return attached;
         }
         if (!(gui instanceof GuiVideoSettings) || !videoFields()) {
             return null;

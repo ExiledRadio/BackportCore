@@ -50,6 +50,29 @@
     1.19.4's light dirt before 1.20.5, the blurred panorama and the tab sprites a backport supplies (else drawn) from
     1.20.5; "Allow Commands" from 1.20.5; the selected tab's label over its background from 1.21.11. Escape goes
     back, Ctrl + Tab changes tabs. 13 new lang keys, 26.3's words in 18 languages.
+*   26.3's menus (`docs/SCREEN_AUDIT.md` gaps 1 to 4 and 13), each from the version that brought it:
+    *   1.20.5's header and footer (`client/HeaderFooterLayout`, a documented helper for any screen): the title centered
+        in a 33-high header, Done (200 wide) or a row of buttons 8 apart in a 33-high footer, the contents between.
+        Skin Customization, Music & Sounds and Chat Settings become 26.3's scrolling lists of their own buttons (rows
+        25 high, the list background and separators); Accessibility, Controls, Mouse Settings and Online Options are
+        lists between the separators; Key Binds has its list between them and Reset Keys and Done in the footer.
+    *   Options as 26.3's: a 61-high header with the title and FOV beside Online... (1.18; Realms Notifications moves
+        to the new Online Options screen), the grid from 30 under it, Telemetry Data (1.19.3, greyed out; from 1.20.5
+        with the tooltip "Telemetry is disabled.") and Credits & Attribution (1.19.4) after Accessibility Settings.
+        Before 1.20.5 the two new buttons are a fifth row of 1.19.4's grid. Allow Server Listing is left off Online
+        Options: it travels in the client information packet of 1.18 and later, which 1.12.2's has no field for.
+    *   Credits & Attribution (1.19.4, `client/CreditsAndAttributionScreen`): Credits (1.12.2's end credits, back to
+        this screen after), Attribution and Licenses (Mojang's links, through the link confirmation), Done. The title
+        screen's copyright text opens it (1.19.4's `PlainTextButton`; 1.12.2's rolled the end credits).
+    *   The multiplayer warning in the newest version's layout: 1.20.5's centered column (title, message, check box,
+        Proceed and Back, 8 apart), and from 1.21.9 26.3's message box: framed as the text field, `width - 100` wide,
+        as tall as the text, single-spaced, scrolling only when taller than `height - 100`. The old screen's text ran
+        at 18 pixels a line from x 25 to the right edge.
+    *   Edit World as 1.20.5's centered column (`client/EditWorldScreen`): Enter Name, the name box, Reset Icon, Open
+        World Folder, Make Backup, Open Backups Folder, Optimize World, then Save and Cancel; the title at 15.
+    *   Select World's and Play Multiplayer's Cancel reads Back (1.20.2); the title screen's Realms button reads
+        Minecraft Realms in full (Forge 1.12.2 shortened it).
+    *   New lang keys in 18 languages (Online Options, Telemetry Data, Credits & Attribution, from Mojang's files).
 
 *   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
     Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads

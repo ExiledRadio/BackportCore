@@ -49,6 +49,9 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.render.client.ImprovedTransparency());
         MinecraftForge.EVENT_BUS.register(new CopyClick());
         MinecraftForge.EVENT_BUS.register(new MenuBackground.Events());
+        MinecraftForge.EVENT_BUS.register(new HeaderFooterLayout.Events());
+        MinecraftForge.EVENT_BUS.register(new CreditsAndAttributionScreen.Events());
+        MinecraftForge.EVENT_BUS.register(new EditWorldScreen.Events());
         NetworkCharts.init();
         ModernDebugLines.init();
         MinecraftForge.EVENT_BUS.register(new NetworkCharts.Events());

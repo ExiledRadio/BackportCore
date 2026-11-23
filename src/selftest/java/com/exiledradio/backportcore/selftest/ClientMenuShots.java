@@ -69,8 +69,13 @@ final class ClientMenuShots {
     }
 
     static void register() {
-        if (!Loader.isModLoaded("trailsandtalesbackport")) {
+        if (!Loader.isModLoaded("trailsandtalesbackport") && !Loader.isModLoaded("gamedropsbackport")) {
             Presentation.version("1.20.5");
+        }
+        if (!Loader.isModLoaded("buzzybeesbackport")) {
+            // The multiplayer warning is Buzzy Bees' (1.15.2); its keys and 26.3's English stand in for it.
+            Presentation.version("1.15.2").multiplayerWarning("multiplayerWarning.header", "multiplayerWarning.message", "multiplayerWarning.check")
+                    .vanillaText(new net.minecraft.util.ResourceLocation("backportcore_selftest", "vanilla_text_warning"));
         }
         MinecraftForge.EVENT_BUS.register(new ClientMenuShots());
     }
@@ -110,6 +115,7 @@ final class ClientMenuShots {
             this.yawAt = PanoramaRenderer.lastAngles()[1];
             return true;
         });
+        headerAndFooter(mc);
         add("video", () -> show(new GuiVideoSettings(new GuiMainMenu(), mc.gameSettings)));
         add("language", () -> show(new GuiLanguage(new GuiMainMenu(), mc.gameSettings, mc.getLanguageManager())));
         add("worlds", () -> show(new GuiWorldSelection(new GuiMainMenu())));
@@ -123,7 +129,29 @@ final class ClientMenuShots {
             return true;
         });
         add("packs", () -> show(new GuiScreenResourcePacks(new GuiMainMenu())));
+        add(null, () -> {
+            com.exiledradio.backportcore.presentation.option.OptionStore.put(
+                    com.exiledradio.backportcore.presentation.client.TitleScreenExtras.SKIP_WARNING, "false");
+            return show(new GuiMainMenu());
+        });
+        add("warning", () -> show(new GuiMultiplayer(mc.currentScreen)));
+        add(null, () -> {
+            GuiScreen s = mc.currentScreen;
+            boolean warning = s instanceof com.exiledradio.backportcore.presentation.client.MultiplayerWarningScreen;
+            check("the title screen's Multiplayer opens the multiplayer warning first", warning, s);
+            if (warning) {
+                com.exiledradio.backportcore.presentation.client.MultiplayerWarningScreen w = (com.exiledradio.backportcore.presentation.client.MultiplayerWarningScreen) s;
+                boolean boxed = Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.MENUS, "1.21.9");
+                check("the warning in 1.21.9's boxed column (26.3)", !boxed || w.layout() == com.exiledradio.backportcore.presentation.VanillaRevisions.WarningLayout.BOXED_1_21_9, w.layout());
+            }
+            return true;
+        });
         add("multiplayer", () -> show(new GuiMultiplayer(new GuiMainMenu())));
+        add(null, () -> {
+            check("Play Multiplayer: Back for Cancel (1.20.2)", !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.WORDING, "1.20.2")
+                    || hasButton(mc.currentScreen, net.minecraft.client.resources.I18n.format("gui.back")), mc.currentScreen);
+            return true;
+        });
         add(null, () -> show(new net.minecraftforge.fml.client.GuiModList(new GuiMainMenu())));
         add("modlist", () -> selectCore(mc));
         add(null, () -> {
@@ -566,6 +594,89 @@ final class ClientMenuShots {
             mc.displayGuiScreen(null);
             return true;
         });
+        // Edit World of the shots' world, once it is closed.
+        add(null, () -> {
+            mc.world.sendQuittingDisconnectingPacket();
+            mc.loadWorld(null);
+            return show(new GuiMainMenu());
+        });
+        add("edit-world", () -> show(new net.minecraft.client.gui.GuiWorldEdit(new GuiWorldSelection(new GuiMainMenu()), WORLD)));
+        add(null, () -> {
+            check("Edit World opens as 1.20.5's column", !com.exiledradio.backportcore.presentation.client.EditWorldScreen.active()
+                    || mc.currentScreen instanceof com.exiledradio.backportcore.presentation.client.EditWorldScreen, mc.currentScreen);
+            return true;
+        });
+    }
+
+    // ---- 1.20.5's header and footer, 26.3's Options (Core 1.4.5) ----
+
+    private void headerAndFooter(Minecraft mc) {
+        add(null, () -> {
+            boolean modern = com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS);
+            GuiScreen s = mc.currentScreen;
+            check("Options: Online... (1.18) in Realms Notifications' place", !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.18")
+                    || hasButton(s, net.minecraft.client.resources.I18n.format("options.online")), s);
+            net.minecraft.client.gui.GuiButton t = com.exiledradio.backportcore.presentation.client.OptionsInjector.telemetry;
+            check("Options: Telemetry Data (1.19.3) greyed out", !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.19.3")
+                    || t != null && !t.enabled, t);
+            check("Options: Credits & Attribution (1.19.4)", !Presentation.isAtLeast(com.exiledradio.backportcore.presentation.LookArea.OPTIONS, "1.19.4")
+                    || hasButton(s, net.minecraft.client.resources.I18n.format("options.credits_and_attribution")), s);
+            net.minecraft.client.gui.GuiButton done = find(s, 200);
+            check("Options: Done (200 wide) in the 33-high footer", !modern || done != null && done.width == 200 && done.y == s.height - 27, done == null ? null : done.y);
+            this.headerFrames = com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.frames;
+            return true;
+        });
+        add("online", () -> show(com.exiledradio.backportcore.presentation.client.OptionsListScreen.online(new GuiOptions(new GuiMainMenu(), mc.gameSettings))));
+        add("credits", () -> show(new com.exiledradio.backportcore.presentation.client.CreditsAndAttributionScreen(new GuiOptions(new GuiMainMenu(), mc.gameSettings))));
+        add("skin", () -> show(new net.minecraft.client.gui.GuiCustomizeSkin(new GuiOptions(new GuiMainMenu(), mc.gameSettings))));
+        add(null, () -> {
+            boolean modern = com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.active(com.exiledradio.backportcore.presentation.LookArea.OPTIONS);
+            check("Skin Customization: its buttons a list between the separators", !modern
+                    || com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.list(mc.currentScreen) != null, mc.currentScreen);
+            check("header and footer: titles drawn", !modern || com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.frames > this.headerFrames,
+                    com.exiledradio.backportcore.presentation.client.HeaderFooterLayout.frames);
+            return true;
+        });
+        add("sounds", () -> show(new net.minecraft.client.gui.GuiScreenOptionsSounds(new GuiOptions(new GuiMainMenu(), mc.gameSettings), mc.gameSettings)));
+        add("chat", () -> show(new net.minecraft.client.gui.ScreenChatOptions(new GuiOptions(new GuiMainMenu(), mc.gameSettings), mc.gameSettings)));
+        add("accessibility", () -> show(com.exiledradio.backportcore.presentation.client.OptionsListScreen.accessibility(new GuiOptions(new GuiMainMenu(), mc.gameSettings))));
+        add("controls", () -> show(com.exiledradio.backportcore.presentation.client.OptionsListScreen.controls(new GuiOptions(new GuiMainMenu(), mc.gameSettings))));
+        add("keybinds", () -> show(new net.minecraft.client.gui.GuiControls(new GuiOptions(new GuiMainMenu(), mc.gameSettings), mc.gameSettings)));
+    }
+
+    private int headerFrames;
+
+    private static boolean hasButton(GuiScreen s, String text) {
+        try {
+            for (net.minecraft.client.gui.GuiButton b : buttons(s)) {
+                if (text.equals(b.displayString)) {
+                    return true;
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            return false;
+        }
+        return false;
+    }
+
+    @javax.annotation.Nullable
+    private static net.minecraft.client.gui.GuiButton find(GuiScreen s, int id) {
+        try {
+            for (net.minecraft.client.gui.GuiButton b : buttons(s)) {
+                if (b.id == id) {
+                    return b;
+                }
+            }
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<net.minecraft.client.gui.GuiButton> buttons(GuiScreen s) throws ReflectiveOperationException {
+        java.lang.reflect.Field f = net.minecraftforge.fml.relauncher.ReflectionHelper.findField(GuiScreen.class, "buttonList", "field_146292_n");
+        return (List<net.minecraft.client.gui.GuiButton>) f.get(s);
     }
 
     private void tab(Minecraft mc, String shot, ModernTabs.Def def, String first) {
