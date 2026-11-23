@@ -38,6 +38,10 @@ public abstract class PresentationOption {
     private boolean loaded;
     @Nullable
     private java.util.function.BooleanSupplier available;
+    @Nullable
+    private java.util.function.BooleanSupplier active;
+    @Nullable
+    private String inactiveTooltip;
 
     /**
      * @param id       unique and permanent: {@code "modid:name"}; it is the key in the options file
@@ -180,6 +184,28 @@ public abstract class PresentationOption {
     public PresentationOption availableWhen(java.util.function.BooleanSupplier available) {
         this.available = available;
         return this;
+    }
+
+    /**
+     * Shows it, but greyed out (it cannot be pressed) while this answers false, with {@code inactiveTooltip} (a lang key,
+     * or null to keep its own) as its tooltip: vanilla's High Contrast without its resource pack, Rotate With Minecarts
+     * outside a world with Minecart Improvements. Since Core 1.4.5.
+     */
+    public PresentationOption activeWhen(java.util.function.BooleanSupplier active, @Nullable String inactiveTooltip) {
+        this.active = active;
+        this.inactiveTooltip = inactiveTooltip;
+        return this;
+    }
+
+    /** @return false while it shows greyed out ({@link #activeWhen}) */
+    public final boolean isActive() {
+        return this.active == null || this.active.getAsBoolean();
+    }
+
+    /** @return the tooltip it shows while greyed out, or null for its own */
+    @Nullable
+    public final String inactiveTooltipKey() {
+        return this.inactiveTooltip;
     }
 
     /**

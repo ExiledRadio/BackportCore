@@ -252,20 +252,22 @@ Ordered by how often a player sees them, then by size. "S" items first within a 
 9. **One system toast drawer** (S): Trails & Tales' `SystemToast1205` folded into Core's `SystemToasts`.
 10. **Recipe book** (M): search hint, 1.21.2's layout for the crafting book.
 11. **F3 + 2 charts** (M): 1.20.2's FPS and TPS charts in place of the lagometer.
-12. **Mouse Settings** (S): drop Touchscreen if 26.3 really has none (check first).
+12. **Mouse Settings** (S): drop Touchscreen if 26.3 really has none (check first). *Done in 1.4.5: 26.2 removed it.*
 13. **Copyright link and Credits & Attribution** (S).
 
 **Seen sometimes**
 
-14. **Accessibility onboarding** on the first start (M).
-15. **Notification Time** (M), **High Contrast** (M), **Rotate With Minecarts** (S).
-16. **Quit Shortcuts** and **Right Click Emulation** on Controls (S).
+14. **Accessibility onboarding** on the first start (M). *Done in 1.4.5.*
+15. **Notification Time** (M), **High Contrast** (M), **Rotate With Minecarts** (S). *Done in 1.4.5 (P50; Game Drops'
+    pack; Rotate With Minecarts greyed out as vanilla's without Minecart Improvements).*
+16. **Quit Shortcuts** and **Right Click Emulation** on Controls (S). *Done in 1.4.5 (P51).*
 17. **Confirm and message screens** in 1.20.6's layout for 1.12.2's own `GuiYesNo` and "Saving world" (M).
 18. **Disconnected screen** buttons and wording (S); **Out of memory** (S).
 19. **Sign edit screen** 26.2 flat look (S, Trails & Tales); **book editor** selection and signing (M).
 20. **Check box and slider/text field/scroll bar sprites** (S each): compare side by side first.
 21. **Subtitle text background** (S).
-22. **Music & Sounds: Device** (M), **Directional Audio** (L).
+22. **Music & Sounds: Device** (M), **Directional Audio** (L). *Done in 1.4.5 (P52); Directional Audio only where
+    OpenAL has HRTF (Cleanroom), not LWJGL 2.*
 23. **Debug parts** 1.12.2 has no lines for, and 1.21.9's column arrangement (M).
 24. **Command suggestions**: argument highlighting and usage at the cursor (L, only partly possible).
 25. **Narrator for screens** (L).

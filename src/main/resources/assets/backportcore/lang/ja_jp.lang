@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21の試練の間、�
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.xの金のタンポポと子ども、硫黄と硫黄キューブ、硫黄の洞窟、ポプラ、放棄されたキャンプ、メニュー。
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Minecraftへようこそ！  ここでは、音声読み上げの有効・無効の設定と、アクセシビリティ設定画面への移動ができます。
+accessibility.onboarding.screen.narrator=Enterを押すと音声読み上げが有効になります
+accessibility.onboarding.accessibility.button=アクセシビリティ設定…
+gui.continue=続ける
+options.notifications.display_time=通知表示時間
+options.notifications.display_time.tooltip=通知が画面上に表示される時間を調整することができます。
+options.accessibility.high_contrast=ハイコントラスト
+options.accessibility.high_contrast.tooltip=UIのコントラストを強調します。
+options.accessibility.high_contrast.error.tooltip=ハイコントラストリソースパックは利用できません。
+options.rotateWithMinecart=トロッコに合わせた視点移動
+options.rotateWithMinecart.tooltip=トロッコが向きを変えるのに合わせてプレイヤーの視点も変えるかどうか。「トロッコの改善」の実験的機能が有効なワールドでのみ利用可能です。
+options.quitShortcuts=終了ショートカット
+options.quitShortcuts.tooltip=キーボートショートカットでゲームを終了することができるかどうかを設定します。オフの場合、Windows・LinuxならAlt + F4、macOSならCommand + Wを入力してもゲームが終了しなくなります。
+options.ctrlClickEmulatesRightClick=右クリックエミュレーション
+options.ctrlClickEmulatesRightClick.tooltip=有効化すると、Ctrl+左クリックを右クリックとして扱います。macOSでのみ利用可能です。
+options.audioDevice=オーディオデバイス
+options.audioDevice.default=システムのデフォルト
+options.directionalAudio=指向性オーディオ
+options.directionalAudio.on.tooltip=HRTF（頭部伝達関数）による指向性オーディオを使用することで、3Dサウンド体験を向上させます。HRTFに対応したオーディオ機器が必要で、ヘッドホンの利用を推奨します。
+options.directionalAudio.off.tooltip=従来のステレオ音声
+
 entity.backportcore.boat.name=ボート
 entity.backportcore.chest_boat.name=チェスト付きのボート
 

@@ -72,7 +72,7 @@ public final class OptionRowList extends GuiListExtended {
             for (GuiButton b : this.buttons) {
                 if (b instanceof OptionWidgets.Action && b.mousePressed(mc, mouseX, mouseY)) {
                     b.playPressSound(mc.getSoundHandler());
-                    ((OptionWidgets.Action) b).action.run();
+                    ((OptionWidgets.Action) b).press();
                     return true;
                 }
             }

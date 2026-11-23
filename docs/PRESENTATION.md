@@ -93,6 +93,9 @@ Since Core 1.2.0:
 | Piece | Call | Notes |
 |---|---|---|
 | Per-value tooltips | `cycle.valueTooltips("key.a.tooltip", "key.b.tooltip")` | One per value; null falls back to `tooltip`. |
+| Greyed out | `option.activeWhen(supplier, "key.inactive.tooltip")` | Shown but not pressable while the supplier answers false, with that tooltip (or its own). Since 1.4.5. |
+| High Contrast pack | `v.highContrast(new ResourceLocation(modid, "vanilla/high_contrast"))` | A folder laid out as the pack's `assets/minecraft/`; the newest installed version's is served while High Contrast is on. Since 1.4.5. |
+| Minecart Improvements | `Presentation.setMinecartImprovements(() -> ...)` | True in a world with the experiment: Rotate With Minecarts is pressable and turns the camera. Since 1.4.5. |
 | Blurred panorama | `PanoramaRenderer.renderBlurred(screen, PanoramaRenderer.MENU_BLUR)` (client) | 1.20.5's menu panorama, by 1.12.2's `shaders/post/blur.json`; sharp where shaders cannot run. |
 | Sunrise | `FogPipeline.add(version, name, step)` with `sunrise(Sunrise)` | Patch P24: the glow's RGBA (a copy), or null for none. |
 | Cloud timing | a step returning true from `cloudsFollowWorldTime()` | Patch P25: clouds drift by world time. |
@@ -352,6 +355,40 @@ change one version made stays made when only a later backport is installed:
   1.20.2's F3 + 1, 2 and 3 have none.
 * **Narrator Hotkey** (1.20.2, P32): Core's own option `backportcore:narrator_hotkey`, last on Accessibility Settings, on
   by default; off, Ctrl + B (Cmd + B) no longer toggles the narrator.
+* **The options rows 26.3 has** (Core 1.4.5; `docs/SCREEN_AUDIT.md` items 12, 14, 15, 16 and 22). Each is Core's own
+  option, from the version that added it, with vanilla's labels and tooltips (Core's lang, 18 languages):
+  * **Accessibility onboarding** (1.19.4, `AccessibilityOnboarding`): the first title screen at 1.19.4's look or later
+    is 26.3's `AccessibilityOnboardingScreen` instead, once (`backportcore:onboard_accessibility` in Core's options file;
+    vanilla's `onboardAccessibility`, so a player who updates sees it once too): the logo, "Welcome to Minecraft! ..." in
+    a black box with a grey outline, Narrator and Music & Sounds..., Accessibility Settings... and Language... (26.3's
+    icon buttons: `icon/music_notes`, `icon/accessibility`, `icon/language` sprites where a backport supplies them),
+    Continue in the footer, over the blurred panorama. The narrator offers itself ("Press enter to enable the narrator")
+    about two seconds in, and Enter turns it on. Leaving the screen any way ends it.
+  * **Accessibility Settings**: High Contrast (1.19.4, after Show Subtitles), Notification Time (1.19.4, after Chat
+    Delay), Rotate With Minecarts (1.21.3, after Narrator Hotkey); from 1.21.9 the whole screen is in 26.3's order
+    (`VanillaRevisions.ACCESSIBILITY_ORDER`, by option name, whichever backport registers each).
+  * **Notification Time** (`backportcore:notification_display_time`, 0.5x to 10x, P50): toasts (any mod's: their time
+    runs slower), subtitles and the held item's name stay that much longer, as 1.19.4's.
+  * **High Contrast** (`backportcore:high_contrast`, `HighContrastPack`): vanilla's built-in pack from the newest
+    installed version that has its art (`Contribution.highContrast(folder)`, Game Drops Backport's 26.3 pack). A resource
+    pack right above Core's vanilla-asset pack: each file under its own path, and 1.12.2's `widgets.png` made from the
+    sheet below with the pack's button, language and lock sprites in their places. Toggling reloads only those
+    textures. Greyed out with "High Contrast resource pack is not available." without a pack, as vanilla.
+  * **Rotate With Minecarts** (`backportcore:rotate_with_minecart`, `MinecartCamera`): greyed out, as vanilla's is outside
+    a world with Minecart Improvements; no 1.12.2 world has the experiment. A backport that adds it calls
+    `Presentation.setMinecartImprovements`, and the camera then turns with the cart.
+  * **Mouse Settings**: Touchscreen leaves from 26.2 (`VanillaRevisions.touchscreenRemoved`; 26.2 removed the option from
+    the game, 26.3 has only a stale lang key).
+  * **Controls**: Quit Shortcuts (26.3, `backportcore:quit_shortcuts`, P51, `QuitShortcuts`): off, Alt + F4 (Cmd + Q on
+    macOS) no longer quits; the window's close button still does. Right Click Emulation (26.3, macOS only,
+    `backportcore:ctrl_click_emulates_right_click`, `RightClickEmulation`): Control + left click is a right click, in a
+    world and on screens (no patch: Forge's cancellable `MouseEvent`).
+  * **Music & Sounds** (1.18): 26.3's layout: Master, the volumes in two columns, Device across both columns, then Show
+    Subtitles, Directional Audio (1.19), Music Frequency and Music Toast. Device (`backportcore:sound_device`,
+    `SoundDevices`, P52) cycles System Default and OpenAL's devices (Shift: backwards), names without "OpenAL Soft on ",
+    and restarts the sound system on the chosen one; a device that is gone falls back to System Default. Directional
+    Audio (`backportcore:directional_audio`) asks OpenAL Soft for HRTF and shows only where the OpenAL has
+    `ALC_SOFT_HRTF`: Cleanroom's LWJGL 3, not LWJGL 2 (below).
 * **Panorama motion** (1.20.5, `VanillaRevisions.panoramaSpinOnly`): the pitch holds at 10 degrees and the view only
   turns, by one spin every screen shares and that never restarts (the title screen's, the menus', the loading screens');
   each screen advances it by the ticks since its own last frame, half a tick for its first (`advancePanoramaTime`).
@@ -421,6 +458,15 @@ change one version made stays made when only a later backport is installed:
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
 * Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
 * Font Settings; Key Binds as a screen of Core's own (1.12.2's key list serves, with the header and footer).
+* Directional Audio on LWJGL 2: its OpenAL Soft (2015) has no `ALC_SOFT_HRTF` (checked on the device when the sound
+  system opens), so the row is not shown; LWJGL 2 loads the OpenAL it ships. On Cleanroom (LWJGL 3's OpenAL Soft) it
+  goes through `alcResetDeviceSOFT`, and the device through `alcReopenDeviceSOFT`; neither was tried on Cleanroom yet.
+  26.3's Device also follows the system's default device when it changes while the game runs;
+  Core's picks it when the sound system starts.
+* High Contrast sits below a player's resource packs (26.3's is above them): 1.12.2's default packs are always below.
+  Only the sprites 1.12.2 has places for are used (buttons, language and lock buttons, menu backgrounds and separators,
+  the title row's icons); checkboxes, sliders, tabs and tooltips are drawn as before.
+* Quit Shortcuts and Right Click Emulation were not tried by hand: Alt + F4 on a real window, and macOS.
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
 ## Command suggestions
 

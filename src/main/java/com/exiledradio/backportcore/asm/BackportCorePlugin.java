@@ -67,6 +67,9 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             ModListLogoTransformer.class.getName(),
             SimulationTransformer.class.getName(),
             CreativeTabsTransformer.class.getName(),
+            NotificationTimeTransformer.class.getName(),
+            QuitShortcutsTransformer.class.getName(),
+            SoundDeviceTransformer.class.getName(),
     };
 
     @Override

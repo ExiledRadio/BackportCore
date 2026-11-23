@@ -95,6 +95,7 @@ final class ClientMenuShots {
 
     private ClientMenuShots() {
         Minecraft mc = Minecraft.getMinecraft();
+        OptionsRowsShots.first(this, mc);
         add("title", () -> {
             check("P31 (screens) applied", "applied".equals(Asm.state("P31")), Asm.state("P31"));
             check("P32 applied", "applied".equals(Asm.state("P32")), Asm.state("P32"));
@@ -116,6 +117,7 @@ final class ClientMenuShots {
             return true;
         });
         headerAndFooter(mc);
+        OptionsRowsShots.steps(this, mc);
         add("video", () -> show(new GuiVideoSettings(new GuiMainMenu(), mc.gameSettings)));
         add("language", () -> show(new GuiLanguage(new GuiMainMenu(), mc.gameSettings, mc.getLanguageManager())));
         add("worlds", () -> show(new GuiWorldSelection(new GuiMainMenu())));
@@ -766,12 +768,12 @@ final class ClientMenuShots {
         return true;
     }
 
-    private void add(String name, Supplier<Boolean> step) {
+    void add(String name, Supplier<Boolean> step) {
         this.names.add(name);
         this.steps.add(step);
     }
 
-    private void check(String what, boolean ok, Object detail) {
+    void check(String what, boolean ok, Object detail) {
         if (ok) {
             this.pass++;
             BackportCore.LOGGER.info("MENU PASS {} ({})", what, detail);
@@ -781,11 +783,11 @@ final class ClientMenuShots {
         }
     }
 
-    private void check(String what, boolean ok) {
+    void check(String what, boolean ok) {
         check(what, ok, "");
     }
 
-    private void failed(String what, Throwable t) {
+    void failed(String what, Throwable t) {
         this.fail++;
         BackportCore.LOGGER.error("MENU FAIL {}", what, t);
     }
@@ -797,7 +799,7 @@ final class ClientMenuShots {
         }
         Minecraft mc = Minecraft.getMinecraft();
         if (this.step < 0) {
-            if (mc.currentScreen instanceof GuiMainMenu && ++this.ticks > 100) {
+            if ((mc.currentScreen instanceof GuiMainMenu || OptionsRowsShots.onboarding(mc)) && ++this.ticks > 100) {
                 this.step = 0;
                 this.ticks = 0;
                 run();

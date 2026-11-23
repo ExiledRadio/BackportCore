@@ -344,6 +344,38 @@ public final class VanillaRevisions {
         }
     }
 
+    /**
+     * 26.2: Touchscreen is gone from Mouse Settings ({@code Options.touchscreen} left the code; 26.1 still has it, and
+     * the lang key stays behind in 26.3's file).
+     */
+    public static boolean touchscreenRemoved(GameVersion v) {
+        return v.isAtLeast("26.2");
+    }
+
+    /**
+     * 1.19.4 (23w03a, {@code AccessibilityOnboardingScreen}): the very first start opens a welcome screen offering the
+     * Narrator and the accessibility and language settings, before the title screen.
+     */
+    public static boolean accessibilityOnboarding(GameVersion v) {
+        return v.isAtLeast("1.19.4");
+    }
+
+    /**
+     * 26.3's order of Accessibility Settings ({@code AccessibilityOptionsScreen.options}) by name, used from 1.21.9 (its
+     * Controls... button beside Narrator): vanilla's settings and the options named after them, whichever mod registers
+     * them; others follow.
+     */
+    public static final String[] ACCESSIBILITY_ORDER = {"NARRATOR", "SHOW_SUBTITLES", "high_contrast", "menu_background_blurriness",
+            "text_background_opacity", "text_background", "CHAT_OPACITY", "chat_line_spacing", "chat_delay", "notification_display_time",
+            "VIEW_BOBBING", "screen_effect_scale", "fov_effect_scale", "darkness_effect_scale", "damage_tilt_strength", "glint_speed",
+            "glint_strength", "hide_lightning_flashes", "monochrome_logo", "panorama_speed", "hide_splash_texts", "narrator_hotkey",
+            "rotate_with_minecart", "high_contrast_block_outline"};
+
+    /** 26.3's macOS-only rows (Right Click Emulation): {@code InputQuirks.EMULATE_RIGHT_CLICK_WITH_CTRL_KEY}. */
+    public static boolean macOs() {
+        return System.getProperty("os.name", "").toLowerCase(java.util.Locale.ROOT).contains("mac");
+    }
+
     /** 1.20.2 (23w31a): the Narrator Hotkey option (Accessibility); off, Ctrl + B no longer toggles the narrator. */
     public static boolean narratorHotkeyOption(GameVersion v) {
         return v.isAtLeast("1.20.2");

@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=Las cámaras de desafío
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=El diente de león dorado y las crías de 26.x, el azufre y el cubo de azufre, las cuevas de azufre, el álamo, los campamentos abandonados y los menús.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=¡Bienvenido a Minecraft!  ¿Quieres activar la narración o ver las opciones de accesibilidad?
+accessibility.onboarding.screen.narrator=Presiona Enter para activar la narración
+accessibility.onboarding.accessibility.button=Accesibilidad...
+gui.continue=Continuar
+options.notifications.display_time=Duración de avisos
+options.notifications.display_time.tooltip=Controla la duración que se mantienen las notificaciones visibles en la pantalla.
+options.accessibility.high_contrast=Alto contraste
+options.accessibility.high_contrast.tooltip=Mejora el contraste de los elementos de la interfaz.
+options.accessibility.high_contrast.error.tooltip=El paquete de recursos de alto contraste no está disponible.
+options.rotateWithMinecart=Girar en vagones
+options.rotateWithMinecart.tooltip=Controla si la cámara debería rotar al montar en un vagón. Solo disponible en mundos con la opción experimental "Mejoras de vagones" activada.
+options.quitShortcuts=Atajos para salir
+options.quitShortcuts.tooltip=Controla si los atajos del sistema pueden cerrar el juego. Si está desactivado, Alt + F4 en Windows y Linux, y Cmd + Q y Cmd + W en macOS ya no cerrarán el juego.
+options.ctrlClickEmulatesRightClick=Emulación de clic dcho.
+options.ctrlClickEmulatesRightClick.tooltip=Al activarlo, Ctrl + clic izdo. tiene el efecto de clic dcho. Solo aplicable en macOS.
+options.audioDevice=Dispositivo
+options.audioDevice.default=Por defecto
+options.directionalAudio=Audio direccional
+options.directionalAudio.on.tooltip=Usa audio direccional basado en HRTF para mejorar la simulación del sonido en 3D. Es necesario hardware de audio compatible con HRTF, y se experimenta mejor con audífonos/auriculares.
+options.directionalAudio.off.tooltip=Sonido estéreo clásico
+
 entity.backportcore.boat.name=Bote
 entity.backportcore.chest_boat.name=Bote con cofre
 

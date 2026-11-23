@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=Le camere della sfida, l
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Il dente di leone dorato e i cuccioli di 26.x, lo zolfo e il cubo di zolfo, le grotte di zolfo, il pioppo, gli accampamenti abbandonati e i menu.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Ti diamo il benvenuto in Minecraft!  Vuoi attivare l'assistente vocale o accedere alle impostazioni di accessibilità?
+accessibility.onboarding.screen.narrator=Premi Invio per attivare l'assistente vocale
+accessibility.onboarding.accessibility.button=Accessibilità...
+gui.continue=Continua
+options.notifications.display_time=Durata delle notifiche
+options.notifications.display_time.tooltip=Regola per quanto tempo le notifiche rimarranno sullo schermo.
+options.accessibility.high_contrast=Contrasto elevato
+options.accessibility.high_contrast.tooltip=Aumenta il contrasto tra gli elementi dell'interfaccia.
+options.accessibility.high_contrast.error.tooltip=Il pacchetto di risorse a contrasto elevato non è disponibile.
+options.rotateWithMinecart=Ruota con i vagonetti
+options.rotateWithMinecart.tooltip=Stabilisce se la visuale del giocatore deve ruotare quando un vagonetto svolta. Disponibile solo nei mondi con il parametro sperimentale «Miglioramenti dei vagonetti» attivo.
+options.quitShortcuts=Esci con scorciatoia
+options.quitShortcuts.tooltip=Determina se le scorciatoie da tastiera possono chiudere il gioco. Disattiva quest'opzione per impedire alle scorciatoie Alt + F4 (su Windows e Linux) e Comando + Q (su macOS) di arrestare il gioco.
+options.ctrlClickEmulatesRightClick=Tasto destro emulato
+options.ctrlClickEmulatesRightClick.tooltip=Tasto destro verrà emulato dalla combinazione Ctrl + Tasto sinistro (solo su macOS) attivando quest'opzione.
+options.audioDevice=Dispositivo
+options.audioDevice.default=Predefinito di sistema
+options.directionalAudio=Audio direzionale
+options.directionalAudio.on.tooltip=Usa l'audio direzionale basato su funzioni di trasferimento correlate alla testa (FTCT, in inglese HRTF) per migliorare la simulazione del suono tridimensionale. Richiede una periferica audio compatibile ed è consigliabile usare le cuffie.
+options.directionalAudio.off.tooltip=Audio stereo classico.
+
 entity.backportcore.boat.name=Barca
 entity.backportcore.chest_boat.name=Barca con baule
 

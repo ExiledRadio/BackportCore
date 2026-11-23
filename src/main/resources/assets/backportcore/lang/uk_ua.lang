@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=Зали випробу�
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=Золота кульбаба й дитинчата з 26.x, сірка та сірчаний куб, сірчані печери, тополя, покинуті табори й меню.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Вітаємо в Minecraft!  Бажаєте ввімкнути диктора або відвідати налаштування доступности?
+accessibility.onboarding.screen.narrator=Натисніть Enter, щоб увімкнути диктора
+accessibility.onboarding.accessibility.button=Доступність…
+gui.continue=Продовжити
+options.notifications.display_time=Час сповіщення
+options.notifications.display_time.tooltip=Впливає на тривалість часу, протягом якого всі сповіщення залишаються видимими на екрані.
+options.accessibility.high_contrast=Високий контраст
+options.accessibility.high_contrast.tooltip=Збільшує контрастність елементів користувацького інтерфейсу.
+options.accessibility.high_contrast.error.tooltip=Пакет ресурсів високої контрастности недоступний.
+options.rotateWithMinecart=Оберт із вагонеткою
+options.rotateWithMinecart.tooltip=Чи погляд гравця має повертатися разом із вагонеткою, яка повертається. Доступно тільки у світах з увімкненим експериментальним налаштуванням «Поліпшення вагонеток».
+options.quitShortcuts=Швидкий вихід
+options.quitShortcuts.tooltip=Чи можуть комбінації клавіш закривати гру. Якщо вимкнено, Alt + F4 на Windows та Linux, Cmd + Q та Cmd + W на macOS не закриватимуть гру.
+options.ctrlClickEmulatesRightClick=Емуляція ПКМ
+options.ctrlClickEmulatesRightClick.tooltip=Коли ввімкнено, Control + ЛКМ поводиться як ПКМ. Дотичне тільки на macOS.
+options.audioDevice=Пристрій
+options.audioDevice.default=Усталений у системі
+options.directionalAudio=Спрямований звук
+options.directionalAudio.on.tooltip=Використовується спрямований звук на основі HRTF для покращення моделювання 3D-звуку. Потрібне аудіотехнічне обладнання, сумісне з HRTF, рекомендуємо користуватися навушниками для кращого ігрового досвіду.
+options.directionalAudio.off.tooltip=Звичайний стереозвук.
+
 entity.backportcore.boat.name=Човен
 entity.backportcore.chest_boat.name=Човен зі скринею
 

@@ -18,7 +18,8 @@ tasks name it with `-Dfml.coreMods.load`.
     so these see each method as Fluidlogged API leaves it. None of the call sites patched here is one
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
-    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`, `creative/client/CreativeScreenHooks`).
+    `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`, `creative/client/CreativeScreenHooks`,
+    and from P50 `presentation/client/NotificationTime`, `QuitShortcuts` and `SoundDevices`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
     with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
@@ -966,3 +967,64 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: transformer chain and SRG names (`PatchTests`; vanilla's unpaged screen in the SRG jar is left alone);
     `ClientMenuShots` (the first page's 13 and 14 tabs, each tab's first item and screenshot, books, eggs, every 1.12.2
     stack in a 1.19.3 tab, search, a late mod tab on page 2, the inventory part off).
+
+## P50. Notification Time
+
+*   **Classes**: `net.minecraft.client.gui.toasts.GuiToast$ToastInstance` (`render`), `net.minecraft.client.gui.GuiSubtitleOverlay`
+    (`renderSubtitles`), `net.minecraft.client.gui.GuiIngame` (`updateTick`). **Transformer**:
+    `asm/NotificationTimeTransformer`. **Hooks**: `presentation/client/NotificationTime`. **Since**: 1.4.5. Reported as
+    `P50-toasts`, `P50-subtitles` and `P50-highlight`, one per class.
+*   **Vanilla change**: 1.19.4 added Notification Time (Accessibility Settings, 0.5x to 10x): toasts stay
+    `5000.0 * getNotificationDisplayTimeMultiplier()` ms (a system toast its own time times it), subtitles
+    `3000 * notificationDisplayTime`, and the held item's name `(int) (40.0 * notificationDisplayTime)` ticks (26.3's
+    `ToastManager`, `SubtitleOverlay`, `Hud.tick`).
+*   **Why a patch**: 1.12.2's toasts decide when to hide from the time `ToastInstance.render` hands them, with no event; the
+    subtitle overlay's 3000 ms and the highlight's 40 ticks are constants in methods with no hook.
+*   **What changes**: the long handed to `IToast.draw(GuiToast, long)` passes through `toastTime(long)`, which divides it
+    by the multiplier, so every toast (any mod's) stays that much longer; its own timings inside (an advancement toast's
+    "Advancement Made!" for 1.5 s) stretch with it. The one `3000L` and the one `3000.0F` in `renderSubtitles` pass through
+    `subtitleTime` and `subtitleFade`, and the `40` stored into `remainingHighlightTicks` through `highlightTicks`. Each is
+    a value in and the same type out. While the option does not show (before 1.19.4, or the options' part of the look
+    off) every hook returns vanilla's value.
+*   **Fails safe**: per class, a method missing or not exactly one of its site: that class is left alone and reported
+    skipped.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `ClientMenuShots` (`OptionsRowsShots`: applied in the
+    client, the hooks at 2x and 1x).
+
+## P51. Quit Shortcuts
+
+*   **Class**: `net.minecraft.client.Minecraft` (`runGameLoop`). **Transformer**: `asm/QuitShortcutsTransformer`. **Hook**:
+    `presentation/client/QuitShortcuts`. **Since**: 1.4.5.
+*   **Vanilla change**: 26.3 added Quit Shortcuts (Controls, on by default). Off, `Window.onQuitRequested` ignores a quit
+    while `InputQuirks.isQuitShortcutDown()`: Alt and F4 held on Windows and Linux, Cmd and Q on macOS.
+*   **Why a patch**: 1.12.2 shuts down as soon as `Display.isCloseRequested()` answers true, at the top of
+    `runGameLoop`, before any event. LWJGL 2 reports Alt + F4 and the close button alike.
+*   **What changes**: the one `isCloseRequested()` result (any owner: LWJGL 2's `Display`, or lwjglx's where Cleanroom has
+    moved the reference) passes through `closeRequested(boolean)`, which answers false while the option is off and the
+    shortcut's keys are down (`Keyboard.isKeyDown`, from the same frame's `Display.update`). LWJGL 2's flag is cleared when
+    read; lwjglx's is GLFW's `glfwWindowShouldClose`, which stays set, so the hook clears it with
+    `glfwSetWindowShouldClose(window, false)`.
+*   **Fails safe**: not exactly one call: the class is left alone, and quitting is 1.12.2's.
+*   **Tested**: transformer chain and SRG names (`PatchTests`); `ClientMenuShots` (applied; with the option off and no keys
+    held a close still closes). Alt + F4 on a real window was not tried by hand.
+
+## P52. The sound device and Directional Audio
+
+*   **Class**: `paulscode.sound.libraries.LibraryLWJGLOpenAL` (`init`), Paulscode's OpenAL library (FML's class loader
+    transforms it; it is not in Forge's SRG jar, so only the dev chain checks it). **Transformer**:
+    `asm/SoundDeviceTransformer`. **Hook**: `presentation/client/SoundDevices`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.18 added Device (Music & Sounds: System Default or an OpenAL device; a change reloads
+    the sound engine), and 1.19 Directional Audio (OpenAL Soft's HRTF, `ALC_HRTF_SOFT` when the context is
+    made).
+*   **Why a patch**: Paulscode opens OpenAL with a bare `AL.create()` (the default device, no attributes) on its own
+    thread; nothing else can pick the device, and a second `AL.create` throws.
+*   **What changes**: that one `AL.create()` (inside its `try` for `LWJGLException`) becomes `SoundDevices.createAL()`, which
+    throws the same. LWJGL 2: `AL.create(device, 44100, 60, false)` opens the chosen device (the default when it fails),
+    and for HRTF the context is made again with `ALC_HRTF_SOFT` where the device has `ALC_SOFT_HRTF` (LWJGL 2's OpenAL
+    Soft has not, so Directional Audio is not shown there). Cleanroom: lwjglx's `AL.create` always opens the default
+    device, so the hook moves it with LWJGL 3's `alcReopenDeviceSOFT` or resets it with HRTF (`alcResetDeviceSOFT`).
+    Paulscode's compatibility check (`libraryCompatible`, its own `AL.create()` and `AL.destroy()`) is left alone.
+*   **Fails safe**: not exactly one `AL.create()` in `init`: left alone, sound opens as 1.12.2's. In the hook, any failure
+    to open the chosen device or turn HRTF on keeps the default device and context.
+*   **Tested**: transformer chain (`PatchTests`, dev only); `ClientMenuShots` (applied; the devices listed; the sound
+    system restarted on the first listed device and back).

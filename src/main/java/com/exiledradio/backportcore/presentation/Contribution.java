@@ -52,6 +52,8 @@ public final class Contribution {
     com.exiledradio.backportcore.presentation.option.ToggleOption commandSuggestions;
     @Nullable
     SuggestionLook suggestionLook;
+    @Nullable
+    ResourceLocation highContrast;
 
     Contribution(GameVersion version) {
         this.version = version;
@@ -289,6 +291,19 @@ public final class Contribution {
      */
     public Contribution vanillaText(ResourceLocation folder) {
         this.texts.add(folder);
+        return this;
+    }
+
+    /**
+     * This version's built-in High Contrast resource pack (1.19.4's {@code resourcepacks/high_contrast.zip}): a folder
+     * in the backport's assets laid out as the pack's {@code assets/minecraft/} ({@code new ResourceLocation(
+     * "gamedropsbackport", "vanilla/high_contrast")} holds {@code textures/gui/sprites/widget/button.png} and so on).
+     * The newest installed version's pack is the one Core serves while the High Contrast option is on, putting its
+     * button, language and lock sprites into 1.12.2's {@code widgets.png} sheet. With none installed the option is
+     * greyed out, as vanilla's is without the pack. Since Core 1.4.5.
+     */
+    public Contribution highContrast(ResourceLocation folder) {
+        this.highContrast = folder;
         return this;
     }
 

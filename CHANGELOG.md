@@ -74,6 +74,24 @@
         Minecraft Realms in full (Forge 1.12.2 shortened it).
     *   New lang keys in 18 languages (Online Options, Telemetry Data, Credits & Attribution, from Mojang's files).
 
+*   The options rows and screens 26.3 has that the family lacked (`docs/SCREEN_AUDIT.md` items 12, 14, 15, 16 and 22),
+    each Core's own option from the version that added it, with vanilla's text in 18 languages:
+    *   1.19.4's accessibility onboarding: on the first start the welcome screen with Narrator, Music & Sounds...,
+        Accessibility Settings... and Language..., once, before the title screen.
+    *   1.19.4's Notification Time (P50): toasts, subtitles and the held item's name stay 0.5x to 10x as long.
+    *   1.19.4's High Contrast: the built-in High Contrast pack from the newest backport that has its art
+        (`Contribution.highContrast`; Game Drops Backport's 26.3 pack), with 1.12.2's `widgets.png` made from its
+        button, language and lock sprites. Greyed out without one, as vanilla's without the pack.
+    *   1.21.3's Rotate With Minecarts: greyed out, as vanilla's outside a world with Minecart Improvements
+        (`Presentation.setMinecartImprovements` for a backport that adds the experiment).
+    *   Accessibility Settings in 26.3's order from 1.21.9.
+    *   26.2: Touchscreen gone from Mouse Settings.
+    *   26.3's Quit Shortcuts (P51): off, Alt + F4 (Cmd + Q) no longer quits. 26.3's Right Click Emulation (macOS):
+        Control + left click is a right click.
+    *   1.18's Device (P52): pick the sound output device; the sound system restarts on it. 1.19's Directional Audio
+        (HRTF) where OpenAL has it (Cleanroom's LWJGL 3; LWJGL 2's OpenAL has no HRTF, so the row is not shown there).
+        Music & Sounds in 26.3's layout from 1.18.
+*   API: `PresentationOption.activeWhen(supplier, inactiveTooltip)`: an option shown greyed out.
 *   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
     Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads
     (`CopyRemapping`), also with Village & Pillage removed.

@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21의 시련의 회당
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.x의 황금 민들레와 새끼들, 유황과 유황 큐브, 유황 동굴, 포플러, 버려진 야영지와 메뉴.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Minecraft에 오신 것을 환영합니다!  내레이터를 켜거나 접근성 설정을 확인하시겠습니까?
+accessibility.onboarding.screen.narrator=내레이터를 켜려면 enter를 누르세요
+accessibility.onboarding.accessibility.button=접근성 설정...
+gui.continue=계속하기
+options.notifications.display_time=알림 시간
+options.notifications.display_time.tooltip=알림이 화면에 표시되는 시간을 조절합니다.
+options.accessibility.high_contrast=고대비
+options.accessibility.high_contrast.tooltip=UI 요소의 대비를 높입니다.
+options.accessibility.high_contrast.error.tooltip=고대비 리소스 팩을 사용할 수 없습니다.
+options.rotateWithMinecart=광산 수레와 함께 회전
+options.rotateWithMinecart.tooltip=광산 수레가 회전할 때 플레이어 시야도 함께 회전할지 여부입니다. '광산 수레 개선' 실험적 기능이 켜진 세계에서만 사용 가능합니다.
+options.quitShortcuts=종료 단축키
+options.quitShortcuts.tooltip=키보드 단축키가 게임을 종료할 수 있는지 여부입니다. 끄면, Windows와 Linux에서 Alt + F4, macOS에서 Command + Q는 더 이상 게임을 종료하지 않습니다.
+options.ctrlClickEmulatesRightClick=우클릭 모방
+options.ctrlClickEmulatesRightClick.tooltip=켜면, Control + 좌클릭을 우클릭으로 간주합니다. macOS에서만 적용됩니다.
+options.audioDevice=장치
+options.audioDevice.default=시스템 기본
+options.directionalAudio=방향성 오디오
+options.directionalAudio.on.tooltip=3차원 소리를 구현하기 위해 HRTF 기반 지향성 오디오를 사용합니다. HRTF 호환 오디오 장치가 필요하며, 헤드폰에서 사용하는 것이 가장 좋습니다.
+options.directionalAudio.off.tooltip=클래식 스테레오 사운드
+
 entity.backportcore.boat.name=보트
 entity.backportcore.chest_boat.name=상자가 실린 보트
 

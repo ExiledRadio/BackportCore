@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=De beproevingskamers, de
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=De gouden paardenbloem en de jongen uit 26.x, zwavel en de zwavelkubus, zwavelgrotten, populier, verlaten kampen en menu's.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Welkom in Minecraft!  Wil je de verteller inschakelen of de toegankelijkheidsinstellingen bekijken?
+accessibility.onboarding.screen.narrator=Druk op Enter om de verteller in te schakelen
+accessibility.onboarding.accessibility.button=Toegankelijkheidsinstellingen
+gui.continue=Doorgaan
+options.notifications.display_time=Meldingsduur
+options.notifications.display_time.tooltip=Bepaalt hoe lang meldingen op het scherm zichtbaar blijven.
+options.accessibility.high_contrast=Hoog contrast
+options.accessibility.high_contrast.tooltip=Verhoogt het contrast van interface-elementen
+options.accessibility.high_contrast.error.tooltip=Bronpakket voor hoog contrast niet beschikbaar
+options.rotateWithMinecart=Met mijnkarren draaien
+options.rotateWithMinecart.tooltip=Of het zichtveld van de speler mee moet draaien met een draaiende mijnkar. Alleen beschikbaar in werelden waar de experimentele instelling 'Mijnkarverbeteringen' ingeschakeld is.
+options.quitShortcuts=Afsluitsneltoetsen
+options.quitShortcuts.tooltip=Of sneltoetsen het spel kunnen sluiten. Als deze instelling is uitgeschakeld, sluit het spel niet door te drukken op Alt + F4 op Windows en Linux en ⌘ + Q op macOS.
+options.ctrlClickEmulatesRightClick=Rechtsklikken emuleren
+options.ctrlClickEmulatesRightClick.tooltip=Ctrl+linksklikken wordt als rechtsklikken behandeld indien ingeschakeld. Alleen van toepassing op macOS.
+options.audioDevice=Apparaat
+options.audioDevice.default=systeemstandaard
+options.directionalAudio=3D-geluid
+options.directionalAudio.on.tooltip=Gebruikt op HRTF-gebaseerd directioneel geluid om de simulatie van 3D-geluid te verbeteren. Vereist audiohardware met ondersteuning voor HRTF. Krijg de beste ervaring met een hoofdtelefoon.
+options.directionalAudio.off.tooltip=Klassiek stereogeluid
+
 entity.backportcore.boat.name=Boot
 entity.backportcore.chest_boat.name=Boot met kist
 

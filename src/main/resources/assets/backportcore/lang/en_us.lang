@@ -533,6 +533,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21's trial chambers, t
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.x's golden dandelion and babies, sulfur and the sulfur cube, sulfur caves, poplar, abandoned camps and menus.
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=Welcome to Minecraft!\n\nWould you like to enable the Narrator or visit the Accessibility Settings?
+accessibility.onboarding.screen.narrator=Press enter to enable the narrator
+accessibility.onboarding.accessibility.button=Accessibility Settings...
+gui.continue=Continue
+options.notifications.display_time=Notification Time
+options.notifications.display_time.tooltip=Affects the length of time that all notifications stay visible on the screen.
+options.accessibility.high_contrast=High Contrast
+options.accessibility.high_contrast.tooltip=Enhances the contrast of UI elements.
+options.accessibility.high_contrast.error.tooltip=High Contrast resource pack is not available.
+options.rotateWithMinecart=Rotate with Minecarts
+options.rotateWithMinecart.tooltip=Whether the player's view should rotate with a turning Minecart. Only available in worlds with the 'Minecart Improvements' experimental setting turned on.
+options.quitShortcuts=Quit Shortcuts
+options.quitShortcuts.tooltip=Whether keyboard shortcuts can close the game. When off, Alt + F4 on Windows and Linux, and Cmd + Q on macOS, will no longer quit the game.
+options.ctrlClickEmulatesRightClick=Right Click Emulation
+options.ctrlClickEmulatesRightClick.tooltip=When enabled, Control + left-click is treated as a right-click. Only applies on macOS.
+options.audioDevice=Device
+options.audioDevice.default=System Default
+options.directionalAudio=Directional Audio
+options.directionalAudio.on.tooltip=Uses HRTF-based directional audio to improve the simulation of 3D sound. Requires HRTF-compatible audio hardware, and is best experienced with headphones.
+options.directionalAudio.off.tooltip=Classic Stereo sound.
+
 entity.backportcore.boat.name=Boat
 entity.backportcore.chest_boat.name=Boat with Chest
 

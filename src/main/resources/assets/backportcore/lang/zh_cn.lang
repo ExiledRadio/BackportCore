@@ -534,6 +534,28 @@ backportcore.settings.family.trickytrialsbackport.about=1.21的试炼密室、�
 backportcore.settings.family.gamedropsbackport=Game Drops
 backportcore.settings.family.gamedropsbackport.about=26.x的金色蒲公英与幼体、硫磺与硫磺立方、硫磺洞穴、杨树、废弃营地和菜单。
 
+# 1.18 to 26.3: the options rows and the accessibility onboarding 26.3 has (Core 1.4.5).
+accessibility.onboarding.screen.title=欢迎进入Minecraft！  需要启用复述功能或访问辅助功能设置吗？
+accessibility.onboarding.screen.narrator=按下Enter键启用复述功能
+accessibility.onboarding.accessibility.button=辅助功能设置…
+gui.continue=继续
+options.notifications.display_time=通知显示时长
+options.notifications.display_time.tooltip=影响所有通知在屏幕上停留的时长。
+options.accessibility.high_contrast=高对比度
+options.accessibility.high_contrast.tooltip=提高UI控件的对比度。
+options.accessibility.high_contrast.error.tooltip=高对比度资源包不可用。
+options.rotateWithMinecart=同步矿车转动
+options.rotateWithMinecart.tooltip=是否在矿车转动时同步转动玩家视角。仅在开启“矿车改进”实验性设置的世界中可用。
+options.quitShortcuts=退出游戏快捷键
+options.quitShortcuts.tooltip=能否使用键盘快捷键关闭游戏。禁用时，无法通过Windows和Linux上的Alt + F4以及macOS上的Command + Q退出游戏。
+options.ctrlClickEmulatesRightClick=右键单击模拟
+options.ctrlClickEmulatesRightClick.tooltip=启用后，Control + 左键单击将被视为右键单击。仅适用于 macOS。
+options.audioDevice=设备
+options.audioDevice.default=系统默认
+options.directionalAudio=定向音频
+options.directionalAudio.on.tooltip=通过基于HRTF算法的定向环绕音频来改善立体音效的模拟。需使用与HRTF兼容的音频硬件，推荐在使用时佩戴耳机。
+options.directionalAudio.off.tooltip=经典立体声。
+
 entity.backportcore.boat.name=船
 entity.backportcore.chest_boat.name=运输船
 
