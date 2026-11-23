@@ -33,7 +33,7 @@ the switches, for content. A dedicated server ignores the switches: each player 
 | `TOASTS` | `toasts` | toast textures, Music Toast |
 | `INVENTORY` | `inventory` | 1.19.3's creative tabs (P47), creative order, slot highlights (P23), container and recipe book textures, Operator Items Tab |
 | `MUSIC` | `music` | menu music, `GameMusic`, the Music and Sounds options, 1.14's sound channels |
-| `SKY` | `sky` | `FogPipeline` |
+| `SKY` | `sky` | `FogPipeline`, 1.21.2's clouds, 26.1's lightmap (P65) |
 | `WORDING` | `wording` | `vanillaText` |
 | `TEXTURES` | `textures.modernTextures` | the texture layers, and other replaced assets |
 
@@ -317,6 +317,12 @@ change one version made stays made when only a later backport is installed:
   * **Cloud Distance** (from 1.21.6, P26): the clouds reach 2 to 128 chunks and fade out by that distance.
   * **1.21.2's clouds** (the sky's look, P26's return, `ModernClouds`): 26.3's cloud mesh, a box per texel with only
     its visible faces, so no grid of inner walls shows through the clouds' undersides.
+* **26.1's lightmap** (the sky's look, P65, `ModernLightmap` with the formula in `LightmapColors`): 26.3's
+  `lightmap.fsh` on the CPU into 1.12.2's 16 by 16 lightmap. Torch light is warm yellow at middle levels and white at
+  the brightest, moonlight is blue, and each dimension has 26.3's ambient light under both (the Nether's warm, the
+  End's green-gray). Night Vision, Brightness, the boss fog's darkening, lightning, and Wild Update's Darkness follow
+  26.3. Forge's `WorldProvider.getLightmapColors` still runs for each cell. Steps aside for an OptiFine shader pack and
+  for OptiFine's custom lightmaps.
   * **Weather Effect Radius** (P27): rain and snow within 3 to 10 blocks.
   * **Texture Filtering**: None or Anisotropic, and **Anisotropic Filtering** 2x, 4x or 8x (on with Anisotropic only),
     set on the block atlas with OpenGL's anisotropic filtering. 1.21.11's RGSS is a shader 1.12.2 cannot run.

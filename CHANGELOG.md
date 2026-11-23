@@ -45,6 +45,12 @@
     early return): 26.3's `CloudRenderer` mesh in six display lists with a depth pass first; 1.12.2's inner walls
     showed through as a grid. Off for a world's own cloud renderer and an OptiFine shader pack. Video shots
     `video-clouds-*`.
+*   26.1's lightmap (`presentation.LightmapColors`, `presentation.client.ModernLightmap`, `VanillaRevisions.modernLightmap()`,
+    the sky's look, which now lists 26.1; patch P65 at the head of `EntityRenderer.updateLightmap`): 26.3's
+    `lightmap.fsh` with its environment attributes per dimension (block light tint, sky light color and factor on the
+    day timeline with rain and thunder, ambient light, Night Vision color), Forge's `getLightmapColors` still per cell,
+    Wild Update's Darkness taken in. Steps aside for an OptiFine shader pack and OptiFine's custom lightmaps. Checked
+    cell by cell against the shader in `LookFeelTests`; video shots `video-light-*`.
 *   1.19.4's Create New World (23w05a; `presentation.client.CreateWorldTabs`, the menus part): tabs Game (World Name,
     Game Mode, Difficulty, Allow Commands), World (World Type and Customize, the seed, Generate Structures, Bonus
     Chest) and More (Game Rules, and other mods' buttons), Create New World and Cancel below, laid out as 26.3's.

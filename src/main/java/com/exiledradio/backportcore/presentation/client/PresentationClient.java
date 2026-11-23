@@ -24,6 +24,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());
         MinecraftForge.EVENT_BUS.register(new MenuMusicPlayer());
         MinecraftForge.EVENT_BUS.register(new FogPipeline.Events());
+        MinecraftForge.EVENT_BUS.register(new ModernLightmap.Events());
         MinecraftForge.EVENT_BUS.register(new ChatRenderer.Events());
         MinecraftForge.EVENT_BUS.register(new StartupScreen.Events());
         MinecraftForge.EVENT_BUS.register(new TitleScreenExtras());
