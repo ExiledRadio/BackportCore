@@ -1,5 +1,6 @@
 # 1.4.5
 
+*   **Fixed: ocean monuments on land and in lakes in Realistic Terrain Generation worlds.** A monument there now also needs deep water where it stands, so it only generates in RTG's deep oceans, and `/locate` and explorer maps point to the same places.
 *   **Update notices**: the settings screen shows when a newer version of Backport Core or any installed backport is out, on the Family page and the mod's own page, with a link to CurseForge. It uses Forge's update check, or the versions this Core knows when that check is off or offline.
 *   **Look & Feel is now part of the Family page**, after Core's own settings, instead of its own tab.
 *   **Simulation Distance** (1.18, Video Settings): mobs, machines, crops and redstone run only this many chunks from a player, however far you can see. Your own worlds follow the setting; a server uses `simulation-distance` in server.properties, as 1.18 does. Spawn chunks and chunks a mod keeps loaded run as before.

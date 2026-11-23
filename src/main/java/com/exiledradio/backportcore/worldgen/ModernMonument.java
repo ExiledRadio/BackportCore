@@ -21,7 +21,8 @@ import java.util.List;
  * river by the biome dictionary, which for vanilla's biomes is 1.12.2's own list. Only used where the
  * overworld still has vanilla's generator: a backport that brings its own monument rule (1.13's deep oceans by
  * temperature) keeps it. The grid (32/5, salt 10387313, triangular) is the newest registered one, else
- * vanilla's.
+ * vanilla's. Where the terrain does not follow the biome map (Realistic Terrain Generation), the monument also
+ * needs deep water there ({@link MonumentTerrain}).
  */
 public final class ModernMonument extends StructureOceanMonument {
 
@@ -47,6 +48,7 @@ public final class ModernMonument extends StructureOceanMonument {
             return false;
         }
         return this.world.getBiomeProvider().areBiomesViable(chunkX * 16 + 9, chunkZ * 16 + 9, 16, this.center)
-                && this.world.getBiomeProvider().areBiomesViable(chunkX * 16 + 9, chunkZ * 16 + 9, 29, this.water);
+                && this.world.getBiomeProvider().areBiomesViable(chunkX * 16 + 9, chunkZ * 16 + 9, 29, this.water)
+                && MonumentTerrain.deepEnough(this.world, chunkX, chunkZ);
     }
 }
