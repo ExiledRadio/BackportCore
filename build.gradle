@@ -80,6 +80,9 @@ dependencies {
 	deobfCompile 'curse.maven:fluidlogged-api-485654:8445863'
 	// Compile only: JEI is never required, and only JEI loads the class that uses it.
 	deobfProvided 'mezz.jei:jei_1.12.2:4.16.1.302:api'
+	// Realistic Terrain Generation Unofficial 1.1.0 (CurseForge 648514, file 4696300): compile only, for
+	// terrain/rtg/RtgRealisticBiomes, the one class that links against it (RTG 6.1 has the same API there).
+	deobfProvided 'curse.maven:rtgu-648514:4696300'
 }
 
 // Every other mod is reached by name and reflection, behind a Loader.isModLoaded check. No Mixin.

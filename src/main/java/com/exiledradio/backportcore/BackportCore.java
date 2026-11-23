@@ -186,6 +186,8 @@ public final class BackportCore {
         DuplicateBlocks.removeLateRecipes();
         // World generators of another mod whose duplicate blocks are hidden.
         DuplicateBlocks.removeGenerators();
+        // The backports' biomes to Realistic Terrain Generation, before it locks its list at load complete.
+        com.exiledradio.backportcore.terrain.RtgBiomes.postInit();
     }
 
     /** Every mod has loaded: the backports' vanilla text and assets go into the client's languages and textures. */

@@ -256,6 +256,32 @@ NetherHeights base = NetherHeights.baseForWorld(world);  // 1.16's getBaseColumn
 - Use `baseForWorld` where 1.16 measures its base column (ruined portals' `findSuitableY` corner test), for parity.
   As with `TerrainHeights`, call it once per structure start on the server thread: it drops the last layout's columns.
 
+### Realistic Terrain Generation biomes (`terrain.RtgBiomes`, 1.4.5)
+
+RTG (6.1 and its Unofficial fork, modid `rtg`) builds each column from a "realistic biome" registered for the
+column's biome; any other biome becomes RTG's patch biome (plains), terrain and saved biome id alike. A backport
+names the vanilla biome whose RTG terrain fits each surface biome, right after registering it:
+
+```java
+RtgBiomes.register(biome, RtgBiomes.Template.FOREST_HILLS);
+// or by name, for a backport that must load with an older Core:
+Class.forName("com.exiledradio.backportcore.terrain.RtgBiomes").getMethod("register", Biome.class, String.class)
+        .invoke(null, biome, "FOREST_HILLS");
+```
+
+- Templates: `OCEAN`, `DEEP_OCEAN`, `PLAINS`, `FOREST`, `FOREST_HILLS`, `BIRCH_FOREST`, `JUNGLE`, `JUNGLE_HILLS`,
+  `SWAMP`, `ROOFED_FOREST`: RTG's own terrain for that vanilla biome, the biome's top and filler blocks painted by
+  RTG's generic surface (its swamp and ocean surfaces for those), no RTG decorations on land. RTG then runs the
+  biome's own `decorate`, so trees and features stay the backport's.
+- Core hands the list to RTG in its post-init (RTG locks it at load complete); later calls go straight through.
+  Without RTG nothing happens. The only class linking against RTG is `terrain.rtg.RtgRealisticBiomes`.
+- RTG needs a `ModCompat.Mods` constant per mod (its config folder, `config/RTG/biomes/<ModName>/`); Core adds one
+  with EnumHelper.
+- `RtgBiomes.biomeAt(world, x, z)`: the biome RTG gives a column once its chunk is made, after its per-chunk coast
+  repair, without making the chunk (null outside RTG worlds). The biome provider does not know the repair.
+  `StructurePlacements.biomeAt(World, chunkX, chunkZ)` uses it, so a start check matches the chunk in RTG worlds;
+  Core's temples read it.
+
 ## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
 
 1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed. A block that
