@@ -527,17 +527,24 @@ final class ClientPresentationTests {
                 com.exiledradio.backportcore.CoreConfig.presentation.reportBugsLink);
         mc.displayGuiScreen(null);
 
-        // 26.3's system toast (the pause menu's Friends and Player Reporting): its size and addOrUpdate.
+        // The system toast (the pause menu's Friends and Player Reporting): its size and addOrUpdate, by the version's rule.
+        com.exiledradio.backportcore.presentation.client.SystemToasts.clear();
+        boolean rewrap = com.exiledradio.backportcore.presentation.VanillaRevisions.systemToastRewrap();
         com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate("Friends", "Not available in this version");
         int[] toast = com.exiledradio.backportcore.presentation.client.SystemToasts.size();
-        check("client: system toast: max(160, widest line) + 30 by 20 + 12 for a one-line message",
-                toast != null && toast[0] == 190 && toast[1] == 32, toast == null ? "none" : toast[0] + "x" + toast[1]);
-        com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate("Player Reporting",
-                "A message longer than two hundred pixels, which splits onto a second line");
+        int text = Math.max(mc.fontRenderer.getStringWidth("Friends"), mc.fontRenderer.getStringWidth("Not available in this version"));
+        int wide = rewrap ? Math.max(160, text) + 30 : Math.max(160, 30 + text);
+        check("client: system toast: " + (rewrap ? "max(160, widest line) + 30" : "max(160, 30 + widest)") + " by 20 + 12 for a one-line message",
+                toast != null && toast[0] == wide && toast[1] == 32, toast == null ? "none" : toast[0] + "x" + toast[1]);
+        String longer = "A message longer than two hundred pixels, which splits onto a second line";
+        com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate("Player Reporting", longer);
         int[] two = com.exiledradio.backportcore.presentation.client.SystemToasts.size();
-        check("client: system toast: addOrUpdate keeps one toast, a long message wraps at 200 (230 wide, 44 high)",
-                two != null && two[0] <= 230 && two[0] > 190 && two[1] == 44 && "Player Reporting".equals(com.exiledradio.backportcore.presentation.client.SystemToasts.lastTitle),
-                two == null ? "none" : two[0] + "x" + two[1]);
+        int lines = mc.fontRenderer.listFormattedStringToWidth(longer, 200).size();
+        check("client: system toast: addOrUpdate keeps one toast; from 26.2 the message wraps at 200 and the width follows, before one line at the first width",
+                two != null && "Player Reporting".equals(com.exiledradio.backportcore.presentation.client.SystemToasts.lastTitle)
+                        && (rewrap ? two[0] <= 230 && two[0] > 190 && two[1] == 20 + 12 * lines : two[0] == wide && two[1] == 32),
+                two == null ? "none" : two[0] + "x" + two[1] + (rewrap ? " (26.2)" : " (before 26.2)"));
+        com.exiledradio.backportcore.presentation.client.SystemToasts.clear();
 
         java.lang.reflect.Method orderOf = com.exiledradio.backportcore.presentation.client.CreativeOrder.class.getDeclaredMethod("order", net.minecraft.util.ResourceLocation.class);
         orderOf.setAccessible(true);

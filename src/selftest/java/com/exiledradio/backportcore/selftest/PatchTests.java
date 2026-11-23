@@ -94,6 +94,10 @@ final class PatchTests {
             {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
             {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P47", new String[] {"tabCount", "openTab", "tabsOnPage*2",
                     "pageOf", "searchTooltipTab", "isMouseOverTab", "renderCreativeInventoryHoveringText", "drawTab"}},
+            {"net.minecraft.client.renderer.InventoryEffectRenderer", "P57", new String[] {"inventoryEffects"}},
+            {"net.minecraft.client.gui.recipebook.GuiRecipeBook", "P58", new String[] {"recipeSearchBox"}},
+            {"net.minecraft.client.gui.GuiSubtitleOverlay", "P59", new String[] {"subtitleBoxColor"}},
+            {"net.minecraft.client.Minecraft", "P60", new String[] {"profilerPie"}},
     };
 
     private PatchTests() {
@@ -359,6 +363,7 @@ final class PatchTests {
             case "P43": cls = "MapFacingTransformer"; break;
             case "P46": cls = "SimulationTransformer"; break;
             case "P47": cls = "CreativeTabsTransformer"; break;
+            case "P57": case "P58": case "P59": case "P60": cls = "ScreenPatchesTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

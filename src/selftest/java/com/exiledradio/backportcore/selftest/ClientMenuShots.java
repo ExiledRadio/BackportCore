@@ -223,7 +223,226 @@ final class ClientMenuShots {
             mc.displayGuiScreen(null);
             return true;
         });
+        screenGaps(mc);
         creativeTabs(mc);
+    }
+
+    // ---- Core 1.4.5: the screen audit's items 8 to 11, 21 and 23 ----
+
+    private final List<String> debugLeft = new ArrayList<String>();
+    private final List<String> debugRight = new ArrayList<String>();
+    private int subtitleAt;
+
+    /** The F3 text as Core leaves it, after the versions' steps and 1.21.9's arrangement. */
+    @SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.LOW)
+    public void onDebugText(net.minecraftforge.client.event.RenderGameOverlayEvent.Text event) {
+        this.debugLeft.clear();
+        this.debugLeft.addAll(event.getLeft());
+        this.debugRight.clear();
+        this.debugRight.addAll(event.getRight());
+    }
+
+    private static boolean anyStarts(List<String> lines, String prefix) {
+        for (String l : lines) {
+            if (l != null && net.minecraft.util.text.TextFormatting.getTextWithoutFormattingCodes(l).startsWith(prefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void screenGaps(Minecraft mc) {
+        add(null, () -> {
+            for (String p : new String[] {"P57", "P58", "P59", "P60"}) {
+                check(p + " applied", "applied".equals(Asm.state(p)), Asm.state(p));
+            }
+            check("26.3 is the newest (inventory, debug, toasts)", com.exiledradio.backportcore.presentation.VanillaRevisions.effectsFitText()
+                    && com.exiledradio.backportcore.presentation.VanillaRevisions.debugFrameCharts()
+                    && com.exiledradio.backportcore.presentation.VanillaRevisions.systemToastRewrap(), Presentation.newest());
+            net.minecraft.server.integrated.IntegratedServer server = mc.getIntegratedServer();
+            final java.util.UUID id = mc.player.getUniqueID();
+            mc.playerController.setGameType(GameType.SURVIVAL);
+            server.addScheduledTask(() -> {
+                net.minecraft.entity.player.EntityPlayerMP p = server.getPlayerList().getPlayerByUUID(id);
+                p.setGameType(GameType.SURVIVAL);
+                p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.SPEED, 6000, 1));
+                p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.JUMP_BOOST, 6000, 4));
+                p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.NIGHT_VISION, 6000, 0, true, true));
+                p.addPotionEffect(new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.FIRE_RESISTANCE, 6000, 0));
+            });
+            return true;
+        });
+        add(null, () -> mc.player.getActivePotionEffects().size() == 4 && !mc.player.capabilities.isCreativeMode);
+        add("inventory-effects", () -> show(new GuiInventory(mc.player)));
+        add(null, () -> {
+            GuiInventory gui = (GuiInventory) mc.currentScreen;
+            int[] bg = com.exiledradio.backportcore.presentation.client.InventoryEffects.lastBackgrounds;
+            check("effects: the inventory stays centered (no 1.12.2 shift)", gui.getGuiLeft() == (gui.width - gui.getXSize()) / 2, gui.getGuiLeft());
+            check("effects: four backgrounds right of the inventory, 33 apart", bg.length == 12 && bg[0] == gui.getGuiLeft() + gui.getXSize() + 2
+                    && bg[4] == bg[1] + 33, Arrays.toString(bg));
+            int room = gui.width - bg[0];
+            check("effects: each as wide as its text (1.21.11), at most the room less 7", bg[2] > 32 && bg[2] <= Math.max(32, room - 7)
+                    && (bg[2] != bg[5] || bg[5] != bg[8]), Arrays.toString(bg) + " room " + room);
+            check("effects: Jump Boost V named with 26.3's levels", com.exiledradio.backportcore.presentation.client.InventoryEffects.name(
+                    new net.minecraft.potion.PotionEffect(net.minecraft.init.MobEffects.JUMP_BOOST, 10, 4)).endsWith(" V"), "");
+            return true;
+        });
+        add("creative-effects", () -> {
+            mc.playerController.setGameType(GameType.CREATIVE);
+            server(mc, p -> p.setGameType(GameType.CREATIVE));
+            return show(new GuiContainerCreative(mc.player));
+        });
+        add(null, () -> {
+            GuiContainerCreative gui = (GuiContainerCreative) mc.currentScreen;
+            int[] bg = com.exiledradio.backportcore.presentation.client.InventoryEffects.lastBackgrounds;
+            int room = gui.width - (gui.getGuiLeft() + gui.getXSize() + 2);
+            check("creative: effects beside it, compact (32 wide, icon only) when names do not fit", room >= 120 || bg.length == 12 && bg[2] == 32,
+                    Arrays.toString(bg) + " room " + room);
+            mc.player.getRecipeBook().setGuiOpen(true);
+            mc.playerController.setGameType(GameType.SURVIVAL);
+            server(mc, p -> p.setGameType(GameType.SURVIVAL));
+            mc.displayGuiScreen(null);
+            return true;
+        });
+        add("recipe-book", () -> show(new GuiInventory(mc.player)));
+        add(null, () -> {
+            int[] box = com.exiledradio.backportcore.presentation.client.RecipeBookLook.lastBox;
+            int j = (mc.currentScreen.height - 166) / 2;
+            check("recipe book: \"Search...\" in the empty box (1.16)", com.exiledradio.backportcore.presentation.client.RecipeBookLook.hints > 0,
+                    com.exiledradio.backportcore.presentation.client.RecipeBookLook.hints);
+            check("recipe book: the box at 1.20.5's place (yo + 13, 81 wide)", box != null && box[1] == j + 13 && box[2] == 81, box == null ? null
+                    : Arrays.toString(box) + " j " + j);
+            net.minecraft.client.gui.GuiTextField field = com.exiledradio.backportcore.presentation.client.RecipeBookLook.searchBox(
+                    ((GuiInventory) mc.currentScreen).func_194310_f());
+            boolean clicked = field != null && com.exiledradio.backportcore.presentation.client.RecipeBookLook.magnifierClick(field, field.x - 10, field.y + 3);
+            check("recipe book: the magnifier focuses the box (1.21.2)", clicked && field.isFocused(), field == null ? null : field.isFocused());
+            mc.player.getRecipeBook().setGuiOpen(false);
+            mc.displayGuiScreen(null);
+            server(mc, p -> {
+                p.clearActivePotions();
+                p.setGameType(GameType.CREATIVE);
+            });
+            mc.playerController.setGameType(GameType.CREATIVE);
+            return true;
+        });
+        // F3 + 2: 1.20.2's FPS and TPS charts.
+        add(null, () -> {
+            mc.gameSettings.showDebugInfo = true;
+            mc.gameSettings.showLagometer = true;
+            mc.gameSettings.showDebugProfilerChart = false;
+            return com.exiledradio.backportcore.presentation.client.FrameCharts.TICKS.size() > 100;
+        });
+        add("fps-charts", () -> {
+            check("F3 + 2: the charts drawn in place of the lagometer", com.exiledradio.backportcore.presentation.client.FrameCharts.frames > 0,
+                    com.exiledradio.backportcore.presentation.client.FrameCharts.frames);
+            check("F3 + 2: the integrated server's ticks logged (start to start, with tick()'s share)",
+                    com.exiledradio.backportcore.presentation.client.FrameCharts.TICKS.size() > 100
+                            && com.exiledradio.backportcore.presentation.client.FrameCharts.TICKS.get(0, 0) >= com.exiledradio.backportcore.presentation.client.FrameCharts.TICKS.get(0, 1),
+                    com.exiledradio.backportcore.presentation.client.FrameCharts.TICKS.size());
+            check("F3 + 2: 30 fps is the chart's top, 60 its middle", com.exiledradio.backportcore.presentation.DebugCharts.fpsHeight(1.0E9 / 30) == 60
+                    && com.exiledradio.backportcore.presentation.DebugCharts.fpsHeight(1.0E9 / 60) == 30, "");
+            return true;
+        });
+        add(null, () -> {
+            mc.gameSettings.showDebugProfilerChart = true;
+            return true;
+        });
+        add("!profiler-pie", () -> true);
+        add(null, () -> {
+            int[] pie = com.exiledradio.backportcore.presentation.client.FrameCharts.lastPie;
+            net.minecraft.client.gui.ScaledResolution res = new net.minecraft.client.gui.ScaledResolution(mc);
+            int[] d = com.exiledradio.backportcore.presentation.client.DebugScale.size(mc, res);
+            check("F3 + 1: 1.20.2's pie at the GUI scale, above the F3 + 2 charts", com.exiledradio.backportcore.presentation.client.FrameCharts.pies > 0
+                    && pie != null && pie[3] == d[1] - 69 - 5 + 5 && pie[2] == d[0] - 10 + 5, pie == null ? null : Arrays.toString(pie) + " in " + Arrays.toString(d));
+            mc.gameSettings.showDebugProfilerChart = false;
+            mc.gameSettings.showLagometer = false;
+            // The debug parts: every new entry on, as Always or In F3.
+            com.exiledradio.backportcore.presentation.client.DebugEntries.loadProfile(com.exiledradio.backportcore.presentation.client.DebugEntries.DEFAULT);
+            for (String e : new String[] {"tps", "sound_mood", "heightmap", "detailed_memory", "looking_at_entity", "looking_at_fluid",
+                    "entity_spawn_counts", "light_levels", "biome", "local_difficulty", "chunk_source_stats", "looking_at_block"}) {
+                com.exiledradio.backportcore.presentation.client.DebugEntries.setStatus(e, com.exiledradio.backportcore.presentation.client.DebugEntries.Status.IN_OVERLAY);
+            }
+            mc.player.rotationPitch = 60.0F;
+            return true;
+        });
+        add("debug-parts", () -> {
+            List<String> l = this.debugLeft;
+            List<String> r = this.debugRight;
+            // 1.21.9's parts run in their ids' order: fps before game_version, so the frame rate is top left.
+            check("F3: the frame rate first on the left, the version first on the right (1.21.9's priority lines)",
+                    !l.isEmpty() && l.get(0).contains(" fps") && !r.isEmpty() && r.get(0).startsWith("Minecraft "), l.isEmpty() ? l : l.get(0) + " | " + (r.isEmpty() ? r : r.get(0)));
+            List<String> all = new ArrayList<String>(l);
+            all.addAll(r);
+            check("F3: tps (1.21.9)", anyStarts(all, "Integrated server @ "), all);
+            check("F3: sound_mood (1.21.9)", anyStarts(all, "Sounds: "), "");
+            check("F3: heightmap (1.21.11)", anyStarts(all, "CH S: ") && anyStarts(all, "SH S: "), "");
+            check("F3: detailed_memory (26.1)", anyStarts(all, "Memory (heap)") && anyStarts(all, "Memory (non-heap)"), "");
+            check("F3: looking_at_fluid (1.21.9), the ground below", anyStarts(all, "Targeted Fluid: "), "");
+            check("F3: the To edit line last on the left", l.get(l.size() - 1).startsWith("To edit: press"), l.get(l.size() - 1));
+            return true;
+        });
+        add(null, () -> {
+            com.exiledradio.backportcore.presentation.client.DebugEntries.loadProfile(com.exiledradio.backportcore.presentation.client.DebugEntries.DEFAULT);
+            mc.gameSettings.showDebugInfo = false;
+            mc.player.rotationPitch = 0.0F;
+            // System toasts: three ids at once, in 26.3's slots.
+            com.exiledradio.backportcore.presentation.client.SystemToasts.add(com.exiledradio.backportcore.presentation.client.SystemToasts.Id.WORLD_BACKUP,
+                    "Backed up: New World", "Size: 3 MB");
+            com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate(com.exiledradio.backportcore.presentation.client.SystemToasts.Id.LOW_DISK_SPACE,
+                    "Low disk space!", "Might not be able to save the world.");
+            com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate(com.exiledradio.backportcore.presentation.client.SystemToasts.Id.CHUNK_SAVE_FAILURE,
+                    net.minecraft.util.text.TextFormatting.RED + "Failed to save chunk at [7, 8]", "See log for more details");
+            com.exiledradio.backportcore.presentation.client.SystemToasts.addOrUpdate(com.exiledradio.backportcore.presentation.client.SystemToasts.Id.LOW_DISK_SPACE,
+                    "Low disk space!", "Might not be able to save the world. Free up some space on the disk, then try again.");
+            // Subtitles: Text Background Everywhere at 0.75.
+            mc.gameSettings.showSubtitles = true;
+            Presentation.TEXT_BACKGROUND.set("everywhere");
+            Presentation.TEXT_BACKGROUND_OPACITY.set(0.75);
+            this.subtitleAt = PresentationHooks.subtitleBoxes;
+            return true;
+        });
+        // The subtitle overlay listens for sounds from the first frame drawn with subtitles on.
+        add(null, () -> {
+            net.minecraft.client.audio.PositionedSoundRecord moo = new net.minecraft.client.audio.PositionedSoundRecord(
+                    net.minecraft.init.SoundEvents.ENTITY_COW_AMBIENT, net.minecraft.util.SoundCategory.NEUTRAL, 1.0F, 1.0F,
+                    (float) mc.player.posX + 2, (float) mc.player.posY, (float) mc.player.posZ);
+            try {
+                net.minecraft.client.gui.GuiSubtitleOverlay overlay = (net.minecraft.client.gui.GuiSubtitleOverlay) net.minecraftforge.fml.relauncher.ReflectionHelper
+                        .findField(net.minecraft.client.gui.GuiIngame.class, "overlaySubtitle", "field_184049_t").get(mc.ingameGUI);
+                // The dev run may lack the sound assets: the accessor is made here, with the cow's subtitle.
+                overlay.soundPlay(moo, new net.minecraft.client.audio.SoundEventAccessor(moo.getSoundLocation(), "subtitles.entity.cow.ambient"));
+            } catch (IllegalAccessException e) {
+                failed("subtitle overlay", e);
+            }
+            return true;
+        });
+        add("!system-toasts", () -> {
+            int[] slots = com.exiledradio.backportcore.presentation.client.SystemToasts.visibleSlots();
+            check("toasts: three at once, each in its own slots down from the top", slots.length == 3 && slots[0] == 0 && slots[1] == 1 && slots[2] > 1,
+                    Arrays.toString(slots));
+            com.exiledradio.backportcore.presentation.client.SystemToasts.Toast disk = com.exiledradio.backportcore.presentation.client.SystemToasts
+                    .get(com.exiledradio.backportcore.presentation.client.SystemToasts.Id.LOW_DISK_SPACE);
+            int lines = mc.fontRenderer.listFormattedStringToWidth("Might not be able to save the world. Free up some space on the disk, then try again.", 200).size();
+            check("toasts: addOrUpdate rewraps the shown toast (26.2) at 200", disk != null && lines > 1 && disk.height() == 20 + 12 * lines
+                    && disk.width() <= 230, disk == null ? null : disk.width() + "x" + disk.height() + ", " + lines + " lines");
+            check("subtitles: drawn through P59 with Text Background Everywhere", PresentationHooks.subtitleBoxes > this.subtitleAt
+                    && PresentationHooks.subtitleBoxColor(0xCC000000) == 0xBF000000, PresentationHooks.subtitleBoxes);
+            return true;
+        });
+        add(null, () -> {
+            Presentation.TEXT_BACKGROUND.set("chat");
+            Presentation.TEXT_BACKGROUND_OPACITY.set(0.5);
+            check("subtitles: Chat Only keeps 1.12.2's box", PresentationHooks.subtitleBoxColor(0xCC000000) == 0xCC000000);
+            mc.gameSettings.showSubtitles = false;
+            com.exiledradio.backportcore.presentation.client.SystemToasts.clear();
+            return true;
+        });
+    }
+
+    private static void server(Minecraft mc, java.util.function.Consumer<net.minecraft.entity.player.EntityPlayerMP> action) {
+        net.minecraft.server.integrated.IntegratedServer server = mc.getIntegratedServer();
+        final java.util.UUID id = mc.player.getUniqueID();
+        server.addScheduledTask(() -> action.accept(server.getPlayerList().getPlayerByUUID(id)));
     }
 
     // ---- 1.19.3's creative tabs (creative.client.ModernTabs, P47) ----
@@ -469,6 +688,27 @@ final class ClientMenuShots {
         return true;
     }
 
+    private void backBuffer(Minecraft mc, File file) {
+        int w = mc.displayWidth;
+        int h = mc.displayHeight;
+        java.nio.IntBuffer buf = BufferUtils.createIntBuffer(w * h);
+        GL11.glReadBuffer(GL11.GL_BACK);
+        GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
+        GL11.glReadPixels(0, 0, w, h, org.lwjgl.opengl.GL12.GL_BGRA, org.lwjgl.opengl.GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buf);
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                img.setRGB(x, h - 1 - y, buf.get(y * w + x) & 0xFFFFFF);
+            }
+        }
+        try {
+            file.getParentFile().mkdirs();
+            javax.imageio.ImageIO.write(img, "png", file);
+        } catch (java.io.IOException e) {
+            failed("back buffer shot", e);
+        }
+    }
+
     private static boolean colorMaskOn() {
         ByteBuffer b = BufferUtils.createByteBuffer(16);
         GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK, b);
@@ -557,7 +797,8 @@ final class ClientMenuShots {
         this.shot = this.names.get(this.step);
     }
 
-    @SubscribeEvent
+    /** Last, so the toasts Core draws at the end of the frame are in the back buffer shots. */
+    @SubscribeEvent(priority = net.minecraftforge.fml.common.eventhandler.EventPriority.LOWEST)
     public void onRender(TickEvent.RenderTickEvent event) {
         if (event.phase != TickEvent.Phase.END || this.shot == null) {
             return;
@@ -566,7 +807,16 @@ final class ClientMenuShots {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
-        ScreenShotHelper.saveScreenshot(mc.gameDir, "menu-" + this.shot + ".png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        if (this.shot.startsWith("!")) {
+            // Toasts and the profiler pie are drawn on the window after the framebuffer: read the back buffer.
+            if (this.shot.contains("pie")) {
+                PresentationHooks.profilerPie(mc, 0L);
+            }
+            this.shot = this.shot.substring(1);
+            backBuffer(mc, new File(mc.gameDir, "screenshots/menu-" + this.shot + ".png"));
+        } else {
+            ScreenShotHelper.saveScreenshot(mc.gameDir, "menu-" + this.shot + ".png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        }
         BackportCore.LOGGER.info("MENU SHOT {} ({})", this.shot, mc.currentScreen == null ? "none" : mc.currentScreen.getClass().getSimpleName());
         this.shot = null;
         this.ticks = 0;

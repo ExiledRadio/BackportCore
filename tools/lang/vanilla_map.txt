@@ -102,3 +102,4 @@ backportcore.itemGroup.ingredients = itemGroup.ingredients
 backportcore.itemGroup.spawnEggs = itemGroup.spawnEggs
 backportcore.itemGroup.op = itemGroup.op
 options.operatorItemsTab = options.operatorItemsTab
+gui.recipebook.search_hint = gui.recipebook.search_hint

@@ -966,3 +966,55 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: transformer chain and SRG names (`PatchTests`; vanilla's unpaged screen in the SRG jar is left alone);
     `ClientMenuShots` (the first page's 13 and 14 tabs, each tab's first item and screenshot, books, eggs, every 1.12.2
     stack in a 1.19.3 tab, search, a late mod tab on page 2, the inventory part off).
+
+## P57. The active effects beside the inventory
+
+*   **Class**: `net.minecraft.client.renderer.InventoryEffectRenderer`, `drawScreen(IIF)V`. **Transformer**:
+    `asm/ScreenPatchesTransformer`. **Hook**: `PresentationHooks.inventoryEffects` (`InventoryEffects.draw`). **Since**:
+    1.4.5.
+*   **Vanilla change**: 1.18 (`EffectRenderingInventoryScreen`) draws the effects in a column right of the inventory,
+    120 or 32 wide, and no longer moves the inventory; 1.21.11 (`EffectsInInventory`) fits each background to its text.
+*   **Why a patch**: the drawing is the private `drawActivePotionEffects()`, at `guiLeft - 124`, called from
+    `drawScreen` before the survival inventory's tooltip. Forge's `PotionShiftEvent` (cancelled by Core from 1.18)
+    stops the shift but not the drawing.
+*   **What changes**: the one call to `drawActivePotionEffects()` becomes a static call with the screen as its argument.
+    Before 1.18 the hook calls the private method; from 1.18 it draws Core's column, calling Forge's
+    `Potion.renderInventoryEffect` for each effect as 1.12.2 does.
+*   **Fails safe**: not exactly one call: skipped; 1.12.2's effects.
+*   **Tested**: transformer chain and SRG names; `ClientMenuShots` (four effects beside a centered survival inventory,
+    each as wide as its text; compact in the creative inventory).
+
+## P58. The recipe book's search box
+
+*   **Class**: `net.minecraft.client.gui.recipebook.GuiRecipeBook`, `render(IIF)V`. **Hook**:
+    `PresentationHooks.recipeSearchBox` (`RecipeBookLook`). **Since**: 1.4.5.
+*   **Vanilla change**: 1.16 shows "Search..." (`gui.recipebook.search_hint`, gray italics) in the empty, unfocused box;
+    1.20.5 puts the box at `yo + 13`, 81 wide (1.12.2's `j + 14`, 80).
+*   **Why a patch**: the box is a private field drawn in the middle of `render`, under the tabs and the page.
+*   **What changes**: the one `searchBar.drawTextBox()` becomes a static call with the box. The hook moves a new box once
+    (1.20.5), draws it, then the hint (1.16). Core's furnace books call the same hook.
+*   **Fails safe**: not exactly one `drawTextBox` call: skipped; 1.12.2's box.
+*   **Tested**: transformer chain and SRG names; `ClientMenuShots` (the hint drawn, the box at 1.20.5's place).
+
+## P59. Subtitles and Text Background
+
+*   **Class**: `net.minecraft.client.gui.GuiSubtitleOverlay`, `renderSubtitles`. **Hook**:
+    `PresentationHooks.subtitleBoxColor`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.14's `Options.getBackgroundColor`: with Text Background set to Everywhere, the subtitle box
+    takes the Text Background Opacity; with Chat Only it keeps its own (`0xCC000000`).
+*   **What changes**: the one `0xCC000000` constant passes through the hook (as P14's chat box).
+*   **Fails safe**: not exactly one constant: skipped.
+*   **Tested**: transformer chain and SRG names; `ClientMenuShots` (a subtitle drawn through the hook, both settings).
+
+## P60. The profiler pie at the GUI scale
+
+*   **Class**: `net.minecraft.client.Minecraft`, `runGameLoop()V`. **Hook**: `PresentationHooks.profilerPie`
+    (`FrameCharts.profilerPie`). **Since**: 1.4.5.
+*   **Vanilla change**: 1.20.2 (`ProfilerPieChart`) draws F3 + 1's pie at the GUI scale, 105 across, 10 from the bottom
+    or above the F3 + 2 or F3 + 3 charts, on a dark box with the node's path wrapped; 1.12.2's is at window pixels,
+    160 across.
+*   **Why a patch**: `displayDebugInfo` is private and called once a frame after the GUI, with no event.
+*   **What changes**: the one call to `displayDebugInfo(elapsed)` becomes a static call with the game as first argument.
+    Before 1.20.2 the hook calls the private method.
+*   **Fails safe**: not exactly one call: skipped; 1.12.2's pie.
+*   **Tested**: transformer chain and SRG names; `ClientMenuShots` (the pie's box above the charts).

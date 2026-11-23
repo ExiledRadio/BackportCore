@@ -101,3 +101,16 @@ Create a new world and load an existing one, each with these installed:
 - [ ] Menu Background Blurriness at OFF: no blur anywhere; at 100%: stronger. The title screen is never blurred.
 - [ ] The panorama only turns (no nodding up and down) and keeps turning from screen to screen.
 - [ ] Narrator Hotkey (Accessibility, 1.20.2 or later): off, Ctrl + B does nothing; on, it toggles the narrator.
+
+## Inventory, toasts and F3 (Game Drops installed, Core 1.4.5)
+
+- [ ] With a few potions active, the survival inventory stays centered and the effects stand right of it, each box as
+      wide as its name; a narrow window or the creative inventory shows icons only, with the name and time on hover.
+- [ ] The recipe book's empty search box reads "Search..." in gray italics; clicking the magnifier focuses it.
+- [ ] F3 + 2: the FPS chart bottom left and, in single player, the TPS chart bottom right; no lagometer. F3 + 1: the pie
+      sits above the charts at the debug overlay's size.
+- [ ] Debug Options lists tps, looking_at_fluid, looking_at_entity, sound_mood, heightmap and detailed_memory. F3 shows
+      the frame rate top left and the version top right, the rest split into the two columns.
+- [ ] Subtitles with Text Background: Everywhere follow the Text Background Opacity slider.
+- [ ] With Trails & Tales installed, a world backup or a failed chunk save shows its toast in Core's style, stacked
+      under any other system toast.

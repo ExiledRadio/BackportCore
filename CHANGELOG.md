@@ -41,6 +41,29 @@
 
 # 1.4.5
 
+*   Active effects beside the inventory (`InventoryEffects`, patch P57 on `InventoryEffectRenderer.drawScreen`): from
+    1.18 a column right of the survival and creative inventories, 120 wide with names or 32 wide (icon only, name and
+    time as a tooltip) as the room allows, and the inventory no longer moves right (Forge's `PotionShiftEvent`
+    cancelled). From 1.21.11 each background fits its text (at most the room less 7), names cut to fit, levels up to
+    X, and ambient effects on their own sprite. Backgrounds from the `container/inventory/effect_background*` sprites
+    when supplied, else `inventory.png`'s, sliced with 4-pixel edges.
+*   One system toast drawer: `SystemToasts` takes 26.3's ids (`SystemToasts.Id`: display time; `add`, `addOrUpdate`,
+    `forceHide`, `get`, `clear`) and shows several at once in `ToastManager`'s five 32-pixel slots, one sound a frame.
+    Before 26.2 a toast is one title and one message line, as wide as its first text; from 26.2 both wrap at 200 and
+    the width follows each update. `SystemToasts.notificationTime` for 1.19.4's Notification Time. Trails & Tales'
+    toasts now go here. `addOrUpdate(title, message)` kept.
+*   Recipe book search box (patch P58 on `GuiRecipeBook.render`, and Core's furnace books): 1.16's gray italic
+    "Search..." while empty and unfocused, 1.20.5's position (one up, 81 wide), and 1.21.2's magnifier: a click left
+    of the box focuses it. 18 languages.
+*   F3 + 2 from 1.20.2 (`FrameCharts`): the FPS chart (bottom left) and, on your own server, the TPS chart (bottom
+    right) in place of the lagometer: colored bars, min/avg/max, 30 and 60 fps lines, the frame limit line, the tick
+    rate. F3 + 1's profiler pie at the GUI scale, above the charts, as 1.20.2's (patch P60 on `Minecraft.runGameLoop`).
+    `DebugCharts.Samples` takes several values a sample.
+*   Subtitles take Text Background: Everywhere's opacity (patch P59 on `GuiSubtitleOverlay`).
+*   Debug Options: `tps`, `looking_at_fluid`, `looking_at_entity`, `sound_mood` (1.21.9), `heightmap` (1.21.11) and
+    `detailed_memory` (26.1), each worded as vanilla's (`DebugParts`; `DebugParts.setMood` for a cave mood). From
+    1.21.9 the parts are laid out in vanilla's two columns: version and FPS on top, plain lines split half and half,
+    then the groups. Lines of other mods follow in their own column.
 *   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
     Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads
     (`CopyRemapping`), also with Village & Pillage removed.

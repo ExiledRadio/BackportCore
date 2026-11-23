@@ -19,16 +19,33 @@ public final class DebugCharts {
     private DebugCharts() {
     }
 
-    /** {@code LocalSampleLogger}: the last 240 samples, oldest first. Thread-safe. */
+    /** {@code LocalSampleLogger}: the last 240 samples, oldest first, each of one or more values. Thread-safe. */
     public static final class Samples {
         public static final int CAPACITY = 240;
-        private final long[] values = new long[CAPACITY];
+        private final long[][] values;
         private int start;
         private int size;
 
+        public Samples() {
+            this(1);
+        }
+
+        /** Samples of several values each (26.3's {@code TpsDebugDimensions}); since Core 1.4.5. */
+        public Samples(int dimensions) {
+            this.values = new long[CAPACITY][dimensions];
+        }
+
         public synchronized void log(long value) {
+            log(new long[] {value});
+        }
+
+        /** Logs one sample's values, the first being the one {@link #get(int)} reads. */
+        public synchronized void log(long... sample) {
             int at = (this.start + this.size) % CAPACITY;
-            this.values[at] = value;
+            long[] row = this.values[at];
+            for (int d = 0; d < row.length; d++) {
+                row[d] = d < sample.length ? sample[d] : 0L;
+            }
             if (this.size < CAPACITY) {
                 this.size++;
             } else {
@@ -41,10 +58,14 @@ public final class DebugCharts {
         }
 
         public synchronized long get(int i) {
+            return get(i, 0);
+        }
+
+        public synchronized long get(int i, int dimension) {
             if (i < 0 || i >= this.size) {
                 throw new IndexOutOfBoundsException(i + " out of bounds for length " + this.size);
             }
-            return this.values[(this.start + i) % CAPACITY];
+            return this.values[(this.start + i) % CAPACITY][dimension];
         }
 
         public synchronized void reset() {
@@ -56,6 +77,33 @@ public final class DebugCharts {
     /** {@code AbstractDebugChart.getWidth}: the samples and two border pixels, at most half the screen. */
     public static int width(int maxWidth) {
         return Math.min(Samples.CAPACITY + 2, maxWidth);
+    }
+
+    // ---- frame and tick times (nanoseconds; since Core 1.4.5)
+
+    /** {@code FpsDebugChart.toDisplayString} and {@code TpsDebugChart}'s: whole milliseconds. */
+    public static String msText(double nanos) {
+        return String.format(Locale.ROOT, "%d ms", (int) Math.round(nanos / 1000000.0));
+    }
+
+    /** {@code FpsDebugChart.getSampleHeight}: 60 pixels for 33.3 ms (30 fps). */
+    public static int fpsHeight(double nanos) {
+        return (int) Math.round(nanos / 1000000.0 * 60.0 / 33.333333333333336);
+    }
+
+    /** Green at 0 ms, yellow at 28, red from 56. */
+    public static int fpsColor(long nanos) {
+        return color(nanos / 1000000.0, 0.0, 0xFF00FF00, 28.0, 0xFFFFFF00, 56.0, 0xFFFF0000);
+    }
+
+    /** {@code TpsDebugChart.getSampleHeight}: 60 pixels for one tick at the target rate. */
+    public static int tpsHeight(double nanos, float msPerTick) {
+        return (int) Math.round(nanos / 1000000.0 * 60.0 / msPerTick);
+    }
+
+    /** Green at the target tick time, yellow at 1.125 times it, red from 1.25. */
+    public static int tpsColor(long nanos, float msPerTick) {
+        return color(nanos / 1000000.0, msPerTick, 0xFF00FF00, msPerTick * 1.125, 0xFFFFFF00, msPerTick * 1.25, 0xFFFF0000);
     }
 
     // ---- ping

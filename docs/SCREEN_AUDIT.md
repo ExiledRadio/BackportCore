@@ -139,7 +139,7 @@ the screen.
 | Status effect icons (top right) | 1.12.2 (sprites 1.20.2) | matches | Ambient border and the blinking at the end are 1.12.2's. | – |
 | Boss bar | 1.12.2 | matches | Same six-color sprites, notches, layout. | – |
 | Tab list | 1.12.2 (sprites 1.20.2) | matches (code) | Faces, ping bars, the health objective's hearts as in 1.12.2. | – |
-| Subtitles | 1.12.2 (Background for chat only 1.14) | partly | Text Background "Everywhere" does not reach subtitles (Core's notes). | S |
+| Subtitles | 1.12.2 (Background for chat only 1.14) | matches | Text Background "Everywhere" reaches subtitles (Core 1.4.5, P59). | – |
 | Autosave indicator | 1.18 | matches (code) | Caves & Cliffs' option. | – |
 | Title and action bar text, held item name, overlay message | 1.12.2 | matches | – | – |
 | Spectator menu and hotbar | 1.12.2 | matches | 26.3 key "Spectator Hotbar" (1.21.10) as a key bind is not checked. | S |
@@ -151,9 +151,9 @@ the screen.
 | Element | 26.3 (first) | Ours | What differs | Size |
 |---|---|---|---|---|
 | Creative inventory | 1.19.3 tabs, 26.3 order | matches | Done. 26.3's "Operator Utilities" behind Operator Items Tab, as Core has it. | – |
-| Survival inventory | 1.12.2 (effects layout 1.18 to 1.20, exact version not checked; sprites 1.20.2) | partly | 26.3 draws active effects in a column beside the inventory, compact (icon only) when there is no room for names, without moving the inventory (`EffectsInInventory`); 1.12.2 shifts the inventory right while effects are active. The recipe book (below). | M |
+| Survival inventory | 1.12.2 (effects beside it 1.18, fitted to their text 1.21.11; sprites 1.20.2) | matches | Core 1.4.5 (`InventoryEffects`, P57): the column right of the inventory, compact when names do not fit, no shift; creative too. With the recipe book open 1.12.2 hides the effects; 26.3 still draws them when there is room. | – |
 | Slot highlight | 1.21.2 | matches | P23 with the sprites supplied. | – |
-| Recipe book | 1.12.2 (1.21.2 rework) | partly | 26.3: tabs down the left, a search box with "Search..." hint, the filter toggle, the page arrows, and since 1.21.2 recipes shown from their own displays (several outputs, crafter-style ghost slots, no group overlay changes). Core gives the furnace (and blast furnace, smoker) books 1.13's. The crafting book is 1.12.2's; no search hint text. | M |
+| Recipe book | 1.12.2 (search hint 1.16, box 1.20.5, 1.21.2 rework) | partly | Core 1.4.5 (`RecipeBookLook`, P58): "Search..." and 1.20.5's box, in the crafting and furnace books. 26.3's crafting book otherwise matches 1.12.2's (tabs, filter, arrows, ghost recipe colors and cycle). 1.21.2's magnifier click too. Missing: 1.21.2's displays (several outputs per button), which 1.12.2's recipes cannot describe. | S |
 | Furnace, blast furnace, smoker | 1.13 / 1.14 | matches | Core's book, V&P's `GuiFurnaceVariant`. | – |
 | Crafting table, chest, hopper, dispenser, dropper, shulker box | 1.12.2 | matches | Textures from the layers. | – |
 | Crafter | 1.21 | matches | Tricky Trials. | – |
@@ -194,7 +194,7 @@ the screen.
 | Element | 26.3 (first) | Ours | What differs | Size |
 |---|---|---|---|---|
 | Advancement, recipe, tutorial toasts | 1.12.2 (sprites 1.20.2) | matches (code) | Art from the texture layers; 160 wide as in 1.12.2. Notification Time (below) would change how long they stay. | – |
-| System toast | 26.3 | matches | Core's `SystemToasts`; Trails & Tales' `SystemToast1205` for its own. Two drawers for one toast; worth folding into Core's. | S |
+| System toast | 26.3 | matches | Core's `SystemToasts` is the one drawer (Core 1.4.5): 26.3's ids and five slots, one line before 26.2. Trails & Tales' toasts use it with Core 1.4.5 (its own drawer stays for Core 1.4.4). | – |
 | Now Playing (Music Toast) | 1.21.6 | matches | Core. | – |
 | Narrator toast | 1.13 | matches | 1.12.2 shows it. | – |
 | Smelting recipe toast | 1.13 | matches | Core's `SmeltingToast`. | – |
@@ -218,9 +218,9 @@ the screen.
 
 | Element | 26.3 (first) | Ours | What differs | Size |
 |---|---|---|---|---|
-| F3 screen parts, Debug Options (F3 + F6), profiles | 1.21.9 | partly | Core's. Missing parts (Core's notes): tps, gpu_utilization, simple_performance_impactors, looking_at_fluid, looking_at_entity (+ tags), heightmap, sound_mood, entity_spawn_counts, chunk_generation_stats, day count, player speed, detailed memory, sound cache; and 1.21.9's arrangement of the parts into the two columns (1.12.2's order stays). C&C's 1.18 noise rows are not done. | M |
+| F3 screen parts, Debug Options (F3 + F6), profiles | 1.21.9 | partly | Core's. Core 1.4.5 adds tps, looking_at_fluid, looking_at_entity, sound_mood (1.21.9), heightmap (1.21.11), detailed_memory (26.1) and 1.21.9's two-column arrangement. Missing (no 1.12.2 source): gpu_utilization, simple_performance_impactors, chunk_generation_stats, sound_cache, entity and block tags; the cave mood needs Nether Update to call `DebugParts.setMood`. C&C's 1.18 noise rows are not done. | S |
 | Overlay GUI scale | 26.3 | matches | Core's `DebugScale`. | – |
-| Charts F3 + 1/2/3 (profiler pie, FPS, TPS, ping, bandwidth) | 1.20.2 | partly | Core's network charts. 26.3's FPS and TPS charts (`FpsDebugChart`, `TpsDebugChart`, 1.20.2's look: colored bars, min/avg/max, 30/60 lines) replace 1.12.2's lagometer on F3 + 2; ours keeps the lagometer. The profiler pie (F3 + 1) is 1.12.2's (1.20.2 moved it to the bottom right; check). | M |
+| Charts F3 + 1/2/3 (profiler pie, FPS, TPS, ping, bandwidth) | 1.20.2 | matches | Core 1.4.5 (`FrameCharts`, P60): 1.20.2's FPS and TPS charts on F3 + 2 in place of the lagometer, and the pie at the GUI scale above the charts. The TPS chart has no task or "other" share (1.12.2 does not measure them) and none for a remote server. | – |
 | F3 + Q help, F3 key binds | 1.21.11 | matches | – | – |
 | Game mode switcher | 1.16 | matches | Nether Update. | – |
 | Crash screen, "Pausing on lost focus" etc. | – | n/a | – | – |
@@ -248,10 +248,10 @@ Ordered by how often a player sees them, then by size. "S" items first within a 
 
 **Seen often**
 
-8. **Survival inventory effects** (M): 26.3's left column without shifting the inventory.
-9. **One system toast drawer** (S): Trails & Tales' `SystemToast1205` folded into Core's `SystemToasts`.
-10. **Recipe book** (M): search hint, 1.21.2's layout for the crafting book.
-11. **F3 + 2 charts** (M): 1.20.2's FPS and TPS charts in place of the lagometer.
+8. Done in Core 1.4.5: **Survival inventory effects** (M): 26.3's column right of the inventory, without shifting it.
+9. Done in Core 1.4.5: **One system toast drawer** (S): Trails & Tales' `SystemToast1205` folded into Core's `SystemToasts`.
+10. Done in Core 1.4.5 as far as 1.12.2's recipes allow: **Recipe book** (M): search hint, box, magnifier (section 6).
+11. Done in Core 1.4.5: **F3 + 2 charts** (M): 1.20.2's FPS and TPS charts in place of the lagometer.
 12. **Mouse Settings** (S): drop Touchscreen if 26.3 really has none (check first).
 13. **Copyright link and Credits & Attribution** (S).
 
@@ -264,9 +264,9 @@ Ordered by how often a player sees them, then by size. "S" items first within a 
 18. **Disconnected screen** buttons and wording (S); **Out of memory** (S).
 19. **Sign edit screen** 26.2 flat look (S, Trails & Tales); **book editor** selection and signing (M).
 20. **Check box and slider/text field/scroll bar sprites** (S each): compare side by side first.
-21. **Subtitle text background** (S).
+21. Done in Core 1.4.5: **Subtitle text background** (S).
 22. **Music & Sounds: Device** (M), **Directional Audio** (L).
-23. **Debug parts** 1.12.2 has no lines for, and 1.21.9's column arrangement (M).
+23. Done in Core 1.4.5: **Debug parts** 1.12.2 has no lines for, and 1.21.9's column arrangement (M).
 24. **Command suggestions**: argument highlighting and usage at the cursor (L, only partly possible).
 25. **Narrator for screens** (L).
 26. **End credits** from 26.3's `credits.json` (S, low value).

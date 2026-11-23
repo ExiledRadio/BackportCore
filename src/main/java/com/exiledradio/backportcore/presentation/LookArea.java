@@ -29,14 +29,15 @@ public enum LookArea {
     /** Chat: command suggestions, the chat options and look. */
     CHAT("chat", "1.13", "1.14", "1.16"),
     /** F3: the debug keys, the debug screen's lines, Debug Options and the charts. */
-    DEBUG("debug", "1.20.2", "1.21.9", "1.21.11", "26.3"),
+    DEBUG("debug", "1.20.2", "1.21.9", "1.21.11", "26.1", "26.3"),
     /** Toasts: the music toast and the newer toasts' textures. */
-    TOASTS("toasts", "1.21.6"),
+    TOASTS("toasts", "1.21.6", "26.2"),
     /**
      * Inventory and creative tabs: 1.19.3's creative tabs (creative.client.ModernTabs), the creative order (26.3's,
-     * creative.client.ModernOrder), slot highlights and the container textures.
+     * creative.client.ModernOrder), slot highlights, the active effects beside the inventory (1.18, 1.21.11), the
+     * recipe book's search box (1.16, 1.20.5) and the container textures.
      */
-    INVENTORY("inventory", "1.19.3", "1.21.2", "26.3"),
+    INVENTORY("inventory", "1.16", "1.18", "1.19.3", "1.20.5", "1.21.2", "1.21.11", "26.3"),
     /** Sounds and music: the menu music, the in-game music, the music options. */
     MUSIC("music", "1.14", "1.21.6"),
     /** Sky, fog and clouds: each version's fog, sky color, clouds and sunrise steps. */

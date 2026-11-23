@@ -327,7 +327,13 @@ change one version made stays made when only a later backport is installed:
   profiles. 1.12.2's lines are sorted into vanilla's parts (game_version, fps, chunk_render_stats,
   entity_render_stats, particle_render_stats, chunk_source_stats, player_position, player_section_position,
   light_levels, biome, local_difficulty, looking_at_block, memory, system_specs, post_effect; a line no part claims
-  belongs to the one above it, or shows with F3 like other mods' lines), keeping 1.12.2's order. The default profile
+  belongs to the one above it, or shows with F3 like other mods' lines), laid out as 1.21.9's
+  `DebugScreenOverlay`: the version top left and the frame rate top right, the plain lines (chunk stats, biome,
+  difficulty, day, spawn counts, tps, sounds, post effect) split half and half, then the groups (memory, heightmaps,
+  light, what is looked at, position, system) split by count, each part in its id's order; other mods' lines follow
+  in their own column. The parts 1.12.2 has no lines for are Core's (`DebugParts`), worded as vanilla's: tps,
+  looking_at_fluid, looking_at_entity, sound_mood (1.21.9; the mood from `DebugParts.setMood`), heightmap (1.21.11),
+  detailed_memory (26.1). The default profile
   shows what 1.21.9's does: version, fps, memory, system specs and position. Always parts show with F3 hidden. The
   renderers are parts too: 3d_crosshair, entity_hitboxes (F3 + B), chunk_borders (F3 + G) and 1.12.2's water,
   heightmap, collision box and solid face renderers. F3's combinations work in menus (not while typing), and the left
@@ -348,6 +354,19 @@ change one version made stays made when only a later backport is installed:
   `PingDebugChart`: 240 samples, 60 high, the min, avg and max above, the scale lines, the colors (`DebugCharts`).
   1.12.2's "Debug: Pie [shift] ... FPS [alt] ..." line reads 1.20.2's "Debug charts: [F3+1] Profiler hidden; [F3+2] FPS +
   TPS hidden; [F3+3] Ping hidden".
+* **F3 + 2 and F3 + 1** (1.20.2, `FrameCharts`, P60): F3 + 2 (Trails & Tales' key) shows 1.20.2's FPS chart bottom left
+  (1.12.2's frame timer, 60 high for 33.3 ms, green to yellow at 28 ms to red at 56, the 30 and 60 fps lines, the frame
+  limit's line up to 250) and, on your own server, the TPS chart bottom right (each tick start to start, `tick()`'s
+  share stacked over it, colored against `/tick rate`, the rate on top) in place of the lagometer. F3 + 1's pie is
+  1.20.2's: at the GUI scale (the overlay's own from 26.3), 105 across, above the charts.
+* **Inventory effects** (`InventoryEffects`, P57): from 1.18 the active effects stand in a column right of the
+  survival and creative inventories, 120 wide or 32 (icon only, tooltip) as the room allows, and the inventory stays
+  centered; from 1.21.11 each is as wide as its text, ambient ones on their own background. Sprites
+  `container/inventory/effect_background*` when a backport supplies them, else `inventory.png`'s background.
+* **Recipe book** (`RecipeBookLook`, P58): "Search..." in the empty search box from 1.16, the box one up and 81 wide
+  from 1.20.5, the magnifier left of it focuses it from 1.21.2; the crafting book's tabs, filter, pages and ghost recipe are 1.12.2's, which 26.3's match.
+* **System toasts** (`SystemToasts`): the family's one drawer, 26.3's `ToastManager` slots and `SystemToast` ids; one
+  line each and the first text's width before 26.2, wrapped at 200 and refitted from 26.2.
 * **F3 keys with no help line** (1.20.2): `v.debugKey(key, null, action)` puts a key in the map with no F3 + Q line, as
   1.20.2's F3 + 1, 2 and 3 have none.
 * **Narrator Hotkey** (1.20.2, P32): Core's own option `backportcore:narrator_hotkey`, last on Accessibility Settings, on
@@ -406,9 +425,10 @@ change one version made stays made when only a later backport is installed:
 
 * Biome Blend (no 1.12.2 counterpart; a backport's option of that name is placed and set by the presets), RGSS
   texture filtering, 26.x's Graphics API (Vulkan). Improved Transparency covers rain and snow only (see above).
-* The debug parts 1.12.2's screen has no lines for (tps, gpu_utilization, simple_performance_impactors,
-  looking_at_fluid, looking_at_entity, heightmap, sound_mood, entity_spawn_counts, chunk_generation_stats, the
-  other visualizers), and 1.21.9's arrangement of the parts into the two columns: 1.12.2's order stays.
+* The debug parts 1.12.2 cannot supply: gpu_utilization, simple_performance_impactors, chunk_generation_stats,
+  sound_cache, looking_at_entity_tags (no entity type tags), the block and fluid tags of 26.1, the other visualizers.
+  The TPS chart has no scheduled-task or "other" share (1.12.2's loop does not measure them) and no chart for a
+  remote server.
 * Allow Cursor Changes (LWJGL 2 has no system cursors), and slider arrow keys (1.12.2's screens have no keyboard
   focus).
 * Forge's own loading screen during the game's start stays Forge's; Core's startup screen shows as each load
@@ -419,7 +439,7 @@ change one version made stays made when only a later backport is installed:
 * Command suggestions: 1.13's red highlighting of a wrong argument and the colored arguments (1.12.2's commands do not
   describe their arguments), the usage of the argument at the cursor (the whole command's `getUsage` shows instead),
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
-* Text Background "Everywhere" reaches the chat input box, not name tags or subtitles.
+* Text Background "Everywhere" reaches the chat input box and subtitles (P59), not name tags.
 * Key Binds, Online and Font Settings screens.
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
   rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers and header-and-footer layouts (1.12.2's screens

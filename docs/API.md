@@ -915,6 +915,25 @@ Presentation.version("1.14")
 Everything, with how each piece resolves, is in `docs/PRESENTATION.md`; what to check in game is in
 `docs/PRESENTATION_CHECKLIST.md`. Patches P6 (title panorama) and P7 (F3 keys) are in `docs/PATCHES.md`.
 
+### System toasts (`presentation.client.SystemToasts`, 1.4.5)
+
+The family's one system toast drawer (26.3's `SystemToast` in `ToastManager`'s slots, each version's look). Client
+thread only.
+
+```java
+SystemToasts.addOrUpdate(SystemToasts.Id.LOW_DISK_SPACE, I18n.format("chunk.toast.lowDiskSpace"),
+        I18n.format("chunk.toast.lowDiskSpace.description"));     // or add(...) for a new toast each time
+SystemToasts.Toast t = SystemToasts.get(SystemToasts.Id.LOW_DISK_SPACE); // title(), message(), width(), height()
+```
+
+`Id` holds 26.3's ids with their display times (`new Id("mymod:thing", 8000L)` for one of your own); `forceHide(id)`
+slides one out, `clear()` drops all. `notificationTime` is the multiplier a Notification Time option sets. A mod that
+must also run on Core 1.4.4 can reach these by reflection, as Trails & Tales' `SystemToast1205` does.
+
+### Debug parts (`presentation.client.DebugParts`, 1.4.5)
+
+`DebugParts.setMood(() -> mood)`: a backport with 1.16's cave mood hands its value (0 to 1) to the `sound_mood` line.
+
 ## Creative tabs (`creative.CreativePlacement`, 1.1.0)
 
 A backport has no creative tab of its own. Each block or item goes in the vanilla tab it has in 1.19.2 (the

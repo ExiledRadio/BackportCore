@@ -303,6 +303,63 @@ public final class VanillaRevisions {
         }
     }
 
+    // ---- Since Core 1.4.5: inventories, the recipe book, F3 + 2, the debug screen's newer parts ----
+
+    /**
+     * 1.18 (21w37a, {@code EffectRenderingInventoryScreen}): the active effects in a column right of the inventory
+     * ({@code leftPos + imageWidth + 2}), 120 wide with names when 120 fit, 32 wide (icon only, the name and time
+     * in a tooltip) when only 32 fit, none when less; the inventory stays centered (1.12.2 moved it right and drew the
+     * effects left of it). 1.17.1 still had 1.12.2's.
+     */
+    public static boolean effectsBesideInventory() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.18");
+    }
+
+    /**
+     * 1.21.11 ({@code EffectsInInventory}): each effect's background is as wide as its name or time (a nine-slice
+     * sprite, edges 4), at most the room left less 7, names cut to fit with the tooltip then, and ambient effects on
+     * their own background. 1.21.10 still had 1.18's two widths.
+     */
+    public static boolean effectsFitText() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.21.11");
+    }
+
+    /** 1.16 ({@code RecipeBookComponent.SEARCH_HINT}): the recipe book's empty, unfocused search box shows "Search..." in gray italics. */
+    public static boolean recipeSearchHint() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.16");
+    }
+
+    /** 1.20.5: the recipe book's search box one pixel higher ({@code yo + 13}, 1.12.2's {@code j + 14}). */
+    public static boolean recipeSearchBoxRaised() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.20.5");
+    }
+
+    /**
+     * 1.21.2 ({@code RecipeBookComponent.magnifierIconPlacement}, with the recipe book rework; in 1.21.4's code, not in
+     * 1.20.6's): a click on the magnifier left of the recipe book's search box focuses the box.
+     */
+    public static boolean recipeMagnifier() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.21.2");
+    }
+
+    /**
+     * 1.20.2 (23w31a, {@code FpsDebugChart}, {@code TpsDebugChart}): F3 + 2 shows the frame time chart bottom left and,
+     * on this game's own server, the tick time chart bottom right (1.12.2's lagometer is gone), and the profiler pie
+     * (F3 + 1) is drawn at the GUI scale above them ({@code ProfilerPieChart}, radius 105).
+     */
+    public static boolean debugFrameCharts() {
+        return Presentation.isAtLeast(LookArea.DEBUG, "1.20.2");
+    }
+
+    /**
+     * 26.2 ({@code SystemToast.recalculateWidth}): a system toast splits its title as well as its message at 200 pixels
+     * and is {@code max(160, widest line) + 30} wide, again whenever its text changes; 26.1 and before had one line
+     * each, {@code max(160, 30 + widest)} wide from the first text.
+     */
+    public static boolean systemToastRewrap() {
+        return Presentation.isAtLeast(LookArea.TOASTS, "26.2");
+    }
+
     /** @return the color a button's label is drawn in, given 1.12.2's ({@code GuiButton.drawButton}) */
     public static int buttonTextColor(int vanilla) {
         if ((vanilla == 0xE0E0E0 || vanilla == 0xFFFFA0) && whiteButtonText()) {
