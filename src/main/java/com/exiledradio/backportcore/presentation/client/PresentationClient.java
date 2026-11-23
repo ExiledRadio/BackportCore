@@ -60,7 +60,13 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new EditWorldScreen.Events());
         NetworkCharts.init();
         ModernDebugLines.init();
+        DebugParts.init();
+        MinecraftForge.EVENT_BUS.register(new DebugParts.Events());
         MinecraftForge.EVENT_BUS.register(new NetworkCharts.Events());
+        MinecraftForge.EVENT_BUS.register(new FrameCharts.Events());
+        MinecraftForge.EVENT_BUS.register(new FrameCharts.ServerEvents());
+        MinecraftForge.EVENT_BUS.register(new InventoryEffects.Events());
+        MinecraftForge.EVENT_BUS.register(new RecipeBookLook.Events());
         DebugScreen.init();
         RenderOptions.init();
         com.exiledradio.backportcore.presentation.Presentation.EXCLUSIVE_FULLSCREEN.onChange(on -> BorderlessFullscreen.optionChanged(Minecraft.getMinecraft()));

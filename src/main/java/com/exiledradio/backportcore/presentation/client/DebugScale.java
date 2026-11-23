@@ -120,6 +120,12 @@ public final class DebugScale {
         return new int[] {mc.displayWidth / s, mc.displayHeight / s, s};
     }
 
+    /** @return the debug overlay's width and height: at its own scale when that is smaller, else the GUI's. Since 1.4.5. */
+    public static int[] size(Minecraft mc, ScaledResolution res) {
+        int s = now(mc);
+        return s > 0 ? new int[] {mc.displayWidth / s, mc.displayHeight / s} : new int[] {res.getScaledWidth(), res.getScaledHeight()};
+    }
+
     static void end() {
         GlStateManager.popMatrix();
     }

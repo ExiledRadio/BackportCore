@@ -418,4 +418,30 @@ public final class PresentationHooks {
         net.minecraft.client.renderer.GlStateManager.resetColor();
         net.minecraft.client.renderer.GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
     }
+
+    // ---- Since Core 1.4.5: P57 to P60 ----
+
+    /** P57: {@code InventoryEffectRenderer.drawScreen}'s {@code drawActivePotionEffects()}. */
+    public static void inventoryEffects(net.minecraft.client.renderer.InventoryEffectRenderer gui) {
+        InventoryEffects.draw(gui);
+    }
+
+    /** P58: {@code GuiRecipeBook.render}'s {@code searchBar.drawTextBox()}, with 1.16's hint and 1.20.5's position. */
+    public static void recipeSearchBox(net.minecraft.client.gui.GuiTextField box) {
+        RecipeBookLook.drawSearchBox(box);
+    }
+
+    /** For the client self-test: subtitle boxes drawn through P59. */
+    public static volatile int subtitleBoxes;
+
+    /** P59: {@code GuiSubtitleOverlay}'s box color ({@code 0xCC000000}); 1.14's Text Background: Everywhere. */
+    public static int subtitleBoxColor(int vanilla) {
+        subtitleBoxes++;
+        return ChatRenderer.boxColor(vanilla);
+    }
+
+    /** P60: {@code Minecraft.runGameLoop}'s {@code displayDebugInfo(elapsed)}: 1.20.2's profiler pie, or 1.12.2's. */
+    public static void profilerPie(Minecraft mc, long elapsed) {
+        FrameCharts.profilerPie(mc, elapsed);
+    }
 }

@@ -114,6 +114,18 @@ public final class DebugEntries {
     public static final String HEIGHTMAP = "visualize_heightmap";
     public static final String COLLISION_BOXES = "visualize_collision_boxes";
     public static final String SOLID_FACES = "visualize_solid_faces";
+    /** 1.21.9: the server's tick time and the connection's packets ({@link DebugParts}). */
+    public static final String TPS = "tps";
+    /** 1.21.9: "Targeted Fluid" and its state. */
+    public static final String LOOKING_AT_FLUID = "looking_at_fluid";
+    /** 1.21.9: "Targeted Entity" and its id. */
+    public static final String LOOKING_AT_ENTITY = "looking_at_entity";
+    /** 1.21.9: "Sounds: ..." and the cave mood. */
+    public static final String SOUND_MOOD = "sound_mood";
+    /** 1.21.11: the client's and the server's heightmaps (the text; {@link #HEIGHTMAP} is the renderer). */
+    public static final String HEIGHTMAP_TEXT = "heightmap";
+    /** 26.1: the heap and non-heap memory. */
+    public static final String DETAILED_MEMORY = "detailed_memory";
 
     /** The entries, in vanilla's order (text by id, then renderers by id). */
     public static final List<Entry> ENTRIES = Collections.unmodifiableList(Arrays.asList(
@@ -121,20 +133,26 @@ public final class DebugEntries {
             new Entry(CHUNK_RENDER_STATS, false, true),
             new Entry(CHUNK_SOURCE_STATS, false, true),
             new Entry(DAY_COUNT, false, false, "26.1"),
+            new Entry(DETAILED_MEMORY, false, true, "26.1"),
             new Entry(ENTITY_RENDER_STATS, false, true),
             new Entry(ENTITY_SPAWN_COUNTS, false, false),
             new Entry(FPS, false, true),
             new Entry(GAME_VERSION, false, true),
+            new Entry(HEIGHTMAP_TEXT, false, false, "1.21.11"),
             new Entry(LIGHT_LEVELS, false, false),
             new Entry(LOCAL_DIFFICULTY, false, false),
             new Entry(LOOKING_AT_BLOCK, false, false),
+            new Entry(LOOKING_AT_ENTITY, false, false),
+            new Entry(LOOKING_AT_FLUID, false, false),
             new Entry(MEMORY, false, true),
             new Entry(PARTICLE_RENDER_STATS, false, true),
             new Entry(PLAYER_POSITION, false, false),
             new Entry(PLAYER_SECTION_POSITION, false, true),
             new Entry(PLAYER_SPEED, false, false, "26.1"),
             new Entry(POST_EFFECT, false, false),
+            new Entry(SOUND_MOOD, false, false),
             new Entry(SYSTEM_SPECS, false, true),
+            new Entry(TPS, false, true),
             new Entry(THREE_DIMENSIONAL_CROSSHAIR, true, false),
             new Entry(CHUNK_BORDERS, true, false),
             new Entry(ENTITY_HITBOXES, true, false),
@@ -351,6 +369,15 @@ public final class DebugEntries {
         if (s.startsWith("Shader:")) {
             return POST_EFFECT;
         }
+        if (s.startsWith("Integrated server @ ") || s.startsWith("\"") && s.contains("\" server")) {
+            return TPS;
+        }
+        if (s.startsWith("Sounds: ")) {
+            return SOUND_MOOD;
+        }
+        if (s.startsWith("CH S: ") || s.startsWith("SH S: ")) {
+            return HEIGHTMAP_TEXT;
+        }
         if (s.startsWith("Looking at")) {
             return LOOKING_AT_BLOCK;
         }
@@ -365,7 +392,16 @@ public final class DebugEntries {
         if (s.startsWith("CPU:") || s.startsWith("Display:")) {
             return SYSTEM_SPECS;
         }
-        if (s.equals(lookedAtBlock) || s.startsWith("Targeted ")) {
+        if (s.startsWith("Memory (heap)") || s.startsWith("Memory (non-heap)")) {
+            return DETAILED_MEMORY;
+        }
+        if (s.contains("Targeted Fluid")) {
+            return LOOKING_AT_FLUID;
+        }
+        if (s.contains("Targeted Entity")) {
+            return LOOKING_AT_ENTITY;
+        }
+        if (s.equals(lookedAtBlock) || s.startsWith("Targeted ") || s.contains("Targeted Block")) {
             return LOOKING_AT_BLOCK;
         }
         return null;
@@ -391,6 +427,142 @@ public final class DebugEntries {
             out.remove(out.size() - 1);
         }
         return out;
+    }
+
+    /** How 1.21.9's entries add their lines ({@code DebugScreenDisplayer}): alternating priority lines, plain lines, or a group. */
+    static final Map<String, String> KINDS = new LinkedHashMap<String, String>();
+
+    static {
+        KINDS.put(GAME_VERSION, "!");
+        KINDS.put(FPS, "!");
+        for (String id : new String[] {BIOME, CHUNK_RENDER_STATS, CHUNK_SOURCE_STATS, DAY_COUNT, ENTITY_RENDER_STATS, ENTITY_SPAWN_COUNTS,
+                LOCAL_DIFFICULTY, PARTICLE_RENDER_STATS, POST_EFFECT, SOUND_MOOD, TPS}) {
+            KINDS.put(id, "");
+        }
+        KINDS.put(DETAILED_MEMORY, "memory");
+        KINDS.put(MEMORY, "memory");
+        KINDS.put(HEIGHTMAP_TEXT, "heightmaps");
+        KINDS.put(LIGHT_LEVELS, "light");
+        KINDS.put(LOOKING_AT_BLOCK, "looking_at_block");
+        KINDS.put(LOOKING_AT_ENTITY, "looking_at_entity");
+        KINDS.put(LOOKING_AT_FLUID, "looking_at_fluid");
+        KINDS.put(PLAYER_POSITION, "position");
+        KINDS.put(PLAYER_SECTION_POSITION, "position");
+        KINDS.put(PLAYER_SPEED, "position");
+        KINDS.put(SYSTEM_SPECS, "system");
+    }
+
+    /**
+     * 1.21.9's arrangement ({@code DebugScreenOverlay.extractRenderState}): the parts that show, in their ids' order,
+     * each adding its lines as vanilla's entry does: the version and the frame rate as priority lines (left, then
+     * right), the plain lines split half and half (left first), then the groups (memory, heightmaps, light, what is
+     * looked at, position, system) split by count, left first, a blank line after each. Lines no part claims (other
+     * mods') follow in their own column. {@code entries} are {@link #classify}'s.
+     */
+    static void arrange(List<String> left, List<String> leftIds, List<String> right, List<String> rightIds, boolean overlayVisible,
+            boolean reduced, List<String> outLeft, List<String> outRight) {
+        Map<String, List<String>> blocks = new LinkedHashMap<String, List<String>>();
+        List<String> otherLeft = new ArrayList<String>();
+        List<String> otherRight = new ArrayList<String>();
+        collect(left, leftIds, blocks, otherLeft, overlayVisible);
+        collect(right, rightIds, blocks, otherRight, overlayVisible);
+        List<String> regular = new ArrayList<String>();
+        Map<String, List<String>> groups = new LinkedHashMap<String, List<String>>();
+        List<String> ids = new ArrayList<String>(blocks.keySet());
+        java.util.Collections.sort(ids);
+        for (String id : ids) {
+            List<String> lines = blocks.get(id);
+            if (!enabled(id, overlayVisible, reduced) || lines.isEmpty()) {
+                continue;
+            }
+            String kind = KINDS.get(id);
+            if ("!".equals(kind)) {
+                for (String line : lines) {
+                    (outLeft.size() > outRight.size() ? outRight : outLeft).add(line);
+                }
+            } else if (kind == null || kind.isEmpty()) {
+                regular.addAll(lines);
+            } else {
+                List<String> g = groups.get(kind);
+                if (g == null) {
+                    g = new ArrayList<String>();
+                    groups.put(kind, g);
+                }
+                g.addAll(lines);
+            }
+        }
+        if (!outLeft.isEmpty()) {
+            outLeft.add("");
+        }
+        if (!outRight.isEmpty()) {
+            outRight.add("");
+        }
+        if (!regular.isEmpty()) {
+            int mid = (regular.size() + 1) / 2;
+            outLeft.addAll(regular.subList(0, mid));
+            outRight.addAll(regular.subList(mid, regular.size()));
+            outLeft.add("");
+            if (mid < regular.size()) {
+                outRight.add("");
+            }
+        }
+        List<List<String>> all = new ArrayList<List<String>>(groups.values());
+        int mid = (all.size() + 1) / 2;
+        for (int i = 0; i < all.size(); i++) {
+            List<String> target = i < mid ? outLeft : outRight;
+            target.addAll(all.get(i));
+            target.add("");
+        }
+        appendOther(outLeft, otherLeft);
+        appendOther(outRight, otherRight);
+        trim(outLeft);
+        trim(outRight);
+    }
+
+    /** Each claimed line into its entry's block (separators dropped); unclaimed lines, while F3 shows, kept apart. */
+    private static void collect(List<String> lines, List<String> ids, Map<String, List<String>> blocks, List<String> other, boolean overlayVisible) {
+        for (int i = 0; i < lines.size(); i++) {
+            String id = ids.get(i);
+            String line = lines.get(i);
+            if ("".equals(id) || line == null) {
+                if (!other.isEmpty() && !"".equals(other.get(other.size() - 1))) {
+                    other.add("");
+                }
+                continue;
+            }
+            if (id == null) {
+                if (overlayVisible) {
+                    other.add(line);
+                }
+                continue;
+            }
+            List<String> b = blocks.get(id);
+            if (b == null) {
+                b = new ArrayList<String>();
+                blocks.put(id, b);
+            }
+            b.add(line);
+        }
+    }
+
+    private static void appendOther(List<String> column, List<String> other) {
+        trim(other);
+        while (!other.isEmpty() && "".equals(other.get(0))) {
+            other.remove(0);
+        }
+        if (other.isEmpty()) {
+            return;
+        }
+        if (!column.isEmpty() && !"".equals(column.get(column.size() - 1))) {
+            column.add("");
+        }
+        column.addAll(other);
+    }
+
+    private static void trim(List<String> column) {
+        while (!column.isEmpty() && "".equals(column.get(column.size() - 1))) {
+            column.remove(column.size() - 1);
+        }
     }
 
     /** 1.12.2's help line at the left's end, which 1.21.9's "To edit" line replaces (its chart line stays). */
@@ -420,8 +592,11 @@ public final class DebugEntries {
             }
         }
         left.remove(charts);
-        List<String> l = filter(left, classify(left, true, fps, source, null), overlayVisible, reduced);
-        List<String> r = filter(right, classify(right, false, null, null, block), overlayVisible, reduced);
+        List<String> leftIds = classify(left, true, fps, source, null);
+        List<String> rightIds = classify(right, false, null, null, block);
+        List<String> l = new ArrayList<String>();
+        List<String> r = new ArrayList<String>();
+        arrange(left, leftIds, right, rightIds, overlayVisible, reduced, l, r);
         if (overlayVisible) {
             if (!l.isEmpty()) {
                 l.add("");

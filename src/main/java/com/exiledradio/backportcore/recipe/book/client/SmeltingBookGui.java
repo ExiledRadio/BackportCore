@@ -341,7 +341,7 @@ public class SmeltingBookGui extends Gui {
         int i = (this.width - 147) / 2 - this.xOffset;
         int j = (this.height - 166) / 2;
         this.drawTexturedModalRect(i, j, 1, 1, 147, 166);
-        this.searchBar.drawTextBox();
+        com.exiledradio.backportcore.presentation.client.RecipeBookLook.drawSearchBox(this.searchBar);
         RenderHelper.disableStandardItemLighting();
         for (TabButton t : this.tabs) {
             t.drawButton(this.mc, mouseX, mouseY, partialTicks);
@@ -486,7 +486,8 @@ public class SmeltingBookGui extends Gui {
         if (button != 0) {
             return false;
         }
-        if (this.searchBar.mouseClicked(mouseX, mouseY, button)) {
+        if (com.exiledradio.backportcore.presentation.client.RecipeBookLook.magnifierClick(this.searchBar, mouseX, mouseY)
+                || this.searchBar.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }
         if (this.toggleRecipesBtn.mousePressed(this.mc, mouseX, mouseY)) {

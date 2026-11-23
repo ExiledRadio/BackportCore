@@ -113,3 +113,4 @@ options.quitShortcuts.tooltip = options.quitShortcuts.tooltip
 options.ctrlClickEmulatesRightClick.tooltip = options.ctrlClickEmulatesRightClick.tooltip
 options.directionalAudio.on.tooltip = options.directionalAudio.on.tooltip
 options.directionalAudio.off.tooltip = options.directionalAudio.off.tooltip
+gui.recipebook.search_hint = gui.recipebook.search_hint

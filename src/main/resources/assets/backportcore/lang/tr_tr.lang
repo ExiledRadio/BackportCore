@@ -253,6 +253,7 @@ editGamerule.inGame.discardChanges.title=Oyun Kuralı Değişiklikleri
 editGamerule.inGame.discardChanges.message=Beklenen oyun kuralı değişikliklerinizi iptal etmek istediğinizden emin misiniz?
 editGamerule.inGame.downloadingGamerules=Oyun kuralları alınıyor
 gui.game_rule.search=Ara...
+gui.recipebook.search_hint=Ara...
 selectWorld.gameRules=Oyun Kuralları
 selectWorld.edit.optimize=Dünyayı Optimize Et
 optimizeWorld.confirm.title=Dünyayı Akıcı Duruma Getir

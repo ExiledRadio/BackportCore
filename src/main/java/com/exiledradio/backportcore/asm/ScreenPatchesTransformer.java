@@ -65,6 +65,14 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
                 return slider(transformedName, basicClass, 2);
             case "net.minecraftforge.fml.client.config.GuiSlider":
                 return slider(transformedName, basicClass, 1);
+            case "net.minecraft.client.renderer.InventoryEffectRenderer":
+                return inventoryEffects(basicClass);
+            case "net.minecraft.client.gui.recipebook.GuiRecipeBook":
+                return recipeBook(basicClass);
+            case "net.minecraft.client.gui.GuiSubtitleOverlay":
+                return subtitles(basicClass);
+            case "net.minecraft.client.Minecraft":
+                return profilerPie(basicClass);
             default:
                 return basicClass;
         }
@@ -239,5 +247,84 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
     private static void withThis(MethodNode m, org.objectweb.asm.tree.AbstractInsnNode constant, String hook, String desc) {
         m.instructions.insertBefore(constant, new org.objectweb.asm.tree.VarInsnNode(Opcodes.ALOAD, 0));
         m.instructions.insert(constant, new org.objectweb.asm.tree.MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, hook, desc, false));
+    }
+
+    // ---- Since Core 1.4.5 ----
+
+    private static byte[] inventoryEffects(byte[] bytes) {
+        String what = "inventory effects (InventoryEffectRenderer.drawScreen)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode draw = Asm.method(node, "drawScreen", "func_73863_a", "(IIF)V");
+        if (draw == null) {
+            Asm.skipped("P57", what, "drawScreen not found");
+            return bytes;
+        }
+        String owner = "net/minecraft/client/renderer/InventoryEffectRenderer";
+        java.util.List<org.objectweb.asm.tree.MethodInsnNode> calls = Asm.privateCalls(draw, owner, "drawActivePotionEffects", "func_147044_g", "()V");
+        if (calls.size() != 1) {
+            Asm.skipped("P57", what, "unexpected shape (" + calls.size() + " drawActivePotionEffects calls)");
+            return bytes;
+        }
+        draw.instructions.set(calls.get(0), new org.objectweb.asm.tree.MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS,
+                "inventoryEffects", "(L" + owner + ";)V", false));
+        Asm.applied("P57", what);
+        return Asm.write(node);
+    }
+
+    private static byte[] recipeBook(byte[] bytes) {
+        String what = "recipe book search box (GuiRecipeBook.render)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode render = Asm.method(node, "render", "func_191861_a", "(IIF)V");
+        if (render == null) {
+            Asm.skipped("P58", what, "render not found");
+            return bytes;
+        }
+        String field = "net/minecraft/client/gui/GuiTextField";
+        int n = Asm.calls(render, Opcodes.INVOKEVIRTUAL, field, "drawTextBox", "func_146194_f", "()V").size();
+        if (n != 1) {
+            Asm.skipped("P58", what, "unexpected shape (" + n + " drawTextBox calls)");
+            return bytes;
+        }
+        Asm.swapCalls(render, Opcodes.INVOKEVIRTUAL, field, "drawTextBox", "func_146194_f", "()V", "recipeSearchBox", "(L" + field + ";)V");
+        Asm.applied("P58", what);
+        return Asm.write(node);
+    }
+
+    private static byte[] subtitles(byte[] bytes) {
+        String what = "subtitle background (GuiSubtitleOverlay.renderSubtitles)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode render = Asm.method(node, "renderSubtitles", "func_184068_a", "(Lnet/minecraft/client/gui/ScaledResolution;)V");
+        if (render == null) {
+            Asm.skipped("P59", what, "renderSubtitles not found");
+            return bytes;
+        }
+        int box = Asm.constants(render, -872415232).size();
+        if (box != 1) {
+            Asm.skipped("P59", what, "unexpected shape (" + box + " box colors)");
+            return bytes;
+        }
+        Asm.wrapConstants(render, -872415232, "subtitleBoxColor", "(I)I");
+        Asm.applied("P59", what);
+        return Asm.write(node);
+    }
+
+    private static byte[] profilerPie(byte[] bytes) {
+        String what = "profiler pie (Minecraft.runGameLoop)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode loop = Asm.method(node, "runGameLoop", "func_71411_J", "()V");
+        if (loop == null) {
+            Asm.skipped("P60", what, "runGameLoop not found");
+            return bytes;
+        }
+        String mc = "net/minecraft/client/Minecraft";
+        java.util.List<org.objectweb.asm.tree.MethodInsnNode> calls = Asm.privateCalls(loop, mc, "displayDebugInfo", "func_71366_a", "(J)V");
+        if (calls.size() != 1) {
+            Asm.skipped("P60", what, "unexpected shape (" + calls.size() + " displayDebugInfo calls)");
+            return bytes;
+        }
+        loop.instructions.set(calls.get(0), new org.objectweb.asm.tree.MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS,
+                "profilerPie", "(L" + mc + ";J)V", false));
+        Asm.applied("P60", what);
+        return Asm.write(node);
     }
 }
