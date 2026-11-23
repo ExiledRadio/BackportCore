@@ -680,7 +680,9 @@ StructurePlacements.isAtLeast("1.16");   // the newest of this table's and the p
   no registration: the strongholds' and spawn point's biome search (patch P8), the villages' biome point (P9),
   the hills layer's river noise seeded with the world seed, 1.12.2's temples on four grids (`ModernTemples`,
   with `/locate Temple` finding any of them), the monument's squares from block (9, 9) (`ModernMonument`, only
-  where the overworld still has vanilla's generator) and the stronghold biome rulings. From 1.15, 1.15's
+  where the overworld still has vanilla's generator; in a Realistic Terrain Generation world it also needs deep
+  water there, `MonumentTerrain.deepEnough`, which a backport's own monument rule can call too) and the stronghold
+  biome rulings. From 1.15, 1.15's
   block-scale biome zoom (`FuzzyZoomLayer`). With Core alone none of it runs.
 - Checked with `tools/vanilla-oracle` (vanilla 1.12.2, 1.13.2, 1.14.4, 1.15.2 and 1.16.5 against
   `seedcheck.OverworldDump` on a real server).

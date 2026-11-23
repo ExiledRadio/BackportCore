@@ -134,6 +134,18 @@ if (project.hasProperty('selftest')) {
 			include 'com/exiledradio/backportcore/selftest/deepwater/**'
 		}
 	}
+
+	// Where monuments go against the terrain, for a real server beside Core and other mods (Realistic Terrain
+	// Generation): see selftest/monument/MonumentCheck. `gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`.
+	task monumentCheckJar(type: Jar) {
+		classifier = 'monumentcheck'
+		from(sourceSets.main.output) {
+			include 'com/exiledradio/backportcore/selftest/monument/**'
+		}
+	}
+	reobf {
+		monumentCheckJar { mappingType = 'SEARGE' }
+	}
 } else {
 	// Gradle's copy into build/resources keeps files a selftest run left there, so the jars leave
 	// them out by name as well.
