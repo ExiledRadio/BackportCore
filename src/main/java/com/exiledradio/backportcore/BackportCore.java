@@ -24,7 +24,8 @@ import org.apache.logging.log4j.Logger;
 /**
  * Backport Core - the code and assets the update backports share.
  *
- * <p>It adds no blocks, items or entities. What it holds (see {@code docs/API.md}):
+ * <p>Its own blocks are only today's jigsaw block ({@code block.CoreBlocks}); its entities are the family's boats.
+ * What it holds (see {@code docs/API.md}):
  * <ul>
  * <li>{@code client.ModernTextures} - vanilla's textures as the newest installed backport's version has them, and the switch back to
  * 1.12.2's look ({@code textures.modernTextures}).</li>
@@ -123,6 +124,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.presentation.PingNetwork.init();
         // 1.20.3's /tick: the rate and the frozen state reach the client (command/tick/).
         com.exiledradio.backportcore.command.tick.TickNetwork.init();
+        // Today's jigsaw block: its screen's two packets (block/).
+        com.exiledradio.backportcore.block.JigsawNetwork.init();
         // 26.3's /swing: the animation and its duration reach the client (command/swing/).
         com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());

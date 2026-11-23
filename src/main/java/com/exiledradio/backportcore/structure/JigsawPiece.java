@@ -31,6 +31,8 @@ public class JigsawPiece extends StructureComponent {
     protected Rotation pieceRotation = Rotation.NONE;
     /** Today's placement pivot: the middle of the structure's first piece at its floor. */
     protected BlockPos pivot = BlockPos.ORIGIN;
+    /** Today's {@code keepJigsaws} (a jigsaw block's Generate): jigsaw blocks stay, not turned into their final state. */
+    protected boolean keepJigsaws;
 
     /** For loading only. */
     public JigsawPiece() {
@@ -67,6 +69,15 @@ public class JigsawPiece extends StructureComponent {
 
     void setPivot(BlockPos pivot) {
         this.pivot = pivot;
+    }
+
+    /** @return whether the piece places its jigsaw blocks as they are (not saved: a jigsaw block's Generate sets it) */
+    public boolean keepJigsaws() {
+        return this.keepJigsaws;
+    }
+
+    public void setKeepJigsaws(boolean keepJigsaws) {
+        this.keepJigsaws = keepJigsaws;
     }
 
     @Override

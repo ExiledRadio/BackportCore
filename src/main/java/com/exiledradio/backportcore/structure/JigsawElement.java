@@ -216,7 +216,8 @@ public abstract class JigsawElement {
         void place(World world, BlockPos pos, Rotation rotation, StructureBoundingBox clip, Random random, BlockPos pivot,
                    IntBinaryOperator surface, JigsawPiece piece) {
             ModernTemplate template = loadTemplate();
-            TemplatePlacement placement = TemplatePlacement.of(rotation, Mirror.NONE).clip(clip).finalizeEntities(true);
+            TemplatePlacement placement = TemplatePlacement.of(rotation, Mirror.NONE).clip(clip).finalizeEntities(true)
+                    .keepJigsaws(piece != null && piece.keepJigsaws());
             for (TemplateProcessor processor : this.processors.build(pivot)) {
                 placement.processor(processor);
             }

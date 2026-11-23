@@ -1,0 +1,25 @@
+{
+    "parent": "block/block",
+    "textures": {
+        "particle": "backportcore:blocks/jigsaw_top",
+        "down": "backportcore:blocks/jigsaw_side",
+        "up": "backportcore:blocks/jigsaw_lock",
+        "north": "backportcore:blocks/jigsaw_top",
+        "south": "backportcore:blocks/jigsaw_bottom",
+        "west": "backportcore:blocks/jigsaw_side",
+        "east": "backportcore:blocks/jigsaw_side"
+    },
+    "elements": [
+        {   "from": [ 0, 0, 0 ],
+            "to": [ 16, 16, 16 ],
+            "faces": {
+                "down":  { "texture": "#down", "cullface": "down", "rotation": 180 },
+                "up":    { "texture": "#up", "cullface": "up" },
+                "north": { "texture": "#north", "cullface": "north" },
+                "south": { "texture": "#south", "cullface": "south" },
+                "west":  { "texture": "#west", "cullface": "west", "rotation": 270 },
+                "east":  { "texture": "#east", "cullface": "east", "rotation": 90 }
+            }
+        }
+    ]
+}

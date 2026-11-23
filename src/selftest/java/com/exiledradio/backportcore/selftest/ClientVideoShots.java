@@ -3,6 +3,13 @@ package com.exiledradio.backportcore.selftest;
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.CoreConfig;
 import com.exiledradio.backportcore.asm.Asm;
+import com.exiledradio.backportcore.block.BlockJigsaw;
+import com.exiledradio.backportcore.block.CoreBlocks;
+import com.exiledradio.backportcore.block.FrontAndTop;
+import com.exiledradio.backportcore.block.JigsawNetwork;
+import com.exiledradio.backportcore.block.TileEntityJigsaw;
+import com.exiledradio.backportcore.block.client.JigsawClient;
+import com.exiledradio.backportcore.block.client.JigsawScreen;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.client.FullscreenModes;
@@ -47,7 +54,7 @@ import java.util.function.Supplier;
  * Video Settings additions at a dummy 26.3. Video Settings (Display with Exclusive Fullscreen Mode, Quality &amp;
  * Performance with Chunk Builder, Simulation Distance and Improved Transparency), the mode list, the Chunk Builder and
  * its config as one setting, the option reaching the game's own server, and a world in the rain over water with
- * Improved Transparency off and on. Saves {@code screenshots/video-*.png}, logs {@code VIDEO SHOTS DONE pass=N fail=M}
+ * Improved Transparency off and on, and today's jigsaw screen (Core 1.4.5). Saves {@code screenshots/video-*.png}, logs {@code VIDEO SHOTS DONE pass=N fail=M}
  * and closes the game. The monitor's mode is never changed.
  */
 @SideOnly(Side.CLIENT)
@@ -152,6 +159,108 @@ final class ClientVideoShots {
             return true;
         });
         add(null, () -> mc.world != null && mc.player != null && ++this.waited > 4);
+        // Today's jigsaw block (Core 1.4.5): two in front of the player, one facing up (Joint Type shown), one north.
+        add(null, () -> {
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            mc.gameSettings.pauseOnLostFocus = false;
+            this.jigsawAt = new BlockPos(p.posX, 200, p.posZ).add(3, 0, 3);
+            BlockPos at = this.jigsawAt;
+            onServer(mc, () -> {
+                // An operator: the world has no cheats.
+                mc.getIntegratedServer().getPlayerList().addOp(p.getGameProfile());
+                WorldServer w = mc.getIntegratedServer().getWorld(0);
+                w.setBlockState(at, CoreBlocks.jigsaw.getDefaultState().withProperty(BlockJigsaw.ORIENTATION, FrontAndTop.UP_NORTH), 3);
+                TileEntityJigsaw te = (TileEntityJigsaw) w.getTileEntity(at);
+                te.setPool("minecraft:village/plains/streets");
+                te.setName("minecraft:building_entrance");
+                te.setTarget("minecraft:street");
+                te.setFinalState("minecraft:dirt_path");
+                te.setJoint(TileEntityJigsaw.Joint.ALIGNED);
+                te.setSelectionPriority(2);
+                te.setPlacementPriority(1);
+                te.markDirty();
+                w.notifyBlockUpdate(at, w.getBlockState(at), w.getBlockState(at), 3);
+                w.setBlockState(at.east(2), CoreBlocks.jigsaw.getDefaultState().withProperty(BlockJigsaw.ORIENTATION, FrontAndTop.NORTH_UP), 3);
+            });
+            return true;
+        });
+        add(null, () -> pause(3));
+        add(null, () -> {
+            check("jigsaw: the player may use operator blocks", mc.player.canUseCommandBlock());
+            this.waited = 0;
+            return true;
+        });
+        add("jigsaw-screen", () -> {
+            JigsawClient.open(this.jigsawAt);
+            if (mc.currentScreen instanceof JigsawScreen) {
+                this.waited = 0;
+                return true;
+            }
+            if (++this.waited > 5) {
+                check("jigsaw: the screen opens", false, mc.currentScreen);
+                return true;
+            }
+            return false;
+        });
+        add(null, () -> {
+            JigsawScreen s = (JigsawScreen) mc.currentScreen;
+            int cx = s.width / 2;
+            check("jigsaw screen: the block's fields", "minecraft:village/plains/streets".equals(s.poolEdit.getText())
+                    && "minecraft:building_entrance".equals(s.nameEdit.getText()) && "minecraft:street".equals(s.targetEdit.getText())
+                    && "minecraft:dirt_path".equals(s.finalStateEdit.getText()) && "2".equals(s.selectionPriorityEdit.getText())
+                    && "1".equals(s.placementPriorityEdit.getText()), s.poolEdit.getText());
+            check("jigsaw screen: 26.3's places", s.poolEdit.x == cx - 153 && s.poolEdit.y == 20 && s.poolEdit.width == 300
+                    && s.finalStateEdit.y == 125 && s.selectionPriorityEdit.width == 98 && s.placementPriorityEdit.x == cx - 50
+                    && s.jointButton.x == cx + 54 && s.jointButton.y == 160 && s.levelsSlider.x == cx - 154 && s.levelsSlider.y == 185
+                    && s.keepButton.x == cx - 50 && s.generateButton.x == cx + 54 && s.doneButton.x == cx - 154 && s.doneButton.width == 150
+                    && s.cancelButton.x == cx + 4 && s.cancelButton.y == 210, cx);
+            check("jigsaw screen: labels (Aligned, Levels: 0, Keep Jigsaws: ON, Generate, Done, Cancel)",
+                    "Aligned".equals(s.jointButton.displayString) && "Levels: 0".equals(s.levelsSlider.displayString)
+                            && "Keep Jigsaws: ON".equals(s.keepButton.displayString) && "Generate".equals(s.generateButton.displayString)
+                            && "Done".equals(s.doneButton.displayString) && "Cancel".equals(s.cancelButton.displayString),
+                    s.jointButton.displayString + " | " + s.levelsSlider.displayString + " | " + s.keepButton.displayString);
+            check("jigsaw screen: facing up, Joint Type shows", s.jointButton.visible && s.jointButton.enabled);
+            check("jigsaw screen: Target Pool has the focus", s.poolEdit.isFocused());
+            s.levelsSlider.setValue(1.0);
+            boolean top = s.levels == 20 && "Levels: 20".equals(s.levelsSlider.displayString);
+            s.levelsSlider.setValue(0.5);
+            check("jigsaw screen: Levels runs 0 to 20", top && s.levels == 10, s.levels);
+            s.nameEdit.setText("Not Valid");
+            s.updateValidity();
+            boolean off = !s.doneButton.enabled && !s.generateButton.enabled;
+            s.nameEdit.setText("minecraft:building_entrance");
+            s.updateValidity();
+            check("jigsaw screen: Done and Generate wait for valid ids", off && s.doneButton.enabled && s.generateButton.enabled);
+            JigsawNetwork.Set m = s.message();
+            check("jigsaw screen: the message Done sends", "minecraft:village/plains/streets".equals(m.pool()) && m.selectionPriority() == 2
+                    && m.placementPriority() == 1 && m.joint() == TileEntityJigsaw.Joint.ALIGNED, m.pool());
+            s.selectionPriorityEdit.setText("7");
+            press(s, s.doneButton);
+            return true;
+        });
+        add(null, () -> pause(3));
+        add(null, () -> {
+            check("jigsaw screen: Done closes it", mc.currentScreen == null);
+            TileEntityJigsaw server = (TileEntityJigsaw) mc.getIntegratedServer().getWorld(0).getTileEntity(this.jigsawAt);
+            TileEntityJigsaw client = (TileEntityJigsaw) mc.world.getTileEntity(this.jigsawAt);
+            check("jigsaw screen: Done sets the server's block, and the client hears back", server.getSelectionPriority() == 7
+                    && client.getSelectionPriority() == 7, server.getSelectionPriority() + " / " + client.getSelectionPriority());
+            JigsawClient.open(this.jigsawAt.east(2));
+            return mc.currentScreen instanceof JigsawScreen;
+        });
+        add("jigsaw-screen-side", () -> {
+            JigsawScreen s = (JigsawScreen) mc.currentScreen;
+            check("jigsaw screen: facing sideways, no Joint Type; a new block's fields", !s.jointButton.visible
+                    && "minecraft:empty".equals(s.poolEdit.getText()) && "minecraft:air".equals(s.finalStateEdit.getText())
+                    && "0".equals(s.selectionPriorityEdit.getText()), s.poolEdit.getText());
+            return true;
+        });
+        add(null, () -> {
+            press(mc.currentScreen, ((JigsawScreen) mc.currentScreen).cancelButton);
+            check("jigsaw screen: Cancel closes it", mc.currentScreen == null);
+            this.waited = 5;
+            return true;
+        });
         add(null, () -> {
             mc.gameSettings.pauseOnLostFocus = false;
             int want = Math.max(2, (int) Math.round(Presentation.SIMULATION_DISTANCE.get()));
@@ -424,6 +533,24 @@ final class ClientVideoShots {
     }
 
     /** Runs world edits on the integrated server's thread (the client thread would race its chunk map). */
+    private BlockPos jigsawAt;
+
+    /** Presses a screen's button as a click does ({@code actionPerformed}). */
+    private void press(net.minecraft.client.gui.GuiScreen screen, GuiButton button) {
+        try {
+            java.lang.reflect.Method m;
+            try {
+                m = net.minecraft.client.gui.GuiScreen.class.getDeclaredMethod("actionPerformed", GuiButton.class);
+            } catch (NoSuchMethodException e) {
+                m = net.minecraft.client.gui.GuiScreen.class.getDeclaredMethod("func_146284_a", GuiButton.class);
+            }
+            m.setAccessible(true);
+            m.invoke(screen, button);
+        } catch (ReflectiveOperationException e) {
+            failed("press " + button.displayString, e);
+        }
+    }
+
     private static void onServer(Minecraft mc, Runnable task) {
         mc.getIntegratedServer().addScheduledTask(task);
     }
