@@ -1,0 +1,26 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 4242,
+    "separation": 5,
+    "spacing": 18,
+    "spread_type": "triangular",
+    "frequency": 0.75,
+    "frequency_reduction_method": "legacy_type_3",
+    "locate_offset": [
+      3,
+      0,
+      -2
+    ]
+  },
+  "structures": [
+    {
+      "structure": "bcst_data:tiny_mix_land",
+      "weight": 3
+    },
+    {
+      "structure": "bcst_data:tiny_mix_sea",
+      "weight": 1
+    }
+  ]
+}

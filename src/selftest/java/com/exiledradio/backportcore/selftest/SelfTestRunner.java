@@ -88,6 +88,7 @@ public final class SelfTestRunner {
                     case "boats": BoatTests.schedule(); break;
                     case "poi": PoiLocateTests.schedule(); break;
                     case "simulation": SimulationTests.schedule(); break;
+                    case "datastructures": DataStructureTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -98,6 +99,7 @@ public final class SelfTestRunner {
         DeepWaterTests.schedule();
         DuplicateTests.schedule();
         StructureTests.schedule();
+        DataStructureTests.schedule();
         SnowTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();

@@ -249,6 +249,16 @@ public final class BiomeLocate {
         return search(sampler, from, WorldHeights.minY(world), WorldHeights.maxYExclusive(world) - 1, wanted);
     }
 
+    /**
+     * @return the world's own biome sampler (a generator's, {@link #source}), or null where 1.12.2's biomes are the
+     * answer; for a structure's biome check
+     * @since 1.4.5
+     */
+    @Nullable
+    public static Sampler sampler(WorldServer world) {
+        return samplerFor(world);
+    }
+
     @Nullable
     private static synchronized Sampler samplerFor(WorldServer world) {
         for (SamplerFactory factory : SOURCES) {

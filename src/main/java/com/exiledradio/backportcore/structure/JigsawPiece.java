@@ -76,6 +76,16 @@ public class JigsawPiece extends StructureComponent {
     }
 
     /**
+     * Today's {@code liquid_settings}: true ({@code apply_waterlogging}, the default) keeps a water source already there
+     * in a block of the template that can hold it; false ({@code ignore_waterlogging}) places the template dry.
+     *
+     * @since 1.4.5
+     */
+    protected boolean applyWaterlogging() {
+        return true;
+    }
+
+    /**
      * Fills a data marker of the piece's template in the chunk being placed. Called after the
      * template's blocks, once per marker inside {@code chunk}; vanilla's jigsaw pieces have none.
      *

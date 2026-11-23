@@ -176,6 +176,8 @@ public final class BackportCore {
         // Saved jigsaw pieces (bastions and the like) of every backport that uses Core's assembler.
         net.minecraft.world.gen.structure.MapGenStructureIO.registerStructureComponent(
                 com.exiledradio.backportcore.structure.JigsawPiece.class, "BCJigsaw");
+        // Saved starts and pieces of the structures today's data files describe (structure/DataStructures).
+        com.exiledradio.backportcore.structure.DataStructures.registerSaveNames();
         // 1.12.2's structures under today's ids for /locate (each backport registers its own in its init).
         com.exiledradio.backportcore.locate.VanillaLocate.register();
     }
@@ -196,6 +198,8 @@ public final class BackportCore {
         // Every backport's settings on Core's settings screen. Each backport keeps its own row in the mod list, so
         // Forge's mod-list search finds it; its Config button opens this screen on its own page.
         com.exiledradio.backportcore.settings.BackportSettings.build();
+        // Structures from today's data files, after every backport registered the structures it generates itself.
+        com.exiledradio.backportcore.structure.DataStructures.load();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();

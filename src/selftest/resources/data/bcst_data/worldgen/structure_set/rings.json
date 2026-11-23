@@ -1,0 +1,16 @@
+{
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "count": 3,
+    "distance": 32,
+    "preferred_biomes": "#minecraft:is_ocean",
+    "salt": 0,
+    "spread": 3
+  },
+  "structures": [
+    {
+      "structure": "bcst_data:tiny_tower",
+      "weight": 1
+    }
+  ]
+}

@@ -244,6 +244,25 @@ public final class ModernJigsaw<P extends JigsawPiece & ModernJigsaw.Joined> {
         return out;
     }
 
+    /**
+     * {@code JigsawPlacement.getRandomNamedJigsaw} as 1.20.3+ draw it: the element's jigsaws shuffled, then by selection
+     * priority, and the first named {@code name}; for a structure's {@code start_jigsaw_name}.
+     *
+     * @return the jigsaw's position, or null if the element has none of that name
+     */
+    @Nullable
+    static BlockPos namedJoint(JigsawElement element, BlockPos pos, Rotation rotation, Random random, String name) {
+        List<JigsawElement.Connector> out = shuffled(element.connectors(pos, rotation), random);
+        out.sort(HIGHEST_SELECTION_PRIORITY_FIRST);
+        String full = full(name);
+        for (JigsawElement.Connector c : out) {
+            if (full.equals(full(c.name))) {
+                return c.pos;
+            }
+        }
+        return null;
+    }
+
     /** {@code JigsawBlock.canAttach}; with nameless features, a feature's jigsaw joins any. */
     private boolean canAttach(JigsawElement.Connector source, JigsawElement.Connector target, boolean targetNameless) {
         boolean rollable = "rollable".equals(source.joint);

@@ -49,7 +49,39 @@ public final class CoreConfig {
     @Config.Comment("Commands later versions added, as today's game has them. Each takes effect when a world loads.")
     public static final Commands commands = new Commands();
 
+    @Setting.Feature(icon = "minecraft:structure_block", toggle = "dataStructures")
+    @Config.LangKey("config.backportcore.structure")
+    @Config.Comment("Structures read from today's data files (data/<namespace>/worldgen), in mod jars and in config/backportcore/structures.")
+    public static final StructureSettings structure = new StructureSettings();
+
     private CoreConfig() {
+    }
+
+    public static final class StructureSettings {
+
+        @Config.Comment({
+                "Generate the jigsaw structures today's data files describe: every structure set in",
+                "data/<namespace>/worldgen/structure_set of a mod jar, or of a structure pack (a folder, .zip or",
+                ".jar laid out like a datapack) in config/backportcore/structures. Off: none of them start.",
+                "",
+                "Only changes chunks generated after it is changed. Takes effect the next time the game starts."
+        })
+        @Setting.Server
+        @Setting.NewChunks
+        @Config.RequiresMcRestart
+        public boolean dataStructures = true;
+
+        @Config.Comment({
+                "Structure or structure set ids that are not generated, such as 'examplemod:tower' or",
+                "'examplemod:towers'; 'examplemod:*' leaves out every one of that namespace.",
+                "",
+                "Takes effect the next time the game starts."
+        })
+        @Setting.Server
+        @Setting.NewChunks
+        @Setting.ListOf(Setting.Kind.ANY)
+        @Config.RequiresMcRestart
+        public String[] blacklist = {};
     }
 
     public static final class Commands {

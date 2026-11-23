@@ -150,7 +150,7 @@ if (project.hasProperty('selftest')) {
 	// Gradle's copy into build/resources keeps files a selftest run left there, so the jars leave
 	// them out by name as well.
 	tasks.matching { it.name in ['jar', 'devJar'] }.all {
-		exclude 'assets/backportcore_selftest/**', 'com/exiledradio/backportcore/selftest/**',
+		exclude 'assets/backportcore_selftest/**', 'data/bcst_data/**', 'com/exiledradio/backportcore/selftest/**',
 				'com/exiledradio/backportcore/waterlog/MigrationAccess*'
 	}
 }

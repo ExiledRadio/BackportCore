@@ -1,6 +1,19 @@
 # 1.4.6
 
 *   P66 (`asm/RecipeToastTransformer`): 1.13's recipe toast draws the crafting table at 0.6 scale behind the output (`VanillaRevisions.recipeToastIcon`, the toasts' look from 1.13, which `LookArea.TOASTS` now offers). 1.12.2 drew the output only.
+*   Data-driven structures (`structure.DataStructures`): Core reads today's `data/<ns>/worldgen/structure_set` and
+    `worldgen/structure` files from every mod jar and from structure packs in `config/backportcore/structures/`
+    (folder, `.zip` or `.jar`, datapack layout; `DataPacks`) at load complete, and generates each `random_spread` set
+    of `minecraft:jigsaw` structures as 26.3 does: `DataPlacement` (frequency and its four reduction methods,
+    exclusion zone, locate offset), `HeightProviders` (every height provider and anchor), the stub of
+    `JigsawPlacement.addPieces` (start jigsaw name, heightmap projection, dimension padding, pool aliases), then
+    `ModernJigsaw`; weighted sets pick as `ChunkGenerator.createStructures`. Biomes by id, list or tag (`DataTags`;
+    26.3's biome tags ship in Core), terrain adaptation, liquid settings and spawn overrides. `/locate structure` finds
+    them by id. Starts save as `BCData`, pieces as `BCDataPiece`. Other placement and structure types, ids a backport
+    already generates and the new `structure.blacklist` are skipped; `structure.dataStructures` turns it off.
+    `JigsawPools` and `ModernTemplate` also read `data/<ns>/worldgen/...` and `data/<ns>/structure/` (or
+    `structures/`). `JigsawPiece.applyWaterlogging()`, `BiomeLocate.sampler(world)`.
+
 *   Ocean monuments in Realistic Terrain Generation worlds only where RTG's terrain is deep water (`worldgen.MonumentTerrain.deepEnough`, called by `ModernMonument` and open to a backport's own monument rule): at least 15 blocks of water within 16 blocks of the chunk's block (9, 9), water within 29, read from RTG's cached landscape at the biome check's 1:4 cells. RTG builds a biome it has no realistic biome for as plains (Update Aquatic's deep oceans in 1.2.2) and blends small deep ocean patches into lakes, so the biome rule alone put monuments on land and in ponds. Generation, `/locate` and explorer maps all ask the same check. Other worlds keep vanilla's rule. `selftest/monument/MonumentCheck` (`gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`) surveys a real server's monuments against the terrain.
 *   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its
     pieces with no log within 6 steps through leaves (26.3's `LeavesBlock` distance) is removed, with any snow layer on
