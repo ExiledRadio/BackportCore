@@ -217,7 +217,8 @@ public abstract class JigsawElement {
                    IntBinaryOperator surface, JigsawPiece piece) {
             ModernTemplate template = loadTemplate();
             TemplatePlacement placement = TemplatePlacement.of(rotation, Mirror.NONE).clip(clip).finalizeEntities(true)
-                    .keepWater(piece.applyWaterlogging());
+                    .keepWater(piece == null || piece.applyWaterlogging())
+                    .keepJigsaws(piece != null && piece.keepJigsaws());
             for (TemplateProcessor processor : this.processors.build(pivot)) {
                 placement.processor(processor);
             }

@@ -1,6 +1,6 @@
 # Backport Core
 
-A Forge 1.12.2 library for the update backports. It adds no blocks or items. It holds what they share:
+A Forge 1.12.2 library for the update backports. Its one block is today's jigsaw block, for operators. It holds what the backports share:
 
 - **Vanilla's textures as the newest installed backport's version has them**: 1.14's Texture Update to begin
   with, then each later version's retextures up to that one (1.17's ores with Caves & Cliffs Backport, and so

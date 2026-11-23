@@ -371,7 +371,8 @@ read every such block as `rollable`.
 - Reads every format since 1.13: `palette` or `palettes`, `Name`/`Properties` or 26.1's `id`/`properties`,
   any `DataVersion` (1.12.2's own files too). A block renamed since the file was saved is renamed first.
 - Structure blocks are never placed (data markers are listed instead), structure voids are skipped, and
-  jigsaw blocks become their final state. Tile entity data loads into the block, turned and mirrored with
+  jigsaw blocks become their final state (1.4.5: `keepJigsaws(true)` places them as Core's jigsaw block, with their
+  data; Core's `backportcore:jigsaw` in a file a 1.12.2 structure block saved is a jigsaw too). Tile entity data loads into the block, turned and mirrored with
   it; entities spawn turned with the structure. `waterlogged=true` places a water source with the block.
 - A block that pops off for want of support in the next chunk (a wall torch) is written in anyway, and no
   item drops while a template places.
@@ -397,6 +398,8 @@ ModernPalette.lootTable("minecraft:chests/shipwreck_supply", new ResourceLocatio
 ModernPalette.entity("minecraft:piglin", new ResourceLocation("yourmod", "piglin"));   // 1.1.0: entities of the files
 ModernPalette.Resolved r = ModernPalette.resolve("minecraft:oak_stairs[facing=east]");  // r.state, r.tile, r.water
 ```
+
+`minecraft:jigsaw` is Core's jigsaw block (1.4.5).
 
 Names are today's (`dirt_path`, `short_grass`, `oak_sign`, `smooth_stone_slab`, `iron_chain`), so a mapping
 for `minecraft:stone_slab` means 1.14's plain stone slab. `villagerbackport` is listed as a source already.
@@ -674,6 +677,37 @@ structure <id>` finds each structure. Starts save as `BCData` with their structu
 What a porter still does by hand: feature pool elements need a `JigsawPools.feature` placer, loot tables and
 entities in templates need 1.12.2 counterparts (`ModernPalette.lootTable`, `ModernPalette.entity`), blocks 1.12.2
 lacks need `ModernPalette.map` or `fallback`, and biome ids of mods that are not today's names need `BiomeLocate.biome`.
+
+### The jigsaw block (`block.CoreBlocks`, `block.TileEntityJigsaw`, 1.4.5)
+
+Today's jigsaw block, `backportcore:jigsaw`, to build and test jigsaw structures in game as in 26.3.
+
+- **Block**: `orientation`, 26.3's twelve `FrontAndTop` values (metadata is the ordinal). It faces the clicked face;
+  facing up or down, its top points toward the player. An operator block: only a player in creative mode with
+  permission level 2 (`canUseCommandBlock`) places it, opens it or breaks it. Hardness -1, no drops, epic rarity. In
+  no 1.12.2 creative tab (as up to 1.19.2); 1.19.3's Operator Utilities lists it. 26.3's model and textures.
+- **Tile entity**: `name`, `target`, `pool`, `final_state`, `joint` (`rollable` or `aligned`), `selection_priority` and
+  `placement_priority`, under 26.x's keys. Without `joint` it is aligned facing sideways, rollable facing up or down.
+- **Screen** (`block.client.JigsawScreen`): 26.3's fields, buttons, places and labels. Done and Generate send
+  `JigsawNetwork.Set` and `Generate` on channel `backportcore_jigsaw`. The server applies them only for a player who
+  may use operator blocks, and refuses a malformed id.
+- **Generate** is `ModernJigsaw.generate(world, pool, target, levels, position, keepJigsaws)`, 26.3's
+  `JigsawPlacement.generateJigsaw`. `position` is the block in front of the jigsaw. The random is the large-feature
+  random of the chunk `position` is in. It draws the start rotation and element; the element's jigsaw named `target`
+  (first of its shuffled jigsaws) goes at `position`, the piece's floor one below. The rest joins on by today's rules
+  (priorities, nameless features, no expansion hack), `levels` deep, 128 blocks out, and every piece is placed at once
+  with `position` as its pivot. `ModernJigsaw.layout` gives the pieces without placing them. With Keep Jigsaws the
+  jigsaw blocks stay (`TemplatePlacement.keepJigsaws`); otherwise each becomes its final state.
+- **Files**: pools are `JigsawPools`': the mods' files, then the world's folder data packs
+  (`<world>/datapacks/<pack>/data/<namespace>/worldgen/template_pool/`). Templates are the mods' first, then the
+  world's: `<world>/structures/<path>.nbt` (where 1.12.2's structure block saves), `<world>/generated/<namespace>/structures/`
+  and folder data packs. Each Generate reads the world's files again.
+- **Saving**: a 1.12.2 structure block saves jigsaw blocks with their data (`backportcore:jigsaw` in the palette).
+  `ModernTemplate` reads them as it reads `minecraft:jigsaw`, so a structure saved in game assembles with Core. A
+  `final_state` may be today's state text or a 1.12.2 block name (`minecraft:planks[variant=birch]`);
+  `minecraft:structure_void` places nothing, as today.
+- **Not done**: saving in today's format. A file saved in game has 1.12.2's block names and `DataVersion` 1343: Core
+  reads it, today's game does not.
 
 ### Seed parity (`StructureRandoms`, `VanillaPlacements`, `NetherStructureSlots`, 1.1.0)
 

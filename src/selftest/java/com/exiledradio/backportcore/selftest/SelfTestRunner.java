@@ -89,6 +89,7 @@ public final class SelfTestRunner {
                     case "poi": PoiLocateTests.schedule(); break;
                     case "simulation": SimulationTests.schedule(); break;
                     case "datastructures": DataStructureTests.schedule(); break;
+                    case "jigsaw": JigsawBlockTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -100,6 +101,7 @@ public final class SelfTestRunner {
         DuplicateTests.schedule();
         StructureTests.schedule();
         DataStructureTests.schedule();
+        JigsawBlockTests.schedule();
         SnowTests.schedule();
         PatchTests.schedule();
         PoseTests.schedule();

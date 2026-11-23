@@ -4,7 +4,7 @@
 
 The update backports bring each Minecraft update to 1.12.2 in a mod of its own: Village & Pillage Backport for 1.14 and Update Aquatic Backport for 1.13, with more to come. Backport Core is the part they share. Every one of them requires it, so install it whenever you install one of them.
 
-It adds no blocks or items of its own. What it adds is what the backports have in common: 1.14's look for vanilla's blocks, items and mobs, 1.13's waterlogging, today's structure files, structure placement on vanilla and modded terrain, and the rules that let the backports work side by side without two copies of the same block.
+Its one block is today's jigsaw block, for operators building jigsaw structures. What it adds is what the backports have in common: 1.14's look for vanilla's blocks, items and mobs, 1.13's waterlogging, today's structure files, structure placement on vanilla and modded terrain, and the rules that let the backports work side by side without two copies of the same block.
 
 > 💬 **[Join the Discord](https://discord.gg/kxQvMDJBTN)** for bug reports, questions and release pings.
 

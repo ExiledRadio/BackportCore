@@ -13,6 +13,19 @@
     already generates and the new `structure.blacklist` are skipped; `structure.dataStructures` turns it off.
     `JigsawPools` and `ModernTemplate` also read `data/<ns>/worldgen/...` and `data/<ns>/structure/` (or
     `structures/`). `JigsawPiece.applyWaterlogging()`, `BiomeLocate.sampler(world)`.
+*   Today's jigsaw block, `backportcore:jigsaw` (`block.CoreBlocks`, `TileEntityJigsaw`, `JigsawNetwork`,
+    `block.client.JigsawScreen`), Core's first block: 26.3's twelve orientations, placement, model and textures; an
+    operator block (creative mode and permission level 2 to place, open or break it), hardness -1, no drops; 26.x's NBT
+    keys; 26.3's edit screen (Target Pool, Name, Target Name, Turns Into, both priorities with tooltips, Joint Type for
+    vertical jigsaws, Levels 0 to 20, Keep Jigsaws, Generate, Done, Cancel; 18 languages from 26.3's files) and its
+    two packets on channel `backportcore_jigsaw`, checked for an operator on the server. Generate is
+    `ModernJigsaw.generate`, 26.3's `JigsawPlacement.generateJigsaw` on Core's assembler (`ModernJigsaw.layout` without
+    placing). `TemplatePlacement.keepJigsaws`. `ModernTemplate` reads a 1.12.2 structure block's `backportcore:jigsaw`
+    blocks as jigsaws, reads templates from the world (`structures/`, `generated/`, folder data packs) when no jar has
+    them, and `JigsawPools` reads pools from the world's folder data packs. A jigsaw's `minecraft:structure_void` final
+    state places nothing (it placed a structure void), and a 1.12.2 block name works as a final state. `minecraft:jigsaw`
+    resolves to the block in `ModernPalette`, and 1.19.3's Operator Utilities lists it. Saving in today's format is not
+    done.
 
 *   Ocean monuments in Realistic Terrain Generation worlds only where RTG's terrain is deep water (`worldgen.MonumentTerrain.deepEnough`, called by `ModernMonument` and open to a backport's own monument rule): at least 15 blocks of water within 16 blocks of the chunk's block (9, 9), water within 29, read from RTG's cached landscape at the biome check's 1:4 cells. RTG builds a biome it has no realistic biome for as plains (Update Aquatic's deep oceans in 1.2.2) and blends small deep ocean patches into lakes, so the biome rule alone put monuments on land and in ponds. Generation, `/locate` and explorer maps all ask the same check. Other worlds keep vanilla's rule. `selftest/monument/MonumentCheck` (`gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`) surveys a real server's monuments against the terrain.
 *   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its

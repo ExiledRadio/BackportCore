@@ -114,3 +114,5 @@ options.ctrlClickEmulatesRightClick.tooltip = options.ctrlClickEmulatesRightClic
 options.directionalAudio.on.tooltip = options.directionalAudio.on.tooltip
 options.directionalAudio.off.tooltip = options.directionalAudio.off.tooltip
 gui.recipebook.search_hint = gui.recipebook.search_hint
+jigsaw_block.selection_priority.tooltip = jigsaw_block.selection_priority.tooltip
+jigsaw_block.placement_priority.tooltip = jigsaw_block.placement_priority.tooltip

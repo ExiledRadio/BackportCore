@@ -32,6 +32,7 @@ public final class TemplatePlacement {
     boolean keepWater = true;
     boolean entities = true;
     boolean finalizeEntities;
+    boolean keepJigsaws;
     @Nullable
     IntBinaryOperator surface;
     int surfaceOffset;
@@ -113,6 +114,16 @@ public final class TemplatePlacement {
     }
 
     /**
+     * Today's {@code keepJigsaws}: jigsaw blocks are placed as jigsaw blocks ({@code backportcore:jigsaw}, their data
+     * kept), not as their final state. Off by default, as for every structure; a jigsaw block's Generate with Keep
+     * Jigsaws on sets it. Since 1.4.5.
+     */
+    public TemplatePlacement keepJigsaws(boolean keepJigsaws) {
+        this.keepJigsaws = keepJigsaws;
+        return this;
+    }
+
+    /**
      * Today's gravity processor (a {@code terrain_matching} jigsaw piece): each block goes to the ground
      * height at its column plus {@code offset} plus its own height in the file. Processors still see the
      * position before the move, as today's do. Null to turn it off (the default). Since 1.1.0.
@@ -188,6 +199,7 @@ public final class TemplatePlacement {
         out.keepWater = this.keepWater;
         out.entities = this.entities;
         out.finalizeEntities = this.finalizeEntities;
+        out.keepJigsaws = this.keepJigsaws;
         out.surface = this.surface;
         out.surfaceOffset = this.surfaceOffset;
         out.palette = this.palette;

@@ -56,7 +56,7 @@ import java.util.Set;
  * Functional Blocks; Transportation and Tools: Tools &amp; Utilities; Miscellaneous: Ingredients, or Spawn Eggs for a
  * spawn egg; Brewing and Foodstuffs: Food &amp; Drinks). Enchanted books are 1.19.3's: every enchantment's book at its
  * top level, in Ingredients. Operator Utilities lists the operator items 1.12.2 has (command blocks, the structure
- * block and void, the barrier).
+ * block and void, the barrier) and Core's jigsaw block.
  *
  * <p>Other mods' tabs are untouched and page after vanilla's as in 1.12.2 Forge (ten to a page from page 2). The 1.12.2
  * tabs stay what every item's {@code getCreativeTab()} is, so {@code getSubItems}, the search tab and JEI see nothing
@@ -369,6 +369,10 @@ public final class ModernTabs {
         }
         for (String id : ids) {
             Item item = Item.getByNameOrId(id);
+            if (item == null && "minecraft:jigsaw".equals(id)) {
+                // 1.12.2 has no jigsaw block: Core's (since 1.4.5).
+                item = com.exiledradio.backportcore.block.CoreBlocks.jigsawItem;
+            }
             if (item != null && item != Items.AIR) {
                 out.add(new ItemStack(item));
             }

@@ -1,6 +1,7 @@
 package com.exiledradio.backportcore.structure;
 
 import com.exiledradio.backportcore.BackportCore;
+import com.exiledradio.backportcore.terrain.TerrainHeights;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -162,6 +163,106 @@ public final class ModernJigsaw<P extends JigsawPiece & ModernJigsaw.Joined> {
             piece.setPivot(pivot);
         }
         return pieces;
+    }
+
+    // ---- a jigsaw block's Generate: JigsawPlacement.generateJigsaw
+
+    /** The pieces a jigsaw block's Generate lays out: today's {@code PoolElementStructurePiece}, nothing more. */
+    public static class GeneratedPiece extends JigsawPiece implements Joined {
+        public GeneratedPiece() {
+        }
+
+        public GeneratedPiece(JigsawElement element, BlockPos position, int groundLevelDelta, Rotation rotation, StructureBoundingBox box) {
+            super(element, position, groundLevelDelta, rotation, box);
+        }
+
+        @Override
+        public void addJunction(int x, int groundY, int z) {
+        }
+    }
+
+    /**
+     * Today's {@code JigsawPlacement.generateJigsaw} without the placing: what a jigsaw block's Generate lays out from
+     * {@code position} (the block in front of the jigsaw). The random is the large-feature random of the chunk
+     * {@code position} is in, as today's {@code GenerationContext} makes it. The start element's jigsaw named
+     * {@code target} goes at {@code position} (first of its shuffled jigsaws), the start piece's floor one below
+     * (today's ground level delta), and the rest joins on as {@code JigsawStructure} assembles: 26.x's rules,
+     * {@code levels} deep, 128 blocks out each way, cut to the world's heights. Every piece's pivot is {@code position}.
+     *
+     * @return the pieces, start piece first; null when nothing can be placed (no pool, an empty pick, no such jigsaw)
+     */
+    @Nullable
+    public static List<GeneratedPiece> layout(net.minecraft.world.World world, ResourceLocation poolId, String target, int levels,
+                                              BlockPos position) {
+        JigsawPools.Pool pool = JigsawPools.pool(poolId);
+        if (pool == null) {
+            BackportCore.LOGGER.error("Jigsaw generate: no pool {}", poolId);
+            return null;
+        }
+        Random random = StructureRandoms.start(world.getSeed(), position.getX() >> 4, position.getZ() >> 4);
+        Rotation rotation = Rotation.values()[random.nextInt(Rotation.values().length)];
+        if (pool.size() == 0) {
+            return null;
+        }
+        JigsawElement element = pool.random(random);
+        if (element.isEmpty()) {
+            return null;
+        }
+        TerrainHeights terrain = TerrainHeights.forWorld(world);
+        ModernJigsaw<GeneratedPiece> placer = of(GeneratedPiece::new).maxDepth(levels).priorities(true).namelessFeatures(true)
+                .expansionHack(false)
+                .surface(terrain != null ? terrain::height : (x, z) -> world.getHeight(x, z));
+        BlockPos anchor = null;
+        String wanted = full(target);
+        for (JigsawElement.Connector c : placer.shuffledJoints(element, position, rotation, random)) {
+            if (wanted.equals(full(c.name))) {
+                anchor = c.pos;
+                break;
+            }
+        }
+        if (anchor == null) {
+            BackportCore.LOGGER.error("No starting jigsaw {} found in start pool {}", target, poolId);
+            return null;
+        }
+        BlockPos local = anchor.subtract(position);
+        BlockPos adjusted = position.subtract(local);
+        GeneratedPiece start = new GeneratedPiece(element, adjusted, element.groundLevelDelta(), rotation, element.box(adjusted, rotation));
+        StructureBoundingBox box = start.getBoundingBox();
+        int centerX = (box.maxX + box.minX) / 2;
+        int centerZ = (box.maxZ + box.minZ) / 2;
+        int bottomY = adjusted.getY();
+        start.offset(0, bottomY - (box.minY + start.groundLevelDelta()), 0);
+        int centerY = bottomY + local.getY();
+        int top = world.getHeight() - 1;
+        StructureBoundingBox bounds = new StructureBoundingBox(centerX - 128, Math.max(centerY - 128, 0), centerZ - 128,
+                centerX + 128, Math.min(centerY + 128, top), centerZ + 128);
+        List<GeneratedPiece> pieces = placer.assemble(start, bounds, random);
+        for (GeneratedPiece piece : pieces) {
+            piece.setPivot(position);
+        }
+        return pieces;
+    }
+
+    /**
+     * Today's {@code JigsawPlacement.generateJigsaw}: {@link #layout}, then every piece placed whole with the world's
+     * random. Kept jigsaws stay jigsaw blocks; otherwise each becomes its final state. Templates are read afresh, the
+     * world's own saved structures included ({@link ModernTemplate#load}).
+     *
+     * @return whether anything was placed
+     */
+    public static boolean generate(net.minecraft.world.World world, ResourceLocation poolId, String target, int levels, BlockPos position,
+                                   boolean keepJigsaws) {
+        ModernTemplate.forgetWorldTemplates();
+        List<GeneratedPiece> pieces = layout(world, poolId, target, levels, position);
+        if (pieces == null) {
+            return false;
+        }
+        StructureBoundingBox everywhere = new StructureBoundingBox(-30000000, 0, -30000000, 30000000, world.getHeight() - 1, 30000000);
+        for (GeneratedPiece piece : pieces) {
+            piece.setKeepJigsaws(keepJigsaws);
+            piece.addComponentParts(world, world.rand, everywhere);
+        }
+        return true;
     }
 
     // ---- free space: today's VoxelShapes, for whole-block boxes

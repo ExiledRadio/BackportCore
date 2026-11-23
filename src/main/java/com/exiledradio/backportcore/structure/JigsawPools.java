@@ -193,6 +193,10 @@ public final class JigsawPools {
             pool = new Pool(EMPTY, EMPTY, Collections.<JigsawElement>emptyList());
         } else {
             JsonObject json = read("worldgen/template_pool", id, ".json");
+            if (json == null) {
+                // A world data pack's pool, for a jigsaw block's Generate (since 1.4.5).
+                json = readWorld("worldgen/template_pool", id, ".json");
+            }
             pool = json == null ? null : parsePool(id, json);
         }
         synchronized (JigsawPools.class) {
@@ -278,6 +282,9 @@ public final class JigsawPools {
         } else {
             JsonObject json = read("worldgen/processor_list", id, ".json");
             if (json == null) {
+                json = readWorld("worldgen/processor_list", id, ".json");
+            }
+            if (json == null) {
                 BackportCore.LOGGER.error("Processor list {} is missing; its elements place without processors.", id);
                 list = ModernProcessors.EMPTY;
             } else {
@@ -345,6 +352,21 @@ public final class JigsawPools {
             // nothing to do
         }
         return true;
+    }
+
+    /** A world data pack's file ({@link WorldFiles}), or null. */
+    @Nullable
+    private static JsonObject readWorld(String folder, ResourceLocation id, String ext) {
+        java.io.File file = WorldFiles.data(folder, id, ext);
+        if (file == null) {
+            return null;
+        }
+        try (Reader reader = new InputStreamReader(new java.io.FileInputStream(file), StandardCharsets.UTF_8)) {
+            return new JsonParser().parse(reader).getAsJsonObject();
+        } catch (Exception e) {
+            BackportCore.LOGGER.error("Could not read {}.", file, e);
+            return null;
+        }
     }
 
     @Nullable

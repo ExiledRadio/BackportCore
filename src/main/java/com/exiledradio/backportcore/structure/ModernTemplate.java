@@ -60,7 +60,8 @@ import java.util.Set;
  * <li>structure blocks in data mode are {@link #dataMarkers() markers}: the structure's own code
  * decides what goes there (a chest, a drowned). Other structure blocks and structure voids are left
  * out.</li>
- * <li>jigsaw blocks are {@link #jigsaws() connectors}, placed as their final state.</li>
+ * <li>jigsaw blocks ({@code minecraft:jigsaw}, and Core's {@code backportcore:jigsaw} in a file a 1.12.2 structure
+ * block saved) are {@link #jigsaws() connectors}, placed as their final state (or kept: {@link TemplatePlacement#keepJigsaws}).</li>
  * </ul>
  *
  * <h2>Placing</h2>
@@ -73,6 +74,8 @@ import java.util.Set;
 public final class ModernTemplate {
 
     private static final Map<ResourceLocation, ModernTemplate> CACHE = new HashMap<ResourceLocation, ModernTemplate>();
+    /** Templates read from the world's own files, or missing from every jar: read again by the next Generate. */
+    private static final Set<ResourceLocation> FROM_WORLD = new LinkedHashSet<ResourceLocation>();
 
     /** 1.13's first data version (17w47a): the Flattening. Files below it use 1.12.2's names. */
     private static final int FLATTENING = 1451;
@@ -199,7 +202,7 @@ public final class ModernTemplate {
                 }
                 continue;
             }
-            if ("minecraft:jigsaw".equals(name)) {
+            if (isJigsaw(name)) {
                 this.jigsaws.add(jigsaw(pos, this.props.get(0).get(state), nbt));
                 continue;
             }
@@ -301,12 +304,29 @@ public final class ModernTemplate {
             }
             break;
         }
+        boolean fromWorld = false;
+        if (template == null) {
+            // A template saved in this world (a 1.12.2 structure block, a world data pack): read for a jigsaw block.
+            java.io.File file = WorldFiles.template(id);
+            if (file != null) {
+                try (InputStream in = new java.io.FileInputStream(file)) {
+                    template = read(id, CompressedStreamTools.readCompressed(in));
+                    fromWorld = true;
+                } catch (Exception e) {
+                    BackportCore.LOGGER.error("Could not read structure file {}.", file, e);
+                }
+            }
+        }
         if (template == null) {
             BackportCore.LOGGER.error("Structure {} is missing; it will be left out.", id);
             template = new ModernTemplate(id, new NBTTagCompound());
+            fromWorld = true;
         }
         synchronized (CACHE) {
             CACHE.put(id, template);
+            if (fromWorld) {
+                FROM_WORLD.add(id);
+            }
         }
         return template;
     }
@@ -356,14 +376,14 @@ public final class ModernTemplate {
         for (int p = 0; p < all.length; p++) {
             for (int i = 0; i < all[p].length; i++) {
                 String name = this.names.get(p)[i];
-                if (all[p][i].state == null && !isAir(name) && !"minecraft:jigsaw".equals(name)
+                if (all[p][i].state == null && !isAir(name) && !isJigsaw(name)
                         && !"minecraft:structure_block".equals(name) && !"minecraft:structure_void".equals(name)) {
                     out.add(name);
                 }
             }
         }
         for (Jigsaw jigsaw : this.jigsaws) {
-            if (ModernPalette.resolve(jigsaw.finalState).state == null) {
+            if (finalState(jigsaw) != null && finalState(jigsaw).state() == null) {
                 out.add(jigsaw.finalState);
             }
         }
@@ -519,10 +539,8 @@ public final class ModernTemplate {
                 if (clip != null && !clip.isVecInside(at)) {
                     continue;
                 }
-                Map<String, String> p = new LinkedHashMap<String, String>();
-                String n = ModernPalette.full(Flattening.parse(jigsaw.finalState.trim(), p));
-                ModernPalette.Resolved r = ModernPalette.resolve(n, p, Integer.MAX_VALUE);
-                if (place(world, pos, at, new TemplateBlock(n, p, r.state, r.tile, r.water), placement)) {
+                TemplateBlock b = placement.keepJigsaws ? kept(jigsaw) : finalState(jigsaw);
+                if (b != null && place(world, pos, at, b, placement)) {
                     placed++;
                 }
             }
@@ -542,6 +560,48 @@ public final class ModernTemplate {
             }
         }
         return placed;
+    }
+
+    /** @return the jigsaw block itself, its data kept (today's {@code keepJigsaws}) */
+    private static TemplateBlock kept(Jigsaw jigsaw) {
+        Map<String, String> p = new LinkedHashMap<String, String>();
+        p.put("orientation", jigsaw.front.getName() + "_" + jigsaw.top.getName());
+        ModernPalette.Resolved r = ModernPalette.resolve("minecraft:jigsaw", p, Integer.MAX_VALUE);
+        NBTTagCompound tile = new NBTTagCompound();
+        tile.setString("name", jigsaw.name);
+        tile.setString("target", jigsaw.target);
+        tile.setString("pool", jigsaw.pool);
+        tile.setString("final_state", jigsaw.finalState);
+        tile.setString("joint", jigsaw.joint);
+        tile.setInteger("placement_priority", jigsaw.placementPriority);
+        tile.setInteger("selection_priority", jigsaw.selectionPriority);
+        return new TemplateBlock("minecraft:jigsaw", p, r.state, tile, false);
+    }
+
+    /**
+     * Today's {@code JigsawReplacementProcessor}: the jigsaw's {@code final_state}, read as today's game writes a state
+     * (or as 1.12.2 names a block, for one typed into a jigsaw in this game); a structure void places nothing.
+     */
+    @Nullable
+    private static TemplateBlock finalState(Jigsaw jigsaw) {
+        Map<String, String> p = new LinkedHashMap<String, String>();
+        String n = ModernPalette.full(Flattening.parse(jigsaw.finalState.trim(), p));
+        if ("minecraft:structure_void".equals(n)) {
+            return null;
+        }
+        ModernPalette.Resolved r = ModernPalette.resolve(n, p, Integer.MAX_VALUE);
+        if (r.state == null) {
+            ModernPalette.Resolved own = legacy(n, p);
+            if (own.state != null) {
+                r = new ModernPalette.Resolved(own.state, null, r.water);
+            }
+        }
+        return new TemplateBlock(n, p, r.state, r.tile, r.water);
+    }
+
+    /** @return true for a jigsaw block: today's, or Core's own as a 1.12.2 structure block saves it */
+    static boolean isJigsaw(String name) {
+        return "minecraft:jigsaw".equals(name) || "backportcore:jigsaw".equals(name);
     }
 
     private TemplateBlock block(Entry entry, int palette) {
@@ -775,6 +835,21 @@ public final class ModernTemplate {
     public static void clearCache() {
         synchronized (CACHE) {
             CACHE.clear();
+            FROM_WORLD.clear();
         }
+    }
+
+    /**
+     * Drops the templates read from the world's files (and the ones no file had), and the pools, so a jigsaw block's
+     * Generate sees structures saved since. Since 1.4.5.
+     */
+    public static void forgetWorldTemplates() {
+        synchronized (CACHE) {
+            for (ResourceLocation id : FROM_WORLD) {
+                CACHE.remove(id);
+            }
+            FROM_WORLD.clear();
+        }
+        JigsawPools.clearCache();
     }
 }
