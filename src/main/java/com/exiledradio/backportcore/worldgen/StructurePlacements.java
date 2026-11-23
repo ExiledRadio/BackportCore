@@ -3,9 +3,11 @@ package com.exiledradio.backportcore.worldgen;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.structure.ScatteredPlacement;
+import com.exiledradio.backportcore.terrain.RtgBiomes;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraftforge.fml.common.Loader;
@@ -65,6 +67,18 @@ public final class StructurePlacements {
         BLOCK_9_9,
         /** 1.16 on ({@code ChunkGenerator.createStructures}): the 1:4 cell at (4 x + 2, 4 z + 2) of the chunk. */
         QUART_CENTER;
+
+        /** @return the block (on both axes) of the chunk this point reads; the middle of the 1:4 cell for 1.16's */
+        public int blockOffset() {
+            switch (this) {
+                case QUART_CENTER:
+                    return 10;
+                case BLOCK_9_9:
+                    return 9;
+                default:
+                    return 8;
+            }
+        }
 
         /** @return the biome this point reads for a start in chunk (chunkX, chunkZ); never loads a chunk */
         @Nullable
@@ -253,6 +267,24 @@ public final class StructurePlacements {
     @Nullable
     public static Biome biomeAt(BiomeProvider provider, int chunkX, int chunkZ) {
         return biomePoint().read(provider, chunkX, chunkZ);
+    }
+
+    /**
+     * @return the biome a single-biome start check reads in this chunk, at the newest version's point, as the chunk
+     *         will really have it: in a Realistic Terrain Generation world the biome after RTG's per-chunk coast
+     *         repair ({@link RtgBiomes#biomeAt}), which the biome provider does not know; elsewhere the provider's
+     */
+    @Nullable
+    public static Biome biomeAt(World world, int chunkX, int chunkZ) {
+        BiomePoint point = biomePoint();
+        if (RtgBiomes.handles(world)) {
+            int offset = point.blockOffset();
+            Biome biome = RtgBiomes.biomeAt(world, (chunkX << 4) + offset, (chunkZ << 4) + offset);
+            if (biome != null) {
+                return biome;
+            }
+        }
+        return point.read(world.getBiomeProvider(), chunkX, chunkZ);
     }
 
     /**

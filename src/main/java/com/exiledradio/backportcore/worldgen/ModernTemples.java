@@ -88,7 +88,7 @@ public final class ModernTemples extends MapGenScatteredFeature {
         for (int i = 0; i < KINDS.length; i++) {
             if (this.grids[i].isCandidate(seed, chunkX, chunkZ)) {
                 if (biomeKind == -2) {
-                    biomeKind = templeOf(StructurePlacements.biomeAt(world.getBiomeProvider(), chunkX, chunkZ));
+                    biomeKind = templeOf(StructurePlacements.biomeAt(world, chunkX, chunkZ));
                 }
                 if (biomeKind == i) {
                     return i;
@@ -104,7 +104,7 @@ public final class ModernTemples extends MapGenScatteredFeature {
      */
     @Override
     protected StructureStart getStructureStart(int chunkX, int chunkZ) {
-        Biome biome = StructurePlacements.biomeAt(this.world.getBiomeProvider(), chunkX, chunkZ);
+        Biome biome = StructurePlacements.biomeAt(this.world, chunkX, chunkZ);
         int kind = templeOf(biome);
         Biome as = kind == 0 ? Biomes.DESERT : kind == 1 ? Biomes.ICE_PLAINS : kind == 2 ? Biomes.JUNGLE : kind == 3 ? Biomes.SWAMPLAND : biome;
         return new MapGenScatteredFeature.Start(this.world, this.rand, chunkX, chunkZ, as);
@@ -157,7 +157,7 @@ public final class ModernTemples extends MapGenScatteredFeature {
         for (int i = 0; i < KINDS.length; i++) {
             final int kind = i;
             ChunkPos found = this.grids[i].nearest(world.getSeed(), pos, this.grids[i].spacing() * 100,
-                    c -> templeOf(StructurePlacements.biomeAt(world.getBiomeProvider(), c.x, c.z)) == kind);
+                    c -> templeOf(StructurePlacements.biomeAt(world, c.x, c.z)) == kind);
             if (found != null) {
                 BlockPos p = new BlockPos((found.x << 4) + 8, 64, (found.z << 4) + 8);
                 if (best == null || p.distanceSq(pos) < best.distanceSq(pos)) {

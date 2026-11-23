@@ -1,5 +1,6 @@
 # 1.4.5
 
+*   **Realistic Terrain Generation** (and RTG Unofficial): the backports' surface biomes now generate in RTG worlds, on RTG's terrain for the nearest vanilla biome, with their own trees and features. RTG turned every biome it did not know into plains. Desert temples, igloos, jungle temples and witch huts in RTG worlds go by the biome RTG really gives a chunk.
 *   **Update notices**: the settings screen shows when a newer version of Backport Core or any installed backport is out, on the Family page and the mod's own page, with a link to CurseForge. It uses Forge's update check, or the versions this Core knows when that check is off or offline.
 *   **Look & Feel is now part of the Family page**, after Core's own settings, instead of its own tab.
 *   **Simulation Distance** (1.18, Video Settings): mobs, machines, crops and redstone run only this many chunks from a player, however far you can see. Your own worlds follow the setting; a server uses `simulation-distance` in server.properties, as 1.18 does. Spawn chunks and chunks a mod keeps loaded run as before.
