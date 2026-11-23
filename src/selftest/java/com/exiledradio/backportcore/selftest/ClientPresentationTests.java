@@ -159,6 +159,9 @@ final class ClientPresentationTests {
                             ClientSwingTests.tick(mc);
                         }
                         if (ClientSwingTests.done) {
+                            ClientLightTests.tick(mc);
+                        }
+                        if (ClientLightTests.done) {
                             ClientGameRulesTests.inWorldTick(mc);
                         }
                         if (ClientGameRulesTests.inWorldDone) {
@@ -166,7 +169,7 @@ final class ClientPresentationTests {
                         }
                     }
                     if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done
-                            && ClientSwingTests.done && ClientGameRulesTests.inWorldDone && ClientEffectsTests.done && this.bookChecked(mc)) {
+                            && ClientSwingTests.done && ClientLightTests.done && ClientGameRulesTests.inWorldDone && ClientEffectsTests.done && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);

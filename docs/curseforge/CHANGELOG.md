@@ -1,3 +1,7 @@
+# 1.5.0
+
+*   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.
+
 # 1.4.9
 
 *   **Fixed: with Dynamic Trees, static and dynamic trees generated side by side** along the edges of the backports' biomes (cherry groves, pale gardens, mangrove swamps, dappled forests, bamboo jungles) and other mods' biomes. Dynamic Trees decided per chunk by the wrong biome, so normal trees stayed next to its own on one side of the edge and the backport biome lost its trees on the other. Each chunk now gets one kind: the one its biome grows.

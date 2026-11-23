@@ -2,6 +2,16 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   1.14's light update packet (`light/LightUpdates`, channel `backportcore_light`, no patch): a listener on every
+    server world collects the sections `notifyLightSet` reports; at the end of the world's tick each collected chunk
+    its players already have gets those sections' sky and block light (`light/client/LightUpdatesClient` copies them
+    in and redraws). 1.12.2 sends a chunk's light only with the chunk, so light the server changed later with no
+    block change there (a neighbor's decoration, light spreading in from a chunk generated after) stayed wrong on the
+    client until a block update nearby; F3+A did not help. Under Update Aquatic's water (light drops one a block)
+    that was whole chunks of sea floor brighter or darker than the rest at night, and see-through looking ice. Client
+    test `ClientLightTests`; in a Showcase copy, flights over warm, frozen and plain oceans went from 9 and 5 such
+    chunks to none.
+
 # 1.4.9
 
 *   Dynamic Trees (0.9.x, modid `dynamictrees`) support, `compat/DynamicTrees` (`DynamicTreesLink` is the one class linking against it, `deobfProvided`). Dynamic Trees denies 1.12.2's TREE, BIG_SHROOM and CACTUS decoration by the biome at the chunk's corner; 1.12.2 decorates with the biome at corner + 16. Next to a biome Dynamic Trees leaves alone (every backport biome, other mods' biomes without an add-on) a vanilla-decorated chunk kept its static trees beside Dynamic Trees' own, and a backport-decorated chunk lost its trees. Core re-answers those events at LOWEST priority by the decorating biome (`DynamicTrees.decide`): DENY where Dynamic Trees replaces that biome's trees; a DENY lifted only where Dynamic Trees' rule for the corner biome explains it.

@@ -128,6 +128,9 @@ public final class BackportCore {
         com.exiledradio.backportcore.command.tick.TickNetwork.init();
         // Today's jigsaw block: its screen's two packets (block/).
         com.exiledradio.backportcore.block.JigsawNetwork.init();
+        // 1.14's light update packet: light the server changes in a chunk its players have reaches them (light/).
+        com.exiledradio.backportcore.light.LightUpdates.init();
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.light.LightUpdates.Events());
         // 26.3's /swing: the animation and its duration reach the client (command/swing/).
         com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
@@ -161,6 +164,7 @@ public final class BackportCore {
             com.exiledradio.backportcore.settings.client.SettingsClient.init();
             com.exiledradio.backportcore.recipe.book.client.ClientBooks.init();
             com.exiledradio.backportcore.gameevent.client.VibrationClient.init();
+            com.exiledradio.backportcore.light.client.LightUpdatesClient.init();
             // 1.20's armor trims, worn and on item icons (smithing/).
             com.exiledradio.backportcore.smithing.client.ArmorTrimsClient.init();
             // 1.21.5's spawn eggs, each its own texture (client.SpawnEggModels).
