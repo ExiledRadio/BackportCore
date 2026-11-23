@@ -1,5 +1,6 @@
 # 1.4.6
 
+*   P66 (`asm/RecipeToastTransformer`): 1.13's recipe toast draws the crafting table at 0.6 scale behind the output (`VanillaRevisions.recipeToastIcon`, the toasts' look from 1.13, which `LookArea.TOASTS` now offers). 1.12.2 drew the output only.
 *   Ocean monuments in Realistic Terrain Generation worlds only where RTG's terrain is deep water (`worldgen.MonumentTerrain.deepEnough`, called by `ModernMonument` and open to a backport's own monument rule): at least 15 blocks of water within 16 blocks of the chunk's block (9, 9), water within 29, read from RTG's cached landscape at the biome check's 1:4 cells. RTG builds a biome it has no realistic biome for as plains (Update Aquatic's deep oceans in 1.2.2) and blends small deep ocean patches into lakes, so the biome rule alone put monuments on land and in ponds. Generation, `/locate` and explorer maps all ask the same check. Other worlds keep vanilla's rule. `selftest/monument/MonumentCheck` (`gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`) surveys a real server's monuments against the terrain.
 *   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its
     pieces with no log within 6 steps through leaves (26.3's `LeavesBlock` distance) is removed, with any snow layer on

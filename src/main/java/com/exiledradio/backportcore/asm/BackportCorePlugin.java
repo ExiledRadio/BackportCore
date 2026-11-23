@@ -71,6 +71,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             QuitShortcutsTransformer.class.getName(),
             SoundDeviceTransformer.class.getName(),
             LightmapTransformer.class.getName(),
+            RecipeToastTransformer.class.getName(),
     };
 
     @Override

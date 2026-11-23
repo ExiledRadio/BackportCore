@@ -108,6 +108,11 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.VIDEO, "26.1");
     }
 
+    /** 1.13: the recipe toast draws the crafting table small behind a crafting recipe's output (P66). Since Core 1.4.5. */
+    public static boolean recipeToastIcon() {
+        return Presentation.isAtLeast(LookArea.TOASTS, "1.13");
+    }
+
     /** 1.15: the drop key swings the main hand ({@code presentation.client.DropSwing}). Since Core 1.4.5. */
     public static boolean dropKeySwing() {
         return Presentation.isAtLeast("1.15");

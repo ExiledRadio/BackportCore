@@ -1156,3 +1156,15 @@ or passes an existing constant through a hook of the same type.
     Vision, Darkness, boss fog, Nether, End), within 1/255, and 26.3's values by hand; `ClientVideoShots` shoots each
     of the Overworld by day and night, a torch-lit room, the Nether and the End with 26.1's lightmap and with 1.12.2's
     (`video-light-*-26.1.png`, `video-light-*-1.12.2.png`).
+
+## P66. 1.13's recipe toast icon
+
+*   **Class**: `net.minecraft.client.gui.toasts.RecipeToast`, `draw(GuiToast, long)`. **Transformer**:
+    `asm/RecipeToastTransformer`. **Hook**: `PresentationHooks.recipeToastIcon`. **Since**: 1.4.5.
+*   **Vanilla change**: 1.13's "New Recipes Unlocked!" toast draws the recipe's workstation (the crafting table for a
+    crafting recipe) at 0.6 scale at (3, 4), then the output at (8, 8). 1.12.2 draws the output only. Core's furnace
+    book toast (`SmeltingToast`) already draws its furnace.
+*   **Why a patch**: vanilla adds the toast from the recipe book packet; no event lets a mod change how it draws.
+*   **What changes**: before the one `renderItemAndEffectIntoGUI` call, `aload 1` and the hook, which leaves the stack
+    as it was. From 1.13 (the toasts' look, `VanillaRevisions.recipeToastIcon`) it draws the crafting table.
+*   **Fails safe**: method missing or not exactly one item draw: left as 1.12.2's, one log line.

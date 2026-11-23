@@ -271,6 +271,19 @@ final class ClientVideoShots {
             return true;
         });
         add(null, () -> {
+            // 1.13's recipe toast: the crafting table behind the output (P66); toasts miss 1.12.2's screenshots, so this
+            // draws a toast for a few frames (loading RecipeToast) and then checks the patch.
+            check("1.13: the recipe toast draws its crafting table", com.exiledradio.backportcore.presentation.VanillaRevisions.recipeToastIcon(), "off");
+            net.minecraft.item.crafting.IRecipe r = net.minecraft.item.crafting.CraftingManager.getRecipe(new net.minecraft.util.ResourceLocation("minecraft", "crafting_table"));
+            net.minecraft.client.gui.toasts.RecipeToast.addOrUpdate(mc.getToastGui(), r);
+            return true;
+        });
+        add(null, () -> pause(20));
+        add(null, () -> {
+            check("P66 applied", "applied".equals(Asm.state("P66")), Asm.state("P66"));
+            return true;
+        });
+        add(null, () -> {
             check("P65 applied", "applied".equals(Asm.state("P65")), Asm.state("P65"));
             // 26.1's lightmap beside 1.12.2's: the Overworld by day and by night, a torch-lit cave, the Nether, the End.
             EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);

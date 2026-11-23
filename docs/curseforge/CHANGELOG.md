@@ -1,5 +1,6 @@
 # 1.4.5
 
+*   **Fixed: the crafting table missing from the "New Recipes Unlocked!" toast.** As in 1.13, it is drawn small behind the recipe's output.
 *   **Realistic Terrain Generation** (and RTG Unofficial): the backports' surface biomes now generate in RTG worlds, on RTG's terrain for the nearest vanilla biome, with their own trees and features. RTG turned every biome it did not know into plains. Desert temples, igloos, jungle temples and witch huts in RTG worlds go by the biome RTG really gives a chunk.
 *   **Fixed: ocean monuments on land and in lakes in Realistic Terrain Generation worlds.** A monument there now also needs deep water where it stands, so it only generates in RTG's deep oceans, and `/locate` and explorer maps point to the same places.
 *   **Fixed: leaves left floating where a structure cut trees.** A village, outpost, temple or any backport structure built where trees stood cleared their logs but left the leaves in the air. The leaves those trees lose now go with them (any mod's trees), as cut-off leaves decay in today's game.

@@ -30,8 +30,8 @@ public enum LookArea {
     CHAT("chat", "1.13", "1.14", "1.16"),
     /** F3: the debug keys, the debug screen's lines, Debug Options and the charts. */
     DEBUG("debug", "1.20.2", "1.21.9", "1.21.11", "26.1", "26.3"),
-    /** Toasts: the music toast and the newer toasts' textures. */
-    TOASTS("toasts", "1.21.6", "26.2"),
+    /** Toasts: the recipe toast's icon, the music toast and the newer toasts' textures. */
+    TOASTS("toasts", "1.13", "1.21.6", "26.2"),
     /**
      * Inventory and creative tabs: 1.19.3's creative tabs (creative.client.ModernTabs), the creative order (26.3's,
      * creative.client.ModernOrder), slot highlights, the active effects beside the inventory (1.18, 1.21.11), the
