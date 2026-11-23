@@ -41,6 +41,9 @@
 
 # 1.4.5
 
+*   The arm swings on a drop (`presentation.client.DropSwing`, no patch): the drop key from 1.15 (`InputEvent`, the
+    checks `processKeyBinds` makes), every client-side `ItemTossEvent` of the player from 1.16 (`Player.drop`'s
+    client swing: inventory throws, clicks outside, creative). Checked against 1.15.2, 1.16.5 and 26.3's code.
 *   1.21.2's clouds (`presentation.client.ModernClouds`, `VanillaRevisions.modernClouds()`, the sky's look 1.21.2, P26's
     early return): 26.3's `CloudRenderer` mesh in six display lists with a depth pass first; 1.12.2's inner walls
     showed through as a grid. Off for a world's own cloud renderer and an OptiFine shader pack. Video shots

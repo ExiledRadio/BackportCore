@@ -32,6 +32,7 @@ public final class PresentationClient {
         MinecraftForge.EVENT_BUS.register(new Credits());
         MinecraftForge.EVENT_BUS.register(new SystemToasts());
         MinecraftForge.EVENT_BUS.register(new DarkTitleBar());
+        MinecraftForge.EVENT_BUS.register(new DropSwing());
         MinecraftForge.EVENT_BUS.register(new BorderlessFullscreen.Events());
         MinecraftForge.EVENT_BUS.register(new CreativeOrder());
         MinecraftForge.EVENT_BUS.register(new DebugText.Events());

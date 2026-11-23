@@ -108,6 +108,16 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.VIDEO, "26.1");
     }
 
+    /** 1.15: the drop key swings the main hand ({@code presentation.client.DropSwing}). Since Core 1.4.5. */
+    public static boolean dropKeySwing() {
+        return Presentation.isAtLeast("1.15");
+    }
+
+    /** 1.16: every drop swings it, from the inventory and in creative too ({@code Player.drop}). Since Core 1.4.5. */
+    public static boolean everyDropSwings() {
+        return Presentation.isAtLeast("1.16");
+    }
+
     /**
      * 1.21.2's clouds ({@code presentation.client.ModernClouds}): a box per cell with only the faces that can be seen,
      * in place of 1.12.2's textured slabs and their inner walls. Since Core 1.4.5.

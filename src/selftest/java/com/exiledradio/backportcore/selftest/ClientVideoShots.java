@@ -6,6 +6,7 @@ import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.client.FullscreenModes;
+import com.exiledradio.backportcore.presentation.client.DropSwing;
 import com.exiledradio.backportcore.presentation.client.ModernClouds;
 import com.exiledradio.backportcore.presentation.client.OptionWidgets;
 import com.exiledradio.backportcore.render.client.ChunkRebuildHooks;
@@ -251,6 +252,20 @@ final class ClientVideoShots {
         add(null, () -> {
             check("sky look off: 1.12.2's clouds", ModernClouds.frames == this.framesAt, ModernClouds.frames - this.framesAt);
             CoreConfig.lookAndFeel.sky = true;
+            // 1.16: throwing from the inventory swings the arm. An apple in the first hotbar slot, then a THROW click on it.
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            p.inventory.setInventorySlotContents(0, new net.minecraft.item.ItemStack(net.minecraft.init.Items.APPLE, 3));
+            p.inventory.currentItem = 0;
+            return true;
+        });
+        add(null, () -> pause(2));
+        add(null, () -> {
+            this.framesAt = DropSwing.swings;
+            mc.player.swingProgressInt = 0;
+            mc.player.isSwingInProgress = false;
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 36, 0, net.minecraft.inventory.ClickType.THROW, mc.player);
+            check("1.16: a throw from the inventory swings the arm", DropSwing.swings == this.framesAt + 1 && mc.player.isSwingInProgress,
+                    (DropSwing.swings - this.framesAt) + " swings, swinging " + mc.player.isSwingInProgress);
             return true;
         });
     }
