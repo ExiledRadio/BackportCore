@@ -205,6 +205,7 @@ public final class BorderlessFullscreen {
      */
     public static final class Events {
         private int frames;
+        private boolean syncFailed;
 
         @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
         public void onRender(net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent event) {
@@ -220,6 +221,16 @@ public final class BorderlessFullscreen {
                 int[] fb = Glfw.framebufferSize();
                 if (fb[0] > 0 && fb[1] > 0 && (fb[0] != mc.displayWidth || fb[1] != mc.displayHeight)) {
                     mc.resize(fb[0], fb[1]);
+                }
+                if (fb[0] > 0 && fb[1] > 0) {
+                    try {
+                        Glfw.syncLwjglxSize(fb);
+                    } catch (ReflectiveOperationException | RuntimeException e) {
+                        if (!this.syncFailed) {
+                            this.syncFailed = true;
+                            BackportCore.LOGGER.warn("Fullscreen: couldn't keep lwjglx's stored size in step; the mouse may be offset", e);
+                        }
+                    }
                 }
             } catch (ReflectiveOperationException | RuntimeException e) {
                 // Leave the size to the game.
@@ -320,6 +331,35 @@ public final class BorderlessFullscreen {
             int[] s = saved != null ? saved : new int[] {100, 100, 854, 480};
             g.getMethod("glfwSetWindowMonitor", long.class, long.class, int.class, int.class, int.class, int.class, int.class)
                     .invoke(null, window, 0L, s[0], s[1], s[2], s[3], DONT_CARE);
+        }
+
+        private static java.lang.reflect.Field fbWidth, fbHeight;
+        private static boolean loggedStale;
+
+        /**
+         * lwjglx's mouse turns GLFW's cursor into 1.12.2's bottom-up Y with {@code Display.getHeight()}, its stored
+         * framebuffer height ({@code displayFramebufferHeight}, set by its framebuffer-size callback). A game started
+         * fullscreen goes borderless while its window is still being made, and that stored size kept the first window's,
+         * so the mouse sat far below the cursor until a second F11. Kept equal to GLFW's framebuffer every frame.
+         */
+        static void syncLwjglxSize(int[] fb) throws ReflectiveOperationException {
+            if (fbWidth == null) {
+                fbWidth = Display.class.getDeclaredField("displayFramebufferWidth");
+                fbHeight = Display.class.getDeclaredField("displayFramebufferHeight");
+                fbWidth.setAccessible(true);
+                fbHeight.setAccessible(true);
+            }
+            int w = fbWidth.getInt(null), h = fbHeight.getInt(null);
+            if (w == fb[0] && h == fb[1]) {
+                return;
+            }
+            if (!loggedStale) {
+                loggedStale = true;
+                BackportCore.LOGGER.info("Fullscreen: lwjglx's stored size was {}x{}, the framebuffer is {}x{}; the mouse follows the framebuffer",
+                        w, h, fb[0], fb[1]);
+            }
+            fbWidth.setInt(null, fb[0]);
+            fbHeight.setInt(null, fb[1]);
         }
 
         static int[] framebufferSize() throws ReflectiveOperationException {
