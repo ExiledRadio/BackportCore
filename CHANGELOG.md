@@ -1,5 +1,11 @@
 # 1.4.6
 
+*   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its
+    pieces with no log within 6 steps through leaves (26.3's `LeavesBlock` distance) is removed, with any snow layer on
+    it. 26.3 places template air (`SinglePoolElement` ignores only structure blocks) and its cut-off leaves count up
+    to 7 and decay; 1.12.2's generated leaves never check. Run by `FreezeTopLayer.afterBuilding` (villages, outposts,
+    Caves & Cliffs' structures), `ScatteredStructure`'s driver and `ModernTemples`. Reads loaded chunks only.
+
 *   API: `Waterloggable.waterFlowsThrough(state, world, pos, side)`, handed to Fluidlogged API as `canFluidFlow` (null
     keeps its face-shape rule). A full collision box answers false, as 26.3's `canPassThroughWall`: water kept in leaves
     stays there.
