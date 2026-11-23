@@ -192,8 +192,8 @@ public final class OptionWidgets {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 double at = this.dragging && snapsOnRelease() ? this.dragFraction : this.option.fraction();
                 int knob = this.x + (int) (at * (double) (this.width - 8));
-                drawTexturedModalRect(knob, this.y, 0, 66, 4, 20);
-                drawTexturedModalRect(knob + 4, this.y, 196, 66, 4, 20);
+                drawTexturedModalRect(knob, this.y, 0, PresentationHooks.sliderHandleRow(this, 66), 4, 20);
+                drawTexturedModalRect(knob + 4, this.y, 196, PresentationHooks.sliderHandleRow(this, 66), 4, 20);
             }
         }
 

@@ -199,6 +199,24 @@ change one version made stays made when only a later backport is installed:
   `placeSpawnEgg`, so a backport ships no egg textures and calls nothing new). The egg's own model is wrapped (an override
   list), not replaced: other mods' eggs, and every egg before 1.21.5, keep 1.12.2's two tinted layers.
 * **Death screen** (1.15): a hardcore death screen's second button reads "Title screen".
+* **Question and message screens** (Core 1.4.5, `MessageScreens`, `VanillaRevisions.ConfirmLayout`, `.MessageScreen`,
+  `.DisconnectedLayout`): 1.12.2's own screen objects, their buttons moved on `InitGuiEvent.Post` and their text drawn in
+  place of `drawScreen` (exact classes only; a subclass draws its own). `GuiYesNo`: 1.17 (buttons at
+  `clamp(90 + message + 12, height / 6 + 96, height - 24)`), 1.19.1 (title at `clamp((height - message) / 2 - 29, 10, 80)`,
+  message 20 below, buttons 20 under it), 1.21.6 (26.3's `ConfirmScreen` column: title, message to `width - 50` and 15
+  rows, the 150-wide buttons 4 apart 16 further down, 8 between the three, centered; an empty message has no line).
+  "Saving world" leaving a singleplayer world (`WorldLoadingScreen`, while the internal server saves): 1.13 at 70 over
+  the dirt, 1.20.5 centered in a black box 12 larger with a `0xA0A0A0` frame over the menu background, 1.21.11's box
+  with its top at `height / 2 - 4` (26.3's `FocusableTextWidget`). `GuiDisconnected`: 1.20 (cells padded 10, reason
+  white, 150-wide button), 1.21 (the button 200 wide, padded 2). `GuiMemoryErrorScreen`: 1.20.5's 33-high header and
+  footer, the message in a 300-wide framed box (`outOfMemory.title`, `.message` from a backport's vanilla text).
+  `GuiScreenWorking`: 1.14 drops the second line until there is a stage and progress.
+* **Widgets** (Core 1.4.5, `Widgets`): sliders' handles take the hovered row under the mouse (1.14, P62) and focused text
+  fields a white frame (1.16, P61); 1.20.2's check box from a backport's `widget/checkbox` sprites (17 square, white
+  framed after a click). 26.3's `slider`, `slider_handle`, `text_field`, `scroller` and `scroller_background` sprites
+  are 1.12.2's drawing (with the family's `widgets.png`) pixel for pixel, so only those states differed.
+* **End credits** (1.17, Core 1.4.5, `Credits`): `texts/credits.json` and `postcredits.txt`, when a backport supplies
+  them, read as 26.3's `WinScreen` does into 1.12.2's screen. 26.3's vignette, logo and 256-wide column are not drawn.
 * **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing
   and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.
@@ -227,6 +245,56 @@ change one version made stays made when only a later backport is installed:
   world, `GameRulesScreen.inWorld(parent)` (26.3's `InWorldGameRulesScreen`, Game Drops Backport's World Options) asks
   the server on channel `backportcore_rules`, shows "Retrieving game rules...", sends the changed rules on Done (asking
   first when leaving with changes); the server answers and applies only for permission level 2, as `/gamerule` does.
+* **Create New World** (1.19.4, 23w05a; Core 1.4.5, `VanillaRevisions.createWorldTabs`, `presentation.client.CreateWorldTabs`):
+  one screen of three tabs laid out as 26.3's `CreateWorldScreen`. Game: World Name (its box 208 wide, the save folder
+  as its tooltip), Game Mode, Difficulty, Allow Commands, a column 210 wide. World: World Type and Customize (150 each,
+  10 apart), the seed (308, "Leave blank for a random seed" while empty), Generate Structures and Bonus Chest (44-wide
+  ON/OFF at the right). More: Game Rules (Core's Game Rules screen), then any button another mod added. Each tab's
+  content sits a sixth of the way down the free height; the tab bar is up to 400 wide less 28, three even tabs; Create
+  New World and Cancel in the footer. Data Packs and Experiments are left out (no 1.12.2 counterpart).
+  * 1.12.2's `GuiCreateWorld` stays the screen and its fields stay authoritative: its own buttons are moved onto the
+    tabs each frame (their words rewritten as 26.3's, "Game Mode: Survival"), its own `actionPerformed` changes the
+    settings and makes the world, so the settings are 1.12.2's for the same choices (Creative still turns commands on
+    until Allow Commands is clicked; Hardcore locks Allow Commands and Bonus Chest off). The Game tab is 1.12.2's main
+    page (name box), World and More its More World Options page (seed box). Only `drawScreen` is replaced. A subclass
+    of `GuiCreateWorld` keeps its own screen.
+  * Difficulty (on the Game tab from 23w05a) starts at the Difficulty option, which is what 1.12.2 gives a new world;
+    another choice waits for the new world's first tick (`gamerules.NewWorldDifficulty`, as the in-game Difficulty
+    button sets it); joining then copies it into the option, as 1.12.2 does for any world. Hard and inactive in Hardcore.
+  * Before 1.20.5: 1.19.4's light dirt (`light_dirt_background.png` from a pack, else 1.12.2's dirt at 0.3), a black
+    tab bar with a full-width separator, 1.19.4's dirt tabs (`tab_button.png` from a pack, else drawn), a 36-high
+    footer, buttons 10 apart. From 1.20.5: the blurred panorama with `menu_background` below the tab bar only
+    (`tab_header_background.png` is clear), separators beside the tabs, the `widget/tab*` sprites (from a pack, else
+    the same pixels drawn), the selected tab's inside in the menu background, a 33-high footer, buttons 8 apart. 1.20.5
+    (24w04a): "Allow Commands" (`selectWorld.allowCommands.new`). 1.21.11 (25w42a): the selected tab's label over its
+    background. 26.2's `MenuTabBar` is the same look.
+  * Keys: Escape goes back (1.12.2's screen ignored it), Ctrl + Tab / Ctrl + Shift + Tab and Ctrl + 1 to 3 change tabs,
+    Enter makes the world. Shift + click on Difficulty goes back. Tabs make no click sound.
+  * Text: the tab titles, "Save folder: %s", "Allow Commands" and the game mode and difficulty tooltips are in Core's
+    lang (26.3's words in 18 languages); 1.12.2's labels lose their colons ("World Type:").
+* **Header and footer** (1.20.5, `client.HeaderFooterLayout`, Core 1.4.5): 26.3's `HeaderAndFooterLayout` for 1.12.2's
+  screens: the title centered in a 33-high header (y 12), the footer's buttons centered at `height - 27` (Done 200
+  wide, or a row 8 apart), the contents between. `attachRows` turns a screen's own button grid into 26.3's
+  `OptionsList` (rows of 25, two 150-wide columns, the list background and separators), the buttons still reaching the
+  screen's `actionPerformed` and Forge's action events; `fitList` puts a 1.12.2 `GuiSlot` between the separators;
+  `contentsTop` places a grid 30 under the header. Applied to Options, Skin Customization, Music & Sounds, Chat
+  Settings, Accessibility, Controls, Mouse Settings, Online Options, Key Binds and Credits & Attribution (the class
+  comment says how to use it on another screen; Language, Resource Packs and Select World are not done yet). Edit
+  World has no header and footer in 26.3: it is one centered column from 1.20.5 (`client.EditWorldScreen`).
+* **Options** (26.3's `OptionsScreen`): 1.18's Online... in Realms Notifications' place (Online Options: the Realms
+  section with Realms Notifications; Allow Server Listing needs 1.18's client information packet field and is left
+  out); 1.19.3's Telemetry Data, greyed out, with 1.20.5's tooltip "Telemetry is disabled."; 1.19.4's Credits &
+  Attribution (Credits rolls 1.12.2's end credits; Attribution and Licenses open Mojang's pages after the link
+  confirmation). From 1.20.5 the screen is 26.3's: a 61-high header with the title and FOV / Online..., the grid
+  30 under it, Done in the footer. In a world Difficulty keeps its place in singleplayer until a backport removes it
+  (26.1 moved it to World Options), and Online... takes it otherwise.
+* **Title screen copyright** (1.19.4): the copyright text opens Credits & Attribution. The Realms button reads
+  "Minecraft Realms" in full from 1.13 (Forge 1.12.2 strips "Minecraft").
+* **Multiplayer warning** (`VanillaRevisions.WarningLayout`): 1.15.2's layout to 1.20.4; 1.20.5's centered column;
+  1.21.9's (26.3's) framed message box, single-spaced, scrolling only when taller than `height - 100`.
+* **Back for Cancel** (1.20.2): Select World's and Play Multiplayer's way back to the title screen. The other words
+  these menus changed (Direct Connection, Open Pack Folder, Available, Selected) are vanilla's keys reworded: a
+  backport's vanilla text.
 * **Controls** (1.18): Options' "Controls..." opens Core's Controls screen (Mouse Settings... and Key Binds..., then
   Toggle Crouch, Toggle Sprint, Attack/Destroy, Use Item/Place Block and Auto-Jump in 1.21.11's order, then the
   backports' Controls options); "Key Binds..." is 1.12.2's key list with its top rows gone, titled Key Binds, the list
@@ -468,6 +536,8 @@ change one version made stays made when only a later backport is installed:
   the title row's icons); checkboxes, sliders, tabs and tooltips are drawn as before.
 * Quit Shortcuts and Right Click Emulation were not tried by hand: Alt + F4 on a real window, and macOS.
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
+  rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers, and the header and footer on Language,
+  Resource Packs, Select World and Play Multiplayer (`HeaderFooterLayout` is ready for them).
 ## Command suggestions
 
 On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen

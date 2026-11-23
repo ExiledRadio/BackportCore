@@ -92,6 +92,23 @@
         (HRTF) where OpenAL has it (Cleanroom's LWJGL 3; LWJGL 2's OpenAL has no HRTF, so the row is not shown there).
         Music & Sounds in 26.3's layout from 1.18.
 *   API: `PresentationOption.activeWhen(supplier, inactiveTooltip)`: an option shown greyed out.
+*   1.12.2's question and message screens as the newest installed version lays them out (`client/MessageScreens`,
+    `VanillaRevisions`; the screens stay 1.12.2's objects, so every mod's `GuiYesNo` keeps working):
+    *   yes/no questions (`GuiYesNo`: delete world, delete server, the death screen's quit question, every mod's): 1.17's
+        buttons under the message, 1.19.1's centered title and message, 1.21.6's column (26.3's `ConfirmScreen`: title,
+        message, then the two buttons, 8 apart, centered on the screen; an empty message takes no line);
+    *   leaving a singleplayer world: "Saving world" while the server saves, 1.13's over the dirt, 1.20.5's in its framed
+        box, 1.21.11's box 12 lower (Forge's "Shutting down internal server..." until now);
+    *   the disconnected screen: 1.20's centered reason (white), message and 150-wide button, 1.21's 200-wide button;
+        the wording ("Back to Server List") is the backports' vanilla text;
+    *   out of memory: 1.20.5's header, framed message and footer with Back to Title Screen and Quit Game;
+    *   the working screen (deleting a world, joining one) without 1.12.2's lone " 0%" (1.14).
+*   Widgets: a slider's handle lights up under the mouse (1.14, P62) and a focused text field's frame is white (1.16,
+    P61), on vanilla's, Forge's and Core's sliders and fields. The check box (multiplayer warning, Optimize World) is
+    1.20.2's when a backport supplies the `widget/checkbox` sprites: 17 square, its label beside it, framed white once
+    clicked. Compared with 26.3's sprites: the slider track, button, scroll bar and text field already match.
+*   The End credits from 26.3's `texts/credits.json` and `postcredits.txt` when a backport supplies them (1.17's
+    `WinScreen` reading: sections, disciplines, titles and names), drawn by 1.12.2's screen.
 *   The ominous bottle is Tricky Trials Backport's in `ItemOwnership`: 1.21 added it (Village & Pillage's until now).
     Bad Omen stays Village & Pillage's. A world's `villagerbackport:ominous_bottle` becomes Tricky Trials' as it loads
     (`CopyRemapping`), also with Village & Pillage removed.

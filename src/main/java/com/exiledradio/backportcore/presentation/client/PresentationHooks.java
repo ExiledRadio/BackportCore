@@ -285,6 +285,18 @@ public final class PresentationHooks {
         return com.exiledradio.backportcore.presentation.VanillaRevisions.buttonTextColor(vanilla);
     }
 
+    // ---- P61, P62: text fields and sliders ----
+
+    /** P61: a text field's frame color; 1.16's white while it is focused. */
+    public static int textFieldFrame(net.minecraft.client.gui.GuiTextField field, int vanilla) {
+        return field.isFocused() && com.exiledradio.backportcore.presentation.VanillaRevisions.textFieldFocusFrame() ? 0xFFFFFFFF : vanilla;
+    }
+
+    /** P62: the texture row of a slider's handle in {@code widgets.png}; 1.14's hovered button row (86) under the mouse. */
+    public static int sliderHandleRow(net.minecraft.client.gui.GuiButton slider, int vanilla) {
+        return slider.isMouseOver() && com.exiledradio.backportcore.presentation.VanillaRevisions.sliderHandleHover() ? 86 : vanilla;
+    }
+
     // ---- P13, P14: the chat ----
 
     /** P13: the chat's {@code drawChat(updateCounter)}: Core's from 1.14 on (its text options), vanilla's before. */

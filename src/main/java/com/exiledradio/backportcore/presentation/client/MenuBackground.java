@@ -259,6 +259,27 @@ public final class MenuBackground {
     }
 
     /**
+     * A menu's background outside a world, for a frame the loading screen draws outside the GUI loop ("Saving world",
+     * {@link WorldLoadingScreen}): the panorama and its overlay, the blur, the menu texture, whether or not the world
+     * being left is still set. Draws into the main framebuffer, which the blur reads.
+     */
+    static void drawOutsideWorld(int width, int height) {
+        Minecraft mc = Minecraft.getMinecraft();
+        GlStateManager.disableLighting();
+        GlStateManager.disableFog();
+        PanoramaRenderer.render(null);
+        ResourceLocation overlay = Presentation.panoramaOverlay();
+        if (overlay != null) {
+            PanoramaRenderer.drawOverlay(mc, overlay, width, height);
+        }
+        GlStateManager.disableDepth();
+        blurredThisFrame = false;
+        blur(mc, 0.0F);
+        tile(MENU, MENU_COLOR, 0, 0, width, height, 0, 0);
+        menuFrames++;
+    }
+
+    /**
      * Blurs what the main framebuffer holds, in place ({@code GameRenderer.processBlurEffect}), at most once a frame.
      *
      * @return true if it blurred

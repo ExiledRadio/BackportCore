@@ -100,6 +100,11 @@ final class PatchTests {
             {"net.minecraft.client.Minecraft", "P51", new String[] {"closeRequested"}},
             // Paulscode's library is not in Forge's SRG jar: the dev chain checks it.
             {"paulscode.sound.libraries.LibraryLWJGLOpenAL", "P52", new String[] {"createAL"}},
+            {"net.minecraft.client.gui.GuiTextField", "P61", new String[] {"textFieldFrame"}},
+            {"net.minecraft.client.gui.GuiOptionSlider", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraft.client.gui.GuiSlider", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraft.client.gui.GuiScreenOptionsSounds$Button", "P62", new String[] {"sliderHandleRow*2"}},
+            {"net.minecraftforge.fml.client.config.GuiSlider", "P62", new String[] {"sliderHandleRow"}},
     };
 
     private PatchTests() {
@@ -352,7 +357,7 @@ final class PatchTests {
             case "P8": cls = "BiomeSearchTransformer"; break;
             case "P9": cls = "VillageBiomeTransformer"; break;
             case "P10": case "P11": cls = "LayerRulesTransformer"; break;
-            case "P12": case "P13": case "P14": case "P15": case "P16": cls = "ScreenPatchesTransformer"; break;
+            case "P12": case "P13": case "P14": case "P15": case "P16": case "P61": case "P62": cls = "ScreenPatchesTransformer"; break;
             case "P17": cls = "ChunkRebuildsTransformer"; break;
             case "P18": cls = "CameraTerrainTransformer"; break;
             case "P31": case "P32": cls = "MenuBackgroundTransformer"; break;

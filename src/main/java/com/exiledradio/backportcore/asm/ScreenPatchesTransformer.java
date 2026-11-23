@@ -22,7 +22,13 @@ import org.objectweb.asm.tree.MethodNode;
  *       passes' two {@code provider.getCloudHeight()} calls go through the fog pipeline's sky and cloud steps.</li>
  *   <li>P16 {@code EntityRenderer}: {@code updateFogColor}'s {@code getSkyColor} call and {@code renderWorldPass}'s two
  *       {@code 128.0D} cloud-layer comparisons (whether the camera is above the clouds) follow the same steps.</li>
+ *   <li>P61 {@code GuiTextField.drawTextBox}: the frame's color ({@code -6250336}) passes through
+ *       {@code textFieldFrame(field, color)} (1.16: white while focused).</li>
+ *   <li>P62 the sliders' {@code mouseDragged} ({@code GuiOptionSlider}, {@code GuiSlider}, the sound screen's
+ *       {@code GuiScreenOptionsSounds$Button}, Forge's {@code GuiSlider}): the handle's texture row ({@code 66}) passes
+ *       through {@code sliderHandleRow(button, row)} (1.14: the hovered button's row, 86, under the mouse).</li>
  * </ul>
+ * P61 and P62 load {@code this} before the constant for their hook; that adds a stack slot, never a local.
  * A class whose shape is not exactly the expected one is left unchanged (logged), never half-patched.
  */
 public final class ScreenPatchesTransformer implements IClassTransformer {
@@ -51,6 +57,14 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
                 return renderGlobal(basicClass);
             case "net.minecraft.client.renderer.EntityRenderer":
                 return entityRenderer(basicClass);
+            case "net.minecraft.client.gui.GuiTextField":
+                return textField(basicClass);
+            case "net.minecraft.client.gui.GuiOptionSlider":
+            case "net.minecraft.client.gui.GuiSlider":
+            case "net.minecraft.client.gui.GuiScreenOptionsSounds$Button":
+                return slider(transformedName, basicClass, 2);
+            case "net.minecraftforge.fml.client.config.GuiSlider":
+                return slider(transformedName, basicClass, 1);
             default:
                 return basicClass;
         }
@@ -173,5 +187,57 @@ public final class ScreenPatchesTransformer implements IClassTransformer {
         Asm.wrapConstants(pass, 128.0D, "cloudLayer", "(D)D");
         Asm.applied("P16", what);
         return Asm.write(node);
+    }
+
+    private static final String GUI_BUTTON = "net/minecraft/client/gui/GuiButton";
+    private static final String GUI_TEXT_FIELD = "net/minecraft/client/gui/GuiTextField";
+
+    private static byte[] textField(byte[] bytes) {
+        String what = "text field frame (GuiTextField.drawTextBox)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode draw = Asm.method(node, "drawTextBox", "func_146194_f", "()V");
+        if (draw == null) {
+            Asm.skipped("P61", what, "drawTextBox not found");
+            return bytes;
+        }
+        java.util.List<org.objectweb.asm.tree.LdcInsnNode> frame = Asm.constants(draw, -6250336);
+        if (frame.size() != 1) {
+            Asm.skipped("P61", what, "unexpected shape (" + frame.size() + " frame colors)");
+            return bytes;
+        }
+        withThis(draw, frame.get(0), "textFieldFrame", "(L" + GUI_TEXT_FIELD + ";I)I");
+        Asm.applied("P61", what);
+        return Asm.write(node);
+    }
+
+    private static byte[] slider(String cls, byte[] bytes, int expected) {
+        String what = "slider handle (" + cls.substring(cls.lastIndexOf('.') + 1) + ".mouseDragged)";
+        ClassNode node = Asm.read(bytes);
+        MethodNode drag = Asm.method(node, "mouseDragged", "func_146119_b", "(Lnet/minecraft/client/Minecraft;II)V");
+        if (drag == null) {
+            Asm.skipped("P62", what, "mouseDragged not found");
+            return bytes;
+        }
+        java.util.List<org.objectweb.asm.tree.AbstractInsnNode> rows = new java.util.ArrayList<org.objectweb.asm.tree.AbstractInsnNode>();
+        for (org.objectweb.asm.tree.AbstractInsnNode insn = drag.instructions.getFirst(); insn != null; insn = insn.getNext()) {
+            if (insn.getOpcode() == Opcodes.BIPUSH && ((org.objectweb.asm.tree.IntInsnNode) insn).operand == 66) {
+                rows.add(insn);
+            }
+        }
+        if (rows.size() != expected) {
+            Asm.skipped("P62", what, "unexpected shape (" + rows.size() + " handle rows)");
+            return bytes;
+        }
+        for (org.objectweb.asm.tree.AbstractInsnNode row : rows) {
+            withThis(drag, row, "sliderHandleRow", "(L" + GUI_BUTTON + ";I)I");
+        }
+        Asm.applied("P62", what);
+        return Asm.write(node);
+    }
+
+    /** {@code this} before the int constant, the hook after it: the constant becomes {@code hook(this, constant)}. */
+    private static void withThis(MethodNode m, org.objectweb.asm.tree.AbstractInsnNode constant, String hook, String desc) {
+        m.instructions.insertBefore(constant, new org.objectweb.asm.tree.VarInsnNode(Opcodes.ALOAD, 0));
+        m.instructions.insert(constant, new org.objectweb.asm.tree.MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, hook, desc, false));
     }
 }
