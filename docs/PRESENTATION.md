@@ -315,6 +315,8 @@ change one version made stays made when only a later backport is installed:
     2/4/4, weather radius 5/10/10, ...), the backports' options of those names included. Changing any of them makes it
     Custom.
   * **Cloud Distance** (from 1.21.6, P26): the clouds reach 2 to 128 chunks and fade out by that distance.
+  * **1.21.2's clouds** (the sky's look, P26's return, `ModernClouds`): 26.3's cloud mesh, a box per texel with only
+    its visible faces, so no grid of inner walls shows through the clouds' undersides.
   * **Weather Effect Radius** (P27): rain and snow within 3 to 10 blocks.
   * **Texture Filtering**: None or Anisotropic, and **Anisotropic Filtering** 2x, 4x or 8x (on with Anisotropic only),
     set on the block atlas with OpenGL's anisotropic filtering. 1.21.11's RGSS is a shader 1.12.2 cannot run.

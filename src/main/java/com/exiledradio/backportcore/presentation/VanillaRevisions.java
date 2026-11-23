@@ -109,6 +109,14 @@ public final class VanillaRevisions {
     }
 
     /**
+     * 1.21.2's clouds ({@code presentation.client.ModernClouds}): a box per cell with only the faces that can be seen,
+     * in place of 1.12.2's textured slabs and their inner walls. Since Core 1.4.5.
+     */
+    public static boolean modernClouds() {
+        return Presentation.isAtLeast(LookArea.SKY, "1.21.2");
+    }
+
+    /**
      * 26.3 (its window through SDL3, 26.2's through GLFW): on Windows the title bar takes Windows' dark mode when the
      * app mode is dark. Since Core 1.4.5.
      */

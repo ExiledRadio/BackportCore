@@ -4,9 +4,15 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FrameNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +66,21 @@ public final class CloudDistanceTransformer implements IClassTransformer {
         for (AbstractInsnNode insn : cells) {
             fancy.instructions.insert(insn, new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, "cloudFancy", "(I)I", false));
         }
-        clouds.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, "cloudsBegin", "()V", false));
+        // The head: cloudsBegin(); if (modernClouds(partialTicks, x, y, z)) return; (one branch, an F_SAME frame at
+        // the head, where the locals are the parameters and the stack is empty).
+        LabelNode vanilla = new LabelNode();
+        InsnList head = new InsnList();
+        head.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, "cloudsBegin", "()V", false));
+        head.add(new VarInsnNode(Opcodes.FLOAD, 1));
+        head.add(new VarInsnNode(Opcodes.DLOAD, 3));
+        head.add(new VarInsnNode(Opcodes.DLOAD, 5));
+        head.add(new VarInsnNode(Opcodes.DLOAD, 7));
+        head.add(new MethodInsnNode(Opcodes.INVOKESTATIC, Asm.PRESENTATION_HOOKS, "modernClouds", "(FDDD)Z", false));
+        head.add(new JumpInsnNode(Opcodes.IFEQ, vanilla));
+        head.add(new InsnNode(Opcodes.RETURN));
+        head.add(vanilla);
+        head.add(new FrameNode(Opcodes.F_SAME, 0, null, 0, null));
+        clouds.instructions.insert(head);
         Asm.applied(PATCH, WHAT);
         return Asm.write(node);
     }

@@ -41,7 +41,7 @@ public enum LookArea {
     /** Sounds and music: the menu music, the in-game music, the music options. */
     MUSIC("music", "1.14", "1.21.6"),
     /** Sky, fog and clouds: each version's fog, sky color, clouds and sunrise steps. */
-    SKY("sky"),
+    SKY("sky", "1.21.2"),
     /** Vanilla's text as each version words it. */
     WORDING("wording", "1.20.2"),
     /** Vanilla's textures as each version has them (Core's existing {@code textures.modernTextures}). */

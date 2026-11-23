@@ -6,6 +6,7 @@ import com.exiledradio.backportcore.asm.Asm;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 import com.exiledradio.backportcore.presentation.client.FullscreenModes;
+import com.exiledradio.backportcore.presentation.client.ModernClouds;
 import com.exiledradio.backportcore.presentation.client.OptionWidgets;
 import com.exiledradio.backportcore.render.client.ChunkRebuildHooks;
 import com.exiledradio.backportcore.render.client.ImprovedTransparency;
@@ -198,6 +199,58 @@ final class ClientVideoShots {
                     ImprovedTransparency.frames - this.framesAt);
             Presentation.IMPROVED_TRANSPARENCY.set(false);
             Presentation.GRAPHICS_PRESET.set(this.presetAt);
+            // 1.21.2's clouds: clear sky, noon, the camera under the layer looking up at it.
+            WorldServer w = mc.getIntegratedServer().getWorld(0);
+            w.getWorldInfo().setRaining(false);
+            w.setRainStrength(0.0F);
+            mc.world.setRainStrength(0.0F);
+            mc.gameSettings.clouds = 2;
+            this.waited = 0;
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            p.connection.setPlayerLocation(p.posX, 100, p.posZ, 30.0F, -35.0F);
+            return true;
+        });
+        add(null, () -> pause(6));
+        add(null, () -> {
+            this.framesAt = ModernClouds.frames;
+            return true;
+        });
+        add("clouds-below", () -> true);
+        add(null, () -> {
+            check("1.21.2's clouds draw at 26.3", VanillaRevisions.modernClouds() && ModernClouds.frames > this.framesAt,
+                    (ModernClouds.frames - this.framesAt) + " frames, " + ModernClouds.quads + " quads");
+            check("P26 applied (with the modern clouds' return)", "applied".equals(Asm.state("P26")), Asm.state("P26"));
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            p.connection.setPlayerLocation(p.posX, 160, p.posZ, 30.0F, 35.0F);
+            return true;
+        });
+        add(null, () -> pause(4));
+        add("clouds-above", () -> true);
+        add(null, () -> {
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            p.connection.setPlayerLocation(p.posX, 129.5, p.posZ, 30.0F, 0.0F);
+            return true;
+        });
+        add(null, () -> pause(4));
+        add("clouds-inside", () -> true);
+        add(null, () -> {
+            EntityPlayerMP p = mc.getIntegratedServer().getPlayerList().getPlayers().get(0);
+            p.connection.setPlayerLocation(p.posX, 100, p.posZ, 30.0F, -35.0F);
+            mc.gameSettings.clouds = 1;
+            return true;
+        });
+        add(null, () -> pause(4));
+        add("clouds-fast", () -> true);
+        add(null, () -> {
+            mc.gameSettings.clouds = 2;
+            CoreConfig.lookAndFeel.sky = false;
+            this.framesAt = ModernClouds.frames;
+            return true;
+        });
+        add("clouds-1.12.2", () -> true);
+        add(null, () -> {
+            check("sky look off: 1.12.2's clouds", ModernClouds.frames == this.framesAt, ModernClouds.frames - this.framesAt);
+            CoreConfig.lookAndFeel.sky = true;
             return true;
         });
     }
@@ -245,6 +298,15 @@ final class ClientVideoShots {
     private static boolean show(net.minecraft.client.gui.GuiScreen screen) {
         Minecraft.getMinecraft().displayGuiScreen(screen);
         return true;
+    }
+
+    /** @return true after {@code steps} calls, then starts over */
+    private boolean pause(int steps) {
+        if (++this.waited > steps) {
+            this.waited = 0;
+            return true;
+        }
+        return false;
     }
 
     private void add(String name, Supplier<Boolean> step) {

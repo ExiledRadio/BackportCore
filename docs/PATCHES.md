@@ -531,13 +531,24 @@ or passes an existing constant through a hook of the same type.
     to it (1.21.6's `FogCloudsEnd`: linear fog from 0 to the distance in place of the render distance's), except under
     water, in lava, while blind, or in a world with its own cloud renderer. Before 1.21.6 every hook returns 1.12.2's
     numbers.
+*   **1.21.2's clouds (since 1.4.5)**: right after `cloudsBegin()`, `if (PresentationHooks.modernClouds(partialTicks,
+    x, y, z)) return;`. From 1.21.2 (the sky's look) `presentation.client.ModernClouds` draws 26.3's `CloudRenderer`
+    mesh instead: a 12 by 4 by 12 box per cloud texel, only the faces that can be seen (top or bottom by the camera's
+    side, a side where the next cell is empty and only on the camera's side, inward faces within one cell), in six
+    display lists (one per direction, 26.3's face shades times the cloud color), a depth pass then a color pass.
+    1.12.2 drew a wall at every texel edge, inside clouds too, and from below they showed through the undersides as a
+    grid of lines, worse with a far Cloud Distance. 1.12.2's clouds stay with the sky look off or before 1.21.2, for a
+    world with its own cloud renderer, and while an OptiFine shader pack is loaded.
 *   **Why a patch**: the bounds are constants in the loops and the far plane is set by `EntityRenderer.renderCloudsCheck`;
     no event comes between.
-*   **Shape**: an `invokestatic ()V` at the head, `invokestatic (I)I` after four `sipush` and four loop constants.
+*   **Shape**: at the head an `invokestatic ()V`, then the parameters, an `invokestatic (FDDD)Z`, `ifeq` past a `return`
+    (an `F_SAME` frame); `invokestatic (I)I` after four `sipush` and four loop constants.
 *   **Fails safe**: methods not found or not exactly four of each constant: skipped, 1.12.2's clouds.
 *   **Cost**: 1.12.2 builds its clouds on the CPU each frame. Fancy clouds at 128 chunks are 45 by 45 cells (1.12.2: 8
     by 8); the Fast and Fancy presets set 32 and 64.
-*   **Tested**: client self-test (`P26 applied`, the hooks keep 1.12.2's numbers below 1.21.6). How it looks: not seen.
+*   **Tested**: client self-test (`P26 applied`, the hooks keep 1.12.2's numbers below 1.21.6); the video shots
+    (`BACKPORTCORE_VIDEOSHOTS=1`) draw 1.21.2's clouds from below, above, inside and Fast, and 1.12.2's with the sky
+    look off (`video-clouds-*.png`).
 
 ## P27. Weather Effect Radius
 

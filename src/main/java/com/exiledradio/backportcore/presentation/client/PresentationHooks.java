@@ -157,6 +157,11 @@ public final class PresentationHooks {
         RenderOptions.cloudsBegin();
     }
 
+    /** P26: right after {@link #cloudsBegin()}: true when 1.21.2's clouds were drawn instead of 1.12.2's. */
+    public static boolean modernClouds(float partialTicks, double x, double y, double z) {
+        return ModernClouds.render(partialTicks, x, y, z);
+    }
+
     /** P26: the fast clouds' -256 and 256. */
     public static int cloudFast(int vanilla) {
         return RenderOptions.cloudFast(vanilla);

@@ -41,6 +41,10 @@
 
 # 1.4.5
 
+*   1.21.2's clouds (`presentation.client.ModernClouds`, `VanillaRevisions.modernClouds()`, the sky's look 1.21.2, P26's
+    early return): 26.3's `CloudRenderer` mesh in six display lists with a depth pass first; 1.12.2's inner walls
+    showed through as a grid. Off for a world's own cloud renderer and an OptiFine shader pack. Video shots
+    `video-clouds-*`.
 *   1.19.4's Create New World (23w05a; `presentation.client.CreateWorldTabs`, the menus part): tabs Game (World Name,
     Game Mode, Difficulty, Allow Commands), World (World Type and Customize, the seed, Generate Structures, Bonus
     Chest) and More (Game Rules, and other mods' buttons), Create New World and Cancel below, laid out as 26.3's.
