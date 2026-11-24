@@ -49,6 +49,7 @@ dev server (port and world in `eclipse/server.properties`), logs `SELFTEST DONE 
 that world (`level-name`) first for a fresh one. Never `cleanRunServer` (it deletes `eclipse/`), and build again
 afterwards: a run task leaves an unobfuscated jar in `build/libs`.
 
-API for the backports: [docs/API.md](docs/API.md).
+API for the backports: [docs/API.md](docs/API.md). Releasing Core or a backport, update notices first:
+[docs/RELEASING.md](docs/RELEASING.md).
 
 Not affiliated with Mojang. Licensed MIT.
