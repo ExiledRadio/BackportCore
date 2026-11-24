@@ -99,7 +99,12 @@ public final class DynamicTrees {
      * and its {@code vanillaCactusWorldGen} is off
      */
     public static boolean replacesCactus(World world, BlockPos pos) {
-        if (!replacesTrees(world, pos)) {
+        return linked && world != null && replacesCactus(world, world.getBiome(pos));
+    }
+
+    /** {@link #replacesCactus(World, BlockPos)} for a biome. */
+    public static boolean replacesCactus(World world, Biome biome) {
+        if (!replacesTrees(world, biome)) {
             return false;
         }
         try {

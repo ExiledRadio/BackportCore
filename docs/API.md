@@ -293,7 +293,7 @@ Dynamic Trees (0.9.x, modid `dynamictrees`) grows its own trees in the biomes it
 the biome at corner + 16. Core re-answers those events at LOWEST priority by the decorating biome, so a backport biome
 next to one of Dynamic Trees' gets one kind of tree per chunk, with nothing to do in the backport. Everything else:
 
-- `replacesTrees(world, biome or pos)`, `replacesCactus(world, pos)`: whether Dynamic Trees grows its own there. A
+- `replacesTrees`, `replacesCactus` (world, biome or pos): whether Dynamic Trees grows its own there. A
   backport placing trees outside the TREE event (a terrain generator, a populate hook) leaves them out where true.
   False without Dynamic Trees, on a client world, in a blacklisted dimension.
 - `grow(world, pos, random, feature)`: a structure's tree (village, camp) as Dynamic Trees' species, where it replaces

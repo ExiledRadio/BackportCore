@@ -52,7 +52,7 @@ import java.util.TreeMap;
  * </ul>
  */
 @Mod(modid = "backportcore_dtcheck", name = "Backport Core Dynamic Trees check", version = "1",
-        dependencies = "required-after:backportcore;required-after:dynamictrees", acceptableRemoteVersions = "*")
+        dependencies = "required-after:backportcore;after:dynamictrees", acceptableRemoteVersions = "*")
 public final class DynamicTreesCheck {
 
     static final String TRIGGER = "dynamictrees-check.txt";
