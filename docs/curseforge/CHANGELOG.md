@@ -1,3 +1,7 @@
+# 1.4.8
+
+*   **Fixed: the settings screen's update notices** didn't know the latest family releases, so a backport one version behind could show as up to date.
+
 # 1.4.7
 
 *   **Every backport now looks and feels like its own version, even on its own.** What each update changed beyond its content is Backport Core's now and follows the newest backport you have installed: the options, chat, F3 keys and F3 text, menus and loading screens, logos and button textures, splashes and wording. With only Caves & Cliffs Backport you get 1.13's command suggestions, 1.14's Scroll Sensitivity, 1.15's Sneak and Sprint toggles and 1.16's F3 + F4 game mode switcher, as in 1.18. Music and title panoramas stay in each backport.

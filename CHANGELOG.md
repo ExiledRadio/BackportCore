@@ -1,3 +1,7 @@
+# 1.4.8
+
+*   Update notices (`settings/Family.java` latest versions, `updates/*.json`) know the 2026-11-24 releases: Core 1.4.7, Update Aquatic 1.2.3, Village & Pillage 2.7.5, Buzzy Bees 1.1.2, Nether Update 1.1.2, Caves & Cliffs 1.1.5, Wild Update 1.1.3, Trails & Tales 1.0.4, Tricky Trials 1.0.2, Game Drops 1.0.1. The table still listed Core 1.4.6, Caves & Cliffs 1.1.4 and older; the JSONs Core 1.4.4 and older.
+
 # 1.4.7
 
 *   Every backport feels like its version on its own: Core now owns each update's look and feel that is not tied to one backport's content, and applies it up to the newest installed backport (`Presentation.core(version)`, `presentation/versions/LookNNN`; `docs/CORE_FEEL.md` lists what moved). Caves & Cliffs alone has 1.13's command suggestions, 1.14's Scroll Sensitivity, 1.15's Sneak and Sprint toggles and 1.16's F3 + F4. Music and panoramas stay in the backports.
