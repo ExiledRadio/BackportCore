@@ -652,3 +652,13 @@ title.singleplayer=Singleplayer
 title.multiplayer.lan=Multiplayer (LAN)
 title.multiplayer.other=Multiplayer (3rd-party)
 title.multiplayer.realms=Multiplayer (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Entity Distance
+options.screenEffectScale=Distortion Effects
+options.fovEffectScale=FOV Effects
+options.screenEffectScale.tooltip=Strength of nausea and Nether portal screen distortion effects.\nAt lower values, the nausea effect is replaced with a green overlay.
+options.fovEffectScale.tooltip=Controls how much the field of view can change with speed effects.
+debug.gamemodes.help=F3 + F4 = Open game mode switcher
+debug.gamemodes.error=Unable to open game mode switcher; no permission
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s Next

@@ -653,3 +653,13 @@ title.singleplayer=싱글플레이
 title.multiplayer.lan=멀티플레이 (LAN)
 title.multiplayer.other=멀티플레이 (제3자 서버)
 title.multiplayer.realms=멀티플레이 (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=개체 거리
+options.screenEffectScale=왜곡 효과
+options.fovEffectScale=시야 효과
+options.screenEffectScale.tooltip=멀미와 네더 차원문의 화면 왜곡 효과 강도.\n수치를 낮추면, 멀미 효과는 초록색 오버레이로 대체됩니다.
+options.fovEffectScale.tooltip=게임플레이 효과에 따라 시야가 얼마나 변하는지 조절합니다.
+debug.gamemodes.help=F3 + F4 = 게임 모드 전환기 열기
+debug.gamemodes.error=권한이 없어 게임 모드 전환기를 열 수 없습니다
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s 다음

@@ -653,3 +653,13 @@ title.singleplayer=單人遊戲
 title.multiplayer.lan=多人遊戲（區域網路）
 title.multiplayer.other=多人遊戲（第三方伺服器）
 title.multiplayer.realms=多人遊戲（Realms）
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=實體顯示距離
+options.screenEffectScale=畫面扭曲效果
+options.fovEffectScale=視角廣度效果
+options.screenEffectScale.tooltip=噁心狀態效果與地獄傳送門的畫面扭曲程度。\n數值較低時，噁心效果將以綠色的視覺效果替代。
+options.fovEffectScale.tooltip=控制視角廣度隨遊戲狀態效果改變的程度。
+debug.gamemodes.help=F3 + F4 = 開啟遊戲模式切換器
+debug.gamemodes.error=您沒有權限開啟遊戲模式切換器
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s 下一個

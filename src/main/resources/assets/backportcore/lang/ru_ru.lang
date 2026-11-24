@@ -653,3 +653,13 @@ title.singleplayer=Одиночная игра
 title.multiplayer.lan=Сетевая игра (локальная)
 title.multiplayer.other=Сетевая игра (сторонний сервер)
 title.multiplayer.realms=Сетевая игра (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=До сущности
+options.screenEffectScale=Эффекты укачивания
+options.fovEffectScale=Эффекты поля зрения
+options.screenEffectScale.tooltip=Сила эффектов головокружения и искажения от портала Незера.\nПри низких значениях эффект головокружения заменяется зелёным подсвечиванием.
+options.fovEffectScale.tooltip=Управляет тем, насколько сильно поле зрения может изменяться с помощью эффектов игрового процесса.
+debug.gamemodes.help=F3 + F4 = Открыть меню смены режима игры
+debug.gamemodes.error=Не удалось открыть переключатель режима игры, недостаточно полномочий
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s — дальше

@@ -653,3 +653,13 @@ title.singleplayer=Гра наодинці
 title.multiplayer.lan=Гра в мережі (локальна мережа)
 title.multiplayer.other=Гра в мережі (сторонній сервер)
 title.multiplayer.realms=Гра в мережі (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Відст. до сутностей
+options.screenEffectScale=Ефекти викривлення
+options.fovEffectScale=Ефекти поля зору
+options.screenEffectScale.tooltip=Сила ефектів запаморочення та спотворення екрана від порталу Незеру.\nЗа низьких значень ефект запаморочення замінюється зеленим підсвічуванням.
+options.fovEffectScale.tooltip=Керує тим, наскільки ігрові ефекти можуть змінювати поле зору.
+debug.gamemodes.help=F3 + F4 = Відкрити перемикач режиму гри
+debug.gamemodes.error=Неможливо відкрити перемикач режиму гри: немає прав
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s — далі

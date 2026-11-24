@@ -1202,3 +1202,29 @@ or passes an existing constant through a hook of the same type.
 *   **Fails safe**: method missing or not exactly two corner calls and three divisors: skipped, colors blend 3 by 3.
     Skipped as well while an older Update Aquatic jar that has `asm/BiomeBlendPatch` is on the class path, or the
     method already calls that jar's hook: the old jar patches it, once.
+## P70. Distortion Effects (the portal and nausea wobble)
+
+*   **Class**: `net.minecraft.client.renderer.EntityRenderer`, `setupCameraTransform(float, int)`. **Transformer**:
+    `asm/DistortionTransformer`. **Hook**: `presentation.versions.Look116.portalWobble(F)F`. **Since**: 1.4.7 (Nether
+    Update Backport's P3 before).
+*   **Vanilla change**: 1.16.2's `GameRenderer.renderLevel` multiplies the portal and nausea wobble's strength by
+    Distortion Effects twice; below 100% a green nausea overlay shows instead (`client.Look116Client`).
+*   **Why a patch**: the wobble is computed and drawn inside the method; no event reaches it.
+*   **What changes**: the one `FSTORE` that ends `prevTimeInPortal + (timeInPortal - prevTimeInPortal) * partialTicks`
+    gets the hook before it (takes and returns the float: no jump, no new local).
+*   **Older jar**: an older Nether Update Backport jar patches the same store with its own hook (its coremod sorts
+    first). Where its hook call is already in the method, or its `asm/LookTransformer` is on the class path, P70 is
+    left out.
+*   **Fails safe**: method missing or `prevTimeInPortal` not read exactly twice: left as 1.12.2's, one log line.
+
+## P71. Entity Distance
+
+*   **Class**: `net.minecraft.client.renderer.RenderGlobal`, `setupTerrain(Entity, double, ICamera, int, boolean)`.
+    **Transformer**: `asm/DistortionTransformer`. **Hook**: `presentation.versions.Look116.entityDistance(D)D`.
+    **Since**: 1.4.7 (Nether Update Backport's P4 before).
+*   **Vanilla change**: 1.16's `LevelRenderer.renderLevel` multiplies the entity render distance weight
+    (clamp(render distance / 8, 1, 2.5)) by Entity Distance (50% to 500%).
+*   **Why a patch**: the weight is set inside the method; no event reaches it.
+*   **What changes**: the argument of the one `Entity.setRenderDistanceWeight` call passes through the hook.
+*   **Older jar**: as P70.
+*   **Fails safe**: method missing or not exactly one `setRenderDistanceWeight` call: left as 1.12.2's, one log line.

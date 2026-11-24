@@ -653,3 +653,13 @@ title.singleplayer=Tryb jednoosobowy
 title.multiplayer.lan=Gra wieloosobowa (LAN)
 title.multiplayer.other=Gra wieloosobowa (serwer zewnętrzny)
 title.multiplayer.realms=Gra wieloosobowa (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Odl. renderow. bytów
+options.screenEffectScale=Efekty zniekształcenia
+options.fovEffectScale=Efekty pola widzenia
+options.screenEffectScale.tooltip=Moc efektu zniekształcenia powodowanego przez nudności i portale do Netheru.\nPrzy niższych wartościach efekt nudności zostaje zastąpiony zieloną nakładką.
+options.fovEffectScale.tooltip=Wpływa na stopień efektów zmiany pola widzenia w czasie rozgrywki.
+debug.gamemodes.help=F3 + F4 = Otwórz interfejs zmiany trybu gry
+debug.gamemodes.error=Nie można otworzyć interfejsu zmiany trybu gry, brak uprawnień
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s — następny

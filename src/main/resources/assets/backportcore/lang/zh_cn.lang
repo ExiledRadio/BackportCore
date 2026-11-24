@@ -653,3 +653,13 @@ title.singleplayer=单人游戏
 title.multiplayer.lan=多人游戏（局域网）
 title.multiplayer.other=多人游戏（第三方服务器）
 title.multiplayer.realms=多人游戏（Realms）
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=实体渲染距离
+options.screenEffectScale=屏幕扭曲效果
+options.fovEffectScale=视场角效果
+options.screenEffectScale.tooltip=反胃状态效果和下界传送门所使用的屏幕扭曲效果的强度。\n值较低时，反胃的扭曲效果会被一层绿色的视觉效果替代。
+options.fovEffectScale.tooltip=控制游戏机制效果改变视场角的程度。
+debug.gamemodes.help=F3 + F4 = 打开游戏模式切换器
+debug.gamemodes.error=你没有权限打开游戏模式切换器
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s 下一个

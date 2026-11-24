@@ -653,3 +653,13 @@ title.singleplayer=Einzelspieler
 title.multiplayer.lan=Mehrspieler (LAN)
 title.multiplayer.other=Mehrspieler (Drittanbieter-Server)
 title.multiplayer.realms=Mehrspieler (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Objektweite
+options.screenEffectScale=Verzerrungseffekte
+options.fovEffectScale=Sichtfeldeffekte
+options.screenEffectScale.tooltip=Stärke von Übelkeits‐ und Netherportal‐Verzerrungseffekten.\nBei niedrigeren Werten wird der Übelkeitseffekt durch eine grüne Überlagerung ersetzt.
+options.fovEffectScale.tooltip=Steuert, wie stark das Sichtfeld durch Spielmechanikeffekte verändert wird.
+debug.gamemodes.help=F3 + F4 = Spielmodusauswahl öffnen
+debug.gamemodes.error=Spielmodusauswahl kann wegen fehlender Berechtigung nicht geöffnet werden
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s Nächster

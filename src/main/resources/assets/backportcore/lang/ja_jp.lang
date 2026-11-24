@@ -653,3 +653,13 @@ title.singleplayer=シングルプレイ
 title.multiplayer.lan=マルチプレイ（LAN）
 title.multiplayer.other=マルチプレイ（サードパーティー製のサーバー）
 title.multiplayer.realms=マルチプレイ（Realms）
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=エンティティの描画距離
+options.screenEffectScale=画面の歪み
+options.fovEffectScale=視野の変化
+options.screenEffectScale.tooltip=吐き気とネザーポータルに入った時に起こる画面の歪み効果の強さを変更します。\n設定の値を小さくすると、吐き気の歪み効果は緑色のオーバーレイに置き換えられます。
+options.fovEffectScale.tooltip=ゲーム内の効果により視野がどの程度変化するかを設定できます。
+debug.gamemodes.help=F3 + F4 = ゲームモード切り替え画面を開く
+debug.gamemodes.error=ゲームモード切り替え画面を開くための権限がありません
+debug.gamemodes.press_f4=［F4］
+debug.gamemodes.select_next=%sで次を選択

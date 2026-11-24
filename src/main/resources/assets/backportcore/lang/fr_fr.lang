@@ -653,3 +653,13 @@ title.singleplayer=Solo
 title.multiplayer.lan=Multijoueur (LAN)
 title.multiplayer.other=Multijoueur (serveur tiers)
 title.multiplayer.realms=Multijoueur (Realms)
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Distance des entités
+options.screenEffectScale=Effets de distorsion
+options.fovEffectScale=Effets de champ de vision
+options.screenEffectScale.tooltip=Intensité des effets de distorsion de l'écran causés par la nausée et les portails du Nether.\nSi la valeur est faible, l'effet de nausée est remplacé par un contour vert.
+options.fovEffectScale.tooltip=Détermine l'amplitude de variation du champ de vision en fonction des effets de jeu.
+debug.gamemodes.help=F3 + F4 = Ouvrir le sélecteur de mode de jeu
+debug.gamemodes.error=Vous n'avez pas la permission d'ouvrir le sélecteur de mode de jeu
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s Suivant
