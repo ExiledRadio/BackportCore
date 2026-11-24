@@ -83,6 +83,10 @@ dependencies {
 	// Realistic Terrain Generation Unofficial 1.1.0 (CurseForge 648514, file 4696300): compile only, for
 	// terrain/rtg/RtgRealisticBiomes, the one class that links against it (RTG 6.1 has the same API there).
 	deobfProvided 'curse.maven:rtgu-648514:4696300'
+	// Dynamic Trees 0.9.29 (CurseForge 252818, file 3812473), the last 1.12.2 release: compile only, for
+	// compat/DynamicTreesLink, the one class that links against it. Every 1.12.2 release needs Forge 2859 or later,
+	// so it never runs here: selftest/dynamictrees/DynamicTreesCheck checks it on a real server.
+	deobfProvided 'curse.maven:dynamic-trees-252818:3812473'
 }
 
 // Every other mod is reached by name and reflection, behind a Loader.isModLoaded check. No Mixin.
@@ -143,8 +147,17 @@ if (project.hasProperty('selftest')) {
 			include 'com/exiledradio/backportcore/selftest/monument/**'
 		}
 	}
+	// Dynamic Trees against the backports on a real server (Forge 2859+): see selftest/dynamictrees/DynamicTreesCheck.
+	// `gradlew dynamicTreesCheckJar reobfDynamicTreesCheckJar -Pselftest`.
+	task dynamicTreesCheckJar(type: Jar) {
+		classifier = 'dynamictreescheck'
+		from(sourceSets.main.output) {
+			include 'com/exiledradio/backportcore/selftest/dynamictrees/**'
+		}
+	}
 	reobf {
 		monumentCheckJar { mappingType = 'SEARGE' }
+		dynamicTreesCheckJar { mappingType = 'SEARGE' }
 	}
 } else {
 	// Gradle's copy into build/resources keeps files a selftest run left there, so the jars leave

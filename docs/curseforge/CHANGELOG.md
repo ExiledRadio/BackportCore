@@ -1,3 +1,8 @@
+# 1.4.9
+
+*   **Fixed: with Dynamic Trees, static and dynamic trees generated side by side** along the edges of the backports' biomes (cherry groves, pale gardens, mangrove swamps, dappled forests, bamboo jungles) and other mods' biomes. Dynamic Trees decided per chunk by the wrong biome, so normal trees stayed next to its own on one side of the edge and the backport biome lost its trees on the other. Each chunk now gets one kind: the one its biome grows.
+*   Villages and abandoned camps grow Dynamic Trees' trees where Dynamic Trees replaces the biome's trees.
+
 # 1.4.8
 
 *   **Fixed: the settings screen's update notices** didn't know the latest family releases, so a backport one version behind could show as up to date.

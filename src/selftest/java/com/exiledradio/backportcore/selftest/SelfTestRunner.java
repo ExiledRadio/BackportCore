@@ -93,6 +93,7 @@ public final class SelfTestRunner {
                     case "simulation": SimulationTests.schedule(); break;
                     case "datastructures": DataStructureTests.schedule(); break;
                     case "jigsaw": JigsawBlockTests.schedule(); break;
+                    case "dynamictrees": DynamicTreesTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -128,6 +129,7 @@ public final class SelfTestRunner {
         GdRequestTests.schedule();
         GdWorldgenTests.schedule();
         BoatTests.schedule();
+        DynamicTreesTests.schedule();
         LookFeelTests.schedule();
         CoreLook113To115Tests.schedule();
         Look116118Tests.schedule();

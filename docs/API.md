@@ -286,6 +286,26 @@ Class.forName("com.exiledradio.backportcore.terrain.RtgBiomes").getMethod("regis
   `StructurePlacements.biomeAt(World, chunkX, chunkZ)` uses it, so a start check matches the chunk in RTG worlds;
   Core's temples read it.
 
+## Dynamic Trees (`compat.DynamicTrees`, 1.4.9)
+
+Dynamic Trees (0.9.x, modid `dynamictrees`) grows its own trees in the biomes its biome database says to and denies
+1.12.2's TREE, BIG_SHROOM and CACTUS decoration there. It asks the biome at the chunk's corner; 1.12.2 decorates with
+the biome at corner + 16. Core re-answers those events at LOWEST priority by the decorating biome, so a backport biome
+next to one of Dynamic Trees' gets one kind of tree per chunk, with nothing to do in the backport. Everything else:
+
+- `replacesTrees(world, biome or pos)`, `replacesCactus(world, pos)`: whether Dynamic Trees grows its own there. A
+  backport placing trees outside the TREE event (a terrain generator, a populate hook) leaves them out where true.
+  False without Dynamic Trees, on a client world, in a blacklisted dimension.
+- `grow(world, pos, random, feature)`: a structure's tree (village, camp) as Dynamic Trees' species, where it replaces
+  the biome's trees and has one for today's feature (oak, fancy oak, birch, super birch, spruce, pine, mega spruce and
+  pine, jungle, mega jungle, acacia, dark oak). `pos` is where the sapling would stand. False: place your own tree.
+- `biomeData(new ResourceLocation(modid, "worldgen/dynamictrees.json"))`, pre-init: a worldgen JSON in Dynamic Trees'
+  own format for the backport's biomes, read before the pack's `config/dynamictrees/worldgen.json`.
+- The only class linking against Dynamic Trees is `compat.DynamicTreesLink` (`deobfProvided`). Every 1.12.2 release
+  of it needs Forge 2859 or later, so it never loads in the 2847 dev environment: `selftest/dynamictrees/
+  DynamicTreesCheck` (`gradlew dynamicTreesCheckJar reobfDynamicTreesCheckJar -Pselftest`) surveys a real server
+  with it, from a plan file `dynamictrees-check.txt` in the server folder.
+
 ## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
 
 1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed. A block that

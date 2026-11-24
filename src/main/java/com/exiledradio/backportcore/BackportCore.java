@@ -145,6 +145,7 @@ public final class BackportCore {
         com.exiledradio.backportcore.worldgen.ModernWorldgen.init();
         // Blocks another installed mod adds under its own names that the backports add too (duplicate/).
         com.exiledradio.backportcore.duplicate.QuarkPairs.preInit();
+        com.exiledradio.backportcore.compat.DynamicTrees.preInit();
         // The family's boats and chest boats (boat/): the backports' old boats renamed as they load, and using one
         // places an entity (entity_place).
         com.exiledradio.backportcore.boat.Boats.registerFixes();
