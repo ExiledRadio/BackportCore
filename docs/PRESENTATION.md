@@ -2,14 +2,30 @@
 
 The look of the game follows the newest installed backport, as vanilla's did at that version. Backport Core
 owns every single-slot piece (the panorama, the world-loading screen, the options screens, the splash list,
-the menu music, the F3 keys, the fog) and builds each from what the installed backports contribute, so they
-never fight. Package `com.exiledradio.backportcore.presentation`; the client-only parts are in its `client`
-subpackage. Since Core 1.1.0.
+the menu music, the F3 keys, the fog) and builds each from its own pieces of each version and what the installed
+backports contribute, so they never fight. Package `com.exiledradio.backportcore.presentation`; the client-only parts
+are in its `client` subpackage. Since Core 1.1.0.
 
 With no backport installed, the newest version is 1.12.2 and the game looks exactly as 1.12.2 does: every
 hook calls vanilla's own code.
 
-## What each backport calls
+## Core's own pieces of each version (Core 1.4.7)
+
+Each version's look and feel that is not tied to one backport's content is Core's: options, F3 keys and text, command
+suggestions, fog steps, loading and dimension screens, splashes, wording, title and startup logos, widgets and other
+small GUI sprites. `presentation.versions.CoreLooks` registers `Look113` to `Look121` (client parts in
+`versions.client`) with `Presentation.core(version)`, which returns a `Contribution` like `version` but does not
+declare the version installed: its pieces apply once the newest installed backport is that version or later (Caves &
+Cliffs alone has 1.13's command suggestions and 1.16's F3 + F4). `installed()` lists Core's contribution of a version
+before the backports' of the same version (`Contribution.isCore()`, `Presentation.coreContribution(version)`). An
+option added to Core's contribution is marked `ownedByCore()`. Option ids stay the backports'
+(`updateaquaticbackport:auto_suggestions`), so saved values carry over. Backports keep music, panoramas and pieces tied
+to their content. What moved: `docs/CORE_FEEL.md`.
+
+An older backport jar that still registers its copy: its option with the id of one Core owns follows Core's
+(`PresentationOption.mirror`, `canonical()`: one button, one value); its F3 text, fog or music step of the same version
+and name is left out (`OrderedSteps`); single-slot pieces resolve to the same thing; Core leaves its own event handler
+or patch off while the older jar's class is on the class path (`LegacyCopies.present`, `coreRuns`).
 
 ## The Look & Feel switches (Core 1.4.0)
 
@@ -30,7 +46,7 @@ the switches, for content. A dedicated server ignores the switches: each player 
 | `VIDEO` | `videoSettings` | Video Settings' layout, removed entries, its options |
 | `CHAT` | `chat` | command suggestions, the chat options |
 | `DEBUG` | `debug` | F3 keys, `DebugText`, Debug Options, debug key binds |
-| `TOASTS` | `toasts` | toast textures, Music Toast |
+| `TOASTS` | `toasts` | the recipe toast's icon (P66), toast textures, Music Toast |
 | `INVENTORY` | `inventory` | 1.19.3's creative tabs (P47), creative order, slot highlights (P23), container and recipe book textures, Operator Items Tab |
 | `MUSIC` | `music` | menu music, `GameMusic`, the Music and Sounds options, 1.14's sound channels |
 | `SKY` | `sky` | `FogPipeline`, 1.21.2's clouds, 26.1's lightmap (P65) |
@@ -46,13 +62,16 @@ A backport's own drawing asks `Presentation.isAtLeast(LookArea.LOADING, "1.20.5"
 page with `@Setting.Look("music")` (sections: loading, title, menus, video, chat, debug, toasts, inventory, music, world,
 backports); the family's existing ones are listed by name in `settings.LookFeelPage.KNOWN`.
 
+## What each backport calls
+
 Once, from pre-init or init, on both sides (everything on a `Contribution` is plain data):
 
 ```java
 Contribution v = Presentation.version("1.14");   // the release your backport brings
 ```
 
-Then add your version's pieces to `v`. Every method is chainable; leave out what your version did not change.
+Then add your version's pieces to `v`. Every method is chainable; leave out what your version did not change, and
+what Core already has of it (`docs/CORE_FEEL.md`): Core makes the same calls on its own contributions.
 
 | Piece | Call | Notes |
 |---|---|---|
@@ -64,8 +83,7 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Loading screen | `v.loadingScreen(LoadingRevision.X)` | Only for a revision Core's table does not put at your version; Core already knows vanilla's. |
 | Menu music | `v.addMenuMusic("modid:music/menu/track", 1)`, `v.addMenuMusic(name, 1, 0.4F)`, `v.removeMenuMusic("minecraft:music/menu/menu1")`, `v.removeMenuMusic("music/game/wending")` | Sound names as sounds.json writes them; the `.ogg` sits under `assets/<modid>/sounds/`. Streamed, weighted, at the volume given (1.2.0; full by default). A removal without a namespace removes that path whichever mod plays it (1.2.0). |
 | F3 keys | `v.debugKey(Keyboard.KEY_C, "debug.copy_location.help", () -> {...; return true;})`, `v.removeDebugKey(Keyboard.KEY_F)` | LWJGL 2 key codes. Register the action from client code (it runs on the client thread, no screen open). `PresentationHooks.debugFeedback("key", args)` prints vanilla's yellow "[Debug]:" line. |
-
-| Vanilla assets | `v.replaceAsset("textures/gui/widgets.png", new ResourceLocation("modid", "textures/gui/widgets.png"))`, and the shorthands `v.titleLogo(rl)` (`minecraft.png`) and `v.startupLogo("textures/gui/title/mojangstudios.png", rl)` | Core's own resource pack serves `minecraft:<path>` from the newest version that replaces it, above vanilla's default pack (a player's resource packs still win). Read from the backport's jar. |
+| Vanilla assets | `v.replaceAsset("textures/gui/widgets.png", new ResourceLocation("modid", "textures/gui/widgets.png"))`, and the shorthands `v.titleLogo(rl)` (`minecraft.png`) and `v.startupLogo("textures/gui/title/mojangstudios.png", rl)` | Core's own resource pack serves `minecraft:<path>` from the newest version that replaces it, above vanilla's default pack (a player's resource packs still win). Read from the jar that registers it. |
 | Vanilla text | `v.vanillaText(new ResourceLocation("modid", "vanilla_text"))` | `assets/modid/vanilla_text/<code>.lang`, vanilla's keys only. Composed into `minecraft:lang/<code>.lang`, oldest version first, so the newest wording wins whatever the mod load order. Keep vanilla keys out of the mod's own `lang/`. |
 | Title Accessibility icon (1.14) | `v.titleAccessibilityIcon(rl)` | Vanilla's 32 by 64 `accessibility.png`. The button shows from 1.14 with the newest icon. |
 | Multiplayer warning (1.15.2) | `v.multiplayerWarning("multiplayerWarning.header", "multiplayerWarning.message", "multiplayerWarning.check")` | Shown before the server list from the title screen until dismissed for good (`backportcore:skip_multiplayer_warning`). The wording is whatever the newest version's text says. |
@@ -73,16 +91,17 @@ Then add your version's pieces to `v`. Every method is chainable; leave out what
 | Command suggestions (1.13) | `v.commandSuggestions(autoSuggest)`, `v.commandSuggestionLook(look)` | Turns on 1.13's suggestion list in the chat box (`presentation.client.ChatSuggestions`). `autoSuggest` is the version's "Command Suggestions" `ToggleOption`, registered with `option` too; off, the list shows on Tab. `SuggestionLook` is the list's colors and rows, plain data, so a later version can draw it its own way (1.13.2's by default). |
 | Option polish | `option.tooltip("options.x.tooltip")`, `option.alsoOn(OptionScreen.VIDEO)`, `slider.zeroKey("options.off")`, `slider.wholeLabel("options.chat.delay", "options.chat.delay_none")` | 1.16's tooltips (wrapped at 200 pixels), one option on two screens (one value), "OFF" at zero, and labels that are one sentence. |
 | Option polish (Core 1.4.4) | `toggle.valueTooltips("x.on.tooltip", "x.off.tooltip")`, `toggle.defaultFollows(() -> ...)`, `option.availableWhen(() -> ...)` | A tooltip for each value of a toggle; a default that follows the installed versions until the player sets it (nothing saved till then); an option shown only while the game can honor it. |
+
 Client-only registrations, from the backport's client proxy:
 
 | Piece | Call | Notes |
 |---|---|---|
 | Fog | `FogPipeline.add("1.13", "underwater visibility", step)` | `FogPipeline.Step` has `colors`, `density` and `distance`, each optional. Steps run oldest version first, each seeing what the ones before did. |
-| Loading screen drawer | `LoadingScreens.register(LoadingRevision.PANORAMA_1_20_5, drawer)` | For the revisions Core does not draw (1.20.5, 1.21, 1.21.9). |
-
+| Loading screen drawer | `LoadingScreens.register(LoadingRevision.BORDERLESS_1_21, drawer)` | Registers or replaces a revision's drawer. Core draws 1.13's, 1.14's, 1.16's, 1.20.5's and 1.21.9's (the last two since 1.4.7); 1.21's has none and shows 1.20.5's. |
 | Debug text (F3) | `DebugText.add("1.15", "no chunk updates", lines -> ...)` | Each step edits `lines.left` and `lines.right` in place, oldest version first, before other mods add their lines (Forge's `RenderGameOverlayEvent.Text`). |
 | In-game music | `GameMusic.add("1.13", "under water", s -> { if (...) s.choose(new GameMusic.Track(event, 12000, 24000, false)); })` | The choice starts as 1.12.2's (`getAmbientMusicType`); each version's step may change it. Core's ticker (1.16.5's `MusicManager`, each track saying whether it cuts off another) replaces vanilla's once a step exists. |
 | Sky and clouds | `FogPipeline.add(version, name, step)` with `sky(Sky)` / `clouds(Clouds)` | Patches P15 and P16: the sky dome, the fog's blend with the sky, both cloud passes and the camera-above-clouds test. |
+
 Core resolves everything lazily, so the order backports load in does not matter. The game's one resource load at
 startup runs before the backports' pre-init, so Core reads the languages again (and any replaced texture already
 loaded) once every mod has loaded. The version that ships 1.13's underwater music hands Core its event
@@ -97,10 +116,11 @@ Since Core 1.2.0:
 | High Contrast pack | `v.highContrast(new ResourceLocation(modid, "vanilla/high_contrast"))` | A folder laid out as the pack's `assets/minecraft/`; the newest installed version's is served while High Contrast is on. Since 1.4.5. |
 | Minecart Improvements | `Presentation.setMinecartImprovements(() -> ...)` | True in a world with the experiment: Rotate With Minecarts is pressable and turns the camera. Since 1.4.5. |
 | Blurred panorama | `PanoramaRenderer.renderBlurred(screen, PanoramaRenderer.MENU_BLUR)` (client) | 1.20.5's menu panorama, by 1.12.2's `shaders/post/blur.json`; sharp where shaders cannot run. |
+| Menu tile | `MenuBackground.menuTile(x, y, width, height)` (client) | 1.20.5's `menu_background.png` tile (or its color) over a rectangle, for a screen drawn outside the GUI loop. Since 1.4.7. |
 | Sunrise | `FogPipeline.add(version, name, step)` with `sunrise(Sunrise)` | Patch P24: the glow's RGBA (a copy), or null for none. |
 | Cloud timing | a step returning true from `cloudsFollowWorldTime()` | Patch P25: clouds drift by world time. |
-| Slot highlight sprites | `v.replaceAsset("textures/gui/sprites/container/slot_highlight_back.png", rl)` and `_front` | Patch P23 draws them from 1.21.2 once both are supplied. |
-| Music toast sprites | `v.replaceAsset("textures/gui/sprites/toast/now_playing.png", rl)`, `icon/music_notes.png` | The toast shows once they are supplied; names from `music.<path>` lang keys (1.12.2's tracks by their 1.20.5 names, in Core's lang). |
+| Slot highlight sprites | `v.replaceAsset("textures/gui/sprites/container/slot_highlight_back.png", rl)` and `_front` | Patch P23 draws them from 1.21.2 once both are supplied. Core's own 1.21.2 piece supplies them since 1.4.7. |
+| Music toast sprites | `v.replaceAsset("textures/gui/sprites/toast/now_playing.png", rl)`, `icon/music_notes.png` | The toast shows once they are supplied (Core's own 1.21.6 piece since 1.4.7); names from `music.<path>` lang keys (1.12.2's tracks by their 1.20.5 names, in Core's lang). |
 
 Core's own options from 1.21.x (shown from the version that added them): Music Frequency, Music Toast and UI
 (Music and Sounds, 1.21.6), Attack/Destroy and Use Item/Place Block Hold or Toggle (Controls, 1.21.9), Cloud Distance
@@ -114,9 +134,9 @@ from 1.21.2 (P22).
 | A slider's value text | `slider.valueText(v -> ...)` | 1.21.11's "Anisotropic Filtering: 4x" shows 2 to the saved value. |
 | An option's name | `option.path()` | The id without its namespace. Options named after vanilla's (`toggle_crouch`) follow vanilla's moves between screens, and the presets set them. |
 
-A backport that copies one of vanilla's options names it after vanilla's own (`<modid>:inactivity_fps_limit`,
-`<modid>:toggle_crouch`, `<modid>:entity_distance_scaling`): Core places it by that name on 1.21.11's Video Settings,
-moves it as vanilla moved it, and the graphics presets set it.
+A copy of one of vanilla's options is named after vanilla's own (Core's `trickytrialsbackport:inactivity_fps_limit`,
+`buzzybeesbackport:toggle_crouch`, `netherupdatebackport:entity_distance_scaling`, or a backport's `<modid>:<name>`):
+Core places it by that name on 1.21.11's Video Settings, moves it as vanilla moved it, and the graphics presets set it.
 
 ## How each piece resolves
 
@@ -133,8 +153,10 @@ moves it as vanilla moved it, and the graphics presets set it.
   installed, and a later version can bring a removed item back.
 * **Loading screen**: vanilla's revision at the newest version (`LoadingRevision.forVersion`): 1.13's
   "Preparing spawn area: N%", 1.14's chunk-status grid (43 by 43, 1.14.4's colors, `LoadingStatus`), 1.16's
-  "Reading world data..." then the grid. 1.20.5, 1.21 and 1.21.9 are hooks; until a drawer is registered,
-  Core draws 1.16's. 1.12.2 generates a chunk in fewer steps than 1.14, so the grid shows generated, populated,
+  "Reading world data..." then the grid; 1.20.5's over the blurred, darkened panorama (`LoadingScreen1205`) and
+  1.21.9's "Loading terrain..." with a progress bar and a 33 by 33 grid (`LoadingScreen1219`), both Core's since
+  1.4.7. 1.21's has no drawer and shows 1.20.5's. 1.20.5's dimension change screens (`DimensionScreen1205`) fill the
+  screen with the nether or end portal. 1.12.2 generates a chunk in fewer steps than 1.14, so the grid shows generated, populated,
   ready-to-light and full (`SpawnProgress`); the percentage is 1.12.2's own spawn-area count.
 * **Options** show while the newest version is at or after their `since` (and before `until`), on their
   screen, or on its fallback when that screen does not exist at the newest version (`OptionScreen.resolve`).
@@ -150,8 +172,8 @@ moves it as vanilla moved it, and the graphics presets set it.
     Auto-Jump; sensitivity, invert mouse, touchscreen) and the backports' options. When they do not all fit above
     Done (the whole family on a small window), they scroll as 1.16's options screens do: a list from y 32 to 32 above
     the bottom, rows 25 tall, Done or Accessibility's footer below.
-  * Key Binds and Online (1.18) and Font (1.20.5) are not built yet: their options show on Controls and
-    Options.
+  * Online Options (1.18) is built (1.4.5). Key Binds (1.18) and Font (1.20.5) take no options yet: theirs show on
+    Controls and Options.
 
   Values are saved in `config/backportcore/options.txt` (`id:value` lines, kept for options no installed mod
   registers). Vanilla's own entries keep 1.12.2's order and names; a version's renames belong in its
@@ -173,7 +195,8 @@ change one version made stays made when only a later backport is installed:
 * **Startup screen** (1.14: white, `mojang.png` 256 by 256, the red bar; 1.16: red `0xEF323D`, the Mojang
   Studios logo in two halves, a white bar; 1.17's Monochrome Logo: black). Drawn when each resource load
   ends (the game's last one at startup, F3+T, resource packs), covering the screen with the bar full for one
-  second, then fading for one second over what is beneath. Its logo is the backports' `startupLogo`.
+  second, then fading for one second over what is beneath. Its logo is the newest `startupLogo` (Core's own for
+  each version since 1.4.7).
 * **Title screen**: 1.13's fade-in on the first start (panorama at once, the rest over the next second); 1.14's
   Accessibility button (with an icon registered).
 * **Video Settings**: 1.13 removes 3D Anaglyph (off) and numbers GUI Scale (Auto, 1, 2 ... up to what the window
@@ -188,8 +211,8 @@ change one version made stays made when only a later backport is installed:
   (Building Blocks, Colored Blocks, Natural Blocks, Functional Blocks, Redstone Blocks, Tools & Utilities, Combat,
   Food & Drinks, Ingredients, Spawn Eggs, Operator Utilities with Controls' Operator Items Tab), each listing 1.19.3's
   items in 1.19.3's order (26.3's from 26.3), other mods' tabs on the pages after (`docs/CREATIVE_TABS.md`). The tab
-  sprites are the backport's `textures/gui/container/creative_inventory/tabs.png` (Wild Update's, 1.19.3's 26-pixel
-  tabs).
+  sprites are 1.19.3's `textures/gui/container/creative_inventory/tabs.png` (26-pixel tabs), Core's own 1.19.3 piece
+  since 1.4.7 (Wild Update's before).
 * **Creative order on 1.12.2's tabs** (26.3, `creative.client.ModernOrder`): every vanilla tab in 26.3's creative order, 1.12.2's tabs
   reading 26.3's (`docs/CREATIVE_TABS.md`). Before 26.3, 1.12.2's order with the backports' items by their neighbors.
 * **Spawn eggs** (1.21.5, `client.SpawnEggModels`): with the textures part at 1.21.5 or later, `minecraft:spawn_egg` draws
@@ -217,7 +240,8 @@ change one version made stays made when only a later backport is installed:
   are 1.12.2's drawing (with the family's `widgets.png`) pixel for pixel, so only those states differed.
 * **End credits** (1.17, Core 1.4.5, `Credits`): `texts/credits.json` and `postcredits.txt`, when a backport supplies
   them, read as 26.3's `WinScreen` does into 1.12.2's screen. 26.3's vignette, logo and 256-wide column are not drawn.
-* **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is the 1.15 backport's `widgets.png`.
+* **Buttons** (1.15): white labels, hovered or not (P12). The highlight texture is 1.15's `widgets.png`, Core's own
+  since 1.4.7 (Buzzy Bees' before).
 * **Chat** (P13, P14): Core's own options, 1.14's Text Background Opacity and Text Background, 1.16's Line Spacing
   and Chat Delay (player chat only, "[+N pending lines]"), on Accessibility and Chat Settings in 1.16.5's order.
 * **Accessibility Guide** (1.16.4): at the bottom of Accessibility Settings, beside Done.
@@ -395,8 +419,8 @@ change one version made stays made when only a later backport is installed:
   * **Left to OptiFine** (`VideoSections.OPTIFINE_HAS`): where OptiFine has its own setting, Core's is not on the
     screen and does nothing: Texture Filtering and Anisotropic Filtering (OptiFine's Anisotropic Filtering, Quality),
     Show Vignette (its Vignette, Details), Chunk Fade Time (off with OptiFine anyway; OptiFine draws the chunks) and
-    Update Aquatic Backport's Biome Blend (its Smooth Biomes, Quality; with Smooth Biomes off, the blend keeps its
-    saved radius). OptiFine's Clouds, Cloud Height, Fast Render, Dynamic Lights and mipmap settings have no Core
+    1.13's Biome Blend (Core's since 1.4.7, P68; its Smooth Biomes, Quality; with Smooth Biomes off, the blend keeps
+    its saved radius). OptiFine's Clouds, Cloud Height, Fast Render, Dynamic Lights and mipmap settings have no Core
     counterpart, so nothing is doubled. Cloud Distance and Weather Effect Radius are not OptiFine's (it has neither)
     and stay; their patches (P26, P27) apply with OptiFine.
   * If OptiFine's screen ever lacks Done or a submenu button, or another mod's screen has no list, Core leaves the
@@ -420,11 +444,11 @@ change one version made stays made when only a later backport is installed:
   `backportcore:debug/<part>`).
 * **Debug key binds** (1.21.11, `DebugBindings`, P30): F3 (as the modifier and as the screen's toggle), the crash's C
   and each F3 combination of the newest map are key binds in the Key Binds screen's "Debug" category.
-* **Title logo** (`VanillaRevisions.TitleLogo`, P29): 1.20's layout when the newest backport that replaces
+* **Title logo** (`VanillaRevisions.TitleLogo`, P29): 1.20's layout when the newest version that replaces
   `minecraft.png` is 1.20 or later and replaces `edition.png` too (so its textures are 1.20's): `minecraft.png` as one
   256 by 44 piece, `edition.png` 128 by 14 under it, Minceraft from `minceraft.png`, the splash at width / 2 + 123, 69.
-  A backport of 1.20 or later registers `replaceAsset` for `textures/gui/title/minecraft.png`, `edition.png` and
-  `minceraft.png` with vanilla's own files, and draws nothing itself.
+  Since 1.4.7 Core's own 1.20 piece (`versions.Look120`) replaces `textures/gui/title/minecraft.png`, `edition.png` and
+  `minceraft.png` with 1.20's files, drawn smoothed (their `.mcmeta`); a backport registers none of them.
 * **F3 + 3, the network charts** (1.20.2, `NetworkCharts`): Core's own key from 1.20.2. On, the debug screen comes on
   and F3 + 2's charts (1.12.2's lagometer) go, and the other way round. The bandwidth received (bottom left; every byte
   the connection receives, counted at the front of its Netty pipeline, logged each tick; not on this game's own server,
@@ -433,7 +457,7 @@ change one version made stays made when only a later backport is installed:
   `PingDebugChart`: 240 samples, 60 high, the min, avg and max above, the scale lines, the colors (`DebugCharts`).
   1.12.2's "Debug: Pie [shift] ... FPS [alt] ..." line reads 1.20.2's "Debug charts: [F3+1] Profiler hidden; [F3+2] FPS +
   TPS hidden; [F3+3] Ping hidden".
-* **F3 + 2 and F3 + 1** (1.20.2, `FrameCharts`, P60): F3 + 2 (Trails & Tales' key) shows 1.20.2's FPS chart bottom left
+* **F3 + 2 and F3 + 1** (1.20.2, `FrameCharts`, P60): F3 + 2 (Core's 1.20.2 key since 1.4.7, Trails & Tales' before) shows 1.20.2's FPS chart bottom left
   (1.12.2's frame timer, 60 high for 33.3 ms, green to yellow at 28 ms to red at 56, the 30 and 60 fps lines, the frame
   limit's line up to 250) and, on your own server, the TPS chart bottom right (each tick start to start, `tick()`'s
   share stacked over it, colored against `/tick rate`, the rate on top) in place of the lagometer. F3 + 1's pie is
@@ -446,6 +470,9 @@ change one version made stays made when only a later backport is installed:
   from 1.20.5, the magnifier left of it focuses it from 1.21.2; the crafting book's tabs, filter, pages and ghost recipe are 1.12.2's, which 26.3's match.
 * **System toasts** (`SystemToasts`): the family's one drawer, 26.3's `ToastManager` slots and `SystemToast` ids; one
   line each and the first text's width before 26.2, wrapped at 200 and refitted from 26.2.
+* **Recipe toasts** (1.13, the toasts' look, `VanillaRevisions.recipeToastIcon`, P66; Core 1.4.6): the crafting table
+  at 0.6 scale behind the output, its small block at (3, 3) as 1.13.2 and 1.14.4 draw it; `SmeltingToast` draws its
+  book's block the same way. 1.12.2 drew the output only.
 * **F3 keys with no help line** (1.20.2): `v.debugKey(key, null, action)` puts a key in the map with no F3 + Q line, as
   1.20.2's F3 + 1, 2 and 3 have none.
 * **Narrator Hotkey** (1.20.2, P32): Core's own option `backportcore:narrator_hotkey`, last on Accessibility Settings, on
@@ -496,8 +523,9 @@ change one version made stays made when only a later backport is installed:
   screen's behind it. The title screen itself is not blurred, as in vanilla.
   * **Blur**: 1.20.6's `post/blur.json` is six box-blur passes, all at the full radius (its `RadiusMultiplier`s sit
     where `PostChain` never reads them); Core's `backportcore:shaders/post/menu_blur.json` is the same six on 1.12.2's
-    `blur` program. The radius is Menu Background Blurriness times 10: the slider of that name a backport registers
-    (0 to 100%, Trails & Tales Backport's, or 0 to 10), else 1.20.5's default 5; under 1 there is no blur. Once a frame.
+    `blur` program. The radius is Menu Background Blurriness times 10: the slider of that name (Core's own from
+    1.20.5 since 1.4.7, `trailsandtalesbackport:menu_background_blurriness`, 0 to 100%; or any mod's 0 to 10), else
+    1.20.5's default 5; under 1 there is no blur. Once a frame.
     The graphics presets set it in vanilla's 0 to 10 and convert for a 0 to 100% slider. Without shaders or
     framebuffers, no blur. `PanoramaRenderer.renderBlurred` uses the same six passes.
   * **Textures**: the eight files (`menu_background`, `inworld_menu_background`, `menu_list_background`,
@@ -534,10 +562,10 @@ change one version made stays made when only a later backport is installed:
   order; Natural Blocks goes Overworld, Nether, End): from 1.4.5 these runs are 1.19.3's tabs reading 26.3's own
   lists from 26.3 on (`ModernTabs`, above). An order file (`Contribution.creativeOrder`) is not used for them; it
   leaves 1.19.3's tabs alone.
+
 ## What is not covered yet
 
-* Biome Blend (no 1.12.2 counterpart; a backport's option of that name is placed and set by the presets), RGSS
-  texture filtering, 26.x's Graphics API (Vulkan). Improved Transparency covers rain and snow only (see above).
+* RGSS texture filtering, 26.x's Graphics API (Vulkan). Improved Transparency covers rain and snow only (see above).
 * The debug parts 1.12.2 cannot supply: gpu_utilization, simple_performance_impactors, chunk_generation_stats,
   sound_cache, looking_at_entity_tags (no entity type tags), the block and fluid tags of 26.1, the other visualizers.
   The TPS chart has no scheduled-task or "other" share (1.12.2's loop does not measure them) and no chart for a
@@ -548,7 +576,7 @@ change one version made stays made when only a later backport is installed:
   ends. 1.12.2 loads resources in one blocking call, so the bar cannot move during a reload.
 * The world list's search bar (1.13.1): its list, title and focus are private to `GuiWorldSelection`, so it
   would mean replacing the screen.
-* Optimize World (the Flattening's converter), Raw Input (LWJGL 2), Biome Blend: no 1.12.2 counterpart.
+* Raw Input (LWJGL 2): no 1.12.2 counterpart.
 * Command suggestions: 1.13's red highlighting of a wrong argument and the colored arguments (1.12.2's commands do not
   describe their arguments), the usage of the argument at the cursor (the whole command's `getUsage` shows instead),
   suggestion tooltips, and the narrator reading the list. A chat screen that does not extend `GuiChat` gets none.
@@ -566,9 +594,11 @@ change one version made stays made when only a later backport is installed:
 * 1.20.5's menu look on Forge's mod list (`GuiScrollingList`, its own drawing) and on screens that draw dirt themselves
   rather than through `GuiScreen.drawBackground`; 1.20.5's tab headers, and the header and footer on Language,
   Resource Packs, Select World and Play Multiplayer (`HeaderFooterLayout` is ready for them).
+
 ## Command suggestions
 
-On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, once a version calls `commandSuggestions`, any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen
+On Cleanroom 0.6 and later, which draw their own list in `GuiChat` with no switch, `ChatSuggestions` does nothing. Otherwise, from 1.13 (Core's own `commandSuggestions` since 1.4.7, `versions.Look113`, with Chat Settings' Command
+Suggestions), any `GuiChat` (and its subclasses) gets 1.13.2's list, through Forge's screen
 events (no patch). The text before the cursor goes to the server in 1.12.2's `CPacketTabComplete` with the looked-at
 block, one request at a time, once typing pauses for 80 ms; the answer is read off the connection on its way to
 vanilla's handler (which ignores it: its own Tab never ran). Forge's client commands are asked locally. So vanilla and
@@ -585,7 +615,8 @@ said hello on login (`CommandUsageNetwork`, a server running Core), or from Forg
 
 `gradlew runServer -Pselftest` (delete `eclipse/world` first) checks the registry, the panorama choice, the
 spawn-area grid of the server's own start, option values, defaults, splashes, music, F3 keys and the step
-order, with a dummy "1.14" and "1.16" from the self-test mod. `gradlew runClient -Pselftest` checks the
+order, with a dummy "1.14" and "1.16" from the self-test mod (Core's own pieces hidden for the registry checks,
+`Presentation.hideCoreForTests`). `gradlew runClient -Pselftest` checks the
 client side in a dev client (logs `CLIENT SELFTEST DONE pass=N fail=M`, then closes): the patches at the title
 screen, the dummy panorama drawn, the splash and music pools, the defaults, every options screen opened in
 code, the F3 hook, and a world created to see the loading screen draw 1.16's revision. No clicks or keys are

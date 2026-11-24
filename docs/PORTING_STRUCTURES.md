@@ -69,8 +69,13 @@ the set can be compared directly.
 
 ## 4. Settings
 
+In `config/backportcore.cfg` (or Mod Options › Backport Core); both apply on the next start and only to new chunks.
+
 - `structure.dataStructures` (on by default): turns all data-driven structures on or off.
 - `structure.blacklist`: structure ids, set ids, or `namespace:*`, which are not generated.
+
+A world keeps the structures it already started (saved as `BCData`, pieces as `BCDataPiece`) after their files are
+gone; no new ones start.
 
 ## 5. What still needs code
 
@@ -118,9 +123,12 @@ from its start, which `max_distance_from_center`'s limit of 128 already ensures.
 
 ## 7. Build and test in game
 
-Core has today's jigsaw block, `backportcore:jigsaw`, for building and testing jigsaw structures in a 1.12.2 world:
+Core has today's jigsaw block, `backportcore:jigsaw` (Core 1.4.5), for building and testing jigsaw structures in a
+1.12.2 world:
 
-- Get it with `/give @p backportcore:jigsaw`. Using it takes creative mode and operator permission, as in 26.3.
+- Get it with `/give @p backportcore:jigsaw`, or from Operator Utilities with 1.19.3's creative tabs (a backport of
+  1.19.3 or later, Operator Items Tab on). Placing, opening or breaking it takes creative mode and operator permission
+  (level 2), as in 26.3. A template's `minecraft:jigsaw` is this block.
 - Its screen is 26.3's: Target Pool, Name, Target Name, Turns Into, both priorities, Joint Type, Levels and Keep
   Jigsaws.
 - **Generate** builds the pool in front of the block as 26.3 does. Pools and templates come from the mods, then from

@@ -14,9 +14,39 @@
 # 1.4.6
 
 *   The recipe toasts' small block is at (3, 3), as 1.13.2 and 1.14.4 draw it: P66's crafting table and the smelting books' blocks were a pixel low. `SmeltingToast` draws its book's block only from the toasts' 1.13 look (`VanillaRevisions.recipeToastIcon`), as P66 does; with the toasts' look off both toasts are 1.12.2's, the output alone. A smelting book can have no screen (1.14's campfire: no container is its own, no tabs) and still unlock and toast its recipes.
+*   Fixed a crash 20 to 30 seconds after launch on Android launchers (PojavLauncher, Zalith): their LWJGL 3 lacks `ALC10.alcIsExtensionPresent`, which `presentation.client.SoundDevices.createAL` called through LWJGL 2's API. A `LinkageError` there now falls back to 1.12.2's own `AL.create()`, without the device choice and Directional Audio; the HRTF query and `remake` catch it too. Self-test hook `SoundDevices.testMissingCalls`.
+*   Fixed lit redstone torches breaking into black and purple particles with the 1.21 models (Newest Look 1.21 or later): `lit_redstone_torch.json` and `_wall.json` named their particle texture through a variable defined in the same model, which 1.12.2 cannot resolve ("upward reference"). They now name `blocks/redstone_torch_on`.
+
+# 1.4.5
+
 *   `locate.BiomeLocate.layers(world)`: 1.12.2's own column biomes as a `Sampler`, for a backport's `source` that answers a few places itself (Game Drops' sulfur caves under 1.12.2 terrain) and hands the rest to the layers.
 *   P67 (`asm/RenderChunkMoveTransformer`): a render chunk the frustum moves is marked for a rebuild, as 1.18.2's `RenderChunk.setOrigin` (`reset()`: `dirty = true`). 1.12.2 emptied it (`CompiledChunk.DUMMY`) and waited for a chunk packet; when the data was already on the client the section stayed empty and blocked the culling walk: holes to the sky until F3 + A.
 *   P66 (`asm/RecipeToastTransformer`): 1.13's recipe toast draws the crafting table at 0.6 scale behind the output (`VanillaRevisions.recipeToastIcon`, the toasts' look from 1.13, which `LookArea.TOASTS` now offers). 1.12.2 drew the output only.
+*   Ocean monuments in Realistic Terrain Generation worlds only where RTG's terrain is deep water (`worldgen.MonumentTerrain.deepEnough`, called by `ModernMonument` and open to a backport's own monument rule): at least 15 blocks of water within 16 blocks of the chunk's block (9, 9), water within 29, read from RTG's cached landscape at the biome check's 1:4 cells. RTG builds a biome it has no realistic biome for as plains (Update Aquatic's deep oceans in 1.2.2) and blends small deep ocean patches into lakes, so the biome rule alone put monuments on land and in ponds. Generation, `/locate` and explorer maps all ask the same check. Other worlds keep vanilla's rule. `selftest/monument/MonumentCheck` (`gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`) surveys a real server's monuments against the terrain.
+*   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its
+    pieces with no log within 6 steps through leaves (26.3's `LeavesBlock` distance) is removed, with any snow layer on
+    it. 26.3 places template air (`SinglePoolElement` ignores only structure blocks) and its cut-off leaves count up
+    to 7 and decay; 1.12.2's generated leaves never check. Run by `FreezeTopLayer.afterBuilding` (villages, outposts,
+    Caves & Cliffs' structures), `ScatteredStructure`'s driver and `ModernTemples`. Reads loaded chunks only.
+*   Texture layers: 1.14's status effect icons put back into the inventory sheet (from 1.15's layer on), and 1.18's
+    wither, 1.18/1.19's vindicator, 1.20/1.21's blaze and clouds (the parts left blank are ones 1.12.2 never draws).
+*   26.2's pause menu (Game Drops Backport and newer): one row of 20 by 20 icon buttons under Advancements and
+    Statistics, 4 apart and centered, as 26.2's and 26.3's: Report Bugs, Give Feedback, Friends and Player Reporting,
+    with their names as tooltips; the grid sits at a quarter of the free height as 26.2's does. Friends is inactive
+    in a demo; Player Reporting is inactive in your own world with nobody else in it ("There are no players to report
+    in this world"). Friends and Player Reporting are Mojang's online services: clicking either shows 26.3's system
+    toast, the button's name over "Not available in this version" (18 languages). Shown only when a backport supplies
+    the `pause_menu/bug` and `pause_menu/social_interactions` sprites (the 1.14 text row stays otherwise); Friends
+    and Player Reporting each need theirs (`friends/friends`, `pause_menu/player_reporting`).
+*   26.3's system toast (`presentation.client.SystemToasts`, drawn by Core: 1.12.2's toast slots are 160 wide): a
+    yellow title over white lines split at 200, `max(160, widest) + 30` wide, slid in and out from the right over
+    600 ms and shown 5 s, on the `toast/system` sprite a backport supplies (else 1.12.2's system toast).
+*   Fixed `/tick rate` below 20 slowing menus and the title screen. 1.12.2 gives a screen its mouse and keys once a
+    tick, so every open screen answered at the server's rate; 26.3 gives them every frame. While the client ticks
+    slower than 20 per second, an open screen now also gets its input every frame. The timer's tick length is now
+    set at the start of every frame, as 26.3's `DeltaTracker` asks for it, so leaving a slowed world is back at 20
+    per second on the title screen's first frame instead of after one slow tick. As in 26.3, the world, the player
+    and screen ticks still run at the server's rate; freezing never stops players.
 *   Data-driven structures (`structure.DataStructures`): Core reads today's `data/<ns>/worldgen/structure_set` and
     `worldgen/structure` files from every mod jar and from structure packs in `config/backportcore/structures/`
     (folder, `.zip` or `.jar`, datapack layout; `DataPacks`) at load complete, and generates each `random_spread` set
@@ -42,55 +72,6 @@
     state places nothing (it placed a structure void), and a 1.12.2 block name works as a final state. `minecraft:jigsaw`
     resolves to the block in `ModernPalette`, and 1.19.3's Operator Utilities lists it. Saving in today's format is not
     done.
-
-*   Ocean monuments in Realistic Terrain Generation worlds only where RTG's terrain is deep water (`worldgen.MonumentTerrain.deepEnough`, called by `ModernMonument` and open to a backport's own monument rule): at least 15 blocks of water within 16 blocks of the chunk's block (9, 9), water within 29, read from RTG's cached landscape at the biome check's 1:4 cells. RTG builds a biome it has no realistic biome for as plains (Update Aquatic's deep oceans in 1.2.2) and blends small deep ocean patches into lakes, so the biome rule alone put monuments on land and in ponds. Generation, `/locate` and explorer maps all ask the same check. Other worlds keep vanilla's rule. `selftest/monument/MonumentCheck` (`gradlew monumentCheckJar reobfMonumentCheckJar -Pselftest`) surveys a real server's monuments against the terrain.
-*   `structure.CutTrees`: after a structure builds its part of a chunk, every decayable leaf within 6 blocks of its
-    pieces with no log within 6 steps through leaves (26.3's `LeavesBlock` distance) is removed, with any snow layer on
-    it. 26.3 places template air (`SinglePoolElement` ignores only structure blocks) and its cut-off leaves count up
-    to 7 and decay; 1.12.2's generated leaves never check. Run by `FreezeTopLayer.afterBuilding` (villages, outposts,
-    Caves & Cliffs' structures), `ScatteredStructure`'s driver and `ModernTemples`. Reads loaded chunks only.
-
-*   API: `Waterloggable.waterFlowsThrough(state, world, pos, side)`, handed to Fluidlogged API as `canFluidFlow` (null
-    keeps its face-shape rule). A full collision box answers false, as 26.3's `canPassThroughWall`: water kept in leaves
-    stays there.
-*   26.3's `/locate poi <type|#tag>` (`locate.PoiLocate`): 26.3's 21 types and 3 tags, today's search (256 blocks,
-    `findClosestWithType`), messages and suggestions. 1.12.2 keeps no point of interest index, so the blocks are
-    read: loaded chunks by section palette, unloaded ones from their saves without loading them. Types match the
-    family's blocks by name (Village & Pillage's workstations and bell, Buzzy Bees' nests and hives, Nether
-    Update's lodestone, Caves & Cliffs' lightning rod and cauldrons) and 1.12.2's beds, brewing stand, cauldron and
-    nether portal; `PoiLocate.register`/`tag` for others. Kept in 1.4.4 (unreleased).
-
-*   1.21.5's spawn eggs: from 1.21.5 (textures part of the look) every egg draws its own 26.3 texture, untinted:
-    1.12.2's mobs and the family's mobs (by their placed vanilla egg). Other mods' eggs and every egg before 1.21.5
-    stay tinted. New `modern-1.21.5` texture layer (`tools/textures/eggs.py`), `client/SpawnEggModels`.
-*   Texture layers: 1.14's status effect icons put back into the inventory sheet (from 1.15's layer on), and 1.18's
-    wither, 1.18/1.19's vindicator, 1.20/1.21's blaze and clouds (the parts left blank are ones 1.12.2 never draws).
-*   26.3's `/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]` (`command/swing/`, setting
-    `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
-    The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's
-    `swingProgress` itself (no patch), `none` holds it still and `stab` draws as `whack`. Kept in 1.4.4 (unreleased).
-*   26.2's pause menu (Game Drops Backport and newer): one row of 20 by 20 icon buttons under Advancements and
-    Statistics, 4 apart and centered, as 26.2's and 26.3's: Report Bugs, Give Feedback, Friends and Player Reporting,
-    with their names as tooltips; the grid sits at a quarter of the free height as 26.2's does. Friends is inactive
-    in a demo; Player Reporting is inactive in your own world with nobody else in it ("There are no players to report
-    in this world"). Friends and Player Reporting are Mojang's online services: clicking either shows 26.3's system
-    toast, the button's name over "Not available in this version" (18 languages). Shown only when a backport supplies
-    the `pause_menu/bug` and `pause_menu/social_interactions` sprites (the 1.14 text row stays otherwise); Friends
-    and Player Reporting each need theirs (`friends/friends`, `pause_menu/player_reporting`).
-*   26.3's system toast (`presentation.client.SystemToasts`, drawn by Core: 1.12.2's toast slots are 160 wide): a
-    yellow title over white lines split at 200, `max(160, widest) + 30` wide, slid in and out from the right over
-    600 ms and shown 5 s, on the `toast/system` sprite a backport supplies (else 1.12.2's system toast).
-*   API: `MenuBackground.contentFrame`, the list background and separators of a header-and-footer screen, for a
-    backport's own screens.
-*   Fixed `/tick rate` below 20 slowing menus and the title screen. 1.12.2 gives a screen its mouse and keys once a
-    tick, so every open screen answered at the server's rate; 26.3 gives them every frame. While the client ticks
-    slower than 20 per second, an open screen now also gets its input every frame. The timer's tick length is now
-    set at the start of every frame, as 26.3's `DeltaTracker` asks for it, so leaving a slowed world is back at 20
-    per second on the title screen's first frame instead of after one slow tick. As in 26.3, the world, the player
-    and screen ticks still run at the server's rate; freezing never stops players.
-
-# 1.4.5
-
 *   The arm swings on a drop (`presentation.client.DropSwing`, no patch): the drop key from 1.15 (`InputEvent`, the
     checks `processKeyBinds` makes), every client-side `ItemTossEvent` of the player from 1.16 (`Player.drop`'s
     client swing: inventory throws, clicks outside, creative). Checked against 1.15.2, 1.16.5 and 26.3's code.
@@ -215,6 +196,24 @@
 
 # 1.4.4
 
+*   API: `Waterloggable.waterFlowsThrough(state, world, pos, side)`, handed to Fluidlogged API as `canFluidFlow` (null
+    keeps its face-shape rule). A full collision box answers false, as 26.3's `canPassThroughWall`: water kept in leaves
+    stays there.
+*   26.3's `/locate poi <type|#tag>` (`locate.PoiLocate`): 26.3's 21 types and 3 tags, today's search (256 blocks,
+    `findClosestWithType`), messages and suggestions. 1.12.2 keeps no point of interest index, so the blocks are
+    read: loaded chunks by section palette, unloaded ones from their saves without loading them. Types match the
+    family's blocks by name (Village & Pillage's workstations and bell, Buzzy Bees' nests and hives, Nether
+    Update's lodestone, Caves & Cliffs' lightning rod and cauldrons) and 1.12.2's beds, brewing stand, cauldron and
+    nether portal; `PoiLocate.register`/`tag` for others. Kept in 1.4.4 (unreleased).
+*   1.21.5's spawn eggs: from 1.21.5 (textures part of the look) every egg draws its own 26.3 texture, untinted:
+    1.12.2's mobs and the family's mobs (by their placed vanilla egg). Other mods' eggs and every egg before 1.21.5
+    stay tinted. New `modern-1.21.5` texture layer (`tools/textures/eggs.py`), `client/SpawnEggModels`.
+*   26.3's `/swing [<targets> [mainhand|offhand [<animation> [<duration>]]]]` (`command/swing/`, setting
+    `commands.swing`, permission level 2): 26.3's messages, `startIfAble`, Haste and Mining Fatigue on the duration.
+    The animation and duration reach clients on channel `backportcore_swing`; `client/ClientSwings` drives the arm's
+    `swingProgress` itself (no patch), `none` holds it still and `stab` draws as `whack`. Kept in 1.4.4 (unreleased).
+*   API: `MenuBackground.contentFrame`, the list background and separators of a header-and-footer screen, for a
+    backport's own screens.
 *   Game Drops Backport's sulfur caves: `worldgen.UndergroundBiomes`, a backport's biome by column and height (saved
     in the chunk as `backportcore_underground`, sent on channel `backportcore_ub`), read by F3's biome line, the grass,
     foliage and water blend (P44, `BiomeColorHelper.getColorAtPos`) and `WaterColors.at`; `worldgen.DeferredPlacement`,

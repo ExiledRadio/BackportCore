@@ -1,7 +1,8 @@
 # Backport Core API
 
-For the backports that depend on this library. Everything is plain static Java; no events to post, and
-the interfaces to implement are `Waterloggable` and, for player poses, `PoseRules` and `PlayerMovement`. Package root: `com.exiledradio.backportcore`.
+For the backports that depend on this library. Everything is plain static Java; no events to post. The interfaces
+to implement are `Waterloggable`, `AgeLockable`, for player poses `PoseRules` and `PlayerMovement`, and for chunk
+generators the sources under Terrain and Structures. Package root: `com.exiledradio.backportcore`.
 
 ## Depending on it
 
@@ -18,11 +19,12 @@ dependencies {
 }
 ```
 
-Then `mkdir deps` in the backport, add its folder name to `dependents` in this repo's `build.gradle`,
-and run `gradlew build copyToDependents` here after every change. In the `@Mod` annotation:
+with `core_version=1.4.7` in the backport's `gradle.properties`. Then `mkdir deps` in the backport, add its folder
+name to `dependents` in this repo's `build.gradle`, and run `gradlew build copyToDependents` here after every change.
+In the `@Mod` annotation, the oldest Core whose API the backport calls (the family's current releases require 1.4.7):
 
 ```java
-dependencies = "required-after:backportcore@[1.1.0,)"
+dependencies = "required-after:backportcore@[1.4.7,)"
 ```
 
 and `"requiredMods": ["backportcore"]` in `mcmod.info`.
@@ -64,6 +66,8 @@ are 1.12.2's. Both packs live in `src/main/resources/backportcore_packs`:
     installed version is that version or later, so Caves & Cliffs (1.18.2) gets 1.17's ores and everything through
     1.18.2. Written by `tools/textures/build.py`, which also writes `tools/textures/report.txt`: what each layer
     took, and every texture left out with the reason.
+  - `modern-1.21.5/` (1.4.4): every spawn egg's own untinted texture, 1.12.2's mobs and the family's, from 26.3's jar.
+    Written by `tools/textures/eggs.py`; drawn by `client.SpawnEggModels`.
 
   A file comes from the newest layer that applies and has it, and its `.mcmeta` only from that same layer
   (`client.TextureLayers`, served by `client.LayeredPack`). The pack decides at each lookup, so the versions the
@@ -131,13 +135,13 @@ Village & Pillage's 1.13 blocks (stripped logs and wood, the five wood trapdoors
 blue ice) are in the table already. Sea pickles are Update Aquatic's: when two backports need a block, it
 belongs to the one it fits best, and Village & Pillage uses Update Aquatic's pickles when it is installed. Ask from your block registry event or later. Caves & Cliffs' tuff, copper ore, raw copper block and
 every copper block (four stages, waxed or not: block, cut, cut stairs, cut slab, cut double slab) are in the table
-too (1.2.0).
+too (1.3.0).
 
 ```java
 BlockOwnership.provides("yourmod", () -> config.copperEnabled, "copper_block", "cut_copper");  // one switch per name
 BlockOwnership.declare("yourmod:switched_off", "tuff");   // the owner itself: "not provided in this game"
 
-// Items and effects (1.2.0): copper ingot and raw copper (Caves & Cliffs), honeycomb (Buzzy Bees),
+// Items and effects (1.3.0): copper ingot and raw copper (Caves & Cliffs), honeycomb (Buzzy Bees),
 // Bad Omen (Village & Pillage), the ominous bottle (Tricky Trials, since 1.4.5; Village & Pillage's before).
 Item ingot = ItemOwnership.item("copper_ingot", "yourmod");     // the owner's if provided, else yours, else null
 boolean copy = ItemOwnership.shouldRegisterItem("yourmod", "copper_ingot");
@@ -145,12 +149,12 @@ Potion omen = ItemOwnership.effect("bad_omen", "yourmod");
 ItemOwnership.declareItems("yourmod", "your_item");
 ```
 
-**Copies become the owner's** (`ownership.CopyRemapping`, 1.2.0, nothing to call): when an owner is added to a
+**Copies become the owner's** (`ownership.CopyRemapping`, 1.3.0, nothing to call): when an owner is added to a
 world that holds a family mod's copies (`copier:name`, registered while the owner was absent), each missing name is
 remapped onto `owner:name` as the world loads, for blocks, items (block items too) and effects. Only names under a
 family mod's id, only when the owner owns that name, provides it and has it registered.
 
-## Copper (`copper.Oxidation`, 1.2.0)
+## Copper (`copper.Oxidation`, 1.3.0)
 
 One table for every mod's copper, so axes, honeycomb and lightning treat all of it alike and copper waits for the
 least oxidized copper near it whichever mod it comes from.
@@ -163,7 +167,7 @@ Block scraped = Oxidation.previous(block);  Oxidation.change(world, pos, state, 
 Oxidation.next(b); Oxidation.waxedOf(b); Oxidation.unwaxed(b); Oxidation.first(b); Oxidation.stage(b); Oxidation.isCopper(b);
 ```
 
-## Walls (`block.ModernWall`, 1.2.0)
+## Walls (`block.ModernWall`, 1.3.0)
 
 The family's one 1.16+ wall: each side none, low or tall, the post dropped on a straight run, joining 1.12.2's walls,
 panes, fence gates and solid faces; metadata 0, so a `BlockWall` moved onto it keeps its saved blocks. Use vanilla's
@@ -212,18 +216,18 @@ Handles vanilla (and subclasses that keep vanilla noise), superflat, OTG, Biomes
 Cliffs and Farmer's Future Delight. `floor` reads the same terrain as `height`, so it is as exact (Farmer's
 Future Delight's surface-estimate fallback is the one approximation). Call `forWorld` once per structure start on the server thread: it drops
 the previous layout's cache. `WorldHeights.minY/maxYExclusive/enterFullHeight` cover the 1.18-height mods,
-Caves & Cliffs Backport's extended height among them (1.2.0; `isCavesAndCliffsExtended(world)`).
+Caves & Cliffs Backport's extended height among them (1.3.0; `isCavesAndCliffsExtended(world)`).
 
-A chunk generator that knows its own surface implements `TerrainSource` (1.2.0): `forWorld` asks its
+A chunk generator that knows its own surface implements `TerrainSource` (1.3.0): `forWorld` asks its
 `columnTerrain(world)` before any other adapter.
 A chunk generator that places today's features itself (1.12's biome decorator does not run in its worlds)
-implements `DecorationSource` (1.2.0). A backport whose 1.12 hook adds a feature the generator already places steps
+implements `DecorationSource` (1.3.0). A backport whose 1.12 hook adds a feature the generator already places steps
 aside: `if (DecorationSource.places(world, "bee_nest")) return;` (or `places(world, event.getGenerator(), name)` in
 a populate handler). Names are today's vanilla features or the block they place, without a namespace.
 `FlatTerrain.structures(generator)` gives a superflat world's structure map for swapping a generator.
 
 A generator that runs a newer version's world generation in full (its 3D biomes and every placed feature: coral,
-kelp, seagrass, icebergs ...) implements `ModernGeneration` (1.2.0). Caves & Cliffs Backport's 1.18 generator does,
+kelp, seagrass, icebergs ...) implements `ModernGeneration` (1.3.0). Caves & Cliffs Backport's 1.18 generator does,
 for 1.18.2. In its worlds a backport's own generator of such a feature steps aside, and biome rules read its biome:
 
 ```java
@@ -285,19 +289,24 @@ Class.forName("com.exiledradio.backportcore.terrain.RtgBiomes").getMethod("regis
 ## Waterlogging (`waterlog.Waterloggable`, `waterlog.Waterlogging`)
 
 1.13's waterlogging for the family's blocks, through Fluidlogged API when it is installed. A block that
-today's game makes waterloggable implements `Waterloggable` (a plain interface) and answers up to three
+today's game makes waterloggable implements `Waterloggable` (a plain interface) and answers a few
 questions. With Fluidlogged API installed, Core's patch P19 adds Fluidlogged API's `IFluidloggable`
-(answered from those three) to the block's class; the block never implements `IFluidloggable` itself and has
+(answered from these) to the block's class; the block never implements `IFluidloggable` itself and has
 no `waterlogged` property.
 
 ```java
 public class BlockLantern extends Block implements Waterloggable {
-    // all three optional:
+    // all optional:
     public Need waterNeed(IBlockState state) { return Need.OPTIONAL; }  // REQUIRED: kelp, seagrass, bubble columns
     public boolean canHoldWater(IBlockState state, IBlockAccess world, BlockPos pos) { return true; }  // false: a double slab
+    public boolean acceptsFlowingWater(IBlockState state) { return false; }  // as 1.13: only a source goes in
+    public Boolean waterFlowsThrough(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) { return null; }
     public void onWaterChanged(World world, BlockPos pos, IBlockState state, boolean hasWater) { }    // coral dies, a campfire goes out
 }
 ```
+
+`waterFlowsThrough` (1.4.4) is Fluidlogged API's `canFluidFlow`: null keeps its rule by the face's shape. A block with
+a full collision box answers false, as 26.3's `canPassThroughWall` (water kept in leaves stays there).
 
 - Water only. A `REQUIRED` block that is drained is removed, with no drop. `onWaterChanged` runs after the
   water came or went (not when flowing water only changes level): buckets, flow, commands, the helpers below.
@@ -329,7 +338,7 @@ Waterlogging.migrateStoredProperty(block, WATERLOGGED); // a released block's ow
 - A block that shipped its own `waterlogged` property keeps the property and its meta bit while old worlds
   may hold it, stops setting it, and calls `migrateStoredProperty` in init. Each chunk is checked once,
   when it loads, and records that in its data (`backportcore:waterlogChecked`).
-- **Every height** (1.2.0): in Caves & Cliffs Backport's extended worlds (y -64 to 319) Core keeps the water
+- **Every height** (1.3.0): in Caves & Cliffs Backport's extended worlds (y -64 to 319) Core keeps the water
   outside y 0-255 itself, one store per section (patch P20), saved with the chunk and sent to clients, so every
   method above works there. Other worlds keep Fluidlogged API's own store. A backport does nothing for it. The
   `ChunkPrimer` form only takes y 0-255 (Fluidlogged API's primer has no other heights): set deeper water once the
@@ -401,6 +410,15 @@ ModernPalette.Resolved r = ModernPalette.resolve("minecraft:oak_stairs[facing=ea
 
 `minecraft:jigsaw` is Core's jigsaw block (1.4.5).
 
+Items have the same lookup (`structure.ModernItems`, 1.4.4), for loot tables, recipes and trades read from a newer
+game's files: a backport's mapping, then 1.12.2's renamed items (`structure/item_names.txt`, from the data fixers,
+`tools/flattening/items.py`), then the same name in the registry. Init or later.
+
+```java
+ItemStack web = ModernItems.stack("minecraft:cobweb");                          // 1.12.2's web; EMPTY: none
+ModernItems.map("minecraft:resin_clump", () -> new ItemStack(MyItems.RESIN_CLUMP));
+```
+
 Names are today's (`dirt_path`, `short_grass`, `oak_sign`, `smooth_stone_slab`, `iron_chain`), so a mapping
 for `minecraft:stone_slab` means 1.14's plain stone slab. `villagerbackport` is listed as a source already.
 Built-in stand-ins: non-oak wood trapdoors, buttons and pressure plates become oak's, stripped logs and wood
@@ -462,7 +480,7 @@ ocean_ruin, buried_treasure, ruined_portal, bastion_remnant, nether_fossil, anci
 trial_chambers, village, pillager_outpost). A locator runs on the server thread, generates nothing and
 loads no chunk it does not need. This is Update Aquatic's dolphin-stream `StructureLocator` API, unchanged.
 
-### Where a world's generator starts structures (`StructureSource`, `StartRule`, `StartRules`, 1.2.0)
+### Where a world's generator starts structures (`StructureSource`, `StartRule`, `StartRules`, 1.3.0)
 
 A chunk generator can decide where today's structures start in its worlds, whichever backport builds them. Caves &
 Cliffs Backport's 1.18 generator does for shipwrecks, ocean ruins, buried treasure, ruined portals and pillager
@@ -487,7 +505,7 @@ StartRule rule = StartRules.of(world, Structures.PILLAGER_OUTPOST);   // null wh
 - Both methods are pure arithmetic on the seed and the generator's noise: never load or generate chunks. Asked on the
   server thread; a world's answer per kind is kept for the world's life.
 
-### Terrain adaptation (`TerrainAdaptation`, 1.2.0)
+### Terrain adaptation (`TerrainAdaptation`, 1.3.0)
 
 Structures today's terrain shapes itself around (`terrain_adaptation`; 1.18.2's `adapt_noise`), for a generator that
 can do it (Caves & Cliffs Backport's 1.18 generator adds the beardifier around their pieces before it fills a chunk).
@@ -507,7 +525,7 @@ public class MyPiece extends StructureComponent implements TerrainAdaptation.Ada
   `TerrainAdjustment`s; 1.18.2's terrain knows `BEARD_THIN` (its beard) and `BURY` (its strongholds).
 - Kinds are summed in registration order, after the generator's own structures.
 
-### A backport's generator in a world generator's place (`StructureGenerators`, 1.2.0)
+### A backport's generator in a world generator's place (`StructureGenerators`, 1.3.0)
 
 For a chunk generator that builds its 1.12.2 structure generators itself, without Forge's `InitMapGenEvent` (Caves
 & Cliffs Backport's 1.18 generator): it offers each one, and the backport that builds the kind returns its own.
@@ -522,7 +540,7 @@ MapGenStructure villages = StructureGenerators.replace(world, Structures.VILLAGE
   with `TerrainAdaptation` for that, and ask `StartRules.of` for its starts where the generator rules them.
 - Asked once per world while its chunk generator is built, so `world.getChunkProvider()` may not be set yet.
 
-### Features a world generator places itself (`worldgen.FeatureSource`, 1.2.0)
+### Features a world generator places itself (`worldgen.FeatureSource`, 1.3.0)
 
 ```java
 public class MyGenerator implements IChunkGenerator, FeatureSource {
@@ -588,7 +606,8 @@ public static final class BastionStart extends StructureStart {
 - **Pools**: `name`, `fallback` and weighted `elements`. Element types are `single_pool_element`,
   `legacy_single_pool_element` (air left out), `list_pool_element`, `feature_pool_element` and
   `empty_pool_element`. 1.12.2 has none of today's configured features, so a feature element is placed by
-  `JigsawPools.feature("minecraft:oak", placer)`. Projections are `rigid` and `terrain_matching`. `processors` may
+  `JigsawPools.feature("minecraft:oak", placer)`; `JigsawPools.placer(idOrType)` (1.4.4) gives the placer registered
+  for an id, so a backport can wrap another's. Projections are `rigid` and `terrain_matching`. `processors` may
   be a list's id, the `{"processors": [...]}` object, or the bare array. `minecraft:empty` (pool and processor
   list) is built in.
 - **Pieces** (`JigsawPiece`, which Core registers as `BCJigsaw`) save their element as its JSON and place chunk by
@@ -673,7 +692,8 @@ every structure is built from Core's populate driver.
 
 Each set is a `ScatteredStructure`; its kind is the structure's id (or the set's id for several), and `/locate
 structure <id>` finds each structure. Starts save as `BCData` with their structure's id, pieces as `BCDataPiece`
-(`DataStructures.Piece`: junctions and liquid settings). `DataStructures.sets()`, `structures()`, `skipped()`,
+(`DataStructures.Piece`: junctions and liquid settings; a `JigsawPiece` subclass overrides `applyWaterlogging()`,
+false for `ignore_waterlogging`). `DataStructures.sets()`, `structures()`, `skipped()`,
 `choose(set, world, x, z)` and `startOf(def, world, x, z)` answer what loaded and what starts where; none loads a chunk.
 
 What a porter still does by hand: feature pool elements need a `JigsawPools.feature` placer, loot tables and
@@ -729,7 +749,7 @@ NetherStructureSlots.roll(seed, chunkX, chunkZ);             // the same without
   basalt deltas list bastions. `install` takes a `BiomeRule` for biomes that answer otherwise.
 - `install` swaps the nether's fortress generator, through `InitMapGenEvent` (no patch), for vanilla's, started by
   this rule and laid out with 1.16's start random. A fortress is decided whole when it is laid out, so none
-  half-generates beside a bastion. Saved fortresses stay, and `/locate Fortress` and blaze spawns follow the new
+  half-generates beside a bastion. Saved fortresses stay, and `/locate structure minecraft:fortress` and blaze spawns follow the new
   rule. If another mod already replaced the fortress generator, it is left alone (`fortressRuleActive()` is false).
 - Your bastion is a `ScatteredStructure` on `VanillaPlacements.V1_16_5.BASTION_REMNANT` whose `canStartAt` is
   `startAt(...) == Slot.BASTION`. `fortressStartsAt` and `savedFortress` read the fortress side.
@@ -763,7 +783,7 @@ StructurePlacements.isAtLeast("1.16");   // the newest of this table's and the p
 - Once the newest installed version is 1.13 or later, Core applies the rules every later version shares, with
   no registration: the strongholds' and spawn point's biome search (patch P8), the villages' biome point (P9),
   the hills layer's river noise seeded with the world seed, 1.12.2's temples on four grids (`ModernTemples`,
-  with `/locate Temple` finding any of them), the monument's squares from block (9, 9) (`ModernMonument`, only
+  each found by `/locate structure` under its id), the monument's squares from block (9, 9) (`ModernMonument`, only
   where the overworld still has vanilla's generator; in a Realistic Terrain Generation world it also needs deep
   water there, `MonumentTerrain.deepEnough`, which a backport's own monument rule can call too) and the stronghold
   biome rulings. From 1.15, 1.15's
@@ -773,10 +793,9 @@ StructurePlacements.isAtLeast("1.16");   // the newest of this table's and the p
 
 ## Locate (`locate.StructureLocate`, 1.1.0)
 
-Core replaces 1.12.2's `/locate` with today's: `/locate structure <id>` or `/locate structure #<tag>`, plus
-1.12.2's names (`Stronghold`, `Monument`, `Mansion`, `EndCity`, `Fortress`, `Temple`, `Mineshaft`; `Village`
-only until a backport registers today's village types, after which it still works but is not listed) and
-1.13-1.18's bare ids. Each backport registers what it builds, in init, under today's ids:
+Core replaces 1.12.2's `/locate` with today's: `/locate structure <id|#tag>`, `/locate biome <id|#tag>` and
+`/locate poi <id|#tag>`. 1.12.2's names (`/locate Stronghold`) and 1.13-1.18's bare ids are gone (1.3.1), as in
+today's game. Each backport registers what it builds, in init, under today's ids:
 
 ```java
 // A ScatteredStructure kind: the kind's own start rule; the id is decided per start where a kind has several.
@@ -810,6 +829,18 @@ real `GuiChat` in a world (`ClientLocateTests`).
 confirm a result is today's, `savedStart` reads a generator's laid-out start, `generateAround` loads chunks, and
 `run`/`complete` run the command or its tab completion as an operator.
 
+From code, for explorer maps (1.4.4):
+
+```java
+StructureLocate.Found f = StructureLocate.nearest(world, from, "#minecraft:on_ocean_monument_maps", 50, true);  // f.pos, f.id, f.chunk
+StructureLocate.nearest(world, from, idOrTag, rings, skipClaimed, false);   // compare several, then claim the one kept:
+StructureClaims.of(world).claim(f.id, f.chunk.x, f.chunk.z);
+```
+
+`rings` and `skipClaimed` are the `exploration_map` function's `search_radius` and `skip_existing_chunks`. Claims are
+start chunks by id, per dimension (`data/backportcore_structure_claims.dat`); a finder's answer is never skipped or
+claimed.
+
 Core registers 1.12.2's structures under today's ids (`minecraft:stronghold`, `monument`, `mansion`, `end_city`,
 `mineshaft` through 1.12.2's own search; `minecraft:fortress` on 1.16.5's shared nether grid once a backport
 installs `NetherStructureSlots`; `minecraft:desert_pyramid`, `jungle_pyramid`, `swamp_hut`, `igloo` on their
@@ -824,11 +855,12 @@ What the family registers:
 | Village & Pillage | `village_plains`, `village_desert`, `village_savanna`, `village_snowy`, `village_taiga`, `pillager_outpost` | `#village` |
 | Update Aquatic | `shipwreck`, `shipwreck_beached`, `ocean_ruin_cold`, `ocean_ruin_warm`, `buried_treasure` | `#shipwreck`, `#ocean_ruin` |
 | Nether Update | `bastion_remnant`, `nether_fossil`, `ruined_portal`, `ruined_portal_desert`, `_jungle`, `_swamp`, `_mountain`, `_ocean`, `_nether` | `#ruined_portal` |
-| Wild Update | not yet: `ancient_city` (not built) | |
-| Trails & Tales | not yet: `trail_ruins` (not built) | |
-| Tricky Trials | not yet: `trial_chambers` (not built) | |
+| Wild Update | `ancient_city` | |
+| Trails & Tales | `trail_ruins` | |
+| Tricky Trials | `trial_chambers` | |
+| Game Drops | `abandoned_camp_<biome>` (one per camp variant) | 26.3's explorer map tags (`#on_abandoned_camp_swamp`, `#on_mineshaft_maps`, ...) |
 
-### Biomes (`locate.BiomeLocate`, 1.2.0)
+### Biomes (`locate.BiomeLocate`, 1.3.0)
 
 `/locate biome <id>` and `/locate biome #<tag>`, today's biome form: "The nearest minecraft:cherry_grove is at
 [x, y, z] (n blocks away)", the height and the distance in three dimensions, the click putting `/tp @s x y z` in the
@@ -846,6 +878,8 @@ BiomeLocate.biome("minecraft:deep_dark", myBiome);      // a biome under a name 
 BiomeLocate.tag("minecraft:is_mountain", "minecraft:cherry_grove", "minecraft:windswept_hills");
 BiomeLocate.id("minecraft:meadow");                     // a sampler's biome with no 1.12.2 biome of its own
 BiomeLocate.source(world -> isMine(world) ? (x, y, z) -> modernIdAt(x, y, z) : null);   // a generator's own biomes
+BiomeLocate.Sampler own = BiomeLocate.sampler(world);   // 1.4.5: the world's source, or null where 1.12.2's biomes answer
+BiomeLocate.Sampler base = BiomeLocate.layers(world);   // 1.4.5: 1.12.2's column biomes, for a source that answers a few places
 ```
 
 The search is 26.x's `BiomeSource.findClosestBiome3d(origin, 6400, 32, 64)`: `BlockPos.spiralAround` columns 32
@@ -902,7 +936,7 @@ read the first time about 0.6 s, then about 1 ms. Sections in another format tha
 saves) are skipped. Village & Pillage's own `WorkstationIndex` is not asked: it covers loaded chunks and job sites
 only, and lags behind the world by design.
 
-### Adventuring Time (`advancement.AdventuringTime`, 1.3.2)
+### Adventuring Time (`advancement.AdventuringTime`, 1.4.0)
 
 `minecraft:adventure/adventuring_time` follows vanilla's later lists as far as the installed backports bring their
 biomes; no backport calls anything. The list is vanilla's at the newest installed version, by today's ids
@@ -924,7 +958,7 @@ file in its jar).
 *   Changed after each load of the advancements (the server's start, `/reload`), then the online players' progress is
     read again. `AdventuringTime.extend(server, ids...)` adds criteria by hand (the self-tests).
 
-## Water colors (`water.WaterColors`, 1.3.2)
+## Water colors (`water.WaterColors`, 1.4.0)
 
 Today's water color and underwater fog color by biome, for whichever mod draws 1.13's water (Update Aquatic Backport).
 
@@ -1012,20 +1046,53 @@ drawing does.
 
 ## Look and feel (`presentation.Presentation`, 1.1.0)
 
-Each backport declares the release it brings and adds its version's non-content changes; Core shows what the
-newest installed version would: panorama, world-loading screen, options on the right screens (and 1.14's
-Accessibility and Mouse Settings), splashes, menu music, F3 keys, fog, and changed defaults applied once.
+Each backport declares the releases it brings; Core shows what the newest installed version would: panorama,
+world-loading screen, options on the right screens, splashes, menu music, F3 keys and text, fog, wording, sprites,
+and changed defaults applied once.
+
+Since 1.4.7 Core owns every version's pieces that are not tied to one backport's content (options, chat
+suggestions, F3 keys and text, the F3 + F4 switcher, loading screens, title and startup logos, widgets, wording,
+splashes, defaults) and applies them up to the newest installed version, whichever backport that is
+(`Presentation.core(version)`, `presentation/versions/LookNNN`). Caves & Cliffs alone has 1.13's command
+suggestions and 1.16's F3 + F4. A backport registers only what its content brings: the version declarations, its
+panorama and overlay, its music, and options or steps of its own content.
 
 ```java
-Presentation.version("1.14")
-        .panorama("villagerbackport:textures/gui/title/background/panorama_")
-        .addSplashes(new ResourceLocation("villagerbackport", "texts/splashes_added.txt"))
-        .option(new SliderOption("villagerbackport:text_background_opacity", "options.accessibility.text_background_opacity",
-                OptionScreen.ACCESSIBILITY, 0, 1, 0.01, 0.5).after("SHOW_SUBTITLES"));
+Contribution v119 = Presentation.version("1.19");      // pre-init, both sides; 1.13 or later
+v119.panorama("wildupdatebackport:textures/gui/title/background/panorama_")
+        .panoramaOverlay(new ResourceLocation("wildupdatebackport", "textures/gui/title/background/panorama_overlay.png"))
+        .addMenuMusic("wildupdatebackport:music/game/swamp/aerie", 1)
+        .option(DARKNESS.after("netherupdatebackport:fov_effect_scale"));   // the Darkness effect is Wild Update's
+Presentation.version("1.19.4");                         // a point release: its pieces are Core's
 ```
+
+- What moved, per backport, is in `docs/CORE_FEEL.md`. Core's options keep the backports' ids
+  (`updateaquaticbackport:auto_suggestions`), so saved values carry over; refer to one by id
+  (`Presentation.option(id)`) or by its `presentation.versions.LookNNN` constant.
+- At one version a backport's contribution comes after Core's, so an older backport jar that still registers its
+  copy resolves to the same piece. An option under the id of one Core owns (`PresentationOption.ownedByCore()`)
+  becomes its mirror (`canonical()`: one button, one value); an F3 text, fog or music step of the same version and
+  name is left out (`OrderedSteps`); Core leaves its own event handler or patch off while the older jar's class is on
+  the class path (`LegacyCopies.coreRuns(className...)`).
+- `Presentation.coreContribution(version)` is Core's own contribution of exactly that version (null if none);
+  `Contribution.isCore()` tells them apart. Backports never call `Presentation.core`.
 
 Everything, with how each piece resolves, is in `docs/PRESENTATION.md`; what to check in game is in
 `docs/PRESENTATION_CHECKLIST.md`. Patches P6 (title panorama) and P7 (F3 keys) are in `docs/PATCHES.md`.
+
+### Screens for a backport's own menus
+
+- `presentation.client.HeaderFooterLayout` (1.4.5): 1.20.5's `HeaderAndFooterLayout`, the title in a 33-high header, Done or a
+  row of buttons in a 33-high footer, the contents between.
+- `presentation.client.MenuBackground.contentFrame(left, top, right, bottom, scrolled)` (1.4.4): the list background and the
+  header and footer separators while the newer menu backgrounds are on; false: keep 1.12.2's look.
+  `MenuBackground.menuTile(x, y, width, height)` (1.4.7): 1.20.5's `menu_background.png` tile over a rectangle, for
+  a screen drawn outside the GUI loop.
+- `gamerules.client.GameRulesScreen.inWorld(parent)` (1.4.4): 26.3's in-world Game Rules screen (the server's rules,
+  sent on Done); show it only when `available()` and `permitted(mc)` (permission level 2).
+- `PresentationOption.activeWhen(supplier, inactiveTooltip)` (1.4.5): shown greyed out while false;
+  `availableWhen(supplier)` (1.4.4): left off where the platform lacks it. `ToggleOption.valueTooltips(onKey, offKey)` and
+  `defaultFollows(supplier)` (1.4.4).
 
 ### System toasts (`presentation.client.SystemToasts`, 1.4.5)
 
@@ -1103,7 +1170,8 @@ GameEvents.isAtLeast("1.20"); GameEvents.newest();        // from the requiremen
   `piston_contract` 9, `entity_roar`/`entity_shake` 4). `resonance(f)` is `resonate_f`. `register` adds a mod's own.
 - `GameEventTags`: `vibrations()` and `wardenCanListen()` give 1.20.6's sets while a "1.20" requirement is on, else
   1.19.2's (`VIBRATIONS_1_19`, `VIBRATIONS_1_20`, ...). 1.20's sets also hold the renamed 1.19.2 events. Wool
-  occludes; wool and carpets dampen; `addResonator(block)` / `resonates(state)` is `#vibration_resonators`.
+  occludes; wool and carpets dampen (`addDampener(block)`, 1.4.4); `addResonator(block)` / `resonates(state)` is
+  `#vibration_resonators`. `GameEvent.BOUNCE` (1.4.4, frequency 2) is in 1.20's vibration and warden lists.
 - `GameEventListener.rules()`: `V1_20` (default: radius between blocks, heard at once, closest first) or `V1_19`
   (exact radius, heard at the end of the world tick, closest first). `immediate()` hears before either; `active()`
   false is deaf (a mod's own switch while another mod keeps events on).
@@ -1140,11 +1208,11 @@ player's inventory once a second, when the items in it have changed.
 
 ## Smelting books (`recipe.book.*`, 1.3.0)
 
-1.13's furnace recipe book, and the same book for any other cooking block (a smoker, a blast furnace). Register a book
-on both sides from pre-init or init:
+1.13's furnace recipe book, and the same book for any other cooking block (a smoker, a blast furnace). Core registers
+vanilla's furnace book itself (`SmeltingBook.furnace()`) once an installed backport is 1.13 or later (1.4.7; Update
+Aquatic's until then). Register another book on both sides from pre-init or init:
 
 ```java
-SmeltingBooks.register(SmeltingBook.furnace());   // vanilla's furnace, as 1.13 has it
 SmeltingBooks.register(new SmeltingBook(new ResourceLocation("modid", "smoker"),
         c -> c.getClass() == ContainerSmoker.class, 0, 1, 2,              // input, fuel, output slots
         () -> SmokerRecipes.instance().getSmeltingList(), TileEntityFurnace::isItemFuel,
@@ -1169,7 +1237,7 @@ SmeltingBooks.register(new SmeltingBook(new ResourceLocation("modid", "smoker"),
 - Screen: draw the book with `client.SmeltingBookGui` as 1.12.2's `GuiCrafting` draws its book (see its javadoc) and
   implement `client.BookScreen`. `client.GuiFurnaceBook` is vanilla's furnace, opened in place of `GuiFurnace` once
   the furnace book is registered. 1.13.2's `recipe_book.png` (furnace filter at 152, 182) and `recipe_button.png`
-  come from the backport (`Contribution.replaceAsset`).
+  are Core's 1.13 look (`Contribution.replaceAsset`; a backport's before 1.4.7).
 - Packets: `BookNetwork` (`backportcore_rb`), only to clients running Core.
 
 ## Babies: the age lock and 26.1's baby models (`mechanics.AgeLockable`, `VanillaRevisions.babyModels`, 1.4.4)
@@ -1216,6 +1284,12 @@ One boat and one boat with chest for the whole family (Wild Update's request 4, 
   riders) are the same. Core also remaps the name in `MissingMappings` (no missing-entries prompt, and an alias for
   that session; Forge 1.12.2 does not keep aliases, its bug 4894). A world with several old names logs Forge's
   "registered twice" warning once, the first time it loads.
+
+## Jukebox signal (`mechanics.JukeboxSignal`, 1.4.4)
+
+Patch P41: a disc's comparator signal from its own `public int comparatorSignal()` (0 to 15) on the `ItemRecord`
+subclass, found by name; no Core type to implement. Other discs keep 1.12.2's answer.
+`JukeboxSignal.signal(world, pos)` and `signal(stack)` read it (-1: none).
 
 ## Helpers
 

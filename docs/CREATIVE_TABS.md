@@ -95,8 +95,8 @@ menu's first page shows 1.19.3's tabs instead of 1.12.2's nine (`creative.client
 
 Operator Utilities shows with Controls' Operator Items Tab on (1.19.3's option, off by default) for a player allowed
 commands (level 2), and lists the operator items 1.12.2 has: command blocks, the command block minecart, the structure
-block and void, the barrier. Tabs are 1.19.3's size (26 pixels, 27 apart); their sprites are 1.19.3's `tabs.png`, which
-Wild Update Backport supplies (`Contribution.replaceAsset`). Without it, 1.12.2's sprites are cut to that width.
+block and void, the barrier, and Core's jigsaw block. Tabs are 1.19.3's size (26 pixels, 27 apart); their sprites are
+1.19.3's `tabs.png`, Core's own 1.19.3 piece since 1.4.7 (Wild Update Backport supplied it before).
 
 **Contents.** Each tab lists what 1.19.3's lists, in its order (`creative/tabs_1_19_3.txt`); from 26.3 on, what 26.3's
 lists (`order_26_3.txt`'s own tabs). The stacks are those the nine 1.12.2 tabs list, the backports' placed items
