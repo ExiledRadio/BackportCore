@@ -301,7 +301,14 @@ final class ClientPresentationTests {
 
         OptionsListScreen accessibility = OptionsListScreen.accessibility(options);
         mc.displayGuiScreen(accessibility);
-        List<GuiButton> a = buttons(accessibility);
+        // The self-test mod's options and Core's own long-standing ones: the options Core took over from the backports
+        // in 1.4.7 (ownedByCore) are left out of this order check.
+        List<GuiButton> a = new java.util.ArrayList<GuiButton>();
+        for (GuiButton b : buttons(accessibility)) {
+            if (!(b instanceof OptionWidgets.OptionButton) || !((OptionWidgets.OptionButton) b).option().isCoreOwned()) {
+                a.add(b);
+            }
+        }
         // 1.16: narrator, subtitles, the backport option (after subtitles), text background opacity, text background,
         // chat opacity, line spacing, chat delay, Auto-Jump, then the option that is also on Video, then Done.
         check("client: Accessibility in 1.16.5's order with the backport options placed by their anchors",
@@ -341,7 +348,8 @@ final class ClientPresentationTests {
         List<?> rows = (List<?>) rowsField.get(listField.get(video));
         // 16 vanilla entries, less Anaglyph (1.13) and VBOs (1.14), plus the dummy's two and the also-on-Video one, under
         // 1.13's Fullscreen Resolution, a row of its own at the top.
-        check("client: Video Settings: Fullscreen Resolution, then 17 entries in 9 rows", rows.size() == 10
+        // Core's own options of 1.13 to 1.16 (1.4.7: Biome Blend, Entity Distance, Distortion and FOV Effects) add rows.
+        check("client: Video Settings: Fullscreen Resolution, then 17 entries in 9 rows (and Core's own)", rows.size() >= 10
                 && ((GuiOptionsRowList.Row) rows.get(0)).getClass() == GuiOptionsRowList.Row.class
                 && ReflectionHelper.getPrivateValue(GuiOptionsRowList.Row.class, (GuiOptionsRowList.Row) rows.get(0), "buttonA", "field_148323_b")
                         instanceof com.exiledradio.backportcore.presentation.client.FullscreenModes.Slider, rows.size());
@@ -407,7 +415,7 @@ final class ClientPresentationTests {
         check("client: F3+B is still vanilla's (hitboxes on)", PresentationHooks.processKeyF3(mc, 48) && mc.getRenderManager().isDebugBoundingBox());
         PresentationHooks.processKeyF3(mc, 48);
         check("client: and off again", !mc.getRenderManager().isDebugBoundingBox());
-        check("client: an unknown key is left alone", !PresentationHooks.processKeyF3(mc, 23));
+        check("client: an unknown key is left alone", !PresentationHooks.processKeyF3(mc, 24));
     }
 
     private void loadWorld(Minecraft mc) throws Exception {
@@ -453,7 +461,7 @@ final class ClientPresentationTests {
         net.minecraft.client.resources.IResource logo = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/title/minecraft.png"));
         check("client: minecraft:textures/gui/title/minecraft.png comes from Core's pack", "backportcore:vanilla_by_version".equals(logo.getResourcePackName()),
                 logo.getResourcePackName());
-        net.minecraft.client.resources.IResource widgets = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/widgets.png"));
+        net.minecraft.client.resources.IResource widgets = mc.getResourceManager().getResource(new net.minecraft.util.ResourceLocation("textures/gui/icons.png"));
         check("client: an asset no version replaces is vanilla's", !"backportcore:vanilla_by_version".equals(widgets.getResourcePackName()), widgets.getResourcePackName());
         check("client: vanilla text newest wins (1.16 over 1.14)", "sixteen".equals(net.minecraft.client.resources.I18n.format("selftest.reworded")),
                 net.minecraft.client.resources.I18n.format("selftest.reworded"));
@@ -485,8 +493,13 @@ final class ClientPresentationTests {
         check("client: the menu music still comes from the pool through Core's ticker", MenuMusicPlayer.lastPick != null);
         List<String> tip = com.exiledradio.backportcore.presentation.client.OptionTooltips.lines("one\\ntwo");
         check("client: a tooltip keeps its line breaks", tip.size() == 2 && "two".equals(tip.get(1)), tip);
-        check("client: the debug text runs oldest version first", com.exiledradio.backportcore.presentation.client.DebugText.steps()
-                .names(Presentation.newest()).equals(java.util.Arrays.asList("1.14 selftest older", "1.16 selftest line")),
+        List<String> debugSteps = new java.util.ArrayList<String>();
+        for (String n : com.exiledradio.backportcore.presentation.client.DebugText.steps().names(Presentation.newest())) {
+            if (n.contains("selftest")) {
+                debugSteps.add(n); // Core's own steps (1.4.7) aside
+            }
+        }
+        check("client: the debug text runs oldest version first", debugSteps.equals(java.util.Arrays.asList("1.14 selftest older", "1.16 selftest line")),
                 com.exiledradio.backportcore.presentation.client.DebugText.steps().names(Presentation.newest()));
     }
 

@@ -91,6 +91,8 @@ final class ClientLocateTests {
         }
         this.wait = 0;
         int tabSteps = TABS.length * 3;
+        // 1.12.2's Tab completion: Core's own 1.13 command suggestions (1.4.7) aside while the Tab steps run.
+        com.exiledradio.backportcore.presentation.Presentation.hideCoreForTests(this.step < tabSteps);
         if (this.step < tabSteps) {
             String[] c = TABS[this.step / 3];
             switch (this.step % 3) {
@@ -134,6 +136,7 @@ final class ClientLocateTests {
             return;
         }
         this.done = true;
+        com.exiledradio.backportcore.presentation.Presentation.hideCoreForTests(false);
     }
 
     private static void tab(Minecraft mc) {
