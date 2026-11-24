@@ -2,7 +2,7 @@
     "ambientocclusion": false,
     "textures": {
         "torch": "blocks/redstone_torch_on",
-        "particle": "#torch"
+        "particle": "blocks/redstone_torch_on"
     },
     "elements": [
         {

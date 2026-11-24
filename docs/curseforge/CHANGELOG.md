@@ -2,6 +2,7 @@
 
 *   **Fixed: a crash 20 to 30 seconds after launch on Android launchers** (PojavLauncher, Zalith and others), and no sound before it. Their LWJGL lacks a call Backport Core used when opening the sound device; the sound now opens as in 1.12.2 there, without the device choice and Directional Audio.
 *   **Fixed: the block on the "New Recipes Unlocked!" toast sat a pixel low**, both the crafting table and the furnace's. Turning off the toasts' newer look now removes both, as in 1.12.2.
+*   **Fixed: lit redstone torches broke into black and purple particles** once a backport of 1.21 or later was installed. 1.21's torch model named its particle texture in a way 1.12.2 cannot read.
 
 # 1.4.5
 
