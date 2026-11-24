@@ -1,5 +1,6 @@
 # 1.4.6
 
+*   `locate.BiomeLocate.layers(world)`: 1.12.2's own column biomes as a `Sampler`, for a backport's `source` that answers a few places itself (Game Drops' sulfur caves under 1.12.2 terrain) and hands the rest to the layers.
 *   P67 (`asm/RenderChunkMoveTransformer`): a render chunk the frustum moves is marked for a rebuild, as 1.18.2's `RenderChunk.setOrigin` (`reset()`: `dirty = true`). 1.12.2 emptied it (`CompiledChunk.DUMMY`) and waited for a chunk packet; when the data was already on the client the section stayed empty and blocked the culling walk: holes to the sky until F3 + A.
 *   P66 (`asm/RecipeToastTransformer`): 1.13's recipe toast draws the crafting table at 0.6 scale behind the output (`VanillaRevisions.recipeToastIcon`, the toasts' look from 1.13, which `LookArea.TOASTS` now offers). 1.12.2 drew the output only.
 *   Data-driven structures (`structure.DataStructures`): Core reads today's `data/<ns>/worldgen/structure_set` and

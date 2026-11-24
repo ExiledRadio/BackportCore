@@ -259,6 +259,15 @@ public final class BiomeLocate {
         return samplerFor(world);
     }
 
+    /**
+     * @return 1.12.2's own biomes as a sampler (the column's biome at its 1:4 cell, as the search reads it), for a
+     * backport whose {@link #source} answers a few places itself and leaves the rest to the world's layers
+     * @since 1.4.5
+     */
+    public static Sampler layers(WorldServer world) {
+        return new LayerSampler(world.getBiomeProvider());
+    }
+
     @Nullable
     private static synchronized Sampler samplerFor(WorldServer world) {
         for (SamplerFactory factory : SOURCES) {
