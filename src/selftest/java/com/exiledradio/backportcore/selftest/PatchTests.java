@@ -89,6 +89,7 @@ final class PatchTests {
             {"net.minecraft.block.BlockJukebox", "P41", new String[] {"has", "signal"}},
             {"net.minecraft.client.Minecraft", "P42", new String[] {"borderlessToggle"}},
             {"net.minecraft.world.biome.BiomeColorHelper", "P44", new String[] {"colorBiome"}},
+            {"net.minecraft.world.biome.BiomeColorHelper", "P68", new String[] {"low*2", "high*2", "count*3"}},
             {"net.minecraft.world.storage.MapData", "P43", new String[] {"enter", "facing"}},
             {"net.minecraft.world.World", "P46", new String[] {"entityArea", "tileLoaded"}},
             {"net.minecraft.world.WorldServer", "P46", new String[] {"scheduledTickLoaded", "randomTickChunks"}},
@@ -375,6 +376,7 @@ final class PatchTests {
             case "P41": cls = "JukeboxSignalTransformer"; break;
             case "P42": cls = "FullscreenTransformer"; break;
             case "P44": cls = "BiomeColorTransformer"; break;
+            case "P68": cls = "BiomeBlendTransformer"; break;
             case "P43": cls = "MapFacingTransformer"; break;
             case "P46": cls = "SimulationTransformer"; break;
             case "P47": cls = "CreativeTabsTransformer"; break;

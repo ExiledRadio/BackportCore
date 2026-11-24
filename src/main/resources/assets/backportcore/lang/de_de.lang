@@ -635,3 +635,21 @@ backportcore.general.structure.blacklist.tooltip=IDs von Bauwerken oder Bauwerk-
 # --- end config tooltips ---
 chat.copy.click=Klicken, um in die Zwischenablage zu kopieren
 item.minecraft.smithing_template.upgrade=Aufwertung: 
+# 1.4.7: 1.13 pieces moved from Update Aquatic Backport
+debug.copy_location.help=F3 + C = Position als /tp‐Befehl kopieren oder 10 Sekunden gedrückt halten, um einen Absturz zu erzwingen
+debug.copy_location.message=Position wurde in die Zwischenablage kopiert
+options.biomeBlendRadius=Biomübergang
+debug.inspect.help=F3 + I = Block- oder Objektdaten in Zwischenablage kopieren
+debug.inspect.client.block=Clientseitige Blockdaten in die Zwischenablage kopiert
+debug.inspect.client.entity=Clientseitige Objektdaten in die Zwischenablage kopiert
+debug.inspect.server.block=Serverseitige Blockdaten in Zwischenablage kopiert
+debug.inspect.server.entity=Serverseitige Objektdaten in Zwischenablage kopiert
+# 1.4.7: 1.14 pieces moved from Village & Pillage Backport
+options.mouseWheelSensitivity=Mausradempfindlichkeit
+options.discrete_mouse_scroll=Eigenständiges Blättern
+menu.paused=Spiel angehalten
+# 1.4.7: 1.15 pieces moved from Buzzy Bees Backport
+title.singleplayer=Einzelspieler
+title.multiplayer.lan=Mehrspieler (LAN)
+title.multiplayer.other=Mehrspieler (Drittanbieter-Server)
+title.multiplayer.realms=Mehrspieler (Realms)
