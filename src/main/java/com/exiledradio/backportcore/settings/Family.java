@@ -59,7 +59,7 @@ public final class Family {
     public static final String UPDATES = "https://raw.githubusercontent.com/ExiledRadio/BackportCore/main/updates/";
 
     public static final List<Member> MEMBERS = Collections.unmodifiableList(Arrays.asList(
-            new Member("backportcore", "", "backport-core", 0xB9A8FF, 1788299, "1.4.7"),
+            new Member("backportcore", "", "backport-core", 0xB9A8FF, 1788299, "1.4.8"),
             new Member("updateaquaticbackport", "1.13", "update-aquatic-backport", 0x4FC9B8, 1788248, "1.2.3"),
             new Member("villagerbackport", "1.14", "village-and-pillage-backport", 0xE8B04A, 1671232, "2.7.5"),
             new Member("buzzybeesbackport", "1.15", "buzzy-bees-backport", 0xF2C94C, 1788311, "1.1.2"),
