@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=生成しない構造物また�
 # --- end config tooltips ---
 chat.copy.click=クリックしてクリップボードにコピー
 item.minecraft.smithing_template.upgrade=強化：
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=被ダメージ時の画面の揺れ
+options.damageTiltStrength.tooltip=被ダメージ時に発生する画面の揺れの強さを設定できます。
+options.glintSpeed=オーラの速度
+options.glintSpeed.tooltip=エンチャントされたアイテムを覆うオーラの揺らめきの速度を設定できます。
+options.glintStrength=オーラの濃さ
+options.glintStrength.tooltip=エンチャントされたアイテムを覆うオーラの透明度を設定できます。
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=メニュー背景のぼかし具合
+options.accessibility.menu_background_blurriness.tooltip=メニュー背景のぼかし具合を変更します。
+debug.profiler_chart.help=F3 + 1 = プロファイラーのグラフを表示
+debug.fps_charts.help=F3 + 2 = FPS と TPS のグラフを表示

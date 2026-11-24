@@ -634,3 +634,15 @@ backportcore.general.structure.blacklist.tooltip=Structure or structure set ids 
 # --- end config tooltips ---
 chat.copy.click=Click to Copy to Clipboard
 item.minecraft.smithing_template.upgrade=Upgrade: 
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Damage Tilt
+options.damageTiltStrength.tooltip=The amount of camera shake caused by being hurt.
+options.glintSpeed=Glint Speed
+options.glintSpeed.tooltip=Controls how fast the visual glint shimmers across enchanted items.
+options.glintStrength=Glint Strength
+options.glintStrength.tooltip=Controls how transparent the visual glint is on enchanted items.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Menu Background Blur
+options.accessibility.menu_background_blurriness.tooltip=Changes the blurriness of menu backgrounds
+debug.profiler_chart.help=F3 + 1 = Show profiler chart
+debug.fps_charts.help=F3 + 2 = Show FPS and TPS charts

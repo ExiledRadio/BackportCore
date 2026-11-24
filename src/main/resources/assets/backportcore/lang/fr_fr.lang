@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=Les identifiants de structures 
 # --- end config tooltips ---
 chat.copy.click=Cliquez pour copier dans le presse-papiers
 item.minecraft.smithing_template.upgrade=Amélioration : 
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Secousse de dégâts
+options.damageTiltStrength.tooltip=Contrôle l'intensité de la secousse de la vue causée par les dégâts reçus.
+options.glintSpeed=Vitesse de scintillement
+options.glintSpeed.tooltip=Détermine la vitesse du scintillement des objets enchantés.
+options.glintStrength=Force de scintillement
+options.glintStrength.tooltip=Détermine la transparence du scintillement des objets enchantés.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Flou de l'arrière-plan des menus
+options.accessibility.menu_background_blurriness.tooltip=Modifie le flou de l'arrière-plan des menus.
+debug.profiler_chart.help=F3 + 1 = Afficher le graphique du profileur
+debug.fps_charts.help=F3 + 2 = Afficher les graphiques FPS et TPS

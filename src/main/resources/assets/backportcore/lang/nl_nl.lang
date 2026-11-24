@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=ID's van bouwwerken of bouwwerk
 # --- end config tooltips ---
 chat.copy.click=Klik om te kopiëren
 item.minecraft.smithing_template.upgrade=Upgrade(s): 
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Schadekanteling
+options.damageTiltStrength.tooltip=Hoeveel de camera kantelt wanneer je gewond raakt.
+options.glintSpeed=Glanssnelheid
+options.glintSpeed.tooltip=Bepaalt hoe snel het glanseffect beweegt over betoverde voorwerpen.
+options.glintStrength=Glanssterkte
+options.glintStrength.tooltip=Bepaalt de transparantie van het glanseffect op betoverde voorwerpen.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Wazigheid menu-achtergrond
+options.accessibility.menu_background_blurriness.tooltip=Past de wazigheid aan van menu-achtergronden
+debug.profiler_chart.help=F3 + 1 = Profileerdergrafiek tonen
+debug.fps_charts.help=F3 + 2 = FPS- en TPS-grafieken tonen

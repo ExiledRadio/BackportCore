@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=ID строений или на
 # --- end config tooltips ---
 chat.copy.click=Нажмите, чтобы скопировать в буфер обмена
 item.minecraft.smithing_template.upgrade=Улучшение: 
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Наклон при уроне
+options.damageTiltStrength.tooltip=Сила наклона камеры при получении урона.
+options.glintSpeed=Мерцание чар
+options.glintSpeed.tooltip=Скорость распространения мерцания по зачарованным предметам.
+options.glintStrength=Заметность чар
+options.glintStrength.tooltip=Интенсивность мерцания чар на предметах.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Размытие фона
+options.accessibility.menu_background_blurriness.tooltip=Изменяет степень размытия фона в меню.
+debug.profiler_chart.help=F3 + 1 = Показать график профилирования
+debug.fps_charts.help=F3 + 2 = Показать графики FPS и TPS

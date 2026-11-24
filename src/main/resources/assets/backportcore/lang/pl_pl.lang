@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=ID budowli lub zestawów budowl
 # --- end config tooltips ---
 chat.copy.click=Kliknij, aby skopiować do schowka
 item.minecraft.smithing_template.upgrade=Ulepszenie: 
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Zadrżenie od obrażeń
+options.damageTiltStrength.tooltip=Natężenie drżenia kamery spowodowane otrzymaniem obrażeń.
+options.glintSpeed=Prędkość poświaty
+options.glintSpeed.tooltip=Określa prędkość animacji poświaty zaklętych przedmiotów.
+options.glintStrength=Siła poświaty
+options.glintStrength.tooltip=Określa przezroczystość poświaty zaklętych przedmiotów.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Rozmycie tła w menu
+options.accessibility.menu_background_blurriness.tooltip=Zmienia rozmazanie tła menu
+debug.profiler_chart.help=F3 + 1 = Pokaż wykres profilowania
+debug.fps_charts.help=F3 + 2 = Pokaż wykresy FPS i TPS

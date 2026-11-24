@@ -1186,3 +1186,56 @@ or passes an existing constant through a hook of the same type.
 *   **What changes**: right after the one `stopCompileTask()` call, `this.needsUpdate = true` (the field alone, as
     1.18.2 sets `dirty` and leaves `playerChanged`). Not a setting: a fix, always on.
 *   **Fails safe**: method or field missing, or not exactly one `stopCompileTask` call: left as 1.12.2's, one log line.
+
+## P73. Damage Tilt
+
+*   **Class**: `net.minecraft.client.renderer.EntityRenderer`, `hurtCameraEffect(F)V`. **Transformer**:
+    `asm/LookVersionsTransformer`. **Hook**: `presentation/versions/LookHooks.damageTilt`. **Since**: 1.4.7 (Wild Update
+    Backport's P1 until its 1.1.3).
+*   **Vanilla change**: 1.19.4 (23w06a) added Damage Tilt (Accessibility Settings, 0 to 100%): `GameRenderer.bobHurt`
+    tilts by `-sin(...) * 14.0 * damageTiltStrength`.
+*   **Why a patch**: the 14 degrees are a constant inside the camera setup; no event reaches it.
+*   **What changes**: its one `14.0F` passes through `damageTilt(F)F`, which scales it by the option. While the option
+    does not show (before 1.19.4, or the options' part of the look off) it returns vanilla's value.
+*   **Fails safe**: method missing or not exactly one `14.0F`: left as 1.12.2's, one log line. Left to Wild Update while
+    an older jar of it (with `wildupdatebackport.asm.LookTransformer`) is on the class path.
+
+## P74. Glint Speed and Glint Strength on items
+
+*   **Class**: `net.minecraft.client.renderer.RenderItem`, `renderEffect(IBakedModel)V`. **Transformer**:
+    `asm/LookVersionsTransformer`. **Hooks**: `presentation/versions/LookHooks.glintTime`, `glintColor`. **Since**: 1.4.7
+    (Wild Update Backport's P2 until its 1.1.3).
+*   **Vanilla change**: 1.19.4 (23w05a) added Glint Speed (default 50%) and Glint Strength (default 75%):
+    `RenderStateShard.setupGlintTexturing` scrolls by `millis * glintSpeed * 8` where 1.19.3 scrolled by `millis * 8`,
+    and the glint shader multiplies the added color by `GlintAlpha`.
+*   **Why a patch**: the clock and the color are read inside `renderEffect`; no event reaches them.
+*   **What changes**: each of the two `Minecraft.getSystemTime()` results passes through `glintTime(J)J` and each of the
+    two `-8372020` (`0xFF8040CC`) colors through `glintColor(I)I` (the alpha byte kept). Vanilla's values while the
+    options do not show.
+*   **Fails safe**: method missing, or not two clocks and two colors: left as 1.12.2's, one log line. Left to Wild Update
+    while an older jar of it is on the class path.
+
+## P75. Glint Speed and Glint Strength on armor
+
+*   **Class**: `net.minecraft.client.renderer.entity.layers.LayerArmorBase`, `renderEnchantedGlint`. **Transformer**:
+    `asm/LookVersionsTransformer`. **Hooks**: `presentation/versions/LookHooks.glintTicks`, `glintComponent`. **Since**:
+    1.4.7 (Wild Update Backport's P3 until its 1.1.3).
+*   **Vanilla change**: as P74, for armor and elytra.
+*   **What changes**: the clock `ticksExisted + partialTicks` passes through `glintTicks(F)F` before its first `FSTORE`,
+    and the glint color's three constants `0.38F, 0.19F, 0.608F` through `glintComponent(F)F`.
+*   **Fails safe**: method missing, no `ticksExisted` read before the first store, or not exactly one of each constant:
+    left as 1.12.2's, one log line. Left to Wild Update while an older jar of it is on the class path.
+
+## P76. Ctrl + pick block without "(+NBT)"
+
+*   **Class**: `net.minecraft.client.Minecraft`, `storeTEInStack(ItemStack, TileEntity)ItemStack`. **Transformer**:
+    `asm/LookVersionsTransformer`. **Hook**: `presentation/versions/LookHooks.pickedBlock`. **Since**: 1.4.7 (Trails &
+    Tales Backport's P1 until its 1.0.4).
+*   **Vanilla change**: 1.20.5 (24w09a, item components) stopped adding the "(+NBT)" lore line to a Ctrl + picked block,
+    and a named block (a renamed chest) gives a named item (`BlockEntity.collectComponents` hands its custom name over).
+*   **Why a patch**: the stack is built and returned inside `middleClickMouse`'s call; no event sees it.
+*   **What changes**: before each `ARETURN`, the stack passes through `pickedBlock`, which, from 1.20.5 with the
+    inventory's part of the look on, removes a lone "(+NBT)" lore line and names the item after the block's
+    `CustomName`.
+*   **Fails safe**: method missing or no return: left as 1.12.2's, one log line. Left to Trails & Tales while an older
+    jar of it (with `trailsandtalesbackport.asm.PickBlockTransformer`) is on the class path.

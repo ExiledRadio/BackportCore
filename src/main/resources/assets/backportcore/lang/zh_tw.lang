@@ -635,3 +635,15 @@ backportcore.general.structure.blacklist.tooltip=不生成的結構或結構集 
 # --- end config tooltips ---
 chat.copy.click=點擊以複製到剪貼簿
 item.minecraft.smithing_template.upgrade=已有升級：
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=受傷抖動效果
+options.damageTiltStrength.tooltip=受到傷害導致遊戲視角晃動的程度。
+options.glintSpeed=附魔光效閃爍速度
+options.glintSpeed.tooltip=控制附魔物品的光效閃動速度。
+options.glintStrength=附魔光效閃爍強度
+options.glintStrength.tooltip=控制附魔物品的光效透明程度。
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=選單背景模糊程度
+options.accessibility.menu_background_blurriness.tooltip=變更選單背景的模糊程度。
+debug.profiler_chart.help=F3 + 1 = 顯示效能分析圖表
+debug.fps_charts.help=F3 + 2 = 顯示 FPS 與 TPS 圖表
