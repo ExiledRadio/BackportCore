@@ -678,3 +678,15 @@ options.chat.drafts=Guardar msjs. sin enviar
 options.chat.drafts.tooltip=Los mensajes no enviados se guardarán y se podrán enviar la próxima vez que se abra el chat.
 options.value=%s
 subtitles.ui.hud.bubble_pop=Nivel de oxígeno agotándose
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Tambaleo por daño
+options.damageTiltStrength.tooltip=El tambaleo de cámara por daño recibido.
+options.glintSpeed=Velocidad de brillo
+options.glintSpeed.tooltip=Controla la velocidad de brillo en los ítems encantados.
+options.glintStrength=Intensidad de brillo
+options.glintStrength.tooltip=Controla la transparencia de brillo en los ítems encantados.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Desenfoque de fondo
+options.accessibility.menu_background_blurriness.tooltip=Controla el desenfoque del fondo del menú.
+debug.profiler_chart.help=F3 + 1 = Mostrar gráfico de análisis de rendimiento
+debug.fps_charts.help=F3 + 2 = Mostrar gráficos de FPS y TPS

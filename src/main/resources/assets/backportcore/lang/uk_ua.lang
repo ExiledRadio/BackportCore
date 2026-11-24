@@ -678,3 +678,15 @@ options.chat.drafts=Збер. ненадісл. чати
 options.chat.drafts.tooltip=Ненадіслані повідомлення буде збережено і їх можна буде надіслати наступного разу, коли чат буде відкрито.
 options.value=%s
 subtitles.ui.hud.bubble_pop=Запас повітря падає
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Нахил від шкоди
+options.damageTiltStrength.tooltip=Ступінь трясіння камери, викликаного пораненням.
+options.glintSpeed=Швидкість блиску
+options.glintSpeed.tooltip=Керує тим, як швидко візуальний блиск переливається на зачарованих предметах.
+options.glintStrength=Сила блиску
+options.glintStrength.tooltip=Керує тим, наскільки прозорим є візуальний блиск на зачарованих предметах.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Розмиття тла меню
+options.accessibility.menu_background_blurriness.tooltip=Змінює розмитість тла меню.
+debug.profiler_chart.help=F3 + 1 = Показати графік профілювання
+debug.fps_charts.help=F3 + 2 = Показати графіки FPS і TPS

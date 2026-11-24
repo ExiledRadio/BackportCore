@@ -678,3 +678,15 @@ options.chat.drafts=保存未发送的聊天消息
 options.chat.drafts.tooltip=未发送的消息将被保存，可以在下次打开聊天时发送。
 options.value=%s
 subtitles.ui.hud.bubble_pop=氧气值：减少
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=受伤抖动效果
+options.damageTiltStrength.tooltip=受到伤害导致的游戏视角晃动程度。
+options.glintSpeed=附魔光效闪烁速度
+options.glintSpeed.tooltip=控制附魔物品光效的闪动速度。
+options.glintStrength=附魔光效闪烁强度
+options.glintStrength.tooltip=控制附魔物品光效的透明程度。
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=菜单背景模糊程度
+options.accessibility.menu_background_blurriness.tooltip=更改菜单背景的模糊程度。
+debug.profiler_chart.help=F3 + 1 = 显示性能分析图表
+debug.fps_charts.help=F3 + 2 = 显示 FPS 和 TPS 图表

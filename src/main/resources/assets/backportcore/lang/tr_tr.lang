@@ -678,3 +678,15 @@ options.chat.drafts=Gönderilmemiş Mesajları Kaydet
 options.chat.drafts.tooltip=Gönderilmemiş mesajlar kaydedilir ve sohbet tekrar açıldığında gönderilebilirler.
 options.value=%s
 subtitles.ui.hud.bubble_pop=Nefes çubuğu düştü
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Hasar Sarsıntısı
+options.damageTiltStrength.tooltip=Hasar alındığındaki kamera sarsıntısının şiddeti.
+options.glintSpeed=Parıltı Hızı
+options.glintSpeed.tooltip=Görsel parıltının büyülü eşyalar üzerinde ne kadar hızlı parıldadığını kontrol eder.
+options.glintStrength=Parıltı Gücü
+options.glintStrength.tooltip=Görsel parıltının büyülü eşyalar üzerinde ne kadar şeffaf olduğunu kontrol eder.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Menü Arka Plan Bulanıklığı
+options.accessibility.menu_background_blurriness.tooltip=Menü arka planlarının bulanıklığını değiştirir.
+debug.profiler_chart.help=F3 + 1 = Ayrımlama grafiğini göster
+debug.fps_charts.help=F3 + 2 = FPS ve TPS grafiklerini göster

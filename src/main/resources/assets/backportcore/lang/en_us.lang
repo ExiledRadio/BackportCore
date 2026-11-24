@@ -677,3 +677,15 @@ options.chat.drafts=Save Unsent Chats
 options.chat.drafts.tooltip=Unsent messages will be saved and can be sent the next time chat is opened.
 options.value=%s
 subtitles.ui.hud.bubble_pop=Breath meter dropping
+# 1.4.7: 1.19 pieces moved from Wild Update Backport
+options.damageTiltStrength=Damage Tilt
+options.damageTiltStrength.tooltip=The amount of camera shake caused by being hurt.
+options.glintSpeed=Glint Speed
+options.glintSpeed.tooltip=Controls how fast the visual glint shimmers across enchanted items.
+options.glintStrength=Glint Strength
+options.glintStrength.tooltip=Controls how transparent the visual glint is on enchanted items.
+# 1.4.7: 1.20 pieces moved from Trails & Tales Backport
+options.accessibility.menu_background_blurriness=Menu Background Blur
+options.accessibility.menu_background_blurriness.tooltip=Changes the blurriness of menu backgrounds
+debug.profiler_chart.help=F3 + 1 = Show profiler chart
+debug.fps_charts.help=F3 + 2 = Show FPS and TPS charts
