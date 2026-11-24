@@ -70,6 +70,9 @@ public final class SoundDevices {
         return Presentation.SOUND_DEVICE.isShown();
     }
 
+    /** Self-test only: act as an LWJGL without LWJGL 2's {@code alcIsExtensionPresent} (an Android launcher's). */
+    public static volatile boolean testMissingCalls;
+
     /** P52: {@code LibraryLWJGLOpenAL.init}'s {@code AL.create()}, on Paulscode's thread. */
     public static void createAL() throws LWJGLException {
         String device = deviceShown() ? Presentation.SOUND_DEVICE.get() : "";
@@ -80,7 +83,19 @@ public final class SoundDevices {
             Lwjgl3.adjust(device, hrtf);
             return;
         }
-        Lwjgl2.create(device, hrtf);
+        try {
+            Lwjgl2.create(device, hrtf);
+        } catch (LinkageError e) {
+            // An LWJGL that only imitates LWJGL 2 (Android launchers run LWJGL 3 behind 1.12.2's classes) can lack the
+            // calls that choose a device or turn HRTF on: open OpenAL as 1.12.2 does. Left to escape, the error kills
+            // Paulscode's thread, the sound system never starts, and its restart 30 s later crashes the game.
+            BackportCore.LOGGER.warn("Sound: this LWJGL lacks LWJGL 2's OpenAL calls ({}); OpenAL opens as in 1.12.2, "
+                    + "without a device choice or HRTF", e.toString());
+            if (!AL.isCreated()) {
+                AL.create();
+            }
+            opened("", false, false);
+        }
     }
 
     static void opened(String device, boolean hrtfAvailable, boolean hrtf) {
@@ -166,7 +181,16 @@ public final class SoundDevices {
                     AL.create();
                 }
             }
-            boolean ext = org.lwjgl.openal.ALC10.alcIsExtensionPresent(AL.getDevice(), "ALC_SOFT_HRTF");
+            boolean ext;
+            try {
+                if (testMissingCalls) {
+                    throw new NoSuchMethodError("org.lwjgl.openal.ALC10.alcIsExtensionPresent (self-test)");
+                }
+                ext = org.lwjgl.openal.ALC10.alcIsExtensionPresent(AL.getDevice(), "ALC_SOFT_HRTF");
+            } catch (LinkageError e) {
+                BackportCore.LOGGER.warn("Sound: this LWJGL cannot ask OpenAL for HRTF ({})", e.toString());
+                ext = false;
+            }
             boolean on = false;
             if (hrtf && ext) {
                 on = remake(true);
@@ -192,7 +216,7 @@ public final class SoundDevices {
                 context.setAccessible(true);
                 context.set(null, made);
                 return true;
-            } catch (ReflectiveOperationException | RuntimeException e) {
+            } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
                 BackportCore.LOGGER.warn("Sound: could not turn HRTF on ({})", e.toString());
                 return false;
             }

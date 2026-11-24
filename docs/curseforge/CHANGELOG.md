@@ -1,3 +1,7 @@
+# 1.4.6
+
+*   **Fixed: a crash 20 to 30 seconds after launch on Android launchers** (PojavLauncher, Zalith and others), and no sound before it. Their LWJGL lacks a call Backport Core used when opening the sound device; the sound now opens as in 1.12.2 there, without the device choice and Directional Audio.
+
 # 1.4.5
 
 *   **Fixed: holes in the ground until F3 + A.** While moving, especially fast or back and forth, sections of the world could stay invisible, showing the sky through the ground. As in 1.18, a part of the world that comes into view is always redrawn.

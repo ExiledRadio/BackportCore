@@ -91,6 +91,19 @@ final class ClientPresentationTests {
                 });
     }
 
+    private int soundTicks;
+
+    private static boolean soundLoaded(Minecraft mc) {
+        try {
+            Object manager = net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(net.minecraft.client.audio.SoundHandler.class,
+                    mc.getSoundHandler(), "sndManager", "field_147694_f");
+            return (Boolean) net.minecraftforge.fml.relauncher.ReflectionHelper.getPrivateValue(net.minecraft.client.audio.SoundManager.class,
+                    (net.minecraft.client.audio.SoundManager) manager, "loaded", "field_148617_f");
+        } catch (RuntimeException e) {
+            return false;
+        }
+    }
+
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
@@ -184,7 +197,22 @@ final class ClientPresentationTests {
                     // Core 1.4.4's Game Rules on Create World, and Optimize World.
                     ClientGameRulesTests.tick(mc);
                     if (ClientGameRulesTests.done) {
+                        // 1.4.6: an LWJGL without LWJGL 2's OpenAL calls (Android launchers) still gets sound.
+                        com.exiledradio.backportcore.presentation.client.SoundDevices.testMissingCalls = true;
+                        com.exiledradio.backportcore.presentation.client.SoundDevices.reload();
+                        this.soundTicks = 0;
                         this.stage = 8;
+                    }
+                    break;
+                case 8:
+                    if (++this.soundTicks == 200) {
+                        check("client: sound starts on an LWJGL without alcIsExtensionPresent", soundLoaded(mc)
+                                && !com.exiledradio.backportcore.presentation.client.SoundDevices.hrtfOn(), "loaded " + soundLoaded(mc));
+                        com.exiledradio.backportcore.presentation.client.SoundDevices.testMissingCalls = false;
+                        com.exiledradio.backportcore.presentation.client.SoundDevices.reload();
+                    } else if (this.soundTicks == 400) {
+                        check("client: sound starts again on LWJGL 2's OpenAL", soundLoaded(mc), "loaded " + soundLoaded(mc));
+                        this.stage = 9;
                         BackportCore.LOGGER.info("CLIENT SELFTEST DONE pass={} fail={}", SelfTestRunner.pass, SelfTestRunner.fail);
                         mc.shutdown();
                     }
