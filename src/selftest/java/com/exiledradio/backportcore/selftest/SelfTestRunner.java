@@ -78,6 +78,7 @@ public final class SelfTestRunner {
                     case "requests": RequestTests.schedule(); TtRequestTests.schedule(); GdRequestTests.schedule(); GdWorldgenTests.schedule(); break;
                     case "lookfeel": LookFeelTests.schedule(); break;
                     case "looksettings": LookSwitchTests.schedule(); break;
+                    case "corefeel": CoreFeelTests.schedule(); break;
                     case "textures": TextureLayerTests.schedule(); break;
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
@@ -127,6 +128,7 @@ public final class SelfTestRunner {
         BoatTests.schedule();
         LookFeelTests.schedule();
         LookSwitchTests.schedule();
+        CoreFeelTests.schedule();
         TextureLayerTests.schedule();
         PresentationTests.schedule();
         PresentationTests.scheduleFinish();
