@@ -1,3 +1,7 @@
+# 1.4.6
+
+*   **Fixed: the block on the "New Recipes Unlocked!" toast sat a pixel low**, both the crafting table and the furnace's. Turning off the toasts' newer look now removes both, as in 1.12.2.
+
 # 1.4.5
 
 *   **Fixed: holes in the ground until F3 + A.** While moving, especially fast or back and forth, sections of the world could stay invisible, showing the sky through the ground. As in 1.18, a part of the world that comes into view is always redrawn.

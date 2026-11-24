@@ -1,5 +1,6 @@
 # 1.4.6
 
+*   The recipe toasts' small block is at (3, 3), as 1.13.2 and 1.14.4 draw it: P66's crafting table and the smelting books' blocks were a pixel low. `SmeltingToast` draws its book's block only from the toasts' 1.13 look (`VanillaRevisions.recipeToastIcon`), as P66 does; with the toasts' look off both toasts are 1.12.2's, the output alone. A smelting book can have no screen (1.14's campfire: no container is its own, no tabs) and still unlock and toast its recipes.
 *   `locate.BiomeLocate.layers(world)`: 1.12.2's own column biomes as a `Sampler`, for a backport's `source` that answers a few places itself (Game Drops' sulfur caves under 1.12.2 terrain) and hands the rest to the layers.
 *   P67 (`asm/RenderChunkMoveTransformer`): a render chunk the frustum moves is marked for a rebuild, as 1.18.2's `RenderChunk.setOrigin` (`reset()`: `dirty = true`). 1.12.2 emptied it (`CompiledChunk.DUMMY`) and waited for a chunk packet; when the data was already on the client the section stayed empty and blocked the culling walk: holes to the sky until F3 + A.
 *   P66 (`asm/RecipeToastTransformer`): 1.13's recipe toast draws the crafting table at 0.6 scale behind the output (`VanillaRevisions.recipeToastIcon`, the toasts' look from 1.13, which `LookArea.TOASTS` now offers). 1.12.2 drew the output only.

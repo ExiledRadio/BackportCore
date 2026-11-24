@@ -159,7 +159,8 @@ public final class PresentationHooks {
 
     /**
      * P66: in {@code RecipeToast.draw}, right before the recipe's output is drawn: from 1.13 the crafting table small in
-     * the corner behind it, as 1.13's toast draws a crafting recipe's icon (the furnace book's toast draws its furnace).
+     * the corner behind it, as 1.13's toast draws a crafting recipe's icon (the smelting books' toast draws each book's
+     * block). At (3, 3) in the scaled space, as 1.13.2 and 1.14.4 draw it.
      */
     public static void recipeToastIcon(net.minecraft.client.gui.toasts.GuiToast toasts) {
         if (!com.exiledradio.backportcore.presentation.VanillaRevisions.recipeToastIcon()) {
@@ -167,9 +168,13 @@ public final class PresentationHooks {
         }
         net.minecraft.client.renderer.GlStateManager.pushMatrix();
         net.minecraft.client.renderer.GlStateManager.scale(0.6F, 0.6F, 1.0F);
-        toasts.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(null, CRAFTING_TABLE, 3, 4);
+        toasts.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(null, CRAFTING_TABLE, 3, 3);
         net.minecraft.client.renderer.GlStateManager.popMatrix();
+        recipeToastIcons++;
     }
+
+    /** Self-tests: how many times {@link #recipeToastIcon} has drawn the crafting table. */
+    public static int recipeToastIcons;
 
     private static final net.minecraft.item.ItemStack CRAFTING_TABLE = new net.minecraft.item.ItemStack(net.minecraft.init.Blocks.CRAFTING_TABLE);
 

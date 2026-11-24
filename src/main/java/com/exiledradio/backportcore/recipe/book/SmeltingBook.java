@@ -31,6 +31,9 @@ import java.util.function.Supplier;
  * <p>{@link #furnace()} is vanilla's furnace as 1.13 has it. Another block's book (a smoker) is built the same way
  * with its own container, recipe map and tabs; its screen draws the book with
  * {@code recipe.book.client.SmeltingBookGui}, as {@code GuiFurnaceBook} does.
+ *
+ * <p>A block with no screen (1.14's campfire) gets a book whose container test is never true and that has no tabs: its
+ * recipes still unlock as every book's do and toast with its block, as 1.14's {@code campfire_cooking} recipes do.
  */
 public final class SmeltingBook {
 
@@ -61,7 +64,7 @@ public final class SmeltingBook {
     /** The filter button's text when on ({@code gui.recipebook.toggleRecipes.smeltable}). */
     public final String filterKey;
     public final List<Tab> tabs;
-    /** The toast's small icon (the furnace). */
+    /** The toast's small icon: the block (1.14's {@code Recipe.getToastSymbol()}: furnace, smoker, blast furnace, campfire). */
     public final ItemStack toastIcon;
 
     private List<ItemStack> fuels;

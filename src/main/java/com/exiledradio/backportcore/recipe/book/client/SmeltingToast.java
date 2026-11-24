@@ -14,11 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 1.13's "New Recipes Unlocked!" toast for smelting recipes: 1.12.2's recipe toast with the recipe's block (the
- * furnace) small in the corner, as 1.13 draws each recipe's icon. Recipes unlocked while it shows join it.
+ * 1.13's "New Recipes Unlocked!" toast for smelting recipes: 1.12.2's recipe toast with the recipe's block (each book's
+ * {@code toastIcon}: the furnace, 1.14's smoker, blast furnace and campfire) small in the corner, as 1.13 and 1.14 draw
+ * each recipe's {@code getToastSymbol()}. Recipes unlocked while it shows join it, from every book.
  */
 @SideOnly(Side.CLIENT)
 public final class SmeltingToast implements IToast {
+
+    /** Self-tests: the block and output last drawn (the block empty when the toasts' look draws none). */
+    public static ItemStack lastIcon = ItemStack.EMPTY;
+    public static ItemStack lastOutput = ItemStack.EMPTY;
 
     private final List<ItemStack[]> shown = new ArrayList<ItemStack[]>();
     private long firstDrawTime;
@@ -44,10 +49,17 @@ public final class SmeltingToast implements IToast {
         toastGui.getMinecraft().fontRenderer.drawString(I18n.format("recipe.toast.description"), 30, 18, -16777216);
         ItemStack[] pair = this.shown.get((int) (delta * (long) this.shown.size() / 5000L % (long) this.shown.size()));
         RenderHelper.enableGUIStandardItemLighting();
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(0.6F, 0.6F, 1.0F);
-        toastGui.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((EntityLivingBase) null, pair[0], 3, 4);
-        GlStateManager.popMatrix();
+        // The block, from the toasts' 1.13 look as P66's crafting table (a 1.12.2 toast draws the output only).
+        if (com.exiledradio.backportcore.presentation.VanillaRevisions.recipeToastIcon()) {
+            GlStateManager.pushMatrix();
+            GlStateManager.scale(0.6F, 0.6F, 1.0F);
+            toastGui.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((EntityLivingBase) null, pair[0], 3, 3);
+            GlStateManager.popMatrix();
+            lastIcon = pair[0];
+        } else {
+            lastIcon = ItemStack.EMPTY;
+        }
+        lastOutput = pair[1];
         toastGui.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI((EntityLivingBase) null, pair[1], 8, 8);
         return delta - this.firstDrawTime >= 5000L ? Visibility.HIDE : Visibility.SHOW;
     }

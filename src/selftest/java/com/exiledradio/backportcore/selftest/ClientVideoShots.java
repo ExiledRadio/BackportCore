@@ -384,12 +384,49 @@ final class ClientVideoShots {
             // draws a toast for a few frames (loading RecipeToast) and then checks the patch.
             check("1.13: the recipe toast draws its crafting table", com.exiledradio.backportcore.presentation.VanillaRevisions.recipeToastIcon(), "off");
             net.minecraft.item.crafting.IRecipe r = net.minecraft.item.crafting.CraftingManager.getRecipe(new net.minecraft.util.ResourceLocation("minecraft", "crafting_table"));
+            this.framesAt = com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons;
             net.minecraft.client.gui.toasts.RecipeToast.addOrUpdate(mc.getToastGui(), r);
             return true;
         });
-        add(null, () -> pause(20));
+        add(null, () -> pause(1));
+        add("!recipe-toast-crafting", () -> true);
         add(null, () -> {
             check("P66 applied", "applied".equals(Asm.state("P66")), Asm.state("P66"));
+            check("1.13: the crafting toast drew its crafting table",
+                    com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons > this.framesAt,
+                    com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons - this.framesAt);
+            mc.getToastGui().clear();
+            // 1.14's smelting toast: each book's block behind the output (a smoker's, a blast furnace's, a campfire's).
+            com.exiledradio.backportcore.recipe.book.client.SmeltingToast.lastIcon = net.minecraft.item.ItemStack.EMPTY;
+            com.exiledradio.backportcore.recipe.book.client.SmeltingToast.addOrUpdate(mc.getToastGui(),
+                    new net.minecraft.item.ItemStack(Blocks.FURNACE), new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_INGOT));
+            return true;
+        });
+        add(null, () -> pause(1));
+        add("!recipe-toast-smelting", () -> true);
+        add(null, () -> {
+            net.minecraft.item.ItemStack icon = com.exiledradio.backportcore.recipe.book.client.SmeltingToast.lastIcon;
+            check("1.13: the smelting toast draws its block behind the output", icon.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.FURNACE)
+                    && com.exiledradio.backportcore.recipe.book.client.SmeltingToast.lastOutput.getItem() == net.minecraft.init.Items.IRON_INGOT, icon);
+            // The toasts' look off: 1.12.2's toast, the output alone, for both.
+            CoreConfig.lookAndFeel.toasts = false;
+            mc.getToastGui().clear();
+            com.exiledradio.backportcore.recipe.book.client.SmeltingToast.addOrUpdate(mc.getToastGui(),
+                    new net.minecraft.item.ItemStack(Blocks.FURNACE), new net.minecraft.item.ItemStack(net.minecraft.init.Items.IRON_INGOT));
+            this.framesAt = com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons;
+            net.minecraft.client.gui.toasts.RecipeToast.addOrUpdate(mc.getToastGui(),
+                    net.minecraft.item.crafting.CraftingManager.getRecipe(new net.minecraft.util.ResourceLocation("minecraft", "crafting_table")));
+            return true;
+        });
+        add(null, () -> pause(1));
+        add(null, () -> {
+            check("toasts look off: no crafting table, no block",
+                    com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons == this.framesAt
+                    && com.exiledradio.backportcore.recipe.book.client.SmeltingToast.lastIcon.isEmpty(),
+                    (com.exiledradio.backportcore.presentation.client.PresentationHooks.recipeToastIcons - this.framesAt) + " "
+                    + com.exiledradio.backportcore.recipe.book.client.SmeltingToast.lastIcon);
+            CoreConfig.lookAndFeel.toasts = true;
+            mc.getToastGui().clear();
             return true;
         });
         add(null, () -> {
@@ -669,6 +706,27 @@ final class ClientVideoShots {
         return false;
     }
 
+    private void backBuffer(Minecraft mc, java.io.File file) {
+        int w = mc.displayWidth;
+        int h = mc.displayHeight;
+        java.nio.IntBuffer buf = org.lwjgl.BufferUtils.createIntBuffer(w * h);
+        org.lwjgl.opengl.GL11.glReadBuffer(org.lwjgl.opengl.GL11.GL_BACK);
+        org.lwjgl.opengl.GL11.glPixelStorei(org.lwjgl.opengl.GL11.GL_PACK_ALIGNMENT, 1);
+        org.lwjgl.opengl.GL11.glReadPixels(0, 0, w, h, org.lwjgl.opengl.GL12.GL_BGRA, org.lwjgl.opengl.GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buf);
+        java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                img.setRGB(x, h - 1 - y, buf.get(y * w + x) & 0xFFFFFF);
+            }
+        }
+        try {
+            file.getParentFile().mkdirs();
+            javax.imageio.ImageIO.write(img, "png", file);
+        } catch (java.io.IOException e) {
+            failed("back buffer shot", e);
+        }
+    }
+
     private void add(String name, Supplier<Boolean> step) {
         this.names.add(name);
         this.steps.add(step);
@@ -744,7 +802,13 @@ final class ClientVideoShots {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
-        ScreenShotHelper.saveScreenshot(mc.gameDir, "video-" + this.shot + ".png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        if (this.shot.startsWith("!")) {
+            // Toasts are drawn on the window after the framebuffer: read the back buffer.
+            this.shot = this.shot.substring(1);
+            backBuffer(mc, new java.io.File(mc.gameDir, "screenshots/video-" + this.shot + ".png"));
+        } else {
+            ScreenShotHelper.saveScreenshot(mc.gameDir, "video-" + this.shot + ".png", mc.displayWidth, mc.displayHeight, mc.getFramebuffer());
+        }
         BackportCore.LOGGER.info("VIDEO SHOT {}", this.shot);
         this.shot = null;
         this.ticks = 0;
