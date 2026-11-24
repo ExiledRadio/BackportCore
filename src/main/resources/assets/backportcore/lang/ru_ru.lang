@@ -663,3 +663,18 @@ debug.gamemodes.help=F3 + F4 = Открыть меню смены режима �
 debug.gamemodes.error=Не удалось открыть переключатель режима игры, недостаточно полномочий
 debug.gamemodes.press_f4=[ F4 ]
 debug.gamemodes.select_next=%s — дальше
+# 1.4.7: 1.21 pieces moved from Tricky Trials Backport
+options.inactivityFpsLimit=Ограничение FPS
+options.inactivityFpsLimit.minimized=В фоне
+options.inactivityFpsLimit.afk=В простое
+options.inactivityFpsLimit.minimized.tooltip=Ограничивает частоту кадров только при сворачивании игры.
+options.inactivityFpsLimit.afk.tooltip=Ограничивает частоту кадров до 30 спустя минуту ожидания действий со стороны игрока. Спустя ещё 9 минут ограничивает до 10.
+options.accessibility.high_contrast_block_outline=Контрастная обводка блоков
+options.accessibility.high_contrast_block_outline.tooltip=Улучшает видимость обводки при наведении на блок.
+options.invertMouseX=Инверсия оси мыши X
+options.sprintWindow=Интервал разбега
+options.sprintWindow.tooltip=Временной промежуток в тактах, в котором двойное нажатие клавиши движения вперёд включает бег.
+options.chat.drafts=Сохранять черновики
+options.chat.drafts.tooltip=Неотправленные сообщения сохранятся и могут быть отправлены при следующем открытии чата.
+options.value=%s
+subtitles.ui.hud.bubble_pop=Запас воздуха убывает

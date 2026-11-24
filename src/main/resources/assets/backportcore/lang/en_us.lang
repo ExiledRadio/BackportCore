@@ -662,3 +662,18 @@ debug.gamemodes.help=F3 + F4 = Open game mode switcher
 debug.gamemodes.error=Unable to open game mode switcher; no permission
 debug.gamemodes.press_f4=[ F4 ]
 debug.gamemodes.select_next=%s Next
+# 1.4.7: 1.21 pieces moved from Tricky Trials Backport
+options.inactivityFpsLimit=Reduce FPS when
+options.inactivityFpsLimit.minimized=Minimized
+options.inactivityFpsLimit.afk=AFK
+options.inactivityFpsLimit.minimized.tooltip=Limits framerate only when the game window is minimized.
+options.inactivityFpsLimit.afk.tooltip=Limits framerate to 30 when the game is not getting any player input for more than a minute. Further limits it to 10 after 9 more minutes.
+options.accessibility.high_contrast_block_outline=High Contrast Block Outlines
+options.accessibility.high_contrast_block_outline.tooltip=Enhances the block outline contrast of the targeted block.
+options.invertMouseX=Invert Mouse X
+options.sprintWindow=Sprint Window
+options.sprintWindow.tooltip=Time window in ticks where double-tapping the forward key activates sprint.
+options.chat.drafts=Save Unsent Chats
+options.chat.drafts.tooltip=Unsent messages will be saved and can be sent the next time chat is opened.
+options.value=%s
+subtitles.ui.hud.bubble_pop=Breath meter dropping

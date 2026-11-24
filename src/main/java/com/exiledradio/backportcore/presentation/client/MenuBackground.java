@@ -280,6 +280,14 @@ public final class MenuBackground {
     }
 
     /**
+     * 1.20.5's {@code Screen.renderMenuBackground} tile ({@code menu_background.png} at 32, or its color where no pack
+     * has it) over a rectangle, for a screen Core draws outside the GUI loop (1.21.9's loading screen). Since 1.4.7.
+     */
+    public static void menuTile(int x, int y, int width, int height) {
+        tile(MENU, MENU_COLOR, x, y, width, height, 0, 0);
+    }
+
+    /**
      * Blurs what the main framebuffer holds, in place ({@code GameRenderer.processBlurEffect}), at most once a frame.
      *
      * @return true if it blurred

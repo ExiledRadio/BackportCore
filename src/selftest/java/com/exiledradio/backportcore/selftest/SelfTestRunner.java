@@ -77,7 +77,7 @@ public final class SelfTestRunner {
                     case "poses": PoseTests.schedule(); MechanicsTests.schedule(); break;
                     case "requests": RequestTests.schedule(); TtRequestTests.schedule(); GdRequestTests.schedule(); GdWorldgenTests.schedule(); break;
                     case "look113": CoreLook113To115Tests.schedule(); break;
-                    case "lookfeel": LookFeelTests.schedule(); Look116118Tests.schedule(); break;
+                    case "lookfeel": LookFeelTests.schedule(); Look116118Tests.schedule(); Look121Tests.schedule(); break;
                     case "looksettings": LookSwitchTests.schedule(); break;
                     case "corefeel": CoreFeelTests.schedule(); break;
                     case "textures": TextureLayerTests.schedule(); break;
@@ -130,6 +130,7 @@ public final class SelfTestRunner {
         LookFeelTests.schedule();
         CoreLook113To115Tests.schedule();
         Look116118Tests.schedule();
+        Look121Tests.schedule();
         LookSwitchTests.schedule();
         CoreFeelTests.schedule();
         TextureLayerTests.schedule();
