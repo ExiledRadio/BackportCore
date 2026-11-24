@@ -55,8 +55,21 @@ public final class Contribution {
     @Nullable
     ResourceLocation highContrast;
 
+    /** True for Backport Core's own pieces of the version ({@link Presentation#core(String)}). */
+    final boolean core;
+
     Contribution(GameVersion version) {
+        this(version, false);
+    }
+
+    Contribution(GameVersion version, boolean core) {
         this.version = version;
+        this.core = core;
+    }
+
+    /** @return true for Backport Core's own pieces of this version ({@link Presentation#core(String)}), since Core 1.4.7 */
+    public boolean isCore() {
+        return this.core;
     }
 
     public GameVersion version() {
@@ -151,6 +164,9 @@ public final class Contribution {
     public Contribution option(PresentationOption option) {
         if (option.since() == null) {
             option.since(this.version.toString());
+        }
+        if (this.core) {
+            option.ownedByCore();
         }
         this.options.add(option);
         Presentation.registerOption(option);

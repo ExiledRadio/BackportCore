@@ -79,7 +79,16 @@ public final class OrderedSteps<T> {
 
     /** Adds a step of {@code version}; {@code name} identifies it in the log. */
     public synchronized void add(String version, String name, T step) {
-        this.slots.add(new Slot<T>(GameVersion.parse(version), this.added++, name, step));
+        GameVersion v = GameVersion.parse(version);
+        for (Slot<T> s : this.slots) {
+            if (s.version.equals(v) && s.name.equals(name)) {
+                // Backport Core owns this step now (Core 1.4.7) and an older backport jar still adds its copy: the first
+                // one, Core's, stays.
+                Presentation.LOG.info("Presentation: step \"{} {}\" is already there; the copy is left out", version, name);
+                return;
+            }
+        }
+        this.slots.add(new Slot<T>(v, this.added++, name, step));
         this.slots.sort((a, b) -> {
             int c = a.version.compareTo(b.version);
             return c != 0 ? c : Integer.compare(a.order, b.order);

@@ -92,6 +92,8 @@ public final class BackportCore {
      */
     @Mod.EventHandler
     public void construct(FMLConstructionEvent event) {
+        // Core's own version-feel pieces (1.4.7), before any backport registers its own and before the startup reload.
+        com.exiledradio.backportcore.presentation.versions.CoreLooks.register();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.client.ModernTextures.install();
             com.exiledradio.backportcore.presentation.client.VanillaAssetPack.install();

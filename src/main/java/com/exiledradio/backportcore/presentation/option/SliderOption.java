@@ -44,12 +44,19 @@ public final class SliderOption extends PresentationOption {
     }
 
     public double get() {
+        if (canonical() != null) {
+            return ((SliderOption) canonical()).get();
+        }
         ensureLoaded();
         return this.value;
     }
 
     /** Sets the value, clamped to the range and snapped to the step. */
     public void set(double value) {
+        if (canonical() != null) {
+            ((SliderOption) canonical()).set(value);
+            return;
+        }
         ensureLoaded();
         double v = snap(value);
         boolean changed = v != this.value;
@@ -57,6 +64,16 @@ public final class SliderOption extends PresentationOption {
         save();
         if (changed && this.listener != null) {
             this.listener.accept(v);
+        }
+        if (changed) {
+            changedMirrors();
+        }
+    }
+
+    @Override
+    protected void mirrorChanged() {
+        if (this.listener != null) {
+            this.listener.accept(get());
         }
     }
 

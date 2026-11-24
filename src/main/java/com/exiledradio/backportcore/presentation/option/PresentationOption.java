@@ -172,8 +172,72 @@ public abstract class PresentationOption {
         return false;
     }
 
+    // ---- Core's own copy (Core 1.4.7) ----
+
+    private boolean coreOwned;
+    @Nullable
+    private PresentationOption canonical;
+    private final java.util.List<PresentationOption> mirrors = new java.util.ArrayList<PresentationOption>();
+
+    /**
+     * Marks it as Backport Core's own (an option Core moved out of a backport, under the backport's id so saved values
+     * stay): an older backport jar that still registers its own copy under the same id gets that copy made a mirror of
+     * this one ({@link #canonical()}), so the screens show one button and both read one value. Since Core 1.4.7.
+     */
+    public final PresentationOption ownedByCore() {
+        this.coreOwned = true;
+        return this;
+    }
+
+    /** @return true for one of Core's own options ({@link #ownedByCore()}) */
+    public final boolean isCoreOwned() {
+        return this.coreOwned;
+    }
+
+    /**
+     * @return the option this one follows (an older backport's copy of an option Core now owns), or null: every value
+     *         read or set on a mirror is the canonical one's. Since Core 1.4.7.
+     */
+    @Nullable
+    public final PresentationOption canonical() {
+        return this.canonical;
+    }
+
+    /** Makes this a mirror of {@code of} (same id and kind): called by Presentation when a copy is registered. */
+    public final void mirror(PresentationOption of) {
+        if (of == this || of.getClass() != getClass() || !of.id.equals(this.id)) {
+            throw new IllegalArgumentException(this.id + " cannot follow " + of.id);
+        }
+        this.canonical = of;
+        synchronized (of.mirrors) {
+            of.mirrors.add(this);
+        }
+    }
+
+    /** Runs each mirror's change listener (a mirror's owner may listen on its own copy). */
+    protected final void changedMirrors() {
+        java.util.List<PresentationOption> copy;
+        synchronized (this.mirrors) {
+            copy = new java.util.ArrayList<PresentationOption>(this.mirrors);
+        }
+        for (PresentationOption m : copy) {
+            try {
+                m.mirrorChanged();
+            } catch (RuntimeException e) {
+                OptionStore.LOG.warn("Option {}: a copy's change listener failed", this.id, e);
+            }
+        }
+    }
+
+    /** A mirror's own listener, with the canonical option's new value. */
+    protected void mirrorChanged() {
+    }
+
     /** @return true while the version its part of the look resolves at ({@link #area()}) shows it, and it is available */
     public final boolean isShown() {
+        if (this.canonical != null) {
+            return this.canonical.isShown();
+        }
         return (this.available == null || this.available.getAsBoolean()) && isShownAt(Presentation.newest(area()));
     }
 
@@ -199,6 +263,9 @@ public abstract class PresentationOption {
 
     /** @return false while it shows greyed out ({@link #activeWhen}) */
     public final boolean isActive() {
+        if (this.canonical != null) {
+            return this.canonical.isActive();
+        }
         return this.active == null || this.active.getAsBoolean();
     }
 
@@ -262,6 +329,10 @@ public abstract class PresentationOption {
 
     /** Sets the value from its saved form and saves it (no change listener runs). Used for versioned defaults. */
     public final void setSaved(String value) {
+        if (this.canonical != null) {
+            this.canonical.setSaved(value);
+            return;
+        }
         ensureLoaded();
         read(value);
         save();

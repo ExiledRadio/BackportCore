@@ -64,17 +64,34 @@ public final class CycleOption extends PresentationOption {
 
     /** @return the current value's saved name */
     public String get() {
+        if (canonical() != null) {
+            return ((CycleOption) canonical()).get();
+        }
         ensureLoaded();
         return this.names[this.index];
     }
 
     /** @return the current value's lang key */
     public String valueKey() {
+        if (canonical() != null) {
+            return ((CycleOption) canonical()).valueKey();
+        }
         ensureLoaded();
         return this.valueKeys[this.index];
     }
 
+    @Override
+    protected void mirrorChanged() {
+        if (this.listener != null) {
+            this.listener.accept(get());
+        }
+    }
+
     public void set(String name) {
+        if (canonical() != null) {
+            ((CycleOption) canonical()).set(name);
+            return;
+        }
         int i = indexOf(name);
         if (i < 0) {
             throw new IllegalArgumentException(id() + ": " + name + " is not a value");
@@ -86,10 +103,17 @@ public final class CycleOption extends PresentationOption {
         if (changed && this.listener != null) {
             this.listener.accept(name);
         }
+        if (changed) {
+            changedMirrors();
+        }
     }
 
     /** Steps to the next value (or the previous one, for {@code backwards}), wrapping around. */
     public void cycle(boolean backwards) {
+        if (canonical() != null) {
+            ((CycleOption) canonical()).cycle(backwards);
+            return;
+        }
         ensureLoaded();
         int n = this.names.length;
         set(this.names[(this.index + (backwards ? n - 1 : 1)) % n]);

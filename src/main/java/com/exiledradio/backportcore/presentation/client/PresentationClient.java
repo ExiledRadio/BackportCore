@@ -19,6 +19,8 @@ public final class PresentationClient {
     }
 
     public static void init() {
+        // Core's own version-feel pieces' client code (1.4.7), before any backport's.
+        com.exiledradio.backportcore.presentation.versions.client.CoreLooksClient.init();
         MinecraftForge.EVENT_BUS.register(new Events());
         MinecraftForge.EVENT_BUS.register(new LookFeelClient());
         MinecraftForge.EVENT_BUS.register(new OptionsInjector());

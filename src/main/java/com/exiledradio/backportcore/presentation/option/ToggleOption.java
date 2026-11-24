@@ -27,11 +27,18 @@ public final class ToggleOption extends PresentationOption {
     }
 
     public boolean get() {
+        if (canonical() != null) {
+            return ((ToggleOption) canonical()).get();
+        }
         ensureLoaded();
         return this.chosen || this.followedDefault == null ? this.value : this.followedDefault.getAsBoolean();
     }
 
     public void set(boolean value) {
+        if (canonical() != null) {
+            ((ToggleOption) canonical()).set(value);
+            return;
+        }
         ensureLoaded();
         boolean changed = get() != value;
         this.value = value;
@@ -39,6 +46,16 @@ public final class ToggleOption extends PresentationOption {
         save();
         if (changed && this.listener != null) {
             this.listener.accept(value);
+        }
+        if (changed) {
+            changedMirrors();
+        }
+    }
+
+    @Override
+    protected void mirrorChanged() {
+        if (this.listener != null) {
+            this.listener.accept(get());
         }
     }
 
@@ -57,6 +74,9 @@ public final class ToggleOption extends PresentationOption {
 
     /** @return true when the player has set it (or a saved value was read), so a followed default no longer applies */
     public boolean chosen() {
+        if (canonical() != null) {
+            return ((ToggleOption) canonical()).chosen();
+        }
         ensureLoaded();
         return this.chosen;
     }

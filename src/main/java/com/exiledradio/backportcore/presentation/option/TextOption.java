@@ -19,11 +19,18 @@ public final class TextOption extends PresentationOption {
     }
 
     public String get() {
+        if (canonical() != null) {
+            return ((TextOption) canonical()).get();
+        }
         ensureLoaded();
         return this.value;
     }
 
     public void set(String value) {
+        if (canonical() != null) {
+            ((TextOption) canonical()).set(value);
+            return;
+        }
         ensureLoaded();
         this.value = value.replace('\n', ' ').replace('\r', ' ');
         save();

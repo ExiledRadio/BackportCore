@@ -38,6 +38,8 @@ public final class Presentation {
     static final Logger LOG = LogManager.getLogger("Backport Core");
 
     private static final TreeMap<GameVersion, Contribution> VERSIONS = new TreeMap<GameVersion, Contribution>();
+    /** Backport Core's own pieces of each version ({@link #core(String)}), used up to the newest installed version. */
+    private static final TreeMap<GameVersion, Contribution> CORE = new TreeMap<GameVersion, Contribution>();
     private static final Map<String, PresentationOption> OPTIONS = new LinkedHashMap<String, PresentationOption>();
 
     /** 1.19.3's Panorama Scroll Speed (Accessibility Settings), 0 to 100%. Core's, since Core owns the panorama. */
@@ -520,6 +522,35 @@ public final class Presentation {
     }
 
     /**
+     * Backport Core's own pieces of {@code version}: the version-feel changes that are not tied to one backport's
+     * content (options, chat, F3 keys and text, menus, small GUI sprites, wording, splashes), which Core moved out of
+     * the backport that brought them so that every backport looks like its version on its own. Unlike
+     * {@link #version(String)} this does not declare the version installed: the pieces apply once any installed
+     * backport is that version or newer (Caves &amp; Cliffs alone has 1.13's command suggestions and 1.16's F3 + F4).
+     * At the same version a backport's own contribution comes after Core's, so an older backport jar that still
+     * registers its copy replaces Core's single-slot pieces with the same ones. Since Core 1.4.7.
+     */
+    public static synchronized Contribution core(String version) {
+        GameVersion v = GameVersion.parse(version);
+        if (!v.isAtLeast("1.13")) {
+            throw new IllegalArgumentException("Core's own pieces start at 1.13, not " + version);
+        }
+        Contribution c = CORE.get(v);
+        if (c == null) {
+            c = new Contribution(v, true);
+            c.addOwner("backportcore");
+            CORE.put(v, c);
+        }
+        return c;
+    }
+
+    /** @return Core's own contribution of exactly this version ({@link #core(String)}), or null */
+    @Nullable
+    public static synchronized Contribution coreContribution(String version) {
+        return CORE.get(GameVersion.parse(version));
+    }
+
+    /**
      * For tests and tools: a contribution that is not registered (nothing installed changes), to feed the
      * resolvers that take a list of contributions ({@link Splashes#pool}, {@link MenuMusic#pool}, ...).
      */
@@ -556,9 +587,30 @@ public final class Presentation {
         return newest(area).isAtLeast(version);
     }
 
-    /** @return every installed version's contribution, oldest first, whatever the look settings */
+    /**
+     * @return every installed version's contribution, oldest first, whatever the look settings: Core's own pieces of
+     *         each version up to the newest installed one ({@link #core(String)}), each before the backports' of the
+     *         same version
+     */
     public static synchronized List<Contribution> installed() {
-        return Collections.unmodifiableList(new ArrayList<Contribution>(VERSIONS.values()));
+        GameVersion top = installedNewest();
+        java.util.TreeSet<GameVersion> all = new java.util.TreeSet<GameVersion>(VERSIONS.keySet());
+        all.addAll(CORE.keySet());
+        List<Contribution> out = new ArrayList<Contribution>();
+        for (GameVersion v : all) {
+            if (!top.isAtLeast(v)) {
+                break;
+            }
+            Contribution core = CORE.get(v);
+            if (core != null) {
+                out.add(core);
+            }
+            Contribution mod = VERSIONS.get(v);
+            if (mod != null) {
+                out.add(mod);
+            }
+        }
+        return Collections.unmodifiableList(out);
     }
 
     /** @return the contributions {@code area} uses now, oldest first: those at or before {@link #newest(LookArea)} */
@@ -659,7 +711,14 @@ public final class Presentation {
     // ---- Options ----
 
     static synchronized void registerOption(PresentationOption option) {
-        PresentationOption old = OPTIONS.put(option.id(), option);
+        PresentationOption old = OPTIONS.get(option.id());
+        if (old != null && old != option && old.isCoreOwned() && !option.isCoreOwned() && old.getClass() == option.getClass()) {
+            // An older backport jar still registers the option Core moved out of it: its copy follows Core's.
+            option.mirror(old);
+            LOG.info("Presentation: option {} is Backport Core's now; the copy an older jar registers follows it", option.id());
+            return;
+        }
+        OPTIONS.put(option.id(), option);
         if (old != null && old != option) {
             LOG.warn("Presentation: option {} registered twice; the later one is used", option.id());
         }
