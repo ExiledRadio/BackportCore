@@ -635,3 +635,13 @@ backportcore.general.structure.blacklist.tooltip=IDs de estruturas ou conjuntos 
 # --- end config tooltips ---
 chat.copy.click=Clique para copiar para a área de transferência
 item.minecraft.smithing_template.upgrade=Melhorias: 
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Distância das entidades
+options.screenEffectScale=Efeitos de distorção
+options.fovEffectScale=Efeitos do campo visual
+options.screenEffectScale.tooltip=Define a intensidade da distorção da tela causada por Náusea e Portais do Nether.\nEm valores mais baixos, o efeito de Náusea é substituído por um contorno verde.
+options.fovEffectScale.tooltip=Define a intensidade da mudança do campo visual causada por ações e efeitos do jogo.
+debug.gamemodes.help=F3 + F4 = Abrir menu de modos de jogo
+debug.gamemodes.error=Você não tem permissão para trocar o modo de jogo
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s seguinte

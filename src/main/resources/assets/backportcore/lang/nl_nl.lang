@@ -635,3 +635,13 @@ backportcore.general.structure.blacklist.tooltip=ID's van bouwwerken of bouwwerk
 # --- end config tooltips ---
 chat.copy.click=Klik om te kopiëren
 item.minecraft.smithing_template.upgrade=Upgrade(s): 
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Entiteitsafstand
+options.screenEffectScale=Vervormingseffecten
+options.fovEffectScale=Gezichtsveldeffecten
+options.screenEffectScale.tooltip=Misselijkheidskracht- en Netherportaalschermvervormingseffecten.\nBij lagere waarden wordt het misselijkheidseffect vervangen door een groene waas.
+options.fovEffectScale.tooltip=Bepaalt hoeveel het gezichtsveld kan wijzigen met speleffecten.
+debug.gamemodes.help=F3 + F4 = Spelmoduswisselaar openen
+debug.gamemodes.error=Spelmoduswisselaar openen mislukt. Geen toestemming
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=Volgende: %s

@@ -635,3 +635,13 @@ backportcore.general.structure.blacklist.tooltip=ID budowli lub zestawów budowl
 # --- end config tooltips ---
 chat.copy.click=Kliknij, aby skopiować do schowka
 item.minecraft.smithing_template.upgrade=Ulepszenie: 
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Odl. renderow. bytów
+options.screenEffectScale=Efekty zniekształcenia
+options.fovEffectScale=Efekty pola widzenia
+options.screenEffectScale.tooltip=Moc efektu zniekształcenia powodowanego przez nudności i portale do Netheru.\nPrzy niższych wartościach efekt nudności zostaje zastąpiony zieloną nakładką.
+options.fovEffectScale.tooltip=Wpływa na stopień efektów zmiany pola widzenia w czasie rozgrywki.
+debug.gamemodes.help=F3 + F4 = Otwórz interfejs zmiany trybu gry
+debug.gamemodes.error=Nie można otworzyć interfejsu zmiany trybu gry, brak uprawnień
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s — następny

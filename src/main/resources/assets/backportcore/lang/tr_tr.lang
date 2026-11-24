@@ -635,3 +635,13 @@ backportcore.general.structure.blacklist.tooltip=Üretilmeyecek yapı veya yapı
 # --- end config tooltips ---
 chat.copy.click=Panoya kopyalamak için tıkla
 item.minecraft.smithing_template.upgrade=Yükseltme: 
+# 1.4.7: 1.16 pieces moved from Nether Update Backport
+options.entityDistanceScaling=Varlık Mesafesi
+options.screenEffectScale=Çarpıtma Efektleri
+options.fovEffectScale=Görüş Açısı Efektleri
+options.screenEffectScale.tooltip=Bulantı ve Nether portalı ekran çarpıtma efekt şiddetleri.\nDüşük seviyelerde bulantı efekti yerini yeşil bir önyüze bırakır.
+options.fovEffectScale.tooltip=Görüş alanının oynanış etkileriyle ne kadar değişebileceğini kontrol eder.
+debug.gamemodes.help=F3 + F4 = Oyun modu değiştiricisini aç
+debug.gamemodes.error=Oyun modu değiştiricisi açılamadı, yetkiniz yok
+debug.gamemodes.press_f4=[ F4 ]
+debug.gamemodes.select_next=%s Sonraki

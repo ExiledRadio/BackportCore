@@ -73,6 +73,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             LightmapTransformer.class.getName(),
             RecipeToastTransformer.class.getName(),
             RenderChunkMoveTransformer.class.getName(),
+            DistortionTransformer.class.getName(),
     };
 
     @Override
