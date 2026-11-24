@@ -5,7 +5,7 @@
 *   Options keep their backports' ids, so saved values carry over. Buzzy Bees' Sneak and Sprint toggles move from its config to the options.
 *   Older backport jars still work with this Core: an older jar's copy of an option Core owns follows Core's (`PresentationOption.mirror`: one button, one value); an F3 text, fog or music step of the same version and name is left out (`OrderedSteps`); Core leaves its own event handler or patch off while the older jar's class is on the class path (`LegacyCopies`).
 *   `Presentation.core`, `coreContribution`, `Contribution.isCore`, `PresentationOption.ownedByCore`/`canonical`, `LegacyCopies`, `MenuBackground.menuTile`. Core registers its first sound, `backportcore:ui.hud.bubble_pop`.
-*   Update Aquatic 1.2.3, Village & Pillage 2.7.5, Buzzy Bees 1.1.2, Nether Update 1.1.2, Caves & Cliffs 1.1.6, Wild Update 1.1.3, Trails & Tales 1.0.4 and Tricky Trials 1.0.2 drop their copies and require this Core; older releases keep working with it.
+*   Update Aquatic 1.2.3, Village & Pillage 2.7.5, Buzzy Bees 1.1.2, Nether Update 1.1.2, Caves & Cliffs 1.1.5, Wild Update 1.1.3, Trails & Tales 1.0.4 and Tricky Trials 1.0.2 drop their copies and require this Core; older releases keep working with it.
 
 # 1.4.6
 
