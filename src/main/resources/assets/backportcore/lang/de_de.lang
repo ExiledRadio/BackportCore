@@ -635,3 +635,18 @@ backportcore.general.structure.blacklist.tooltip=IDs von Bauwerken oder Bauwerk-
 # --- end config tooltips ---
 chat.copy.click=Klicken, um in die Zwischenablage zu kopieren
 item.minecraft.smithing_template.upgrade=Aufwertung: 
+# 1.4.7: 1.21 pieces moved from Tricky Trials Backport
+options.inactivityFpsLimit=FPS verringern, wenn
+options.inactivityFpsLimit.minimized=Minimiert
+options.inactivityFpsLimit.afk=Abwesend
+options.inactivityFpsLimit.minimized.tooltip=Begrenzt die Bildwiederholrate nur dann, wenn das Spielfenster minimiert ist.
+options.inactivityFpsLimit.afk.tooltip=Begrenzt die Bildwiederholrate auf 30 Bilder pro Sekunde, wenn der Spieler länger als 1 Minute keine Eingabe tätigt. Begrenzt sie nach 9 weiteren Minuten auf 10 Bilder pro Sekunde.
+options.accessibility.high_contrast_block_outline=Kontrastreiche Blockumrisse
+options.accessibility.high_contrast_block_outline.tooltip=Erhöht den Kontrast der Umrisslinien des angezielten Blocks.
+options.invertMouseX=X‐Mausachse umkehren
+options.sprintWindow=Sprint‐Zeitfenster
+options.sprintWindow.tooltip=Zeitfenster in Ticks, innerhalb dessen ein doppelter Anschlag der Vorwärtstaste den Spieler sprinten lässt.
+options.chat.drafts=Ungesendete Chatnachrichten speichern
+options.chat.drafts.tooltip=Nicht gesendete Nachrichten werden gespeichert und können beim nächsten Öffnen des Chats gesendet werden.
+options.value=%s
+subtitles.ui.hud.bubble_pop=Luftvorrat nimmt ab

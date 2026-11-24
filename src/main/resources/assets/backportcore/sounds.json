@@ -1,0 +1,8 @@
+{
+  "ui.hud.bubble_pop": {
+    "sounds": [
+      "backportcore:ui/hud/hud_bubble"
+    ],
+    "subtitle": "subtitles.ui.hud.bubble_pop"
+  }
+}

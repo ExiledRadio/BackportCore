@@ -635,3 +635,18 @@ backportcore.general.structure.blacklist.tooltip=ID budowli lub zestawów budowl
 # --- end config tooltips ---
 chat.copy.click=Kliknij, aby skopiować do schowka
 item.minecraft.smithing_template.upgrade=Ulepszenie: 
+# 1.4.7: 1.21 pieces moved from Tricky Trials Backport
+options.inactivityFpsLimit=Zmniejsz liczbę FPS podczas
+options.inactivityFpsLimit.minimized=zminimalizowania
+options.inactivityFpsLimit.afk=bezczynności
+options.inactivityFpsLimit.minimized.tooltip=Ogranicza liczbę klatek na sekundę tylko wtedy, gdy okno gry jest zminimalizowane.
+options.inactivityFpsLimit.afk.tooltip=Ogranicza liczbę klatek na sekundę do 30, jeżeli gra nie otrzymuje żadnych danych wejściowych od gracza przez ponad minutę. Ogranicza ją dalej do 10 po kolejnych 9 minutach.
+options.accessibility.high_contrast_block_outline=Kontrastowe obrysy bloków
+options.accessibility.high_contrast_block_outline.tooltip=Wzmacnia kontrast obrysu bloku pod kursorem.
+options.invertMouseX=Odwróć oś myszy w poziomie
+options.sprintWindow=Interwał biegu
+options.sprintWindow.tooltip=Czas (w tikach), w którym dwukrotne naciśnięcie klawisza ruchu wprzód włączy bieganie.
+options.chat.drafts=Zapisz niewysłane wiadomości
+options.chat.drafts.tooltip=Niewysłane wiadomości zostaną zapisane i będzie można je wysłać przy następnym otwarciu czatu.
+options.value=%s
+subtitles.ui.hud.bubble_pop=Wskaźnik oddechu spada
