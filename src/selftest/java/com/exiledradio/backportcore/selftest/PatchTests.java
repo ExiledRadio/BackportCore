@@ -114,7 +114,7 @@ final class PatchTests {
             {"net.minecraft.client.renderer.EntityRenderer", "P73", new String[] {"damageTilt"}},
             {"net.minecraft.client.renderer.RenderItem", "P74", new String[] {"glintTime*2", "glintColor*2"}},
             {"net.minecraft.client.renderer.entity.layers.LayerArmorBase", "P75", new String[] {"glintTicks", "glintComponent*3"}},
-            {"net.minecraft.client.Minecraft", "P76", new String[] {"pickedBlock"}},
+            {"net.minecraft.client.Minecraft", "P76", new String[] {"pickedBlock*2"}},
     };
 
     private PatchTests() {

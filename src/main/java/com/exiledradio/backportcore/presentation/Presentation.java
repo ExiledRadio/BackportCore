@@ -544,6 +544,16 @@ public final class Presentation {
         return c;
     }
 
+    private static volatile boolean coreHidden;
+
+    /**
+     * For the self-tests of the registry itself: while true, {@link #installed()} leaves Core's own pieces out, as before
+     * Core 1.4.7. Never for anything else.
+     */
+    public static void hideCoreForTests(boolean hidden) {
+        coreHidden = hidden;
+    }
+
     /** @return Core's own contribution of exactly this version ({@link #core(String)}), or null */
     @Nullable
     public static synchronized Contribution coreContribution(String version) {
@@ -601,7 +611,7 @@ public final class Presentation {
             if (!top.isAtLeast(v)) {
                 break;
             }
-            Contribution core = CORE.get(v);
+            Contribution core = coreHidden ? null : CORE.get(v);
             if (core != null) {
                 out.add(core);
             }

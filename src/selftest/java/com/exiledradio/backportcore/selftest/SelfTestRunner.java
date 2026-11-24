@@ -80,6 +80,7 @@ public final class SelfTestRunner {
                     case "lookfeel": LookFeelTests.schedule(); Look116118Tests.schedule(); Look119120Tests.schedule(); Look121Tests.schedule(); break;
                     case "looksettings": LookSwitchTests.schedule(); break;
                     case "corefeel": CoreFeelTests.schedule(); break;
+                    case "legacyjars": CoreFeelTests.scheduleLegacy(); break;
                     case "textures": TextureLayerTests.schedule(); break;
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;

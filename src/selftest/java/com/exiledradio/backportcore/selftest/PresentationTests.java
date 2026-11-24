@@ -124,6 +124,8 @@ final class PresentationTests {
     /** CORE_REQUESTS (Nether 8, Buzzy Bees 7, Village & Pillage, Update Aquatic): the rest of the module. */
     static void scheduleFinish() {
         then(1, "presentation: vanilla assets, text and single slots", world -> {
+            Presentation.hideCoreForTests(true); // the registry's own resolution; Core's own pieces (1.4.7) aside
+            try {
             check("finish: the title logo is the newest version's (1.16 over 1.14)",
                     new ResourceLocation(DOMAIN, "textures/gui/title/background/panorama_3.png").equals(Presentation.asset("textures/gui/title/minecraft.png")),
                     Presentation.asset("textures/gui/title/minecraft.png"));
@@ -139,6 +141,10 @@ final class PresentationTests {
             check("finish: the multiplayer warning is the newest that has one (1.14's here)", warn != null && "selftest.warning.header".equals(warn[0]),
                     warn == null ? "none" : Arrays.toString(warn));
             check("finish: creative order from 1.16", new ResourceLocation(DOMAIN, "creative_order.txt").equals(Presentation.creativeOrder()));
+            } finally {
+                Presentation.hideCoreForTests(false);
+            }
+            check("finish: Core's own 1.13 pieces join below the installed versions", Presentation.assets().containsKey("textures/gui/recipe_book.png"));
         });
         then(1, "presentation: vanilla revisions by version", world -> {
             com.exiledradio.backportcore.presentation.VanillaRevisions.Startup s;
@@ -209,7 +215,12 @@ final class PresentationTests {
         then(1, "presentation: registry", world -> {
             check("newest installed is 1.16", Presentation.newest().equals(GameVersion.parse("1.16")), Presentation.newest());
             check("isAtLeast 1.15 and not 1.17", Presentation.isAtLeast("1.15") && !Presentation.isAtLeast("1.17"));
-            List<Contribution> all = Presentation.installed();
+            List<Contribution> all = new java.util.ArrayList<Contribution>();
+            for (Contribution c : Presentation.installed()) {
+                if (!c.isCore()) {
+                    all.add(c);
+                }
+            }
             check("two versions installed, oldest first", all.size() == 2 && all.get(0).version().toString().equals("1.14"), all);
             check("the same version returns the same contribution", Presentation.version("1.16") == Presentation.contribution("1.16"));
             check("owner is the registering mod", all.get(1).owners().contains(SelfTestMod.MOD_ID), all.get(1).owners());
@@ -231,7 +242,12 @@ final class PresentationTests {
             check("its own since is kept", future.since().equals(GameVersion.parse("1.20")), future.since());
             check("a 1.20 option is hidden at 1.16", !future.isShown() && future.isShownAt(GameVersion.parse("1.20")));
             check("an option removed in 1.15 is hidden at 1.16, shown at 1.14", !retired.isShown() && retired.isShownAt(v114));
-            List<PresentationOption> video = Presentation.optionsOn(OptionScreen.VIDEO);
+            List<PresentationOption> video = new java.util.ArrayList<PresentationOption>();
+            for (PresentationOption o : Presentation.optionsOn(OptionScreen.VIDEO)) {
+                if (!o.isCoreOwned()) {
+                    video.add(o);
+                }
+            }
             check("Video shows the toggle and the slider, and the option also placed there", video.size() == 3 && video.contains(toggle)
                     && video.contains(slider) && video.contains(tooltipped), ids(video));
             check("Chat shows the cycle", Presentation.optionsOn(OptionScreen.CHAT).contains(cycle));
@@ -392,6 +408,8 @@ final class PresentationTests {
             check("an option default was applied", defaulted.get());
             check("the later version's default for the same option wins", "z".equals(overridden.get()), overridden.get());
             check("a default action ran once", actionRuns == 1, actionRuns);
+            Presentation.hideCoreForTests(true); // the self-test mod's defaults only; Core's own (1.4.7) aside
+            try {
             List<VersionedDefaults.Entry> pending = VersionedDefaults.pending(Presentation.installed());
             check("only the vanilla setting is left for a client", pending.size() == 1
                     && pending.get(0).kind == VersionedDefaults.Kind.GAME_OPTION && "chatLinksPrompt".equals(pending.get(0).key), pending.size());
@@ -408,6 +426,9 @@ final class PresentationTests {
             });
             check("a client writes the vanilla setting once", client == 1 && wrote[0] == 1
                     && VersionedDefaults.pending(Presentation.installed()).isEmpty(), client);
+            } finally {
+                Presentation.hideCoreForTests(false);
+            }
         });
     }
 

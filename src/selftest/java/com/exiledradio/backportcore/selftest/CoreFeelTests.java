@@ -26,6 +26,78 @@ final class CoreFeelTests {
     private CoreFeelTests() {
     }
 
+    /** The options Core 1.4.7 moved out of the backports, by their (unchanged) ids. */
+    static final String[] MOVED_OPTIONS = {
+            "updateaquaticbackport:biome_blend_radius", "updateaquaticbackport:auto_suggestions",
+            "villagerbackport:mouse_wheel_sensitivity", "villagerbackport:discrete_mouse_scroll",
+            "buzzybeesbackport:toggle_crouch", "buzzybeesbackport:toggle_sprint",
+            "netherupdatebackport:entity_distance_scaling", "netherupdatebackport:screen_effect_scale", "netherupdatebackport:fov_effect_scale",
+            "cavesandcliffsbackport:hide_lightning_flashes", "cavesandcliffsbackport:autosave_indicator",
+            "wildupdatebackport:damage_tilt_strength", "wildupdatebackport:glint_speed", "wildupdatebackport:glint_strength",
+            "trailsandtalesbackport:menu_background_blurriness",
+            "trickytrialsbackport:inactivity_fps_limit", "trickytrialsbackport:high_contrast_block_outline",
+            "trickytrialsbackport:invert_mouse_x", "trickytrialsbackport:sprint_window", "trickytrialsbackport:save_chat_drafts",
+    };
+
+    /** An older jar's class, and the static option field it still registers (or null): {class, field, option id}. */
+    private static final String[][] OLD_COPIES = {
+            {"com.exiledradio.updateaquaticbackport.lookfeel.LookAndFeel", "AUTO_SUGGEST", "updateaquaticbackport:auto_suggestions"},
+            {"com.exiledradio.updateaquaticbackport.lookfeel.LookAndFeel", "BIOME_BLEND", "updateaquaticbackport:biome_blend_radius"},
+            {"com.exiledradio.villagerbackport.lookfeel.LookAndFeel", "SCROLL_SENSITIVITY", "villagerbackport:mouse_wheel_sensitivity"},
+            {"com.exiledradio.buzzybeesbackport.lookfeel.LookAndFeel", "TOGGLE_SNEAK", "buzzybeesbackport:toggle_crouch"},
+            {"com.exiledradio.netherupdatebackport.lookfeel.LookAndFeel", "FOV_EFFECTS", "netherupdatebackport:fov_effect_scale"},
+            {"com.exiledradio.cavesandcliffsbackport.lookfeel.LookAndFeel", "AUTOSAVE_INDICATOR", "cavesandcliffsbackport:autosave_indicator"},
+            {"com.exiledradio.wildupdatebackport.lookfeel.LookAndFeel", "GLINT_SPEED", "wildupdatebackport:glint_speed"},
+            {"com.exiledradio.trailsandtalesbackport.lookfeel.LookAndFeel", "MENU_BLUR", "trailsandtalesbackport:menu_background_blurriness"},
+            {"com.exiledradio.trickytrialsbackport.lookfeel.LookAndFeel", "SAVE_CHAT_DRAFTS", "trickytrialsbackport:save_chat_drafts"},
+    };
+
+    /** The classes Core leaves its own handler or patch off for (LegacyCopies), one per older jar. */
+    private static final String[] SENTINELS = {
+            "com.exiledradio.updateaquaticbackport.asm.BiomeBlendPatch",
+            "com.exiledradio.villagerbackport.lookfeel.ScrollAccumulator",
+            "com.exiledradio.buzzybeesbackport.tweaks.client.ToggleKeys",
+            "com.exiledradio.netherupdatebackport.lookfeel.client.LookAndFeelClient",
+            "com.exiledradio.cavesandcliffsbackport.lookfeel.client.LookAndFeelClient",
+            "com.exiledradio.wildupdatebackport.asm.LookTransformer",
+            "com.exiledradio.trailsandtalesbackport.lookfeel.client.DimensionScreen",
+            "com.exiledradio.trickytrialsbackport.lookfeel.client.ChatDrafts",
+    };
+
+    /**
+     * Group {@code legacyjars}: run with the live (pre-1.4.7) backport jars in eclipse/mods. Each older jar's own option
+     * follows Core's, the option list has each moved id once, and Core sees each older jar's handler classes.
+     */
+    static void scheduleLegacy() {
+        then(1, "core feel: older backport jars", world -> {
+            for (String id : MOVED_OPTIONS) {
+                com.exiledradio.backportcore.presentation.option.PresentationOption o = Presentation.option(id);
+                check("legacy jars: " + id + " is Core's", o != null && o.isCoreOwned() && o.canonical() == null);
+                int listed = 0;
+                for (com.exiledradio.backportcore.presentation.option.PresentationOption p : Presentation.options()) {
+                    if (p.id().equals(id)) {
+                        listed++;
+                    }
+                }
+                check("legacy jars: " + id + " listed once", listed == 1, listed);
+            }
+            for (String[] copy : OLD_COPIES) {
+                Object field = null;
+                try {
+                    field = Class.forName(copy[0]).getField(copy[1]).get(null);
+                } catch (ReflectiveOperationException | LinkageError e) {
+                    field = e;
+                }
+                check("legacy jars: the older jar's " + copy[1] + " follows Core's", field instanceof com.exiledradio.backportcore.presentation.option.PresentationOption
+                        && ((com.exiledradio.backportcore.presentation.option.PresentationOption) field).canonical() == Presentation.option(copy[2]), field);
+            }
+            for (String c : SENTINELS) {
+                check("legacy jars: Core sees the older jar's " + c.substring(c.lastIndexOf('.') + 1) + " and leaves its copy off",
+                        LegacyCopies.present(c), c);
+            }
+        });
+    }
+
     static void schedule() {
         then(1, "core feel: Core's own contributions", world -> {
             GameVersion newest = Presentation.installedNewest();
@@ -113,6 +185,12 @@ final class CoreFeelTests {
             Presentation.detached("1.14").option(second);
             check("mirror: two backports' options of one id are not mirrored (the later one is used, as before)",
                     Presentation.option("bcst_feel:other") == second && second.canonical() == null);
+        });
+        then(1, "core feel: the moved options", world -> {
+            for (String id : MOVED_OPTIONS) {
+                com.exiledradio.backportcore.presentation.option.PresentationOption o = Presentation.option(id);
+                check("moved: " + id + " is registered as Core's", o != null && o.isCoreOwned());
+            }
         });
         then(1, "core feel: steps and older jars", world -> {
             OrderedSteps<String> steps = new OrderedSteps<String>();

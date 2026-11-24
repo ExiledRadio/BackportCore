@@ -51,6 +51,8 @@ public final class Look114 {
                 .titleAccessibilityIcon(new ResourceLocation("backportcore", "look/1.14/textures/gui/accessibility.png"))
                 .startupLogo("textures/gui/title/mojang.png", new ResourceLocation("backportcore", "look/1.14/textures/gui/title/mojang.png"))
                 .vanillaText(new ResourceLocation("backportcore", "look/1.14/vanilla_text"));
-        // 1.14.1's F3 + N and F3 + Esc and 1.14.2's F3 line are client code (client.Look114Client).
+        // 1.14.1's F3 + N and F3 + Esc and 1.14.2's F3 line are client code (client.Look114Client); the contribution
+        // exists on both sides.
+        Presentation.core("1.14.1");
     }
 }
