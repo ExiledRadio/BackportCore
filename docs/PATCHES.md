@@ -1186,3 +1186,19 @@ or passes an existing constant through a hook of the same type.
 *   **What changes**: right after the one `stopCompileTask()` call, `this.needsUpdate = true` (the field alone, as
     1.18.2 sets `dirty` and leaves `playerChanged`). Not a setting: a fix, always on.
 *   **Fails safe**: method or field missing, or not exactly one `stopCompileTask` call: left as 1.12.2's, one log line.
+
+## P68. Biome Blend
+
+*   **Class**: `net.minecraft.world.biome.BiomeColorHelper` (client), method `getColorAtPos` (`func_180285_a`).
+    **Transformer**: `asm/BiomeBlendTransformer`. **Hook**: `presentation/versions/BiomeBlend.low`, `high`, `count`.
+    **Since**: 1.4.7 (Update Aquatic Backport's P6 until then).
+*   **Vanilla change**: 1.13's Biome Blend (Video Settings) averages the grass, foliage and water colors over a square
+    of (2r+1) by (2r+1) columns, r from 0 (OFF) to 7, 5x5 by default; 1.12.2 always averages 3 by 3.
+*   **Why a patch**: the square and the divisor are constants in the method; no event hands over the blend.
+*   **What changes**: the four `ICONST_M1`/`ICONST_1` corner arguments of the two `BlockPos.add(int, int, int)` calls
+    become `BiomeBlend.low()`/`high()`, the three `BIPUSH 9` before an `IDIV` become `BiomeBlend.count()`: same stack,
+    no local read. The radius is 1 (3x3) until the client sets it from the option, which shows from 1.13 on.
+    P44 changes the `getBiome` call of the same method; the two compose.
+*   **Fails safe**: method missing or not exactly two corner calls and three divisors: skipped, colors blend 3 by 3.
+    Skipped as well while an older Update Aquatic jar that has `asm/BiomeBlendPatch` is on the class path, or the
+    method already calls that jar's hook: the old jar patches it, once.

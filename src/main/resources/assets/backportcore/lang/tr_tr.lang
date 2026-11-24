@@ -635,3 +635,21 @@ backportcore.general.structure.blacklist.tooltip=Üretilmeyecek yapı veya yapı
 # --- end config tooltips ---
 chat.copy.click=Panoya kopyalamak için tıkla
 item.minecraft.smithing_template.upgrade=Yükseltme: 
+# 1.4.7: 1.13 pieces moved from Update Aquatic Backport
+debug.copy_location.help=F3 + C = Konumu /tp komutu olarak kopyala, ya da 10 saniye basılı tutarak oyunu çökert
+debug.copy_location.message=Konum panoya kopyalandı
+options.biomeBlendRadius=Biyom Karışımı
+debug.inspect.help=F3 + I = Varlık veya blok verilerini panoya kopyalar
+debug.inspect.client.block=İstemci taraflı blok verisi panoya kopyalandı
+debug.inspect.client.entity=İstemci taraflı varlık verisi panoya kopyalandı
+debug.inspect.server.block=Sunucu taraflı blok verisi panoya kopyalandı
+debug.inspect.server.entity=Sunucu taraflı varlık verisi panoya kopyalandı
+# 1.4.7: 1.14 pieces moved from Village & Pillage Backport
+options.mouseWheelSensitivity=Kaydırma Hassasiyeti
+options.discrete_mouse_scroll=Ayrık Kaydırma
+menu.paused=Oyun Duraklatıldı
+# 1.4.7: 1.15 pieces moved from Buzzy Bees Backport
+title.singleplayer=Tek Oyunculu
+title.multiplayer.lan=Çok Oyunculu (Yerel Ağ)
+title.multiplayer.other=Çok Oyunculu (Üçüncü Taraf Sunucu)
+title.multiplayer.realms=Çok Oyunculu (Realms)

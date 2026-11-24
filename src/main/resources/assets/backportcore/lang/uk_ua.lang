@@ -635,3 +635,21 @@ backportcore.general.structure.blacklist.tooltip=ID споруд або набо
 # --- end config tooltips ---
 chat.copy.click=Натисніть, щоб скопіювати в буфер обміну
 item.minecraft.smithing_template.upgrade=Покращення: 
+# 1.4.7: 1.13 pieces moved from Update Aquatic Backport
+debug.copy_location.help=F3 + C = Скопіювати розташування як команду /tp; тримайте 10 секунд, щоб спричинити збій гри
+debug.copy_location.message=Скопійовано розташування в буфер обміну
+options.biomeBlendRadius=Зміш. біомів
+debug.inspect.help=F3 + I = Скопіювати в буфер обміну дані сутности чи блока
+debug.inspect.client.block=Клієнтські дані блока скопійовано до буфера обміну
+debug.inspect.client.entity=Клієнтські дані сутностей скопійовано до буфера обміну
+debug.inspect.server.block=Серверні дані блоків скопійовано до буфера обміну
+debug.inspect.server.entity=Серверні дані сутностей скопійовано до буфера обміну
+# 1.4.7: 1.14 pieces moved from Village & Pillage Backport
+options.mouseWheelSensitivity=Чутливість прокрутки
+options.discrete_mouse_scroll=Дискретна прокрутка
+menu.paused=Гру призупинено
+# 1.4.7: 1.15 pieces moved from Buzzy Bees Backport
+title.singleplayer=Гра наодинці
+title.multiplayer.lan=Гра в мережі (локальна мережа)
+title.multiplayer.other=Гра в мережі (сторонній сервер)
+title.multiplayer.realms=Гра в мережі (Realms)

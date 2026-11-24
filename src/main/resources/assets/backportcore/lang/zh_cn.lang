@@ -635,3 +635,21 @@ backportcore.general.structure.blacklist.tooltip=不生成的结构或结构集 
 # --- end config tooltips ---
 chat.copy.click=单击复制到剪贴板
 item.minecraft.smithing_template.upgrade=已有升级：
+# 1.4.7: 1.13 pieces moved from Update Aquatic Backport
+debug.copy_location.help=F3 + C = 将位置复制为/tp命令，或长按10秒使游戏崩溃
+debug.copy_location.message=坐标已复制到剪贴板
+options.biomeBlendRadius=生物群系过渡距离
+debug.inspect.help=F3 + I = 将实体或方块的数据复制到剪贴板
+debug.inspect.client.block=客户端方块数据已复制到剪贴板
+debug.inspect.client.entity=客户端实体数据已复制到剪贴板
+debug.inspect.server.block=服务端方块数据已复制到剪贴板
+debug.inspect.server.entity=服务端实体数据已复制到剪贴板
+# 1.4.7: 1.14 pieces moved from Village & Pillage Backport
+options.mouseWheelSensitivity=滚轮灵敏度
+options.discrete_mouse_scroll=离散滚动
+menu.paused=游戏暂停
+# 1.4.7: 1.15 pieces moved from Buzzy Bees Backport
+title.singleplayer=单人游戏
+title.multiplayer.lan=多人游戏（局域网）
+title.multiplayer.other=多人游戏（第三方服务器）
+title.multiplayer.realms=多人游戏（Realms）

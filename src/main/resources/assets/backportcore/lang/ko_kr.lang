@@ -635,3 +635,21 @@ backportcore.general.structure.blacklist.tooltip=생성하지 않을 구조물 �
 # --- end config tooltips ---
 chat.copy.click=클립보드에 복사하려면 클릭
 item.minecraft.smithing_template.upgrade=강화: 
+# 1.4.7: 1.13 pieces moved from Update Aquatic Backport
+debug.copy_location.help=F3 + C = 위치를 /tp 명령어로 복사, 10초 동안 누르고 있으면 게임에 크래시를 발생시킴
+debug.copy_location.message=위치를 클립보드에 복사했습니다
+options.biomeBlendRadius=생물 군계 혼합
+debug.inspect.help=F3 + I = 개체 또는 블록 데이터를 클립보드에 복사
+debug.inspect.client.block=클라이언트 측 블록 데이터를 클립보드에 복사했습니다
+debug.inspect.client.entity=클라이언트 측 개체 데이터를 클립보드에 복사했습니다
+debug.inspect.server.block=서버 측 블록 데이터를 클립보드에 복사했습니다
+debug.inspect.server.entity=서버 측 개체 데이터를 클립보드에 복사했습니다
+# 1.4.7: 1.14 pieces moved from Village & Pillage Backport
+options.mouseWheelSensitivity=스크롤 감도
+options.discrete_mouse_scroll=별도 스크롤
+menu.paused=게임 일시 정지
+# 1.4.7: 1.15 pieces moved from Buzzy Bees Backport
+title.singleplayer=싱글플레이
+title.multiplayer.lan=멀티플레이 (LAN)
+title.multiplayer.other=멀티플레이 (제3자 서버)
+title.multiplayer.realms=멀티플레이 (Realms)
