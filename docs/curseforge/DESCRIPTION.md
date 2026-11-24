@@ -21,6 +21,7 @@ Its one block is today's jigsaw block, for operators building jigsaw structures.
 *   **1.14's player poses**: swimming players are 0.6 blocks tall, players with no room to stand crawl until there is room, and other players see both. A small coremod of the library's own adds the hooks 1.12.2 lacks, and does nothing until a backport that swims is installed.
 *   **Structures that fit the land**, planned on the surface or the sea floor of vanilla, superflat, Open Terrain Generator, Biomes O' Plenty, Realistic Terrain Generation and 1.18-height terrain.
 *   **One copy of each block.** Some blocks belong to one update but are needed by another: 1.14's villages are built from 1.13's stripped logs and blue ice, for example. Backport Core keeps the table of which backport owns each shared block, so whichever owner is installed provides it and the others use it. A world can move its blocks and items over from another mod's copies, on demand or when that mod is removed. When two mods add the same block, one of each pair keeps its recipe and creative tab.
+*   **Dynamic Trees support**: with Dynamic Trees installed, each spot gets one kind of tree, Dynamic Trees' or the backport's, never both side by side; villages and camps grow its trees.
 *   **Trades and smithing for other mods**: a registry other mods can add villager and wandering trader trades to, and one for smithing table upgrades.
 
 ***
