@@ -135,7 +135,11 @@ final class ClientTickTests {
                 Entity pig = clientPig(mc);
                 check("client tick: frozen: the pig holds still on the client", pig != null && pig.ticksExisted == pigTicks,
                         pig == null ? null : pig.ticksExisted - pigTicks);
-                check("client tick: frozen: the client's clock holds", mc.world.getTotalWorldTime() == clientTime, mc.world.getTotalWorldTime() - clientTime);
+                long serverTime = mc.getIntegratedServer() == null ? -1 : mc.getIntegratedServer().getWorld(0).getTotalWorldTime();
+                // A time packet the server sent just before freezing can land after clientTime was read: the client then
+                // holds at the server's frozen clock. A client clock that ran on would be past both.
+                check("client tick: frozen: the client's clock holds", mc.world.getTotalWorldTime() == clientTime
+                        || mc.world.getTotalWorldTime() == serverTime, (mc.world.getTotalWorldTime() - clientTime) + " (server " + serverTime + ")");
                 check("client tick: frozen: the player still ticks on the client", mc.player.ticksExisted > playerTicks, mc.player.ticksExisted - playerTicks);
                 EntityPlayerMP serverPlayer = serverPlayer(mc);
                 check("client tick: frozen: the player still ticks on the server", serverPlayer != null && serverPlayer.ticksExisted > serverPlayerTicks,
