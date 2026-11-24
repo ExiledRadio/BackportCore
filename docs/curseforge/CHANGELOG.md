@@ -1,6 +1,7 @@
 # 1.4.6
 
 *   **Fixed: a crash 20 to 30 seconds after launch on Android launchers** (PojavLauncher, Zalith and others), and no sound before it. Their LWJGL lacks a call Backport Core used when opening the sound device; the sound now opens as in 1.12.2 there, without the device choice and Directional Audio.
+*   **Fixed: the block on the "New Recipes Unlocked!" toast sat a pixel low**, both the crafting table and the furnace's. Turning off the toasts' newer look now removes both, as in 1.12.2.
 
 # 1.4.5
 

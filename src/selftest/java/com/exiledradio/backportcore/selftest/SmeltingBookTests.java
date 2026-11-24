@@ -137,6 +137,27 @@ final class SmeltingBookTests {
             check("unlock: a damaged iron sword unlocks iron nuggets", data(player, book).isUnlocked("minecraft:iron_nugget"));
         });
 
+        then(1, "smelting book without a screen", world -> {
+            // 1.14's campfire: a book no container is its own, with no tabs; its recipes unlock and toast with its block.
+            java.util.Map<ItemStack, ItemStack> map = new java.util.LinkedHashMap<ItemStack, ItemStack>();
+            map.put(new ItemStack(Items.BEEF), new ItemStack(Items.COOKED_BEEF));
+            map.put(new ItemStack(Items.CHICKEN), new ItemStack(Items.COOKED_CHICKEN));
+            SmeltingBook camp = new SmeltingBook(new net.minecraft.util.ResourceLocation("backportcore", "selftest_campfire"),
+                    c -> false, 0, 1, 2, () -> map, s -> false, "", new ItemStack(Blocks.TORCH));
+            SmeltingBooks.register(camp);
+            ContainerFurnace furnace = new ContainerFurnace(PoseTests.player(world, "bookcamp").inventory, new TileEntityFurnace());
+            check("screenless: no container is its own, the furnace's still finds the furnace book", !camp.isFor(furnace)
+                    && SmeltingBooks.forContainer(furnace) == SmeltingBooks.get(SmeltingBook.FURNACE), SmeltingBooks.forContainer(furnace));
+            check("screenless: its recipes, no tabs", SmeltingBooks.recipes(camp).size() == 2 && camp.tabs.isEmpty(), SmeltingBooks.recipes(camp));
+            EntityPlayerMP player = PoseTests.player(world, "bookcamp");
+            player.inventory.addItemStackToInventory(new ItemStack(Items.BEEF, 2));
+            RecipeUnlocks.check(player);
+            check("screenless: holding beef unlocks it here and in the furnace book", data(player, camp).isUnlocked("minecraft:cooked_beef")
+                    && !data(player, camp).isUnlocked("minecraft:cooked_chicken")
+                    && data(player, SmeltingBooks.get(SmeltingBook.FURNACE)).isUnlocked("minecraft:cooked_beef"), data(player, camp).unlocked());
+            check("screenless: the toast's block is its own", camp.toastIcon.getItem() == net.minecraft.item.Item.getItemFromBlock(Blocks.TORCH));
+        });
+
         then(1, "smelting book placer", world -> {
             SmeltingBook book = SmeltingBooks.get(SmeltingBook.FURNACE);
             BlockPos pos = world.getSpawnPoint().up(40).east(7);

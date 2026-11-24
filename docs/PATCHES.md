@@ -1162,8 +1162,9 @@ or passes an existing constant through a hook of the same type.
 *   **Class**: `net.minecraft.client.gui.toasts.RecipeToast`, `draw(GuiToast, long)`. **Transformer**:
     `asm/RecipeToastTransformer`. **Hook**: `PresentationHooks.recipeToastIcon`. **Since**: 1.4.5.
 *   **Vanilla change**: 1.13's "New Recipes Unlocked!" toast draws the recipe's workstation (the crafting table for a
-    crafting recipe) at 0.6 scale at (3, 4), then the output at (8, 8). 1.12.2 draws the output only. Core's furnace
-    book toast (`SmeltingToast`) already draws its furnace.
+    crafting recipe) at 0.6 scale at (3, 3), then the output at (8, 8); 1.14 does the same with each recipe's
+    `getToastSymbol()`. 1.12.2 draws the output only. Core's smelting books' toast (`SmeltingToast`) draws each book's
+    block the same way, under the same look.
 *   **Why a patch**: vanilla adds the toast from the recipe book packet; no event lets a mod change how it draws.
 *   **What changes**: before the one `renderItemAndEffectIntoGUI` call, `aload 1` and the hook, which leaves the stack
     as it was. From 1.13 (the toasts' look, `VanillaRevisions.recipeToastIcon`) it draws the crafting table.

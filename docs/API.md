@@ -1156,7 +1156,11 @@ SmeltingBooks.register(new SmeltingBook(new ResourceLocation("modid", "smoker"),
   tool), in item registry order; the first tab whose test takes the result lists it. Ids name the result
   (`minecraft:dye@2`, `minecraft:coal*2`), so both sides find the same recipe.
 - Unlocking: 1.13's rule, a recipe unlocks once the player holds any of its inputs, checked with `RecipeUnlocks`
-  (not switched off by `recipes.unlockRecipes`). The client gets 1.13's toast with the book's `toastIcon`.
+  (not switched off by `recipes.unlockRecipes`). The client gets 1.13's toast with the book's `toastIcon` (1.14's
+  `Recipe.getToastSymbol()`: the furnace, smoker, blast furnace or campfire) at 0.6 scale behind the output, from the
+  toasts' 1.13 look (`VanillaRevisions.recipeToastIcon`). Recipes from every book share one toast.
+- A block without a screen (1.14's campfire): a book whose container test is never true and that has no tabs
+  (`c -> false`, `s -> false` for fuel, `""` for the filter). Its recipes unlock and toast like any book's.
 - State: open, filter and unlocked recipes per player under `PlayerPersisted.backportcore:recipe_books.<id>`
   (`SmeltingBooks.data(player, book)`), kept through death; sent at login.
 - Placing: `SmeltingPlacer`, 1.13.2's `ServerRecipePlacerFurnace` (one more per click, shift for all, another recipe's

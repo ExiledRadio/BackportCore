@@ -108,7 +108,10 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.VIDEO, "26.1");
     }
 
-    /** 1.13: the recipe toast draws the crafting table small behind a crafting recipe's output (P66). Since Core 1.4.5. */
+    /**
+     * 1.13: the recipe toast draws the recipe's block small behind its output: the crafting table (P66), and each smelting
+     * book's block ({@code SmeltingToast}: the furnace, 1.14's smoker, blast furnace, campfire). Since Core 1.4.5.
+     */
     public static boolean recipeToastIcon() {
         return Presentation.isAtLeast(LookArea.TOASTS, "1.13");
     }
