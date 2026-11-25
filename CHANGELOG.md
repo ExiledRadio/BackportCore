@@ -1,3 +1,7 @@
+# 1.5.0
+
+In progress: see docs/PLAN_1_5_0.md.
+
 # 1.4.9
 
 *   Dynamic Trees (0.9.x, modid `dynamictrees`) support, `compat/DynamicTrees` (`DynamicTreesLink` is the one class linking against it, `deobfProvided`). Dynamic Trees denies 1.12.2's TREE, BIG_SHROOM and CACTUS decoration by the biome at the chunk's corner; 1.12.2 decorates with the biome at corner + 16. Next to a biome Dynamic Trees leaves alone (every backport biome, other mods' biomes without an add-on) a vanilla-decorated chunk kept its static trees beside Dynamic Trees' own, and a backport-decorated chunk lost its trees. Core re-answers those events at LOWEST priority by the decorating biome (`DynamicTrees.decide`): DENY where Dynamic Trees replaces that biome's trees; a DENY lifted only where Dynamic Trees' rule for the corner biome explains it.
