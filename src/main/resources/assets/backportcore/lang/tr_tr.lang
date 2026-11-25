@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Menü Arka Plan Bulanıklığı
 options.accessibility.menu_background_blurriness.tooltip=Menü arka planlarının bulanıklığını değiştirir.
 debug.profiler_chart.help=F3 + 1 = Ayrımlama grafiğini göster
 debug.fps_charts.help=F3 + 2 = FPS ve TPS grafiklerini göster
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Cilalı Karataş Tuğlası
+tile.backportcore.deepslate_bricks.name=Kayrak Taşı Tuğlası
+tile.backportcore.polished_blackstone.name=Cilalı Karataş
+tile.backportcore.blackstone.name=Karataş
+tile.backportcore.polished_tuff.name=Cilalı Tüf
+tile.backportcore.waxed_copper_block.name=Cilalı Bakır Bloğu
+tile.backportcore.polished_deepslate.name=Cilalı Kayrak Taşı
+tile.backportcore.cobbled_deepslate.name=Kırık Kayrak Taşı
+tile.backportcore.waxed_weathered_copper.name=Cilalı Yıpranmış Bakır
+tile.backportcore.deepslate_tile_stairs.name=Döşeme Kayrak Taşı Merdiven
+tile.backportcore.deepslate.name=Kayrak Taşı
+tile.backportcore.polished_tuff_slab.name=Cilalı Tüf Basamak
+tile.backportcore.waxed_cut_copper.name=Cilalı Kesilmiş Bakır
+tile.backportcore.waxed_copper_grate.name=Cilalı Bakır Izgara
+tile.backportcore.chiseled_tuff.name=Yontulmuş Tüf
+tile.backportcore.deepslate_tiles.name=Döşeme Kayrak Taşı
+tile.backportcore.polished_blackstone_brick_stairs.name=Cilalı Karataş Tuğlası Merdiven
+tile.backportcore.pale_oak_planks.name=Soluk Meşe Tahtası
+tile.backportcore.mud_bricks.name=Kerpiç
+tile.backportcore.waxed_chiseled_copper.name=Cilalı Yontulmuş Bakır
+tile.backportcore.waxed_weathered_cut_copper.name=Cilalı Yıpranmış Kesilmiş Bakır
+tile.backportcore.pale_oak_log.name=Soluk Meşe Kütüğü
+tile.backportcore.chiseled_nether_bricks.name=Yontulmuş Nether Tuğlası
+tile.backportcore.waxed_weathered_chiseled_copper.name=Cilalı Yıpranmış Yontulmuş Bakır
+tile.backportcore.crimson_planks.name=Kızıl Tahta
+tile.backportcore.chiseled_tuff_bricks.name=Yontulmuş Tüf Tuğla
+tile.backportcore.tuff_bricks.name=Tüf Tuğla
+tile.backportcore.iron_chain.name=Demir Zincir
+tile.backportcore.polished_blackstone_slab.name=Cilalı Karataş Basamak
+tile.backportcore.waxed_weathered_copper_grate.name=Cilalı Yıpranmış Bakır Izgara
+tile.backportcore.polished_tuff_double_slab.name=Cilalı Tüf Basamak
+tile.backportcore.polished_blackstone_double_slab.name=Cilalı Karataş Basamak
+# ---- end of supplied blocks ----

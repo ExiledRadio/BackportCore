@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Rozmycie tła w menu
 options.accessibility.menu_background_blurriness.tooltip=Zmienia rozmazanie tła menu
 debug.profiler_chart.help=F3 + 1 = Pokaż wykres profilowania
 debug.fps_charts.help=F3 + 2 = Pokaż wykresy FPS i TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Wypolerowane czernitowe cegły
+tile.backportcore.deepslate_bricks.name=Łupkowe cegły
+tile.backportcore.polished_blackstone.name=Wypolerowany czernit
+tile.backportcore.blackstone.name=Czernit
+tile.backportcore.polished_tuff.name=Wypolerowany tuf
+tile.backportcore.waxed_copper_block.name=Woskowany blok miedzi
+tile.backportcore.polished_deepslate.name=Wypolerowany łupek
+tile.backportcore.cobbled_deepslate.name=Łupkowy bruk
+tile.backportcore.waxed_weathered_copper.name=Woskowana zaśniedziała miedź
+tile.backportcore.deepslate_tile_stairs.name=Łupkowe kafelkowe schody
+tile.backportcore.deepslate.name=Łupek
+tile.backportcore.polished_tuff_slab.name=Wypolerowana tufowa płyta
+tile.backportcore.waxed_cut_copper.name=Woskowana żłobiona miedź
+tile.backportcore.waxed_copper_grate.name=Woskowana miedziana krata
+tile.backportcore.chiseled_tuff.name=Rzeźbiony tuf
+tile.backportcore.deepslate_tiles.name=Łupkowe kafelki
+tile.backportcore.polished_blackstone_brick_stairs.name=Wypolerowane czernitowe ceglane schody
+tile.backportcore.pale_oak_planks.name=Bladodębowe deski
+tile.backportcore.mud_bricks.name=Błotne cegły
+tile.backportcore.waxed_chiseled_copper.name=Woskowana rzeźbiona miedź
+tile.backportcore.waxed_weathered_cut_copper.name=Woskowana zaśniedziała żłobiona miedź
+tile.backportcore.pale_oak_log.name=Bladodębowy pień
+tile.backportcore.chiseled_nether_bricks.name=Rzeźbione netherowe cegły
+tile.backportcore.waxed_weathered_chiseled_copper.name=Woskowana zaśniedziała rzeźbiona miedź
+tile.backportcore.crimson_planks.name=Szkarłatne deski
+tile.backportcore.chiseled_tuff_bricks.name=Rzeźbione tufowe cegły
+tile.backportcore.tuff_bricks.name=Tufowe cegły
+tile.backportcore.iron_chain.name=Żelazny łańcuch
+tile.backportcore.polished_blackstone_slab.name=Wypolerowana czernitowa płyta
+tile.backportcore.waxed_weathered_copper_grate.name=Woskowana zaśniedziała miedziana krata
+tile.backportcore.polished_tuff_double_slab.name=Wypolerowana tufowa płyta
+tile.backportcore.polished_blackstone_double_slab.name=Wypolerowana czernitowa płyta
+# ---- end of supplied blocks ----

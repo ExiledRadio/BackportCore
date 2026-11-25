@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "backportcore:modern/deepslate_bricks"
+    },
+    "inventory": {
+      "model": "backportcore:modern/deepslate_bricks"
+    }
+  }
+}

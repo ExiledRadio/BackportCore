@@ -689,3 +689,38 @@ options.accessibility.menu_background_blurriness=Menu Background Blur
 options.accessibility.menu_background_blurriness.tooltip=Changes the blurriness of menu backgrounds
 debug.profiler_chart.help=F3 + 1 = Show profiler chart
 debug.fps_charts.help=F3 + 2 = Show FPS and TPS charts
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Polished Blackstone Bricks
+tile.backportcore.deepslate_bricks.name=Deepslate Bricks
+tile.backportcore.polished_blackstone.name=Polished Blackstone
+tile.backportcore.blackstone.name=Blackstone
+tile.backportcore.polished_tuff.name=Polished Tuff
+tile.backportcore.waxed_copper_block.name=Waxed Block of Copper
+tile.backportcore.polished_deepslate.name=Polished Deepslate
+tile.backportcore.cobbled_deepslate.name=Cobbled Deepslate
+tile.backportcore.waxed_weathered_copper.name=Waxed Weathered Copper
+tile.backportcore.deepslate_tile_stairs.name=Deepslate Tile Stairs
+tile.backportcore.deepslate.name=Deepslate
+tile.backportcore.polished_tuff_slab.name=Polished Tuff Slab
+tile.backportcore.waxed_cut_copper.name=Waxed Cut Copper
+tile.backportcore.waxed_copper_grate.name=Waxed Copper Grate
+tile.backportcore.chiseled_tuff.name=Chiseled Tuff
+tile.backportcore.deepslate_tiles.name=Deepslate Tiles
+tile.backportcore.polished_blackstone_brick_stairs.name=Polished Blackstone Brick Stairs
+tile.backportcore.pale_oak_planks.name=Pale Oak Planks
+tile.backportcore.mud_bricks.name=Mud Bricks
+tile.backportcore.waxed_chiseled_copper.name=Waxed Chiseled Copper
+tile.backportcore.waxed_weathered_cut_copper.name=Waxed Weathered Cut Copper
+tile.backportcore.pale_oak_log.name=Pale Oak Log
+tile.backportcore.chiseled_nether_bricks.name=Chiseled Nether Bricks
+tile.backportcore.waxed_weathered_chiseled_copper.name=Waxed Weathered Chiseled Copper
+tile.backportcore.crimson_planks.name=Crimson Planks
+tile.backportcore.chiseled_tuff_bricks.name=Chiseled Tuff Bricks
+tile.backportcore.tuff_bricks.name=Tuff Bricks
+tile.backportcore.iron_chain.name=Iron Chain
+tile.backportcore.polished_blackstone_slab.name=Polished Blackstone Slab
+tile.backportcore.waxed_weathered_copper_grate.name=Waxed Weathered Copper Grate
+tile.backportcore.polished_tuff_double_slab.name=Polished Tuff Slab
+tile.backportcore.polished_blackstone_double_slab.name=Polished Blackstone Slab
+# ---- end of supplied blocks ----

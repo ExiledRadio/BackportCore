@@ -39,6 +39,7 @@ import java.util.function.Supplier;
  * ({@code villagerbackport} is listed already);</li>
  * <li>1.12.2's own block: Minecraft's Flattening table read backwards, plus the blocks 1.13 split out
  * of a tile entity (bed and banner colors, skull types, flower pot contents, note block notes);</li>
+ * <li>a decorative copy Core supplies itself ({@code supply/SuppliedBlocks}, since 1.5.0);</li>
  * <li>a stand-in named with {@link #fallback} (a few are built in: wood trapdoors, buttons and
  * pressure plates fall back to oak's, stripped logs to logs, blue ice to packed ice, 1.14's plain
  * stone slab to the smooth one, kelp and seagrass to plain water).</li>
@@ -67,11 +68,26 @@ public final class ModernPalette {
         public final NBTTagCompound tile;
         /** True when the block stands in water: {@code waterlogged=true}, or a block that is always in water. */
         public final boolean water;
+        /**
+         * Which step gave the block: {@code mapping}, {@code owner}, {@code family}, {@code 1.12.2}, {@code supplied},
+         * {@code stand-in <name>}; null when nothing did. For reports and tests. Since 1.5.0.
+         */
+        @Nullable
+        public final String via;
 
         Resolved(@Nullable IBlockState state, @Nullable NBTTagCompound tile, boolean water) {
+            this(state, tile, water, null);
+        }
+
+        Resolved(@Nullable IBlockState state, @Nullable NBTTagCompound tile, boolean water, @Nullable String via) {
             this.state = state;
             this.tile = tile;
             this.water = water;
+            this.via = state == null ? null : via;
+        }
+
+        Resolved via(String step) {
+            return new Resolved(this.state, this.tile, this.water, step);
         }
     }
 
@@ -202,6 +218,11 @@ public final class ModernPalette {
         return resolve(name, props, Integer.MAX_VALUE);
     }
 
+    /** A name already brought up to date ({@code minecraft:iron_chain}), default properties, nothing logged. Since 1.5.0. */
+    public static Resolved resolveUpToDate(String modern, Map<String, String> props) {
+        return resolve(modern, new LinkedHashMap<String, String>(props), false, 0);
+    }
+
     private static Resolved resolve(String modern, Map<String, String> props, boolean water, int depth) {
         Function<Map<String, String>, IBlockState> mapping;
         String fallback;
@@ -212,7 +233,7 @@ public final class ModernPalette {
             sources = new ArrayList<String>(SOURCES);
         }
         if (mapping != null) {
-            return new Resolved(mapping.apply(Collections.unmodifiableMap(props)), null, water);
+            return new Resolved(mapping.apply(Collections.unmodifiableMap(props)), null, water, "mapping");
         }
 
         String path = new ResourceLocation(modern).getPath();
@@ -220,32 +241,38 @@ public final class ModernPalette {
         if (vanilla) {
             Block owned = BlockOwnership.block(path);
             if (owned != null) {
-                return new Resolved(family(owned, props), null, water);
+                return new Resolved(family(owned, props), null, water, "owner");
             }
             for (String source : sources) {
                 Block block = registered(source + ":" + path);
                 if (block != null) {
-                    return new Resolved(family(block, props), null, water);
+                    return new Resolved(family(block, props), null, water, "family");
                 }
             }
             Resolved legacy = LegacyTiles.resolve(path, props, water);
             if (legacy != null) {
-                return legacy;
+                return legacy.via("1.12.2");
             }
             IBlockState flattened = flattened(modern, props);
             if (flattened != null) {
                 // Not carried across by name: a 1.13 name can mean something else in 1.12.2 (a floor
                 // lever's facing). The closest 1.12.2 combination already has what carries over.
-                return new Resolved(DuplicateBlocks.preferred(flattened, props), null, water);
+                return new Resolved(DuplicateBlocks.preferred(flattened, props), null, water, "1.12.2");
+            }
+            // A decorative copy Core supplies (supply/SuppliedBlocks), when nothing above has the block.
+            Block supplied = com.exiledradio.backportcore.supply.SuppliedBlocks.block(path);
+            if (supplied != null) {
+                return new Resolved(family(supplied, props), null, water, "supplied");
             }
         } else {
             Block block = registered(modern);
             if (block != null) {
-                return new Resolved(finish(block.getDefaultState(), props), null, water);
+                return new Resolved(finish(block.getDefaultState(), props), null, water, "mod");
             }
         }
         if (fallback != null && depth < 8) {
-            return resolve(fallback, props, water, depth + 1);
+            Resolved standIn = resolve(fallback, props, water, depth + 1);
+            return standIn.via != null && standIn.via.startsWith("stand-in") ? standIn : standIn.via("stand-in " + fallback);
         }
         return new Resolved(null, null, water);
     }

@@ -398,6 +398,13 @@ public final class DataPacks {
     }
 
     private static void collectJar(File jar, String folder, String ext, Map<ResourceLocation, String> out) throws IOException {
+        for (String n : jarNames(jar)) {
+            add(n, folder, ext, out);
+        }
+    }
+
+    /** The jar's {@code data/} files and {@code assets/} structure files, read once per {@link #scanDropIns}. */
+    private static List<String> jarNames(File jar) throws IOException {
         List<String> names;
         synchronized (JAR_NAMES) {
             names = JAR_NAMES.get(jar);
@@ -409,7 +416,7 @@ public final class DataPacks {
                 while (entries.hasMoreElements()) {
                     ZipEntry e = entries.nextElement();
                     String n = e.getName();
-                    if (!e.isDirectory() && n.startsWith("data/")) {
+                    if (!e.isDirectory() && (n.startsWith("data/") || isAssetStructure(n))) {
                         names.add(n);
                     }
                 }
@@ -419,9 +426,114 @@ public final class DataPacks {
                 JAR_NAMES.put(jar, names);
             }
         }
-        for (String n : names) {
-            add(n, folder, ext, out);
+        return names;
+    }
+
+    /** {@code assets/<ns>/structure(s)/...nbt}: where 1.12.2 mods (and Core) keep their templates. */
+    private static boolean isAssetStructure(String n) {
+        return n.startsWith("assets/") && n.endsWith(".nbt") && (n.contains("/structures/") || n.contains("/structure/"));
+    }
+
+    /** One file found by {@link #everyFile}: its path from the pack root, and where it is. */
+    public static final class Found {
+        public final String path;
+        /** The jar, folder or drop-in pack holding it. */
+        public final String root;
+        private final Root dropIn;
+
+        Found(String path, String root, @Nullable Root dropIn) {
+            this.path = path;
+            this.root = root;
+            this.dropIn = dropIn;
         }
+
+        /** @return the file's bytes, or null if it cannot be read */
+        @Nullable
+        public InputStream open() throws IOException {
+            if (this.dropIn != null) {
+                return this.dropIn.open(this.path);
+            }
+            return DataPacks.class.getResourceAsStream("/" + this.path);
+        }
+    }
+
+    /**
+     * Every structure file ({@code .nbt} under {@code data/<ns>/structure(s)/} or {@code assets/<ns>/structure(s)/})
+     * and every {@code .json} under {@code data/<ns>/worldgen/}, in every mod jar, class path folder and drop-in pack,
+     * for {@link ModernBlockScan}. A drop-in's file replaces a jar's of the same path.
+     *
+     * @param stamp gets each root's name, size and date, to tell whether anything changed since a cached scan
+     * @since 1.5.0
+     */
+    public static List<Found> everyFile(StringBuilder stamp) {
+        Map<String, Found> out = new LinkedHashMap<String, Found>();
+        for (File root : classPathRoots()) {
+            try {
+                if (root.isDirectory()) {
+                    List<String> paths = new ArrayList<String>();
+                    for (String top : new String[] {"data", "assets"}) {
+                        FolderRoot.walk(new File(root, top), top + "/", paths);
+                    }
+                    long newest = 0;
+                    for (String path : paths) {
+                        if (wanted(path)) {
+                            out.put(path, new Found(path, root.getName(), null));
+                            newest = Math.max(newest, new File(root, path).lastModified());
+                        }
+                    }
+                    stamp.append(root).append('|').append(paths.size()).append('|').append(newest).append('\n');
+                } else if (root.isFile()) {
+                    for (String path : jarNames(root)) {
+                        if (wanted(path)) {
+                            out.put(path, new Found(path, root.getName(), null));
+                        }
+                    }
+                    stamp.append(root).append('|').append(root.length()).append('|').append(root.lastModified()).append('\n');
+                }
+            } catch (IOException | RuntimeException e) {
+                BackportCore.LOGGER.debug("Could not look through {} for structure files: {}", root, e.toString());
+            }
+        }
+        File folder = dropInFolder();
+        for (Root r : dropIns()) {
+            try {
+                for (String path : r.list("data")) {
+                    if (wanted(path)) {
+                        out.put(path, new Found(path, r.name, r));
+                    }
+                }
+            } catch (IOException | RuntimeException e) {
+                BackportCore.LOGGER.error("Could not look through structure pack {}.", r, e);
+            }
+            File f = new File(folder, r.name);
+            stamp.append(f).append('|').append(f.isFile() ? f.length() : -1).append('|').append(newest(f)).append('\n');
+        }
+        return new ArrayList<Found>(out.values());
+    }
+
+    private static boolean wanted(String path) {
+        if (isAssetStructure(path)) {
+            return true;
+        }
+        if (!path.startsWith("data/")) {
+            return false;
+        }
+        return path.endsWith(".nbt") && (path.contains("/structure/") || path.contains("/structures/"))
+                || path.endsWith(".json") && path.contains("/worldgen/");
+    }
+
+    private static long newest(File f) {
+        if (!f.isDirectory()) {
+            return f.lastModified();
+        }
+        long n = f.lastModified();
+        File[] children = f.listFiles();
+        if (children != null) {
+            for (File c : children) {
+                n = Math.max(n, newest(c));
+            }
+        }
+        return n;
     }
 
     /** Adds {@code data/<ns>/<folder>/<rest><ext>} as {@code <ns>:<rest>}; any other path is skipped. */

@@ -2,6 +2,26 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   Modern blocks supplied by Core (`supply/`, docs/PLAN_MODERN_BLOCKS.md slices 1 and 2). `structure/ModernBlockScan`
+    reads every block name the structure files would place (`.nbt` palettes and jigsaw final states in `data/` and
+    `assets/`, processor outputs in `data/*/worldgen/`, in mod jars and drop-in packs), brought up to date and cached
+    against each jar's size and date. `config/backportcore/modern_blocks_report.txt` says what this game places for
+    each. On the family's structures and three public packs (Dungeons and Taverns, Towns and Towers, Explorify; 9,875
+    files) Core alone left out 511 names, 1.74 million blocks; the full family 35.
+*   The first 30 of those as decorative copies, `backportcore:<name>`: deepslate, cobbled, polished, bricks, tiles and
+    tile stairs; blackstone, polished, bricks, brick stairs and slab; polished tuff and slab, chiseled tuff, tuff
+    bricks, chiseled tuff bricks; waxed copper, weathered copper, cut, weathered cut, chiseled, weathered chiseled,
+    grate and weathered grate; mud bricks, pale oak planks and log, crimson planks, chiseled nether bricks, iron chain.
+    Numbers, models, textures and names are 26.3's, from `tools/supplied-blocks/generate.py` (reads `Blocks.class`
+    through `javap`, plus the loot tables, tags and assets). No behavior; 1.12.2's closest sounds.
+*   A copy is registered only when a structure file names the block and its owning backport has not registered it.
+    `config/backportcore/supplied_blocks.txt` keeps each one registered from then on. In structures they come after
+    1.12.2's own blocks and before stand-ins (`ModernPalette.Resolved.via` names the step). Copies use the owner's
+    metadata and rename both ways: adding Caves & Cliffs to a world turns `backportcore:deepslate` into
+    `cavesandcliffsbackport:deepslate` with its state, and removing it turns them back (blocks and items, slabs with
+    their doubles). Dedicated server: placed, C&C added, C&C removed, 12 of 12 checks each time. Self-test group
+    `supplied`; client test `ClientSuppliedTests` (`BACKPORTCORE_SUPPLIED=1`): every state and item has a model.
+
 *   Settings pages for mods that build their own `Configuration` (`BackportSettings.register(modid, config, categories...)`):
     each named top-level category is a row with its subcategories after it; `BackportSettings.hint` stands in for the
     `@Setting` annotations (`client`, `server`, `hidden`, `newChunks`, `vanilla=`, `list=`, `icon=`, `toggle=`). Done saves

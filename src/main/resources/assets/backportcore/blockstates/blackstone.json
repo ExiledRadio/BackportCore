@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "backportcore:modern/blackstone"
+    },
+    "inventory": {
+      "model": "backportcore:modern/blackstone"
+    }
+  }
+}

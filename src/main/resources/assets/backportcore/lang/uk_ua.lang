@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Розмиття тла мен�
 options.accessibility.menu_background_blurriness.tooltip=Змінює розмитість тла меню.
 debug.profiler_chart.help=F3 + 1 = Показати графік профілювання
 debug.fps_charts.help=F3 + 2 = Показати графіки FPS і TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Полірована чорнокам'яна цегла
+tile.backportcore.deepslate_bricks.name=Глибосланцева цегла
+tile.backportcore.polished_blackstone.name=Полірований чорнокамінь
+tile.backportcore.blackstone.name=Чорнокамінь
+tile.backportcore.polished_tuff.name=Полірований туф
+tile.backportcore.waxed_copper_block.name=Вощений блок міді
+tile.backportcore.polished_deepslate.name=Полірований глибосланець
+tile.backportcore.cobbled_deepslate.name=Глибосланцевий кругляк
+tile.backportcore.waxed_weathered_copper.name=Вощена вивітрена мідь
+tile.backportcore.deepslate_tile_stairs.name=Сходи з глибосланцевих кахлів
+tile.backportcore.deepslate.name=Глибосланець
+tile.backportcore.polished_tuff_slab.name=Плита з полірованого туфу
+tile.backportcore.waxed_cut_copper.name=Вощена тесана мідь
+tile.backportcore.waxed_copper_grate.name=Вощена мідна решітка
+tile.backportcore.chiseled_tuff.name=Різьблений туф
+tile.backportcore.deepslate_tiles.name=Глибосланцеві кахлі
+tile.backportcore.polished_blackstone_brick_stairs.name=Сходи з полірованої чорнокам'яної цегли
+tile.backportcore.pale_oak_planks.name=Блідо-дубові дошки
+tile.backportcore.mud_bricks.name=Лимпач
+tile.backportcore.waxed_chiseled_copper.name=Вощена різьблена мідь
+tile.backportcore.waxed_weathered_cut_copper.name=Вощена вивітрена тесана мідь
+tile.backportcore.pale_oak_log.name=Блідо-дубова колода
+tile.backportcore.chiseled_nether_bricks.name=Різьблена незерська цегла
+tile.backportcore.waxed_weathered_chiseled_copper.name=Вощена вивітрена різьблена мідь
+tile.backportcore.crimson_planks.name=Багряні дошки
+tile.backportcore.chiseled_tuff_bricks.name=Різьблена туфова цегла
+tile.backportcore.tuff_bricks.name=Туфова цегла
+tile.backportcore.iron_chain.name=Залізний ланцюг
+tile.backportcore.polished_blackstone_slab.name=Плита з полірованого чорнокаменю
+tile.backportcore.waxed_weathered_copper_grate.name=Вощена вивітрена мідна решітка
+tile.backportcore.polished_tuff_double_slab.name=Плита з полірованого туфу
+tile.backportcore.polished_blackstone_double_slab.name=Плита з полірованого чорнокаменю
+# ---- end of supplied blocks ----

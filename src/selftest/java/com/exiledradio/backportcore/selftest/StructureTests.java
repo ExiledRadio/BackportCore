@@ -79,7 +79,7 @@ final class StructureTests {
 
     static void init() {
         ModernPalette.map("backportcore_selftest:mapped", props -> Blocks.GOLD_BLOCK.getDefaultState());
-        ModernPalette.fallback("minecraft:tuff_bricks", "minecraft:stone_bricks");
+        ModernPalette.fallback("minecraft:polished_tuff_wall", "minecraft:stone_bricks");
         ModernPalette.lootTable("minecraft:chests/shipwreck_supply", new ResourceLocation(SelfTestMod.MOD_ID, "chests/test"));
         MapGenStructureIO.registerStructure(TestStructure.Start.class, "BCST_Test");
         MapGenStructureIO.registerStructureComponent(TestStructure.Piece.class, "BCST_TestPiece");
@@ -167,7 +167,7 @@ final class StructureTests {
             checkState("fallback trapdoor", "minecraft:spruce_trapdoor[facing=north,half=top,open=true]", 5023, Blocks.TRAPDOOR,
                     "half", "top", "open", "true");
             checkState("fallback stripped log", "minecraft:stripped_birch_log[axis=z]", 5023, Blocks.LOG, "variant", "birch", "axis", "z");
-            checkState("registered fallback", "minecraft:tuff_bricks", 5023, Blocks.STONEBRICK);
+            checkState("registered fallback", "minecraft:polished_tuff_wall", 5023, Blocks.STONEBRICK);
             checkState("registered mapping", "backportcore_selftest:mapped", 5023, Blocks.GOLD_BLOCK);
 
             ModernPalette.Resolved bed = ModernPalette.resolve("minecraft:lime_bed", props("facing", "east", "part", "head"), 5023);
@@ -188,7 +188,7 @@ final class StructureTests {
             check("palette kelp without its mod is water, and wet", is(kelp, Blocks.WATER) && kelp.water, show(kelp));
             ModernPalette.Resolved wet = ModernPalette.resolve("minecraft:oak_slab", props("type", "bottom", "waterlogged", "true"), 5023);
             check("palette waterlogged=true is wet", wet.water && is(wet, Blocks.WOODEN_SLAB, "half", "bottom"), show(wet));
-            ModernPalette.Resolved missing = ModernPalette.resolve("minecraft:blackstone", props(), 5023);
+            ModernPalette.Resolved missing = ModernPalette.resolve("minecraft:gilded_blackstone", props(), 5023);
             check("palette a block nothing has is null", missing.state == null, show(missing));
             check("palette loot table", "backportcore_selftest:chests/test".equals(ModernPalette.lootTable("minecraft:chests/shipwreck_supply"))
                     && "minecraft:chests/simple_dungeon".equals(ModernPalette.lootTable("minecraft:chests/simple_dungeon")));
@@ -250,7 +250,7 @@ final class StructureTests {
             check("templates jigsaws read", bastion.jigsaws().size() > 5 && !bastion.jigsaws().get(0).pool.isEmpty()
                     && !bastion.jigsaws().get(0).finalState.isEmpty(), bastion.jigsaws().size() + " first pool " + bastion.jigsaws().get(0).pool
                     + " front " + bastion.jigsaws().get(0).front + " top " + bastion.jigsaws().get(0).top);
-            check("templates unresolved blocks are reported", bastion.unresolvedBlocks().contains("minecraft:blackstone"),
+            check("templates unresolved blocks are reported", bastion.unresolvedBlocks().contains("minecraft:cracked_polished_blackstone_bricks"),
                     bastion.unresolvedBlocks());
             ModernTemplate portal = ModernTemplate.load(id("v26/ruined_portal/portal_1"));
             BackportCore.LOGGER.info("SELFTEST INFO ruined portal_1 needs: {}", portal.unresolvedBlocks());

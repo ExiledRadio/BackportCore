@@ -63,6 +63,20 @@ Core reads every mod jar's `data/` folder at load complete, after every backport
 2. **Find one:** `/locate structure mystructures:tower`, then teleport there.
 3. **Look for stand-ins:** a block 1.12.2 and the installed mods don't have is placed as a stand-in. Fix it with
    `ModernPalette` (section 5).
+4. **Read the block report** (Core 1.5.0): `config/backportcore/modern_blocks_report.txt` lists every block name the
+   structure files use, how many blocks, and what this game places for it. `missing` names are left out.
+
+### Supplied blocks (Core 1.5.0)
+
+Core supplies decorative copies of modern blocks the structures use when no installed mod has them: deepslate,
+tuff and blackstone sets, waxed copper, mud bricks, pale oak and crimson planks, iron chains and others (30 so far,
+listed in `assets/backportcore/supplied/blocks.txt`). Only the blocks your files name are registered.
+
+- They look and break like vanilla's and do nothing else. With the backport that owns a block installed, structures
+  get its real block instead, with its behavior (Caves & Cliffs' copper oxidizes).
+- Blocks Core supplied once stay registered (`config/backportcore/supplied_blocks.txt`), so removing a pack does
+  not remove them from worlds.
+- Installing the owning backport later turns Core's copies in a world into its blocks; removing it turns them back.
 
 Seeds match: starts land where 26.3 puts them for the same seed, salt and spacing, so a modern seed map's numbers for
 the set can be compared directly.
@@ -90,7 +104,8 @@ ModernPalette.source("othermod");   // othermod:kelp serves minecraft:kelp
 ```
 
 The backports already provide many modern blocks (Update Aquatic's coral and kelp, Village & Pillage's lanterns and
-barrels, and so on). With them installed, their blocks are used.
+barrels, and so on). With them installed, their blocks are used. Core supplies some decorative ones itself
+(section 3); a mapping wins over them.
 
 **Loot tables and entities** in templates need 1.12.2 counterparts:
 

@@ -32,7 +32,9 @@ public final class SelfTestMod {
         if (FMLCommonHandler.instance().getSide().isClient()) {
             // 1.19.4's accessibility onboarding takes the first title screen: only the menu shots ask for it.
             OptionsRowsShots.onboardingWanted(ClientMenuShots.active());
-            if (ClientOptiFineTests.active()) {
+            if (ClientSuppliedTests.active()) {
+                ClientSuppliedTests.register();
+            } else if (ClientOptiFineTests.active()) {
                 ClientOptiFineTests.register();
             } else if (ClientMenuShots.active()) {
                 ClientMenuShots.register();
@@ -86,6 +88,7 @@ public final class SelfTestMod {
     @Mod.EventHandler
     public void preInit(net.minecraftforge.fml.common.event.FMLPreInitializationEvent event) {
         DataStructureTests.preInit();
+        SuppliedTests.preInit();
     }
 
     @Mod.EventHandler

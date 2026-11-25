@@ -1,0 +1,62 @@
+{
+  "variants": {
+    "axis=x": [
+      {
+        "model": "backportcore:modern/deepslate",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "backportcore:modern/deepslate",
+        "x": 90,
+        "y": 90
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored",
+        "x": 90,
+        "y": 90
+      }
+    ],
+    "axis=y": [
+      {
+        "model": "backportcore:modern/deepslate"
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored"
+      },
+      {
+        "model": "backportcore:modern/deepslate",
+        "y": 180
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored",
+        "y": 180
+      }
+    ],
+    "axis=z": [
+      {
+        "model": "backportcore:modern/deepslate",
+        "x": 90
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored",
+        "x": 90
+      },
+      {
+        "model": "backportcore:modern/deepslate",
+        "x": 90,
+        "y": 180
+      },
+      {
+        "model": "backportcore:modern/deepslate_mirrored",
+        "x": 90,
+        "y": 180
+      }
+    ]
+  }
+}

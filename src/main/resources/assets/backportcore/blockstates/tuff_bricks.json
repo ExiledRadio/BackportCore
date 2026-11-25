@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "backportcore:modern/tuff_bricks"
+    },
+    "inventory": {
+      "model": "backportcore:modern/tuff_bricks"
+    }
+  }
+}

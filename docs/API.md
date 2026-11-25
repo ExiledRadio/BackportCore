@@ -450,6 +450,41 @@ A property a file or processor leaves out has the block's default value, as in t
 (owner or source) follows the family's 1.12.2 convention: `type=bottom|top` sets `half` on `<name>_slab`, and
 `type=double` is the same mod's `<name>_double_slab`.
 
+`Resolved.via` (1.5.0) names the step that gave the block: `mapping`, `owner`, `family`, `1.12.2`, `supplied`,
+`stand-in <name>`, or null. `ModernPalette.resolveUpToDate(name, props)` resolves a name that is already today's
+without logging.
+
+### Supplied blocks (`supply.SuppliedBlocks`, `structure.ModernBlockScan`, 1.5.0)
+
+Core registers decorative copies, `backportcore:<name>`, of the modern blocks structure files use that nothing else
+in the game has. In the palette they come after 1.12.2's own blocks and before stand-ins. Design:
+[PLAN_MODERN_BLOCKS.md](PLAN_MODERN_BLOCKS.md).
+
+- **Scan.** `ModernBlockScan.scan()` (Core's pre-init) reads every `.nbt` palette and jigsaw `final_state` under
+  `data/<ns>/structure(s)/` and `assets/<ns>/structure(s)/`, and every processor `output_state` under
+  `data/<ns>/worldgen/`, in mod jars and drop-in packs. Names are brought up to date first. The result is cached in
+  `config/backportcore/cache/modern_block_scan.txt` against each jar's and pack's size and date. `uses()` gives
+  each name's blocks placed and files.
+- **Report.** At load complete, `config/backportcore/modern_blocks_report.txt` lists every name with what this game
+  uses for it (`missing`, `stand-in ...`, `supplied`, `owner`, `family`, `1.12.2`, `mapping`).
+- **Table.** `assets/backportcore/supplied/blocks.txt` (`SuppliedTable`), written by
+  `tools/supplied-blocks/generate.py` from today's jar: shape, hardness, resistance, sound, light, map color, tool and
+  level, drop, owner and the owner's name for it. Shapes: cube, grate, pillar, chain, stairs, slab (`SuppliedShapes`).
+- **Registration** (`Register<Block>` at LOWEST): a row is registered when a structure file names it or
+  `config/backportcore/supplied_blocks.txt` lists it, and its owner has not registered the block. A row Core has
+  never supplied is also skipped when another source already gives it. Every registered row is added to
+  `supplied_blocks.txt` and stays registered from then on.
+- **Renames.** Copies use their owner's metadata layout. When the owner is added, `backportcore:<name>` becomes
+  `<owner>:<name>`; when it is removed, its names become Core's copies (`MissingMappings` for blocks and items).
+  Slabs carry their `_double_slab`.
+
+```java
+Block deepslate = SuppliedBlocks.block("deepslate");      // Core's copy in this game, or null
+Map<String, ModernBlockScan.Use> used = ModernBlockScan.uses();
+```
+
+Copies have no behavior: copper does not oxidize. Sounds are 1.12.2's closest (today's sound name is in the table).
+
 ### Pieces and scattered structures (`TemplatePiece`, `ScatteredPlacement`, `ScatteredStructure`)
 
 ```java

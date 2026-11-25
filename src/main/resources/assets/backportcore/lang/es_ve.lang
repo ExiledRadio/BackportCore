@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Desenfoque de fondo
 options.accessibility.menu_background_blurriness.tooltip=Controla el desenfoque del fondo del menú.
 debug.profiler_chart.help=F3 + 1 = Mostrar gráfico de análisis de rendimiento
 debug.fps_charts.help=F3 + 2 = Mostrar gráficos de FPS y TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Ladrillos de piedra negra pulida
+tile.backportcore.deepslate_bricks.name=Ladrillos de pizarra profunda
+tile.backportcore.polished_blackstone.name=Piedra negra pulida
+tile.backportcore.blackstone.name=Piedra negra
+tile.backportcore.polished_tuff.name=Toba pulida
+tile.backportcore.waxed_copper_block.name=Bloque de cobre encerado
+tile.backportcore.polished_deepslate.name=Pizarra abismal pulida
+tile.backportcore.cobbled_deepslate.name=Pizarra abismal rocosa
+tile.backportcore.waxed_weathered_copper.name=Cobre degradado encerado
+tile.backportcore.deepslate_tile_stairs.name=Escaleras de baldosas de pizarra abismal
+tile.backportcore.deepslate.name=Pizarra abismal
+tile.backportcore.polished_tuff_slab.name=Losa de toba pulida
+tile.backportcore.waxed_cut_copper.name=Cobre cortado encerado
+tile.backportcore.waxed_copper_grate.name=Rejilla de cobre encerado
+tile.backportcore.chiseled_tuff.name=Toba cincelada
+tile.backportcore.deepslate_tiles.name=Baldosas de pizarra abismal
+tile.backportcore.polished_blackstone_brick_stairs.name=Escaleras de ladrillos de piedra negra pulida
+tile.backportcore.pale_oak_planks.name=Tablones de Madera Pálida
+tile.backportcore.mud_bricks.name=Ladrillos de adobe
+tile.backportcore.waxed_chiseled_copper.name=Cobre cincelado encerado
+tile.backportcore.waxed_weathered_cut_copper.name=Cobre cortado degradado encerado
+tile.backportcore.pale_oak_log.name=Tronco Pálido
+tile.backportcore.chiseled_nether_bricks.name=Ladrillos del Nether cincelados
+tile.backportcore.waxed_weathered_chiseled_copper.name=Cobre cincelado degradado encerado
+tile.backportcore.crimson_planks.name=Madera carmesí
+tile.backportcore.chiseled_tuff_bricks.name=Ladrillos de toba cincelados
+tile.backportcore.tuff_bricks.name=Ladrillos de toba
+tile.backportcore.iron_chain.name=Cadena de hierro
+tile.backportcore.polished_blackstone_slab.name=Losa de piedra negra pulida
+tile.backportcore.waxed_weathered_copper_grate.name=Rejilla de cobre degradado encerado
+tile.backportcore.polished_tuff_double_slab.name=Losa de toba pulida
+tile.backportcore.polished_blackstone_double_slab.name=Losa de piedra negra pulida
+# ---- end of supplied blocks ----

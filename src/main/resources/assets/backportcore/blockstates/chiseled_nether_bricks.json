@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "normal": {
+      "model": "backportcore:modern/chiseled_nether_bricks"
+    },
+    "inventory": {
+      "model": "backportcore:modern/chiseled_nether_bricks"
+    }
+  }
+}

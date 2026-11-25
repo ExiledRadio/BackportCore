@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Sfocatura sfondo menù
 options.accessibility.menu_background_blurriness.tooltip=Regola la sfocatura degli sfondi dei menù.
 debug.profiler_chart.help=F3 + 1 = Mostra il grafico della profilatura
 debug.fps_charts.help=F3 + 2 = Mostra i grafici di FPS e TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Mattoni di pietranera levigata
+tile.backportcore.deepslate_bricks.name=Mattoni di ardesia profonda
+tile.backportcore.polished_blackstone.name=Pietranera levigata
+tile.backportcore.blackstone.name=Pietranera
+tile.backportcore.polished_tuff.name=Tufo levigato
+tile.backportcore.waxed_copper_block.name=Blocco di rame cerato
+tile.backportcore.polished_deepslate.name=Ardesia profonda levigata
+tile.backportcore.cobbled_deepslate.name=Pietrisco di ardesia profonda
+tile.backportcore.waxed_weathered_copper.name=Rame corroso cerato
+tile.backportcore.deepslate_tile_stairs.name=Scalini di piastrelle di ardesia profonda
+tile.backportcore.deepslate.name=Ardesia profonda
+tile.backportcore.polished_tuff_slab.name=Lastra di tufo levigato
+tile.backportcore.waxed_cut_copper.name=Rame inciso cerato
+tile.backportcore.waxed_copper_grate.name=Grata di rame cerato
+tile.backportcore.chiseled_tuff.name=Tufo cesellato
+tile.backportcore.deepslate_tiles.name=Piastrelle di ardesia profonda
+tile.backportcore.polished_blackstone_brick_stairs.name=Scalini di mattoni di pietranera levigata
+tile.backportcore.pale_oak_planks.name=Assi di quercia pallida
+tile.backportcore.mud_bricks.name=Mattoni di fango
+tile.backportcore.waxed_chiseled_copper.name=Rame cesellato cerato
+tile.backportcore.waxed_weathered_cut_copper.name=Rame inciso corroso cerato
+tile.backportcore.pale_oak_log.name=Tronco di quercia pallida
+tile.backportcore.chiseled_nether_bricks.name=Mattoni del Nether cesellati
+tile.backportcore.waxed_weathered_chiseled_copper.name=Rame cesellato corroso cerato
+tile.backportcore.crimson_planks.name=Assi cremisi
+tile.backportcore.chiseled_tuff_bricks.name=Mattoni di tufo cesellati
+tile.backportcore.tuff_bricks.name=Mattoni di tufo
+tile.backportcore.iron_chain.name=Catena di ferro
+tile.backportcore.polished_blackstone_slab.name=Lastra di pietranera levigata
+tile.backportcore.waxed_weathered_copper_grate.name=Grata di rame corroso cerato
+tile.backportcore.polished_tuff_double_slab.name=Lastra di tufo levigato
+tile.backportcore.polished_blackstone_double_slab.name=Lastra di pietranera levigata
+# ---- end of supplied blocks ----

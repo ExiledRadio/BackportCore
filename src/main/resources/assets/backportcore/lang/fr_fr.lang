@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Flou de l'arrière-plan des men
 options.accessibility.menu_background_blurriness.tooltip=Modifie le flou de l'arrière-plan des menus.
 debug.profiler_chart.help=F3 + 1 = Afficher le graphique du profileur
 debug.fps_charts.help=F3 + 2 = Afficher les graphiques FPS et TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Pierre noire taillée
+tile.backportcore.deepslate_bricks.name=Ardoise des abîmes taillée
+tile.backportcore.polished_blackstone.name=Pierre noire
+tile.backportcore.blackstone.name=Roche noire
+tile.backportcore.polished_tuff.name=Tuf poli
+tile.backportcore.waxed_copper_block.name=Bloc de cuivre ciré
+tile.backportcore.polished_deepslate.name=Ardoise des abîmes polie
+tile.backportcore.cobbled_deepslate.name=Pierres des abîmes
+tile.backportcore.waxed_weathered_copper.name=Cuivre érodé ciré
+tile.backportcore.deepslate_tile_stairs.name=Escalier en ardoise des abîmes carrelée
+tile.backportcore.deepslate.name=Ardoise des abîmes
+tile.backportcore.polished_tuff_slab.name=Dalle de tuf poli
+tile.backportcore.waxed_cut_copper.name=Cuivre taillé ciré
+tile.backportcore.waxed_copper_grate.name=Grille en cuivre ciré
+tile.backportcore.chiseled_tuff.name=Tuf sculpté
+tile.backportcore.deepslate_tiles.name=Ardoise des abîmes carrelée
+tile.backportcore.polished_blackstone_brick_stairs.name=Escalier en pierre noire taillée
+tile.backportcore.pale_oak_planks.name=Planches de chêne pâle
+tile.backportcore.mud_bricks.name=Briques de terre crue
+tile.backportcore.waxed_chiseled_copper.name=Cuivre sculpté ciré
+tile.backportcore.waxed_weathered_cut_copper.name=Cuivre taillé érodé ciré
+tile.backportcore.pale_oak_log.name=Bûche de chêne pâle
+tile.backportcore.chiseled_nether_bricks.name=Briques du Nether sculptées
+tile.backportcore.waxed_weathered_chiseled_copper.name=Cuivre sculpté érodé ciré
+tile.backportcore.crimson_planks.name=Planches carmin
+tile.backportcore.chiseled_tuff_bricks.name=Tuf taillé sculpté
+tile.backportcore.tuff_bricks.name=Tuf taillé
+tile.backportcore.iron_chain.name=Chaîne en fer
+tile.backportcore.polished_blackstone_slab.name=Dalle de pierre noire
+tile.backportcore.waxed_weathered_copper_grate.name=Grille en cuivre érodé ciré
+tile.backportcore.polished_tuff_double_slab.name=Dalle de tuf poli
+tile.backportcore.polished_blackstone_double_slab.name=Dalle de pierre noire
+# ---- end of supplied blocks ----

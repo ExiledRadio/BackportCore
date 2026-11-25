@@ -1,0 +1,32 @@
+# Modern name, the backport that owns it, and the block's name there when it differs. The backport of the update
+# that added the block owns it (a copier, such as Wild Update's deepslate, follows the owner's layout).
+polished_blackstone_bricks netherupdatebackport
+polished_blackstone netherupdatebackport
+blackstone netherupdatebackport
+polished_blackstone_brick_stairs netherupdatebackport
+polished_blackstone_slab netherupdatebackport
+chiseled_nether_bricks netherupdatebackport
+crimson_planks netherupdatebackport
+iron_chain netherupdatebackport chain
+deepslate_bricks cavesandcliffsbackport
+polished_deepslate cavesandcliffsbackport
+cobbled_deepslate cavesandcliffsbackport
+deepslate_tile_stairs cavesandcliffsbackport
+deepslate cavesandcliffsbackport
+deepslate_tiles cavesandcliffsbackport
+waxed_copper_block cavesandcliffsbackport
+waxed_weathered_copper cavesandcliffsbackport
+waxed_cut_copper cavesandcliffsbackport
+waxed_weathered_cut_copper cavesandcliffsbackport
+mud_bricks wildupdatebackport
+polished_tuff trickytrialsbackport
+polished_tuff_slab trickytrialsbackport
+waxed_copper_grate trickytrialsbackport
+chiseled_tuff trickytrialsbackport
+pale_oak_planks trickytrialsbackport
+waxed_chiseled_copper trickytrialsbackport
+pale_oak_log trickytrialsbackport
+waxed_weathered_chiseled_copper trickytrialsbackport
+chiseled_tuff_bricks trickytrialsbackport
+tuff_bricks trickytrialsbackport
+waxed_weathered_copper_grate trickytrialsbackport

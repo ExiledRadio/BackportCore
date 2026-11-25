@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=選單背景模糊程度
 options.accessibility.menu_background_blurriness.tooltip=變更選單背景的模糊程度。
 debug.profiler_chart.help=F3 + 1 = 顯示效能分析圖表
 debug.fps_charts.help=F3 + 2 = 顯示 FPS 與 TPS 圖表
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=拋光黑石磚
+tile.backportcore.deepslate_bricks.name=深板岩磚
+tile.backportcore.polished_blackstone.name=拋光黑石
+tile.backportcore.blackstone.name=黑石
+tile.backportcore.polished_tuff.name=拋光凝灰岩
+tile.backportcore.waxed_copper_block.name=上蠟的銅方塊
+tile.backportcore.polished_deepslate.name=拋光深板岩
+tile.backportcore.cobbled_deepslate.name=深板岩碎石
+tile.backportcore.waxed_weathered_copper.name=上蠟的風化銅方塊
+tile.backportcore.deepslate_tile_stairs.name=深板岩磚瓦階梯
+tile.backportcore.deepslate.name=深板岩
+tile.backportcore.polished_tuff_slab.name=拋光凝灰岩半磚
+tile.backportcore.waxed_cut_copper.name=上蠟的切製銅方塊
+tile.backportcore.waxed_copper_grate.name=上蠟的銅格柵
+tile.backportcore.chiseled_tuff.name=浮雕凝灰岩
+tile.backportcore.deepslate_tiles.name=深板岩磚瓦
+tile.backportcore.polished_blackstone_brick_stairs.name=拋光黑石磚階梯
+tile.backportcore.pale_oak_planks.name=蒼白橡木材
+tile.backportcore.mud_bricks.name=泥磚
+tile.backportcore.waxed_chiseled_copper.name=上蠟的浮雕銅方塊
+tile.backportcore.waxed_weathered_cut_copper.name=上蠟的風化切製銅方塊
+tile.backportcore.pale_oak_log.name=蒼白橡木原木
+tile.backportcore.chiseled_nether_bricks.name=浮雕地獄磚
+tile.backportcore.waxed_weathered_chiseled_copper.name=上蠟的風化浮雕銅方塊
+tile.backportcore.crimson_planks.name=緋紅蕈木材
+tile.backportcore.chiseled_tuff_bricks.name=浮雕凝灰岩磚
+tile.backportcore.tuff_bricks.name=凝灰岩磚
+tile.backportcore.iron_chain.name=鐵鏈
+tile.backportcore.polished_blackstone_slab.name=拋光黑石半磚
+tile.backportcore.waxed_weathered_copper_grate.name=上蠟的風化銅格柵
+tile.backportcore.polished_tuff_double_slab.name=拋光凝灰岩半磚
+tile.backportcore.polished_blackstone_double_slab.name=拋光黑石半磚
+# ---- end of supplied blocks ----

@@ -149,6 +149,8 @@ public final class BackportCore {
         // Blocks another installed mod adds under its own names that the backports add too (duplicate/).
         com.exiledradio.backportcore.duplicate.QuarkPairs.preInit();
         com.exiledradio.backportcore.compat.DynamicTrees.preInit();
+        // Every block name the structure files would place, before the block registry event (structure/ModernBlockScan).
+        com.exiledradio.backportcore.structure.ModernBlockScan.scan();
         // The family's boats and chest boats (boat/): the backports' old boats renamed as they load, and using one
         // places an entity (entity_place).
         com.exiledradio.backportcore.boat.Boats.registerFixes();
@@ -210,6 +212,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.settings.BackportSettings.build();
         // Structures from today's data files, after every backport registered the structures it generates itself.
         com.exiledradio.backportcore.structure.DataStructures.load();
+        // What this game makes of each of those names (config/backportcore/modern_blocks_report.txt).
+        com.exiledradio.backportcore.structure.ModernBlockScan.report();
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();

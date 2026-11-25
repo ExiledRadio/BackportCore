@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Размытие фона
 options.accessibility.menu_background_blurriness.tooltip=Изменяет степень размытия фона в меню.
 debug.profiler_chart.help=F3 + 1 = Показать график профилирования
 debug.fps_charts.help=F3 + 2 = Показать графики FPS и TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Полированно-чернитные кирпичи
+tile.backportcore.deepslate_bricks.name=Глубинносланцевые кирпичи
+tile.backportcore.polished_blackstone.name=Полированный чернит
+tile.backportcore.blackstone.name=Чернит
+tile.backportcore.polished_tuff.name=Полированный туф
+tile.backportcore.waxed_copper_block.name=Вощёный медный блок
+tile.backportcore.polished_deepslate.name=Полированный глубинный сланец
+tile.backportcore.cobbled_deepslate.name=Колотый глубинный сланец
+tile.backportcore.waxed_weathered_copper.name=Вощёный состаренный медный блок
+tile.backportcore.deepslate_tile_stairs.name=Ступеньки из глубинносланцевого плитняка
+tile.backportcore.deepslate.name=Глубинный сланец
+tile.backportcore.polished_tuff_slab.name=Плита из полированного туфа
+tile.backportcore.waxed_cut_copper.name=Вощёный резной медный блок
+tile.backportcore.waxed_copper_grate.name=Вощёная медная решётка
+tile.backportcore.chiseled_tuff.name=Резной туф
+tile.backportcore.deepslate_tiles.name=Глубинносланцевый плитняк
+tile.backportcore.polished_blackstone_brick_stairs.name=Ступеньки из полированно-чернитного кирпича
+tile.backportcore.pale_oak_planks.name=Доски из бледного дуба
+tile.backportcore.mud_bricks.name=Саманные кирпичи
+tile.backportcore.waxed_chiseled_copper.name=Вощёный точёный медный блок
+tile.backportcore.waxed_weathered_cut_copper.name=Вощёный состаренный резной медный блок
+tile.backportcore.pale_oak_log.name=Бревно бледного дуба
+tile.backportcore.chiseled_nether_bricks.name=Резные незерские кирпичи
+tile.backportcore.waxed_weathered_chiseled_copper.name=Вощёный состаренный точёный медный блок
+tile.backportcore.crimson_planks.name=Багровые доски
+tile.backportcore.chiseled_tuff_bricks.name=Резные туфовые кирпичи
+tile.backportcore.tuff_bricks.name=Туфовые кирпичи
+tile.backportcore.iron_chain.name=Железная цепь
+tile.backportcore.polished_blackstone_slab.name=Плита из полированного чернита
+tile.backportcore.waxed_weathered_copper_grate.name=Вощёная состаренная медная решётка
+tile.backportcore.polished_tuff_double_slab.name=Плита из полированного туфа
+tile.backportcore.polished_blackstone_double_slab.name=Плита из полированного чернита
+# ---- end of supplied blocks ----

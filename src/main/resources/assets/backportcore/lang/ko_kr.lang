@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=메뉴 배경 흐림
 options.accessibility.menu_background_blurriness.tooltip=메뉴 배경의 흐릿함 정도를 조절합니다.
 debug.profiler_chart.help=F3 + 1 = 프로파일러 차트 표시
 debug.fps_charts.help=F3 + 2 = FPS 및 TPS 차트 표시
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=윤나는 흑암 벽돌
+tile.backportcore.deepslate_bricks.name=심층암 벽돌
+tile.backportcore.polished_blackstone.name=윤나는 흑암
+tile.backportcore.blackstone.name=흑암
+tile.backportcore.polished_tuff.name=윤나는 응회암
+tile.backportcore.waxed_copper_block.name=밀랍칠한 구리 블록
+tile.backportcore.polished_deepslate.name=윤나는 심층암
+tile.backportcore.cobbled_deepslate.name=심층암 조약돌
+tile.backportcore.waxed_weathered_copper.name=밀랍칠한 녹슨 구리
+tile.backportcore.deepslate_tile_stairs.name=심층암 타일 계단
+tile.backportcore.deepslate.name=심층암
+tile.backportcore.polished_tuff_slab.name=윤나는 응회암 반 블록
+tile.backportcore.waxed_cut_copper.name=밀랍칠한 깎인 구리
+tile.backportcore.waxed_copper_grate.name=밀랍칠한 구리 격자
+tile.backportcore.chiseled_tuff.name=조각된 응회암
+tile.backportcore.deepslate_tiles.name=심층암 타일
+tile.backportcore.polished_blackstone_brick_stairs.name=윤나는 흑암 벽돌 계단
+tile.backportcore.pale_oak_planks.name=창백한 참나무 판자
+tile.backportcore.mud_bricks.name=진흙 벽돌
+tile.backportcore.waxed_chiseled_copper.name=밀랍칠한 조각된 구리
+tile.backportcore.waxed_weathered_cut_copper.name=밀랍칠한 녹슨 깎인 구리
+tile.backportcore.pale_oak_log.name=창백한 참나무 원목
+tile.backportcore.chiseled_nether_bricks.name=조각된 네더 벽돌
+tile.backportcore.waxed_weathered_chiseled_copper.name=밀랍칠한 녹슨 조각된 구리
+tile.backportcore.crimson_planks.name=진홍빛 판자
+tile.backportcore.chiseled_tuff_bricks.name=조각된 응회암 벽돌
+tile.backportcore.tuff_bricks.name=응회암 벽돌
+tile.backportcore.iron_chain.name=철 사슬
+tile.backportcore.polished_blackstone_slab.name=윤나는 흑암 반 블록
+tile.backportcore.waxed_weathered_copper_grate.name=밀랍칠한 녹슨 구리 격자
+tile.backportcore.polished_tuff_double_slab.name=윤나는 응회암 반 블록
+tile.backportcore.polished_blackstone_double_slab.name=윤나는 흑암 반 블록
+# ---- end of supplied blocks ----

@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Menühintergrund‐Unschärfe
 options.accessibility.menu_background_blurriness.tooltip=Steuert die Weichzeichnung der Menühintergründe.
 debug.profiler_chart.help=F3 + 1 = Profiler-Diagramm anzeigen
 debug.fps_charts.help=F3 + 2 = FPS- und TPS-Diagramme anzeigen
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Polierte Schwarzsteinziegel
+tile.backportcore.deepslate_bricks.name=Tiefenschieferziegel
+tile.backportcore.polished_blackstone.name=Polierter Schwarzstein
+tile.backportcore.blackstone.name=Schwarzstein
+tile.backportcore.polished_tuff.name=Polierter Tuffstein
+tile.backportcore.waxed_copper_block.name=Gewachster Kupferblock
+tile.backportcore.polished_deepslate.name=Polierter Tiefenschiefer
+tile.backportcore.cobbled_deepslate.name=Bruchtiefenschiefer
+tile.backportcore.waxed_weathered_copper.name=Gewachster verwitterter Kupferblock
+tile.backportcore.deepslate_tile_stairs.name=Tiefenschieferfliesentreppe
+tile.backportcore.deepslate.name=Tiefenschiefer
+tile.backportcore.polished_tuff_slab.name=Polierte Tuffsteinstufe
+tile.backportcore.waxed_cut_copper.name=Gewachster geschnittener Kupferblock
+tile.backportcore.waxed_copper_grate.name=Gewachster Kupferrost
+tile.backportcore.chiseled_tuff.name=Gemeißelter Tuffstein
+tile.backportcore.deepslate_tiles.name=Tiefenschieferfliesen
+tile.backportcore.polished_blackstone_brick_stairs.name=Polierte Schwarzsteinziegeltreppe
+tile.backportcore.pale_oak_planks.name=Blasseichenholzbretter
+tile.backportcore.mud_bricks.name=Schlammziegel
+tile.backportcore.waxed_chiseled_copper.name=Gewachster gemeißelter Kupferblock
+tile.backportcore.waxed_weathered_cut_copper.name=Gewachster verwitterter geschnittener Kupferblock
+tile.backportcore.pale_oak_log.name=Blasseichenstamm
+tile.backportcore.chiseled_nether_bricks.name=Gemeißelte Netherziegel
+tile.backportcore.waxed_weathered_chiseled_copper.name=Gewachster verwitterter gemeißelter Kupferblock
+tile.backportcore.crimson_planks.name=Karmesinbretter
+tile.backportcore.chiseled_tuff_bricks.name=Gemeißelte Tuffsteinziegel
+tile.backportcore.tuff_bricks.name=Tuffsteinziegel
+tile.backportcore.iron_chain.name=Eisenkette
+tile.backportcore.polished_blackstone_slab.name=Polierte Schwarzsteinstufe
+tile.backportcore.waxed_weathered_copper_grate.name=Gewachster verwitterter Kupferrost
+tile.backportcore.polished_tuff_double_slab.name=Polierte Tuffsteinstufe
+tile.backportcore.polished_blackstone_double_slab.name=Polierte Schwarzsteinstufe
+# ---- end of supplied blocks ----

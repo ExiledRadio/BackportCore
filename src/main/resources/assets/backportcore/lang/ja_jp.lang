@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=メニュー背景のぼかし�
 options.accessibility.menu_background_blurriness.tooltip=メニュー背景のぼかし具合を変更します。
 debug.profiler_chart.help=F3 + 1 = プロファイラーのグラフを表示
 debug.fps_charts.help=F3 + 2 = FPS と TPS のグラフを表示
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=磨かれたブラックストーンレンガ
+tile.backportcore.deepslate_bricks.name=深層岩レンガ
+tile.backportcore.polished_blackstone.name=磨かれたブラックストーン
+tile.backportcore.blackstone.name=ブラックストーン
+tile.backportcore.polished_tuff.name=磨かれた凝灰岩
+tile.backportcore.waxed_copper_block.name=錆止めされた銅ブロック
+tile.backportcore.polished_deepslate.name=磨かれた深層岩
+tile.backportcore.cobbled_deepslate.name=深層岩の丸石
+tile.backportcore.waxed_weathered_copper.name=錆止めされた錆びた銅
+tile.backportcore.deepslate_tile_stairs.name=深層岩タイルの階段
+tile.backportcore.deepslate.name=深層岩
+tile.backportcore.polished_tuff_slab.name=磨かれた凝灰岩のハーフブロック
+tile.backportcore.waxed_cut_copper.name=錆止めされた切り込み入りの銅
+tile.backportcore.waxed_copper_grate.name=錆止めされた銅の金網
+tile.backportcore.chiseled_tuff.name=模様入りの凝灰岩
+tile.backportcore.deepslate_tiles.name=深層岩タイル
+tile.backportcore.polished_blackstone_brick_stairs.name=磨かれたブラックストーンレンガの階段
+tile.backportcore.pale_oak_planks.name=ペールオークの板材
+tile.backportcore.mud_bricks.name=泥レンガ
+tile.backportcore.waxed_chiseled_copper.name=錆止めされた模様入りの銅
+tile.backportcore.waxed_weathered_cut_copper.name=錆止めされた錆びた切り込み入りの銅
+tile.backportcore.pale_oak_log.name=ペールオークの原木
+tile.backportcore.chiseled_nether_bricks.name=模様入りのネザーレンガ
+tile.backportcore.waxed_weathered_chiseled_copper.name=錆止めされた錆びた模様入りの銅
+tile.backportcore.crimson_planks.name=真紅の板材
+tile.backportcore.chiseled_tuff_bricks.name=模様入りの凝灰岩レンガ
+tile.backportcore.tuff_bricks.name=凝灰岩レンガ
+tile.backportcore.iron_chain.name=鉄の鎖
+tile.backportcore.polished_blackstone_slab.name=磨かれたブラックストーンのハーフブロック
+tile.backportcore.waxed_weathered_copper_grate.name=錆止めされた錆びた銅の金網
+tile.backportcore.polished_tuff_double_slab.name=磨かれた凝灰岩のハーフブロック
+tile.backportcore.polished_blackstone_double_slab.name=磨かれたブラックストーンのハーフブロック
+# ---- end of supplied blocks ----

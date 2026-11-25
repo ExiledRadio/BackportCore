@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Desfoque de fundo do menu
 options.accessibility.menu_background_blurriness.tooltip=Altera o desfoque de fundo dos menus.
 debug.profiler_chart.help=F3 + 1 = Mostrar gráfico de análise de desempenho
 debug.fps_charts.help=F3 + 2 = Mostrar gráficos de FPS e TPS
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Tijolos de Pedra-Negra Polida
+tile.backportcore.deepslate_bricks.name=Tijolos de Ardosiabissal
+tile.backportcore.polished_blackstone.name=Pedra-Negra Polida
+tile.backportcore.blackstone.name=Pedra-Negra
+tile.backportcore.polished_tuff.name=Tufo Polido
+tile.backportcore.waxed_copper_block.name=Bloco de Cobre Encerado
+tile.backportcore.polished_deepslate.name=Ardosiabissal Polida
+tile.backportcore.cobbled_deepslate.name=Pedregulho de Ardosiabissal
+tile.backportcore.waxed_weathered_copper.name=Cobre Desgastado Encerado
+tile.backportcore.deepslate_tile_stairs.name=Escadas de Ladrilhos de Ardosiabissal
+tile.backportcore.deepslate.name=Ardosiabissal
+tile.backportcore.polished_tuff_slab.name=Laje de Tufo Polido
+tile.backportcore.waxed_cut_copper.name=Cobre Lapidado Encerado
+tile.backportcore.waxed_copper_grate.name=Grade de Cobre Encerado
+tile.backportcore.chiseled_tuff.name=Tufo Talhado
+tile.backportcore.deepslate_tiles.name=Ladrilhos de Ardosiabissal
+tile.backportcore.polished_blackstone_brick_stairs.name=Escadas de Tijolos de Pedra-Negra Polida
+tile.backportcore.pale_oak_planks.name=Tábuas de Carvalho Pálido
+tile.backportcore.mud_bricks.name=Tijolos de Barro
+tile.backportcore.waxed_chiseled_copper.name=Cobre Talhado Encerado
+tile.backportcore.waxed_weathered_cut_copper.name=Cobre Lapidado Desgastado Encerado
+tile.backportcore.pale_oak_log.name=Tronco de Carvalho Pálido
+tile.backportcore.chiseled_nether_bricks.name=Tijolos do Nether Talhados
+tile.backportcore.waxed_weathered_chiseled_copper.name=Cobre Talhado Desgastado Encerado
+tile.backportcore.crimson_planks.name=Tábuas Carmesim
+tile.backportcore.chiseled_tuff_bricks.name=Tijolos de Tufo Talhados
+tile.backportcore.tuff_bricks.name=Tijolos de Tufo
+tile.backportcore.iron_chain.name=Corrente de Ferro
+tile.backportcore.polished_blackstone_slab.name=Laje de Pedra-Negra Polida
+tile.backportcore.waxed_weathered_copper_grate.name=Grade de Cobre Desgastado Encerado
+tile.backportcore.polished_tuff_double_slab.name=Laje de Tufo Polido
+tile.backportcore.polished_blackstone_double_slab.name=Laje de Pedra-Negra Polida
+# ---- end of supplied blocks ----

@@ -690,3 +690,38 @@ options.accessibility.menu_background_blurriness=Wazigheid menu-achtergrond
 options.accessibility.menu_background_blurriness.tooltip=Past de wazigheid aan van menu-achtergronden
 debug.profiler_chart.help=F3 + 1 = Profileerdergrafiek tonen
 debug.fps_charts.help=F3 + 2 = FPS- en TPS-grafieken tonen
+
+# ---- supplied blocks (generated) ----
+tile.backportcore.polished_blackstone_bricks.name=Gepolijste zwartstenen blokstenen
+tile.backportcore.deepslate_bricks.name=Wrevelstenen blokstenen
+tile.backportcore.polished_blackstone.name=Gepolijst zwartsteen
+tile.backportcore.blackstone.name=Zwartsteen
+tile.backportcore.polished_tuff.name=Gepolijst tufsteen
+tile.backportcore.waxed_copper_block.name=Ingewassen koperblok
+tile.backportcore.polished_deepslate.name=Gepolijst wrevelsteen
+tile.backportcore.cobbled_deepslate.name=Geplaveid wrevelsteen
+tile.backportcore.waxed_weathered_copper.name=Ingewassen verweerd koperblok
+tile.backportcore.deepslate_tile_stairs.name=Wrevelstenen tegeltrap
+tile.backportcore.deepslate.name=Wrevelsteen
+tile.backportcore.polished_tuff_slab.name=Gepolijste tufstenen plaat
+tile.backportcore.waxed_cut_copper.name=Ingewassen gesneden koperblok
+tile.backportcore.waxed_copper_grate.name=Ingewassen koperen rooster
+tile.backportcore.chiseled_tuff.name=Gebeiteld tufsteen
+tile.backportcore.deepslate_tiles.name=Wrevelstenen tegels
+tile.backportcore.polished_blackstone_brick_stairs.name=Gepolijste zwartstenen blokstenen trap
+tile.backportcore.pale_oak_planks.name=Bleke eikenhouten planken
+tile.backportcore.mud_bricks.name=Leemstenen
+tile.backportcore.waxed_chiseled_copper.name=Ingewassen bewerkt koperblok
+tile.backportcore.waxed_weathered_cut_copper.name=Ingewassen verweerd gesneden koperblok
+tile.backportcore.pale_oak_log.name=Bleke eikenstam
+tile.backportcore.chiseled_nether_bricks.name=Gebeitelde Netherbakstenen
+tile.backportcore.waxed_weathered_chiseled_copper.name=Ingewassen verweerd bewerkt koperblok
+tile.backportcore.crimson_planks.name=Helrode houten planken
+tile.backportcore.chiseled_tuff_bricks.name=Gebeitelde tufstenen blokstenen
+tile.backportcore.tuff_bricks.name=Tufstenen blokstenen
+tile.backportcore.iron_chain.name=IJzeren ketting
+tile.backportcore.polished_blackstone_slab.name=Gepolijste zwartstenen plaat
+tile.backportcore.waxed_weathered_copper_grate.name=Ingewassen verweerd koperen rooster
+tile.backportcore.polished_tuff_double_slab.name=Gepolijste tufstenen plaat
+tile.backportcore.polished_blackstone_double_slab.name=Gepolijste zwartstenen plaat
+# ---- end of supplied blocks ----
