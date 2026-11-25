@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/inner_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/sandstone_top",
+  "side": "backportcore:blocks/modern/sandstone_top",
+  "top": "backportcore:blocks/modern/sandstone_top"
+ }
+}

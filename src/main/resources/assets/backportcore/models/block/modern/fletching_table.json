@@ -1,0 +1,12 @@
+{
+ "parent": "backportcore:block/modern/cube",
+ "textures": {
+  "down": "backportcore:blocks/modern/birch_planks",
+  "east": "backportcore:blocks/modern/fletching_table_side",
+  "north": "backportcore:blocks/modern/fletching_table_front",
+  "particle": "backportcore:blocks/modern/fletching_table_front",
+  "south": "backportcore:blocks/modern/fletching_table_front",
+  "up": "backportcore:blocks/modern/fletching_table_top",
+  "west": "backportcore:blocks/modern/fletching_table_side"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/smithing_table"
+  },
+  "inventory": {
+   "model": "backportcore:modern/smithing_table"
+  }
+ }
+}

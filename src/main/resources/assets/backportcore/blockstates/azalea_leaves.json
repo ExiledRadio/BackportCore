@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/azalea_leaves"
+  },
+  "inventory": {
+   "model": "backportcore:modern/azalea_leaves"
+  }
+ }
+}

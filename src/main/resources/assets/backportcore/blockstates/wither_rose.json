@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/wither_rose"
+  },
+  "inventory": {
+   "model": "backportcore:modern/wither_rose"
+  }
+ }
+}

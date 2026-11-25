@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/deepslate_copper_ore"
+  },
+  "inventory": {
+   "model": "backportcore:modern/deepslate_copper_ore"
+  }
+ }
+}

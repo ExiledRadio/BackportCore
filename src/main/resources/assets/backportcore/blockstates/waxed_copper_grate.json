@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/copper_grate"
-    },
-    "inventory": {
-      "model": "backportcore:modern/copper_grate"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/copper_grate"
+  },
+  "inventory": {
+   "model": "backportcore:modern/copper_grate"
   }
+ }
 }

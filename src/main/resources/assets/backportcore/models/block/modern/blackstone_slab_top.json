@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab_top",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/blackstone_top",
+  "side": "backportcore:blocks/modern/blackstone",
+  "top": "backportcore:blocks/modern/blackstone_top"
+ }
+}

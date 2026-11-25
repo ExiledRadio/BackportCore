@@ -1,0 +1,13 @@
+{
+ "variants": {
+  "axis=x": {
+   "model": "backportcore:modern/cherry_log_x"
+  },
+  "axis=y": {
+   "model": "backportcore:modern/cherry_log_y"
+  },
+  "axis=z": {
+   "model": "backportcore:modern/cherry_log_z"
+  }
+ }
+}

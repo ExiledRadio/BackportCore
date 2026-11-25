@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/crying_obsidian"
+  },
+  "inventory": {
+   "model": "backportcore:modern/crying_obsidian"
+  }
+ }
+}

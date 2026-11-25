@@ -262,7 +262,7 @@ public final class ModernPalette {
             // A decorative copy Core supplies (supply/SuppliedBlocks), when nothing above has the block.
             Block supplied = com.exiledradio.backportcore.supply.SuppliedBlocks.block(path);
             if (supplied != null) {
-                return new Resolved(family(supplied, props), null, water, "supplied");
+                return new Resolved(family(supplied, com.exiledradio.backportcore.supply.SuppliedBlocks.props(supplied, props)), null, water, "supplied");
             }
         } else {
             Block block = registered(modern);

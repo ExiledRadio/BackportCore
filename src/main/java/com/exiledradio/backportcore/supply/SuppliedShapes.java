@@ -57,6 +57,32 @@ public final class SuppliedShapes {
                 return setup(new Stairs(row), row);
             case "slab":
                 return setup(new HalfSlab(row), row);
+            case "wall":
+                return setup(new Wall(row), row);
+            case "fence":
+                return setup(new Fence(row), row);
+            case "fence_gate":
+                return setup(new FenceGate(row), row);
+            case "door":
+                return setup(new Door(row), row);
+            case "trapdoor":
+                return setup(new Trapdoor(row), row);
+            case "button":
+                return setup(new Button(row), row);
+            case "pressure_plate":
+                return setup(new PressurePlate(row), row);
+            case "lantern":
+                return setup(new Lantern(row), row);
+            case "leaves":
+                return setup(new Leaves(row), row);
+            case "plant":
+                return setup(new Plant(row), row);
+            case "carpet":
+                return setup(new Carpet(row), row);
+            case "pane":
+                return setup(new Pane(row), row);
+            case "glass":
+                return setup(new Glass(row), row);
             default:
                 return setup(new Cube(row), row);
         }
@@ -74,13 +100,43 @@ public final class SuppliedShapes {
                 return Material.IRON;
             case "WOOD":
                 return Material.WOOD;
+            case "PLANTS":
+                return Material.PLANTS;
+            case "LEAVES":
+                return Material.LEAVES;
+            case "GLASS":
+                return Material.GLASS;
+            case "CARPET":
+                return Material.CARPET;
+            case "CIRCUITS":
+                return Material.CIRCUITS;
+            case "GRASS":
+                return Material.GRASS;
+            case "GROUND":
+                return Material.GROUND;
+            case "SAND":
+                return Material.SAND;
+            case "CLOTH":
+                return Material.CLOTH;
             default:
                 return Material.ROCK;
         }
     }
 
+    /** Today's sound type: Core's own when 1.12.2 has none ({@link SuppliedSounds}), else 1.12.2's of that name. */
+    static SoundType sound(SuppliedTable.Row row) {
+        SoundType modern = SuppliedSounds.type(row.modernSound);
+        return modern != null ? modern : sound(row.sound);
+    }
+
     static SoundType sound(String name) {
         switch (name) {
+            case "LADDER":
+                return SoundType.LADDER;
+            case "ANVIL":
+                return SoundType.ANVIL;
+            case "SLIME":
+                return SoundType.SLIME;
             case "METAL":
                 return SoundType.METAL;
             case "WOOD":
@@ -115,8 +171,34 @@ public final class SuppliedShapes {
         if (row.tool != null) {
             block.setHarvestLevel(row.tool, row.level);
         }
-        block.setCreativeTab("chain".equals(row.shape) ? CreativeTabs.DECORATIONS : CreativeTabs.BUILDING_BLOCKS);
+        block.setCreativeTab(tab(row.shape));
         return block;
+    }
+
+    private static CreativeTabs tab(String shape) {
+        switch (shape) {
+            case "chain":
+            case "lantern":
+            case "plant":
+            case "carpet":
+            case "pane":
+            case "leaves":
+                return CreativeTabs.DECORATIONS;
+            case "door":
+            case "trapdoor":
+            case "button":
+            case "pressure_plate":
+            case "fence_gate":
+                return CreativeTabs.REDSTONE;
+            default:
+                return CreativeTabs.BUILDING_BLOCKS;
+        }
+    }
+
+    /** @return the row's box in blocks, or the full block */
+    static AxisAlignedBB box(SuppliedTable.Row row) {
+        float[] b = row.box;
+        return b == null ? Block.FULL_BLOCK_AABB : new AxisAlignedBB(b[0] / 16, b[1] / 16, b[2] / 16, b[3] / 16, b[4] / 16, b[5] / 16);
     }
 
     /** What every supplied block drops: the row's drop, as a block Core supplies; else itself. */
@@ -124,10 +206,10 @@ public final class SuppliedShapes {
         if (!"self".equals(row.drop) && !"none".equals(row.drop)) {
             Block other = SuppliedBlocks.block(row.drop);
             if (other != null) {
-                return Item.getItemFromBlock(other);
+                return SuppliedBlocks.itemOf(other);
             }
         }
-        return "none".equals(row.drop) ? net.minecraft.init.Items.AIR : Item.getItemFromBlock(self);
+        return "none".equals(row.drop) ? net.minecraft.init.Items.AIR : SuppliedBlocks.itemOf(self);
     }
 
     /** A full block. */
@@ -137,7 +219,7 @@ public final class SuppliedShapes {
         Cube(SuppliedTable.Row row) {
             super(material(row.material), color(row.mapColor));
             this.row = row;
-            setSoundType(sound(row.sound));
+            setSoundType(sound(row));
         }
 
         @Override
@@ -193,7 +275,7 @@ public final class SuppliedShapes {
             super(material(row.material), color(row.mapColor));
             this.row = row;
             this.color = color(row.mapColor);
-            setSoundType(sound(row.sound));
+            setSoundType(sound(row));
         }
 
         @Override
@@ -221,6 +303,23 @@ public final class SuppliedShapes {
 
         Chain(SuppliedTable.Row row) {
             super(row);
+        }
+
+        private boolean ordinal() {
+            return "axis_ordinal".equals(this.row.layout);
+        }
+
+        @Override
+        public IBlockState getStateFromMeta(int meta) {
+            if (!ordinal()) {
+                return super.getStateFromMeta(meta);
+            }
+            return getDefaultState().withProperty(AXIS, EnumFacing.Axis.values()[Math.min(meta, 2)]);
+        }
+
+        @Override
+        public int getMetaFromState(IBlockState state) {
+            return ordinal() ? state.getValue(AXIS).ordinal() : super.getMetaFromState(state);
         }
 
         @Override
@@ -269,7 +368,7 @@ public final class SuppliedShapes {
             super(new Cube(row).getDefaultState());
             this.row = row;
             this.useNeighborBrightness = true;
-            setSoundType(sound(row.sound));
+            setSoundType(sound(row));
         }
 
         @Override
@@ -303,7 +402,7 @@ public final class SuppliedShapes {
             super(material(row.material), color(row.mapColor));
             this.row = row;
             this.half = half;
-            setSoundType(sound(row.sound));
+            setSoundType(sound(row));
             this.useNeighborBrightness = !isDouble();
             IBlockState state = this.blockState.getBaseState().withProperty(VARIANT, Variant.DEFAULT);
             if (!isDouble()) {
@@ -385,6 +484,341 @@ public final class SuppliedShapes {
         @Override
         public boolean isDouble() {
             return true;
+        }
+    }
+
+    // ---- 1.5.0 slice 3: the rest of the shapes today's structures use
+
+    /** A wall: Core's {@link com.exiledradio.backportcore.block.ModernWall}, the family's one wall class. */
+    public static class Wall extends com.exiledradio.backportcore.block.ModernWall {
+        final SuppliedTable.Row row;
+
+        Wall(SuppliedTable.Row row) {
+            super(new Cube(row).getDefaultState());
+            this.row = row;
+            setSoundType(sound(row));
+        }
+    }
+
+    public static class Fence extends net.minecraft.block.BlockFence implements Waterloggable {
+        final SuppliedTable.Row row;
+
+        Fence(SuppliedTable.Row row) {
+            super(material(row.material), color(row.mapColor));
+            this.row = row;
+            setSoundType(sound(row));
+        }
+    }
+
+    public static class FenceGate extends net.minecraft.block.BlockFenceGate {
+        final SuppliedTable.Row row;
+
+        FenceGate(SuppliedTable.Row row) {
+            super(net.minecraft.block.BlockPlanks.EnumType.OAK);
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return color(this.row.mapColor);
+        }
+    }
+
+    /** A door. Its item is an ItemDoor ({@link SuppliedBlocks#itemOf}); the top half drops nothing. */
+    public static class Door extends net.minecraft.block.BlockDoor {
+        final SuppliedTable.Row row;
+
+        Door(SuppliedTable.Row row) {
+            super(material(row.material));
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+            return state.getValue(HALF) == EnumDoorHalf.UPPER ? net.minecraft.init.Items.AIR : SuppliedBlocks.itemOf(this);
+        }
+
+        @Override
+        public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
+            return new ItemStack(SuppliedBlocks.itemOf(this));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return color(this.row.mapColor);
+        }
+    }
+
+    public static class Trapdoor extends net.minecraft.block.BlockTrapDoor implements Waterloggable {
+        final SuppliedTable.Row row;
+
+        Trapdoor(SuppliedTable.Row row) {
+            super(material(row.material));
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return color(this.row.mapColor);
+        }
+    }
+
+    /** A button. Today's {@code face=floor|ceiling} is 1.12.2's {@code facing=up|down} ({@link SuppliedBlocks#props}). */
+    public static class Button extends net.minecraft.block.BlockButton {
+        final SuppliedTable.Row row;
+
+        Button(SuppliedTable.Row row) {
+            super(row.material.equals("WOOD"));
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        private boolean wooden() {
+            return "WOOD".equals(this.row.material);
+        }
+
+        @Override
+        protected void playClickSound(EntityPlayer player, World world, BlockPos pos) {
+            world.playSound(player, pos, wooden() ? net.minecraft.init.SoundEvents.BLOCK_WOOD_BUTTON_CLICK_ON
+                    : net.minecraft.init.SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, net.minecraft.util.SoundCategory.BLOCKS, 0.3F, 0.6F);
+        }
+
+        @Override
+        protected void playReleaseSound(World world, BlockPos pos) {
+            world.playSound(null, pos, wooden() ? net.minecraft.init.SoundEvents.BLOCK_WOOD_BUTTON_CLICK_OFF
+                    : net.minecraft.init.SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, net.minecraft.util.SoundCategory.BLOCKS, 0.3F, 0.5F);
+        }
+    }
+
+    public static class PressurePlate extends net.minecraft.block.BlockPressurePlate {
+        final SuppliedTable.Row row;
+
+        PressurePlate(SuppliedTable.Row row) {
+            super(material(row.material), "WOOD".equals(row.material) ? Sensitivity.EVERYTHING : Sensitivity.MOBS);
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return color(this.row.mapColor);
+        }
+    }
+
+    /** A lantern, standing or hanging (meta 1), as the family's. */
+    public static class Lantern extends Block implements Waterloggable {
+        public static final net.minecraft.block.properties.PropertyBool HANGING = net.minecraft.block.properties.PropertyBool.create("hanging");
+        private static final AxisAlignedBB STANDING = new AxisAlignedBB(5 / 16D, 0, 5 / 16D, 11 / 16D, 9 / 16D, 11 / 16D);
+        private static final AxisAlignedBB HUNG = new AxisAlignedBB(5 / 16D, 1 / 16D, 5 / 16D, 11 / 16D, 10 / 16D, 11 / 16D);
+        final SuppliedTable.Row row;
+
+        Lantern(SuppliedTable.Row row) {
+            super(material(row.material), color(row.mapColor));
+            this.row = row;
+            setSoundType(sound(row));
+            setDefaultState(this.blockState.getBaseState().withProperty(HANGING, false));
+        }
+
+        @Override
+        protected BlockStateContainer createBlockState() {
+            return new BlockStateContainer(this, HANGING);
+        }
+
+        @Override
+        public IBlockState getStateFromMeta(int meta) {
+            return getDefaultState().withProperty(HANGING, (meta & 1) != 0);
+        }
+
+        @Override
+        public int getMetaFromState(IBlockState state) {
+            return state.getValue(HANGING) ? 1 : 0;
+        }
+
+        @Override
+        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
+                                                net.minecraft.entity.EntityLivingBase placer) {
+            return getDefaultState().withProperty(HANGING, facing == EnumFacing.DOWN);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return state.getValue(HANGING) ? HUNG : STANDING;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isFullCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+            return BlockFaceShape.UNDEFINED;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.CUTOUT;
+        }
+    }
+
+    /** Leaves that never decay. Stored as meta 4 (1.12.2's "not decayable"), so an owner's leaves stay put too. */
+    public static class Leaves extends Cube {
+        Leaves(SuppliedTable.Row row) {
+            super(row);
+            setLightOpacity(1);
+        }
+
+        @Override
+        public int getMetaFromState(IBlockState state) {
+            return 4;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.CUTOUT_MIPPED;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        @SuppressWarnings("deprecation")
+        public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+            return !world.getBlockState(pos.offset(side)).doesSideBlockRendering(world, pos.offset(side), side.getOpposite());
+        }
+    }
+
+    /** A plant drawn as a cross: no collision, today's outline, stays wherever a structure puts it. */
+    public static class Plant extends net.minecraft.block.BlockBush {
+        final SuppliedTable.Row row;
+
+        Plant(SuppliedTable.Row row) {
+            super(material(row.material), color(row.mapColor));
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        public boolean canBlockStay(World world, BlockPos pos, IBlockState state) {
+            return true;
+        }
+
+        @Override
+        public boolean canPlaceBlockAt(World world, BlockPos pos) {
+            return world.getBlockState(pos).getBlock().isReplaceable(world, pos);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return box(this.row);
+        }
+
+        @Override
+        public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+            return drop(this.row, this);
+        }
+    }
+
+    /** A carpet: one pixel tall. */
+    public static class Carpet extends Cube {
+        Carpet(SuppliedTable.Row row) {
+            super(row);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return box(this.row);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isFullCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public BlockFaceShape getBlockFaceShape(IBlockAccess world, IBlockState state, BlockPos pos, EnumFacing face) {
+            return face == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+        }
+    }
+
+    /** Bars: today's copper bars, on 1.12.2's pane. */
+    public static class Pane extends net.minecraft.block.BlockPane implements Waterloggable {
+        final SuppliedTable.Row row;
+
+        Pane(SuppliedTable.Row row) {
+            super(material(row.material), true);
+            this.row = row;
+            setSoundType(sound(row));
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public MapColor getMapColor(IBlockState state, IBlockAccess world, BlockPos pos) {
+            return color(this.row.mapColor);
+        }
+    }
+
+    /** See-through blocks: tinted glass. Faces between two of the same are hidden. */
+    public static class Glass extends Cube {
+        Glass(SuppliedTable.Row row) {
+            super(row);
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isOpaqueCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SuppressWarnings("deprecation")
+        public boolean isFullCube(IBlockState state) {
+            return false;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public BlockRenderLayer getRenderLayer() {
+            return BlockRenderLayer.TRANSLUCENT;
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        @SuppressWarnings("deprecation")
+        public boolean shouldSideBeRendered(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side) {
+            return world.getBlockState(pos.offset(side)).getBlock() != this && super.shouldSideBeRendered(state, world, pos, side);
         }
     }
 }

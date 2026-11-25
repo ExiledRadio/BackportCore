@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/packed_mud"
+  },
+  "inventory": {
+   "model": "backportcore:modern/packed_mud"
+  }
+ }
+}

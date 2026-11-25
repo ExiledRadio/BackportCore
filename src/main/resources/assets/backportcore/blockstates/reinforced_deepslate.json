@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/reinforced_deepslate"
+  },
+  "inventory": {
+   "model": "backportcore:modern/reinforced_deepslate"
+  }
+ }
+}

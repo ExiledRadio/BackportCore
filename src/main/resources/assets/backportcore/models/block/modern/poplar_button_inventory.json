@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/button_inventory",
+ "textures": {
+  "texture": "backportcore:blocks/modern/poplar_planks"
+ }
+}

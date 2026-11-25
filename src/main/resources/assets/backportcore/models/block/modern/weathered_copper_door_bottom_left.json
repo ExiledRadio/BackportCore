@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/door_bottom_left",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/weathered_copper_door_bottom",
+  "top": "backportcore:blocks/modern/weathered_copper_door_top"
+ }
+}

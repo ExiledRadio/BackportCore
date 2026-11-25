@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/carpet",
+ "textures": {
+  "wool": "backportcore:blocks/modern/moss_block"
+ }
+}

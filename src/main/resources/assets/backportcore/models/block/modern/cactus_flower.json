@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/cross",
+ "textures": {
+  "cross": "backportcore:blocks/modern/cactus_flower"
+ }
+}

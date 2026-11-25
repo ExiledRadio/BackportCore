@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/gilded_blackstone"
+  },
+  "inventory": {
+   "model": "backportcore:modern/gilded_blackstone"
+  }
+ }
+}

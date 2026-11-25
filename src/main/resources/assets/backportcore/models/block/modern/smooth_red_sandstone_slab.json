@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/red_sandstone_top",
+  "side": "backportcore:blocks/modern/red_sandstone_top",
+  "top": "backportcore:blocks/modern/red_sandstone_top"
+ }
+}

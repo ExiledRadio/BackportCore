@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/polished_cinnabar"
+  },
+  "inventory": {
+   "model": "backportcore:modern/polished_cinnabar"
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_hanging_lantern",
+ "textures": {
+  "lantern": "backportcore:blocks/modern/soul_lantern"
+ }
+}

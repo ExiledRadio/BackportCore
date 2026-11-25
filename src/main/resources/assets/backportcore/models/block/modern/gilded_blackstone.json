@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/cube_all",
+ "textures": {
+  "all": "backportcore:blocks/modern/gilded_blackstone"
+ }
+}

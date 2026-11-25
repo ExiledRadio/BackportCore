@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/wall_inventory",
+ "textures": {
+  "wall": "backportcore:blocks/modern/polished_blackstone_bricks"
+ }
+}

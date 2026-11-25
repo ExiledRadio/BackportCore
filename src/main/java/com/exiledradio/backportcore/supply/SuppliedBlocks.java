@@ -57,6 +57,8 @@ public final class SuppliedBlocks {
 
     /** Registered this game: name to block (slabs' doubles under their own path). */
     private static final Map<String, Block> BLOCKS = new LinkedHashMap<String, Block>();
+    /** Each block's item; a door's is an ItemDoor, which {@code Item.getItemFromBlock} does not know. */
+    private static final Map<Block, Item> ITEMS = new java.util.HashMap<Block, Item>();
     /** For the self-test and the log. */
     public static volatile int remapped;
 
@@ -84,6 +86,7 @@ public final class SuppliedBlocks {
     /** Late, so every other mod's blocks are in and the owners' are known. */
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static synchronized void registerBlocks(RegistryEvent.Register<Block> event) {
+        long start = System.nanoTime();
         BLOCKS.clear();
         Set<String> listed = readList();
         Map<String, ModernBlockScan.Use> used = ModernBlockScan.uses();
@@ -117,7 +120,8 @@ public final class SuppliedBlocks {
             writeList(kept);
         }
         if (!BLOCKS.isEmpty() || owned > 0) {
-            BackportCore.LOGGER.info("Supplied blocks: {} registered, {} left to their installed backports.", BLOCKS.size(), owned);
+            BackportCore.LOGGER.info("Supplied blocks: {} registered, {} left to their installed backports ({} ms).", BLOCKS.size(), owned,
+                    (System.nanoTime() - start) / 1000000);
         }
     }
 
@@ -131,12 +135,94 @@ public final class SuppliedBlocks {
             } else if (block instanceof SuppliedShapes.HalfSlab) {
                 SuppliedTable.Row row = ((SuppliedShapes.Slab) block).row;
                 item = new ItemSlab(block, (SuppliedShapes.Slab) block, (SuppliedShapes.Slab) BLOCKS.get(row.doubleSlab()));
+            } else if (block instanceof SuppliedShapes.Door) {
+                item = new net.minecraft.item.ItemDoor(block);
+                item.setTranslationKey(block.getTranslationKey().substring("tile.".length()));
+                item.setCreativeTab(block.getCreativeTab());
             } else {
                 item = new ItemBlock(block);
             }
             item.setRegistryName(block.getRegistryName());
             event.getRegistry().register(item);
+            ITEMS.put(block, item);
         }
+    }
+
+    /** @return the table row of one of Core's copies (a double slab has none), or null */
+    @Nullable
+    public static SuppliedTable.Row row(Block block) {
+        ResourceLocation id = block.getRegistryName();
+        return id == null || !BackportCore.MOD_ID.equals(id.getNamespace()) ? null : SuppliedTable.rows().get(id.getPath());
+    }
+
+    /** @return the block's item (a door's ItemDoor), or AIR */
+    public static Item itemOf(Block block) {
+        Item item = ITEMS.get(block);
+        return item != null ? item : Item.getItemFromBlock(block);
+    }
+
+    /**
+     * A structure file's properties in this block's terms: today's {@code face=floor|ceiling} on a button is 1.12.2's
+     * {@code facing=up|down}.
+     */
+    public static Map<String, String> props(Block block, Map<String, String> props) {
+        if (!(block instanceof SuppliedShapes.Button)) {
+            return props;
+        }
+        Map<String, String> out = new LinkedHashMap<String, String>(props);
+        String face = out.remove("face");
+        if ("floor".equals(face)) {
+            out.put("facing", "up");
+        } else if ("ceiling".equals(face)) {
+            out.put("facing", "down");
+        }
+        return out;
+    }
+
+    /**
+     * {@code -Dbackportcore.suppliedcheck=true}: once every block is in, Core's copy of each row whose owner is installed
+     * is built (not registered) and every state's metadata compared with the owner's state of the same properties. A
+     * difference would turn blocks into the wrong state on a rename. Logs each and the total.
+     *
+     * @return the number of states that differ
+     */
+    public static int checkLayouts() {
+        int rows = 0;
+        int states = 0;
+        int bad = 0;
+        for (SuppliedTable.Row row : SuppliedTable.rows().values()) {
+            Block owner = row.owner == null ? null : registered(new ResourceLocation(row.owner, row.ownerName));
+            if (owner == null) {
+                continue;
+            }
+            rows++;
+            Block copy = SuppliedShapes.create(row);
+            for (net.minecraft.block.state.IBlockState state : copy.getBlockState().getValidStates()) {
+                net.minecraft.block.state.IBlockState mine = copy.getStateFromMeta(copy.getMetaFromState(state));
+                if (!mine.equals(state)) {
+                    // Not stored (a fence's connections): only the stored states are compared.
+                    continue;
+                }
+                net.minecraft.block.state.IBlockState theirs = owner.getDefaultState();
+                for (Map.Entry<net.minecraft.block.properties.IProperty<?>, Comparable<?>> e : state.getProperties().entrySet()) {
+                    theirs = com.exiledradio.backportcore.util.BlockStates.withOrSame(theirs, e.getKey().getName(), name(e.getKey(), e.getValue()));
+                }
+                states++;
+                int a = copy.getMetaFromState(state);
+                int b = owner.getMetaFromState(theirs);
+                if (a != b && !(row.shape.equals("leaves"))) {
+                    bad++;
+                    BackportCore.LOGGER.warn("Supplied block layout: {} {} is meta {}, {} has {} ({}).", row.name, state, a, owner.getRegistryName(), b, theirs);
+                }
+            }
+        }
+        BackportCore.LOGGER.info("Supplied block layouts: {} rows with their owner installed, {} states, {} differ.", rows, states, bad);
+        return bad;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static String name(net.minecraft.block.properties.IProperty p, Comparable v) {
+        return p.getName(v);
     }
 
     private static void name(Block block, String path) {

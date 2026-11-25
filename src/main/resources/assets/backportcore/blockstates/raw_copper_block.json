@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/raw_copper_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/raw_copper_block"
+  }
+ }
+}

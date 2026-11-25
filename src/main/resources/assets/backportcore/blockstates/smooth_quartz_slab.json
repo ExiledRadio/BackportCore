@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "half=bottom,variant=default": {
+   "model": "backportcore:modern/smooth_quartz_slab"
+  },
+  "half=top,variant=default": {
+   "model": "backportcore:modern/smooth_quartz_slab_top"
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_fence_gate_open",
+ "textures": {
+  "texture": "backportcore:blocks/modern/poplar_planks"
+ }
+}

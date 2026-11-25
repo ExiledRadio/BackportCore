@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/fletching_table"
+  },
+  "inventory": {
+   "model": "backportcore:modern/fletching_table"
+  }
+ }
+}

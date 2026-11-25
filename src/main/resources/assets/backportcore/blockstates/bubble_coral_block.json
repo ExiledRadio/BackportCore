@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/bubble_coral_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/bubble_coral_block"
+  }
+ }
+}

@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab_top",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/cobbled_deepslate",
+  "side": "backportcore:blocks/modern/cobbled_deepslate",
+  "top": "backportcore:blocks/modern/cobbled_deepslate"
+ }
+}

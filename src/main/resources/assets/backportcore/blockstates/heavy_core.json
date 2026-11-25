@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/heavy_core"
+  },
+  "inventory": {
+   "model": "backportcore:modern/heavy_core"
+  }
+ }
+}

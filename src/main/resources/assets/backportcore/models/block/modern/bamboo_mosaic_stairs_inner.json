@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/inner_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/bamboo_mosaic",
+  "side": "backportcore:blocks/modern/bamboo_mosaic",
+  "top": "backportcore:blocks/modern/bamboo_mosaic"
+ }
+}

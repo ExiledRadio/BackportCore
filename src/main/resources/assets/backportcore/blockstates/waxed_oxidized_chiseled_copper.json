@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/oxidized_chiseled_copper"
+  },
+  "inventory": {
+   "model": "backportcore:modern/oxidized_chiseled_copper"
+  }
+ }
+}

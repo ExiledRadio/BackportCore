@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/red_shrub"
+  },
+  "inventory": {
+   "model": "backportcore:modern/red_shrub"
+  }
+ }
+}

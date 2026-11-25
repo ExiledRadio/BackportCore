@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/warped_fungus"
+  },
+  "inventory": {
+   "model": "backportcore:modern/warped_fungus"
+  }
+ }
+}

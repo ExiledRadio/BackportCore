@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/warped_nylium"
+  },
+  "inventory": {
+   "model": "backportcore:modern/warped_nylium"
+  }
+ }
+}

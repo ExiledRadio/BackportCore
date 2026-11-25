@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/smooth_basalt"
+  },
+  "inventory": {
+   "model": "backportcore:modern/smooth_basalt"
+  }
+ }
+}

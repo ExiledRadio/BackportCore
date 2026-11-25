@@ -3,7 +3,8 @@
 generate.py - writes Backport Core's supplied-block table and assets from today's Minecraft jar
 (docs/PLAN_MODERN_BLOCKS.md, "Where the blocks come from").
 
-    python -I tools/supplied-blocks/generate.py <client.jar> [--javap <javap.exe>] [--lang <MojangLang/26.3/lang>]
+    python -I tools/supplied-blocks/generate.py <client.jar> --javap <javap.exe> --lang <MojangLang/26.3/lang>
+        --family <folder of the family's release jars> --assets <26.x asset index .json> --cache <asset cache folder>
 
 Reads, from the jar (26.x jars are unobfuscated):
   * net/minecraft/world/level/block/Blocks.class, through the JDK's javap: every block's Properties
@@ -22,8 +23,8 @@ Writes:
   the assets above, and tile.backportcore.<name>.name lines in en_us.lang and, with --lang, the other languages
   (Mojang's own names), each in a generated block at the end of the file.
 
-Which blocks: tools/supplied-blocks/names.txt (one modern name per line). A name whose shape class Core does not
-have is skipped and listed. Owners (the backport that has the block, and its name there) come from owners.txt.
+Which blocks: every block of the jar 1.12.2 does not have (structure/flattening.txt), minus exclude.txt, whose shape
+class Core has; the rest are listed in skipped.txt. Owners: the earliest family jar in --family with the block, or owners.txt.
 """
 import io
 import json
@@ -383,16 +384,49 @@ class Interp:
                 self.blocks[wax + name] = {'name': wax + name, 'cls': self.ctor_class(fn), 'props': p}
         return {'name': base, 'props': Props(props or {})}
 
+_NAMES = {}
+
+def names_of(jar):
+    """The jar's entry names as a set, read once."""
+    if id(jar) not in _NAMES:
+        _NAMES[id(jar)] = set(jar.namelist())
+    return _NAMES[id(jar)]
+
 # ---- shapes
 
+# First class of a block's class chain (the class itself, then its superclasses) that names a shape Core has.
 SHAPES = {
-    'StairBlock': 'stairs', 'SlabBlock': 'slab', 'RotatedPillarBlock': 'pillar', 'ChainBlock': 'chain',
-    'WaterloggedTransparentBlock': 'grate',
+    'StairBlock': 'stairs', 'SlabBlock': 'slab', 'ChainBlock': 'chain', 'RotatedPillarBlock': 'pillar',
+    'WaterloggedTransparentBlock': 'grate', 'WallBlock': 'wall', 'FenceBlock': 'fence', 'FenceGateBlock': 'fence_gate',
+    'DoorBlock': 'door', 'TrapDoorBlock': 'trapdoor', 'ButtonBlock': 'button', 'PressurePlateBlock': 'pressure_plate',
+    'LanternBlock': 'lantern', 'LeavesBlock': 'leaves', 'CarpetBlock': 'carpet', 'IronBarsBlock': 'pane',
+    'TransparentBlock': 'glass', 'HalfTransparentBlock': 'glass', 'FlowerPotBlock': 'potted',
 }
-NOT_SUPPORTED = {'BaseEntityBlock', 'BushBlock', 'VegetationBlock', 'LeavesBlock', 'WallBlock', 'FenceBlock',
-                 'DoorBlock', 'TrapDoorBlock', 'LanternBlock', 'CarpetBlock', 'FallingBlock', 'BrushableBlock',
-                 'IronBarsBlock', 'ButtonBlock', 'PressurePlateBlock', 'FenceGateBlock', 'TorchBlock', 'HalfTransparentBlock',
-                 'TransparentBlock', 'LiquidBlock', 'MultifaceBlock', 'GrowingPlantBlock'}
+# Classes with behavior or state Core's decorative shapes cannot show: the block is skipped.
+NOT_SUPPORTED = {'BaseEntityBlock', 'MultifaceBlock', 'LiquidBlock', 'GrowingPlantBlock', 'FallingBlock', 'BaseTorchBlock',
+                 'MossyCarpetBlock', 'AbstractCandleBlock', 'DoublePlantBlock', 'CropBlock', 'StemBlock', 'PowderSnowBlock',
+                 'BaseFireBlock', 'BasePressurePlateBlock', 'SpeleothemBlock', 'AmethystClusterBlock', 'BubbleColumnBlock',
+                 'BaseCoralPlantTypeBlock', 'SculkSensorBlock', 'ScaffoldingBlock', 'LadderBlock', 'CopperBulbBlock'}
+# Today's BlockColors for the blocks Core can supply: a tint, or none (white).
+TINTS = {'mangrove_leaves': 'mangrove', 'bush': 'grass'}
+# A plant's outline in sixteenths, by the first class of its chain (today's shapes); plants have no collision.
+PLANT_BOX = {'FlowerBlock': '5,0,5,11,10,11', 'SaplingBlock': '2,0,2,14,12,14', 'NetherFungusBlock': '4,0,4,12,9,12',
+             'NetherSproutsBlock': '0,0,0,16,3,16', 'HangingRootsBlock': '2,10,2,14,16,14', 'EyeblossomBlock': '5,0,5,11,10,11',
+             'CactusFlowerBlock': '1,0,1,15,12,15', 'ShortDryGrassBlock': '2,0,2,14,10,14', 'TallDryGrassBlock': '1,0,1,15,16,15'}
+# Plants: a VegetationBlock (or hanging roots) drawn as a cross.
+PLANT_CLASSES = {'VegetationBlock', 'HangingRootsBlock'}
+
+# The 1.12.2 properties each shape's class has, as its blockstate file's variant keys name them.
+PROPS = {
+    'cube': set(), 'grate': set(), 'glass': set(), 'leaves': set(), 'plant': set(), 'carpet': set(), 'potted': set(),
+    'pillar': {'axis'}, 'chain': {'axis'}, 'stairs': {'facing', 'half', 'shape'}, 'slab': {'half', 'variant'},
+    'wall': {'up', 'north', 'east', 'south', 'west'}, 'fence': {'north', 'east', 'south', 'west'},
+    'pane': {'north', 'east', 'south', 'west'}, 'fence_gate': {'facing', 'in_wall', 'open'},
+    'door': {'facing', 'half', 'hinge', 'open'}, 'trapdoor': {'facing', 'half', 'open'}, 'button': {'facing', 'powered'},
+    'pressure_plate': {'powered'}, 'lantern': {'hanging'},
+}
+CUTOUT = {'grate', 'chain', 'lantern', 'plant', 'potted', 'door', 'trapdoor', 'pane', 'leaves'}
+TRANSLUCENT = {'glass'}
 
 def superchain(jar, tmp, exe, cls, cache):
     chain = []
@@ -403,7 +437,7 @@ def superchain(jar, tmp, exe, cls, cache):
         else:
             path = 'net/minecraft/world/level/block/%s.class' % cur
             nxt = None
-            if path in jar.namelist():
+            if path in names_of(jar):
                 f = os.path.join(tmp, cur + '.class')
                 with open(f, 'wb') as o:
                     o.write(jar.read(path))
@@ -421,23 +455,46 @@ def shape_of(chain, props):
             return SHAPES[c]
         if c in NOT_SUPPORTED:
             return None
+        if c in PLANT_CLASSES:
+            return 'plant?'
     # A plain Block subclass (copper's weathering blocks, Block itself) is a cube when it is a full, opaque block.
     return 'cube' if not props.get('noOcclusion') and not props.get('noCollision') else None
 
 # ---- 1.12.2 terms
 
-SOUNDS_METAL = {'METAL', 'COPPER', 'COPPER_GRATE', 'COPPER_BULB', 'CHAIN', 'ANVIL', 'LANTERN', 'NETHERITE_BLOCK', 'HEAVY_CORE', 'IRON'}
-SOUNDS_WOOD = {'WOOD', 'NETHER_WOOD', 'CHERRY_WOOD', 'BAMBOO_WOOD', 'STEM', 'NETHER_STEM'}
+# Today's sound types 1.12.2 has under another name; any other type is one Core registers (sounds.txt).
+SOUNDS_112 = {'STONE': 'STONE', 'WOOD': 'WOOD', 'GRAVEL': 'GROUND', 'GRASS': 'PLANT', 'METAL': 'METAL', 'GLASS': 'GLASS',
+              'WOOL': 'CLOTH', 'SAND': 'SAND', 'SNOW': 'SNOW', 'LADDER': 'LADDER', 'ANVIL': 'ANVIL', 'SLIME_BLOCK': 'SLIME'}
+SOUNDS_METAL = {'METAL', 'COPPER', 'COPPER_GRATE', 'COPPER_BULB', 'CHAIN', 'ANVIL', 'LANTERN', 'NETHERITE_BLOCK', 'HEAVY_CORE',
+                'IRON', 'COPPER_CHAIN', 'COPPER_LANTERN', 'IRON_CHAIN'}
+SOUNDS_WOOD = {'WOOD', 'NETHER_WOOD', 'CHERRY_WOOD', 'BAMBOO_WOOD', 'STEM', 'NETHER_STEM', 'NETHER_WOOD_HANGING_SIGN'}
+SOUNDS_PLANT = {'GRASS', 'ROOTS', 'NETHER_SPROUTS', 'FUNGUS', 'CHERRY_LEAVES', 'AZALEA_LEAVES', 'HANGING_ROOTS', 'MOSS',
+                'MOSS_CARPET', 'CROP', 'WEEPING_VINES', 'TWISTING_VINES', 'SWEET_BERRY_BUSH', 'AZALEA', 'FLOWERING_AZALEA',
+                'SPORE_BLOSSOM', 'BIG_DRIPLEAF', 'SMALL_DRIPLEAF', 'PINK_PETALS', 'LEAF_LITTER', 'CAVE_VINES', 'GLOW_LICHEN',
+                'VINE', 'LILY_PAD', 'WET_GRASS', 'MANGROVE_ROOTS', 'MUDDY_MANGROVE_ROOTS', 'PALE_HANGING_MOSS', 'BUSH', 'CACTUS_FLOWER',
+                'FIREFLY_BUSH', 'DRY_GRASS'}
 
 def sound_112(s):
+    if s in SOUNDS_112:
+        return SOUNDS_112[s]
     if s in SOUNDS_METAL:
         return 'METAL'
     if s in SOUNDS_WOOD:
         return 'WOOD'
-    return {'GLASS': 'GLASS', 'GRAVEL': 'GROUND', 'SAND': 'SAND', 'GRASS': 'PLANT', 'WOOL': 'CLOTH', 'SNOW': 'SNOW'}.get(s, 'STONE')
+    if s in SOUNDS_PLANT:
+        return 'PLANT'
+    return 'STONE'
 
-def material_112(sound):
-    return {'METAL': 'IRON', 'WOOD': 'WOOD'}.get(sound_112(sound), 'ROCK')
+def material_112(sound, shape):
+    if shape in ('plant', 'potted'):
+        return 'PLANTS' if shape == 'plant' else 'CIRCUITS'
+    if shape == 'leaves':
+        return 'LEAVES'
+    if shape == 'glass':
+        return 'GLASS'
+    if shape == 'carpet':
+        return 'CARPET'
+    return {'METAL': 'IRON', 'WOOD': 'WOOD', 'PLANT': 'GRASS', 'GROUND': 'GROUND', 'SAND': 'SAND', 'CLOTH': 'CLOTH'}.get(sound_112(sound), 'ROCK')
 
 MAPCOLOR = {
     'NONE': 'AIR', 'GRASS': 'GRASS', 'SAND': 'SAND', 'WOOL': 'CLOTH', 'FIRE': 'TNT', 'ICE': 'ICE', 'METAL': 'IRON',
@@ -476,7 +533,7 @@ def mapcolor_112(c):
 def tags(jar):
     def read(t):
         p = 'data/minecraft/tags/block/%s.json' % t
-        if p not in jar.namelist():
+        if p not in names_of(jar):
             return set()
         out = set()
         for v in json.loads(jar.read(p))['values']:
@@ -496,7 +553,7 @@ def tags(jar):
 def drop(jar, name):
     """The block's drop without silk touch: 'self', 'none', or another block's name."""
     p = 'data/minecraft/loot_table/blocks/%s.json' % name
-    if p not in jar.namelist():
+    if p not in names_of(jar):
         return 'none'
     found = []
 
@@ -520,6 +577,67 @@ def drop(jar, name):
         return 'none'
     return 'self' if plain[0] == name else plain[0]
 
+# ---- sounds
+
+def sound_types(jar, tmp, exe):
+    """Today's SoundType fields: name -> (volume, pitch, [break, step, place, hit, fall] event ids)."""
+    def dump(cls):
+        f = os.path.join(tmp, cls.split('/')[-1] + '.class')
+        with open(f, 'wb') as o:
+            o.write(jar.read(cls + '.class'))
+        return subprocess.run([exe, '-c', '-p', f], capture_output=True, text=True, encoding='utf-8', errors='replace').stdout
+    events = {}
+    last = None
+    for line in dump('net/minecraft/sounds/SoundEvents').splitlines():
+        m = re.search(r'// String (\S+)$', line)
+        if m:
+            last = m.group(1)
+            continue
+        m = re.search(r'putstatic .*// Field (\w+):', line)
+        if m and last:
+            events[m.group(1)] = last
+            last = None
+    out = {}
+    floats, evs = [], []
+    for line in dump('net/minecraft/world/level/block/SoundType').splitlines():
+        if re.search(r': new .*class .*SoundType$', line):
+            floats, evs = [], []
+            continue
+        m = re.search(r': fconst_(\d)', line)
+        if m:
+            floats.append(float(m.group(1)))
+            continue
+        m = re.search(r'// float ([-\d.eE]+)', line)
+        if m:
+            floats.append(float(m.group(1)))
+            continue
+        m = re.search(r'getstatic .*// Field net/minecraft/sounds/SoundEvents\.(\w+):', line)
+        if m:
+            evs.append(events.get(m.group(1), m.group(1)))
+            continue
+        m = re.search(r'putstatic .*// Field (\w+):Lnet/minecraft/world/level/block/SoundType;', line)
+        if m and len(floats) >= 2 and len(evs) == 5:
+            out[m.group(1)] = (floats[0], floats[1], evs)
+    return out
+
+def asset_index(path):
+    return json.load(open(path, encoding='utf-8'))['objects'] if path else {}
+
+def fetch_object(objects, cache, key):
+    """An asset of today's game by its index name, downloaded once into the cache folder (Mojang's resources host)."""
+    o = objects.get(key)
+    if not o:
+        return None
+    h = o['hash']
+    f = os.path.join(cache, 'objects', h[:2], h)
+    if not os.path.isfile(f):
+        import urllib.request
+        os.makedirs(os.path.dirname(f), exist_ok=True)
+        req = urllib.request.Request('https://resources.download.minecraft.net/%s/%s' % (h[:2], h), headers={'User-Agent': 'backport-generator'})
+        with urllib.request.urlopen(req, timeout=60) as r, open(f, 'wb') as w:
+            w.write(r.read())
+    return open(f, 'rb').read()
+
 # ---- assets
 
 def ref112(ref, kind):
@@ -531,11 +649,14 @@ def ref112(ref, kind):
     top, rest = path.split('/', 1)
     return 'backportcore:%s/modern/%s' % ({'block': 'blocks', 'item': 'items'}.get(top, top), rest)
 
+WRITTEN = []
+
 def write(path, data):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     mode = 'wb' if isinstance(data, bytes) else 'w'
     with open(path, mode, **({} if mode == 'wb' else {'encoding': 'utf-8', 'newline': '\n'})) as f:
         f.write(data)
+    WRITTEN.append(os.path.relpath(path, RES).replace(os.sep, '/'))
 
 def copy_texture(jar, ref, done):
     path = ref.split(':', 1)[1] if ':' in ref else ref
@@ -543,7 +664,7 @@ def copy_texture(jar, ref, done):
         return
     done.add(path)
     src = 'assets/minecraft/textures/%s.png' % path
-    if src not in jar.namelist():
+    if src not in names_of(jar):
         print('  missing texture', src)
         return
     top, rest = path.split('/', 1)
@@ -560,21 +681,36 @@ def copy_texture(jar, ref, done):
     except ImportError:
         pass
     write(out, data)
-    if src + '.mcmeta' in jar.namelist():
+    if src + '.mcmeta' in names_of(jar):
         write(out + '.mcmeta', jar.read(src + '.mcmeta'))
 
 BUILTIN = {'block/block', 'item/generated', 'item/handheld', 'builtin/generated', 'builtin/entity'}
+
+def model_json(jar, ref):
+    path = ref.split(':', 1)[1] if ':' in ref else ref
+    src = 'assets/minecraft/models/%s.json' % path
+    return json.loads(jar.read(src)) if src in names_of(jar) else None
+
+def model_chain(jar, ref):
+    """The model and its parents, nearest first."""
+    out = []
+    while ref and len(out) < 10:
+        m = model_json(jar, ref)
+        if m is None:
+            break
+        out.append((ref.split(':', 1)[-1], m))
+        ref = m.get('parent')
+    return out
 
 def copy_model(jar, ref, done, textures):
     path = ref.split(':', 1)[1] if ':' in ref else ref
     if path in BUILTIN or path in done:
         return
     done.add(path)
-    src = 'assets/minecraft/models/%s.json' % path
-    if src not in jar.namelist():
-        print('  missing model', src)
+    m = model_json(jar, ref)
+    if m is None:
+        print('  missing model', path)
         return
-    m = json.loads(jar.read(src))
     if 'parent' in m:
         p = m['parent'].split(':', 1)[-1]
         if p in BUILTIN:
@@ -588,63 +724,183 @@ def copy_model(jar, ref, done, textures):
             m['textures'][k] = ref112(v, 'texture')
     m.pop('render_type', None)
     top, rest = path.split('/', 1)
-    write(os.path.join(RES, 'models', top, 'modern', rest + '.json'), json.dumps(m, indent=2) + '\n')
+    write(os.path.join(RES, 'models', top, 'modern', rest + '.json'), json.dumps(m, indent=1) + '\n')
+
+def first_model(bs):
+    if 'variants' in bs:
+        v = next(iter(bs['variants'].values()))
+    else:
+        v = bs['multipart'][0]['apply']
+    return (v[0] if isinstance(v, list) else v)['model']
+
+def variant_keys(bs):
+    """Every property name today's blockstate file keys on, waterlogged left out."""
+    keys = set()
+    for key in bs.get('variants', {}):
+        keys |= {kv.split('=')[0] for kv in key.split(',') if kv}
+    for part in bs.get('multipart', []):
+        w = part.get('when', {})
+        for c in w.get('OR', w.get('AND', [w])):
+            keys |= set(c)
+    keys.discard('waterlogged')
+    return keys
+
+BUTTON_FACE = {'floor': 'up', 'ceiling': 'down'}
+
+def convert_key(props, shape, half):
+    props = dict(props)
+    props.pop('waterlogged', None)
+    if shape == 'slab':
+        t = props.pop('type', 'bottom')
+        if half == 'double':
+            return None if t != 'double' else {'variant': 'default'}
+        if t == 'double':
+            return None
+        props['half'] = t
+        props['variant'] = 'default'
+    if shape == 'button':
+        face = props.pop('face', 'wall')
+        if face != 'wall':
+            if props.get('facing') != 'north':
+                return None
+            props['facing'] = BUTTON_FACE[face]
+    if shape in ('fence_gate', 'door'):
+        props.pop('powered', None)
+    return props
 
 def blockstate(jar, name, out_name, shape, models, textures, half=None):
-    """Today's blockstate file to 1.12.2's: waterlogged dropped, slabs split into half and double blocks."""
+    """Today's blockstate file to 1.12.2's: waterlogged dropped, slabs split into half and double blocks, buttons'
+    face folded into facing; multipart files stay multipart."""
     bs = json.loads(jar.read('assets/minecraft/blockstates/%s.json' % name))
+
+    def conv_model(e):
+        e = dict(e)
+        copy_model(jar, e['model'], models, textures)
+        e['model'] = ref112(e['model'], 'model').replace('backportcore:block/', 'backportcore:')
+        return e
+
+    if 'multipart' in bs:
+        parts = []
+        for part in bs['multipart']:
+            apply = part['apply']
+            apply = [conv_model(e) for e in apply] if isinstance(apply, list) else conv_model(apply)
+            out = {'apply': apply}
+            if 'when' in part:
+                w = part['when']
+                if 'OR' in w:
+                    out['when'] = {'OR': [{k: v for k, v in c.items() if k != 'waterlogged'} for c in w['OR']]}
+                else:
+                    out['when'] = {k: v for k, v in w.items() if k != 'waterlogged'}
+            parts.append(out)
+        write(os.path.join(RES, 'blockstates', out_name + '.json'), json.dumps({'multipart': parts}, indent=1) + '\n')
+        return
     variants = {}
     for key, v in bs.get('variants', {}).items():
-        props = dict(kv.split('=') for kv in key.split(',') if kv)
-        props.pop('waterlogged', None)
-        if shape == 'slab':
-            t = props.pop('type', 'bottom')
-            if half == 'double':
-                if t != 'double':
-                    continue
-            else:
-                if t == 'double':
-                    continue
-                props['half'] = t
-                props['variant'] = 'default'
+        props = convert_key(dict(kv.split('=') for kv in key.split(',') if kv), shape, half)
+        if props is None:
+            continue
         entries = v if isinstance(v, list) else [v]
-        conv = []
-        for e in entries:
-            e = dict(e)
-            copy_model(jar, e['model'], models, textures)
-            e['model'] = ref112(e['model'], 'model').replace('backportcore:block/', 'backportcore:')
-            conv.append(e)
+        conv = [conv_model(e) for e in entries]
         k = ','.join('%s=%s' % kv for kv in sorted(props.items())) or 'normal'
-        if shape == 'slab' and half == 'double':
-            k = 'variant=default'
         variants[k] = conv if len(conv) > 1 else conv[0]
     if 'normal' in variants:
         variants['inventory'] = variants['normal']
-    write(os.path.join(RES, 'blockstates', out_name + '.json'), json.dumps({'variants': variants}, indent=2) + '\n')
+    write(os.path.join(RES, 'blockstates', out_name + '.json'), json.dumps({'variants': variants}, indent=1) + '\n')
 
 def item_model(jar, name, models, textures):
     src = 'assets/minecraft/items/%s.json' % name
     ref = 'minecraft:block/' + name
-    if src in jar.namelist():
-        d = json.loads(jar.read(src))
-        ref = d.get('model', {}).get('model', ref)
+    if src in names_of(jar):
+        # The first plain model of the item definition (a condition or select picks among several).
+        def first(e):
+            if isinstance(e, dict):
+                if e.get('type') in ('minecraft:model', 'model') and isinstance(e.get('model'), str):
+                    return e['model']
+                for v in e.values():
+                    r = first(v)
+                    if r:
+                        return r
+            elif isinstance(e, list):
+                for v in e:
+                    r = first(v)
+                    if r:
+                        return r
+            return None
+        ref = first(json.loads(jar.read(src))) or ref
     copy_model(jar, ref, models, textures)
-    write(os.path.join(RES, 'models', 'item', name + '.json'), json.dumps({'parent': ref112(ref, 'model')}, indent=2) + '\n')
+    write(os.path.join(RES, 'models', 'item', name + '.json'), json.dumps({'parent': ref112(ref, 'model')}, indent=1) + '\n')
+
+def tint_and_box(jar, bs):
+    """Whether the model is tinted, and the bounds of its elements in sixteenths ('-' for a full block)."""
+    chain = model_chain(jar, first_model(bs))
+    tinted = any('tintindex' in json.dumps(m.get('elements', [])) for _p, m in chain)
+    names = [p for p, _m in chain]
+    elements = next((m['elements'] for _p, m in chain if 'elements' in m), None)
+    box = '-'
+    if elements:
+        lo = [min(e['from'][i] for e in elements) for i in range(3)]
+        hi = [max(e['to'][i] for e in elements) for i in range(3)]
+        if lo != [0, 0, 0] or hi != [16, 16, 16]:
+            box = ','.join('%g' % max(0, min(16, x)) for x in lo + hi)
+    return tinted, box, names
 
 # ---- main
+
+FAMILY_ORDER = ['updateaquaticbackport', 'villagerbackport', 'buzzybeesbackport', 'netherupdatebackport', 'cavesandcliffsbackport',
+                'wildupdatebackport', 'trailsandtalesbackport', 'trickytrialsbackport', 'gamedropsbackport']
+
+def family_blocks(folder):
+    """modid -> block names of each family jar in the folder (from its blockstates)."""
+    out = {}
+    if not folder:
+        return out
+    for f in os.listdir(folder):
+        if not f.endswith('.jar'):
+            continue
+        with zipfile.ZipFile(os.path.join(folder, f)) as z:
+            for n in z.namelist():
+                m = re.match(r'assets/(\w+)/blockstates/(\w+)\.json$', n)
+                if m and m.group(1) in FAMILY_ORDER:
+                    out.setdefault(m.group(1), set()).add(m.group(2))
+    return out
+
+def old_names():
+    """Blocks 1.12.2 has under some name: the Flattening table's (Core's structure/flattening.txt)."""
+    out = set()
+    for l in open(os.path.join(RES, 'structure', 'flattening.txt'), encoding='utf-8'):
+        if l.startswith('minecraft:'):
+            out.add(l.split('\t')[0].split('[')[0][len('minecraft:'):])
+    # Renamed since 1.13 (ModernPalette brings files up to date), or a tile entity's in 1.12.2: still 1.12.2's blocks.
+    return out | {'short_grass', 'dirt_path', 'oak_sign', 'oak_wall_sign', 'smooth_stone_slab', 'water_cauldron', 'flower_pot',
+                 # 1.13 split 1.12.2's pumpkin (always carved) into pumpkin and carved_pumpkin; ModernPalette maps both.
+                 'pumpkin'}
+
+def arg(a, k, d=None):
+    return a[a.index(k) + 1] if k in a else d
 
 def main():
     a = sys.argv[1:]
     jarpath = a[0]
-    exe = a[a.index('--javap') + 1] if '--javap' in a else 'javap'
-    langdir = a[a.index('--lang') + 1] if '--lang' in a else None
+    exe = arg(a, '--javap', 'javap')
+    langdir = arg(a, '--lang')
+    family = family_blocks(arg(a, '--family'))
+    objects = asset_index(arg(a, '--assets'))
+    cache = arg(a, '--cache', os.path.join(tempfile.gettempdir(), 'mc-assets'))
     jar = zipfile.ZipFile(jarpath)
-    names = [l.strip() for l in open(os.path.join(HERE, 'names.txt'), encoding='utf-8') if l.strip() and not l.startswith('#')]
-    owners = {}
+    overrides = {}
     for l in open(os.path.join(HERE, 'owners.txt'), encoding='utf-8'):
         f = l.split()
         if f and not l.startswith('#'):
-            owners[f[0]] = (f[1], f[2] if len(f) > 2 else f[0])
+            overrides[f[0]] = (f[1], f[2] if len(f) > 2 else f[0])
+    excluded = {l.strip() for l in open(os.path.join(HERE, 'exclude.txt'), encoding='utf-8') if l.strip() and not l.startswith('#')}
+
+    # A run replaces everything the last run wrote.
+    manifest = os.path.join(RES, 'supplied', 'generated.txt')
+    if os.path.isfile(manifest):
+        for rel in open(manifest, encoding='utf-8').read().split():
+            p = os.path.join(RES, rel)
+            if os.path.isfile(p):
+                os.remove(p)
 
     tmp = tempfile.mkdtemp()
     bf = os.path.join(tmp, 'Blocks.class')
@@ -655,32 +911,61 @@ def main():
     interp.run('<clinit>', [])
     print('read %d blocks from Blocks.class' % len(interp.blocks))
 
+    old = old_names()
     tool, level = tags(jar)
-    cache = {}
+    classes = {}
     rows, skipped = [], []
     models, textures = set(), set()
     lang = {}
-    en = {}
-    if langdir:
-        en = json.load(open(os.path.join(langdir, 'en_us.json'), encoding='utf-8'))
-    for name in names:
-        rec = interp.blocks.get(name)
-        if rec is None:
-            skipped.append((name, 'not in the jar'))
+    en = json.load(open(os.path.join(langdir, 'en_us.json'), encoding='utf-8')) if langdir else {}
+    for name, rec in interp.blocks.items():
+        if name in old or name in excluded:
             continue
-        chain = superchain(jar, tmp, exe, rec['cls'], cache)
+        bsp = 'assets/minecraft/blockstates/%s.json' % name
+        if bsp not in names_of(jar):
+            skipped.append((name, 'no blockstate file'))
+            continue
+        bs = json.loads(jar.read(bsp))
+        chain = superchain(jar, tmp, exe, rec['cls'], classes)
         p = rec['props']
         shape = shape_of(chain, p)
-        if shape is None:
-            skipped.append((name, 'shape class %s' % ' > '.join(chain)))
+        tinted, box, model_names = tint_and_box(jar, bs)
+        chain_models = model_chain(jar, first_model(bs))
+        if not model_names or not any('elements' in m for _p, m in chain_models):
+            # Drawn by a tile entity renderer (copper chests): no block model to copy, or one with only a particle.
+            skipped.append((name, 'no block model'))
             continue
-        owner, owner_path = owners.get(name, ('-', name))
+        if shape == 'plant?':
+            shape = 'plant' if any(n in ('block/cross', 'block/tinted_cross') for n in model_names) else None
+        if shape is None:
+            skipped.append((name, 'class %s' % ' > '.join(chain)))
+            continue
+        keys = variant_keys(bs)
+        if shape == 'slab':
+            keys = (keys - {'type'}) | {'half', 'variant'}
+        if shape == 'button':
+            keys.discard('face')
+        if shape in ('fence_gate', 'door'):
+            keys.discard('powered')
+        if not keys <= PROPS[shape]:
+            skipped.append((name, '%s with properties %s' % (shape, ', '.join(sorted(keys - PROPS[shape])))))
+            continue
+        if name in overrides:
+            owner, owner_name = overrides[name]
+        else:
+            owner, owner_name = next(((m, name) for m in FAMILY_ORDER if name in family.get(m, ())), ('-', name))
+        layout = 'axis_ordinal' if shape == 'chain' and owner == 'trickytrialsbackport' else 'vanilla'
         snd = p.get('sound', 'STONE')
-        layer = 'cutout' if shape in ('grate', 'chain') else 'solid'
-        rows.append([name, shape, material_112(snd), '%g' % p.get('hardness', 1.5), '%g' % p.get('resistance', p.get('hardness', 1.5)),
+        layer = 'translucent' if shape in TRANSLUCENT else 'cutout' if shape in CUTOUT else 'solid'
+        tint = TINTS.get(name, '-')
+        if shape == 'plant':
+            box = next((PLANT_BOX[c] for c in chain if c in PLANT_BOX), '2,0,2,14,13,14')
+        elif shape not in ('potted', 'carpet', 'lantern'):
+            box = '-'
+        rows.append([name, shape, material_112(snd, shape), '%g' % p.get('hardness', 0.0), '%g' % p.get('resistance', p.get('hardness', 0.0)),
                      sound_112(snd), snd, str(p.get('light', 0)), str(mapcolor_id(p.get('mapcolor', 'NONE'))),
                      tool.get(name, '-'), str(level.get(name, 0)), 'yes' if p.get('tool_required') else 'no',
-                     drop(jar, name), owner, owner_path, layer])
+                     drop(jar, name), owner, owner_name, layer, layout, tint, box])
         if shape == 'slab':
             base = name[:-len('_slab')]
             blockstate(jar, name, name, shape, models, textures)
@@ -692,8 +977,61 @@ def main():
 
     header = ('# Backport Core supplied blocks, generated by tools/supplied-blocks/generate.py from %s. Do not edit.\n'
               '# name shape material hardness resistance sound(1.12.2) sound(today) light mapcolor(1.12.2 id) tool level '
-              'needs_tool drop owner owner_name layer\n') % os.path.basename(jarpath)
+              'needs_tool drop owner owner_name layer layout tint box(sixteenths)\n') % os.path.basename(jarpath)
     write(os.path.join(RES, 'supplied', 'blocks.txt'), header + ''.join('\t'.join(r) + '\n' for r in rows))
+
+    # Today's sound types 1.12.2 lacks, as Core's own sound events, with today's sound files.
+    types = sound_types(jar, tmp, exe)
+    used = sorted({r[6] for r in rows if r[6] not in SOUNDS_112 and r[6] in types})
+    sounds_json_path = os.path.join(RES, 'sounds.json')
+    sj = json.load(open(sounds_json_path, encoding='utf-8')) if os.path.isfile(sounds_json_path) else {}
+    sj = {k: v for k, v in sj.items() if not k.startswith('block.')}
+    modern_sounds = json.loads(fetch_object(objects, cache, 'minecraft/sounds.json') or b'{}')
+    lines, files, missing_sounds = [], set(), []
+    for t in used:
+        vol, pitch, evs = types[t]
+        lines.append('%s\t%g\t%g\t%s\n' % (t, vol, pitch, '\t'.join(evs)))
+        for ev in evs:
+            if ev in sj:
+                continue
+            entry = modern_sounds.get(ev)
+            if entry is None:
+                missing_sounds.append(ev)
+                continue
+            out = []
+            for s in entry.get('sounds', []):
+                s = dict(s) if isinstance(s, dict) else {'name': s}
+                if s.get('type') == 'event':
+                    # Another event's sounds: copied in.
+                    for inner in modern_sounds.get(s['name'].replace('minecraft:', ''), {}).get('sounds', []):
+                        inner = dict(inner) if isinstance(inner, dict) else {'name': inner}
+                        if inner.get('type') != 'event':
+                            out.append(inner)
+                    continue
+                out.append(s)
+            conv = []
+            for s in out:
+                n = s['name'].replace('minecraft:', '')
+                files.add(n)
+                s['name'] = 'backportcore:modern/' + n
+                s.pop('attenuation_distance', None)
+                conv.append(s)
+            e = {'sounds': conv}
+            sub = entry.get('subtitle', '')
+            if sub.startswith('subtitles.block.generic.'):
+                e['subtitle'] = sub
+            sj[ev] = e
+    write(os.path.join(RES, 'supplied', 'sounds.txt'), '# Today\'s sound types: volume pitch break step place hit fall.\n' + ''.join(lines))
+    with open(sounds_json_path, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(json.dumps(sj, indent=1) + '\n')
+    total = 0
+    for n in sorted(files):
+        data = fetch_object(objects, cache, 'minecraft/sounds/%s.ogg' % n)
+        if data is None:
+            missing_sounds.append(n)
+            continue
+        total += len(data)
+        write(os.path.join(RES, 'sounds', 'modern', n + '.ogg'), data)
 
     # en_us.lang: a generated block at the end, replaced on each run.
     lp = os.path.join(RES, 'lang', 'en_us.lang')
@@ -706,7 +1044,8 @@ def main():
         if n.endswith('_slab'):
             block += 'tile.backportcore.%s_double_slab.name=%s\n' % (n[:-5], t)
     block += end
-    write(lp, cur.rstrip('\n') + '\n\n' + block)
+    with open(lp, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(cur.rstrip('\n') + '\n\n' + block)
 
     # The other languages: Mojang's own names for the same blocks (Rule 4), the same generated block in each file.
     if langdir:
@@ -717,22 +1056,31 @@ def main():
             if code == 'en_us' or not os.path.isfile(src):
                 continue
             d = json.load(open(src, encoding='utf-8'))
-            lines = []
+            out = []
             for k in keys:
                 key = k.split('=', 1)[0]
                 path = key[len('tile.backportcore.'):-len('.name')]
                 v = d.get('block.minecraft.' + (path.replace('_double_slab', '_slab') if path.endswith('_double_slab') else path))
                 if v:
-                    lines.append('%s=%s' % (key, v) + chr(10))
+                    out.append('%s=%s' % (key, v) + chr(10))
             lp = os.path.join(RES, 'lang', f)
             cur = open(lp, encoding='utf-8').read()
             if start in cur:
                 cur = cur[:cur.index(start)] + cur[cur.index(end) + len(end):]
-            write(lp, cur.rstrip(chr(10)) + chr(10) * 2 + start + ''.join(lines) + end)
+            with open(lp, 'w', encoding='utf-8', newline='\n') as fh:
+                fh.write(cur.rstrip(chr(10)) + chr(10) * 2 + start + ''.join(out) + end)
 
-    print('wrote %d rows, %d models, %d textures' % (len(rows), len(models), len(textures)))
-    for n, why in skipped:
-        print('skipped %s: %s' % (n, why))
+    with open(manifest, 'w', encoding='utf-8', newline='\n') as f:
+        f.write('\n'.join(sorted(set(WRITTEN) - {'supplied/generated.txt'})) + '\n')
+    with open(os.path.join(HERE, 'skipped.txt'), 'w', encoding='utf-8', newline='\n') as f:
+        f.write('# Blocks newer than 1.12.2 that Core does not supply, and why (generated).\n')
+        f.write(''.join('%s\t%s\n' % s for s in skipped))
+    shapes = {}
+    for r in rows:
+        shapes[r[1]] = shapes.get(r[1], 0) + 1
+    print('wrote %d rows (%s), %d models, %d textures, %d sound types, %d sound files (%d KB)' % (
+        len(rows), ', '.join('%s %d' % kv for kv in sorted(shapes.items())), len(models), len(textures), len(used), len(files), total // 1024))
+    print('skipped %d (tools/supplied-blocks/skipped.txt); sounds missing: %s' % (len(skipped), missing_sounds[:10]))
 
 if __name__ == '__main__':
     main()

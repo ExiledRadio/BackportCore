@@ -1,6 +1,6 @@
 {
-  "parent": "backportcore:block/modern/cube_all",
-  "textures": {
-    "all": "backportcore:blocks/modern/weathered_chiseled_copper"
-  }
+ "parent": "backportcore:block/modern/cube_all",
+ "textures": {
+  "all": "backportcore:blocks/modern/weathered_chiseled_copper"
+ }
 }

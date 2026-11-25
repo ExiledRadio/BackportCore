@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/cut_copper",
+  "side": "backportcore:blocks/modern/cut_copper",
+  "top": "backportcore:blocks/modern/cut_copper"
+ }
+}

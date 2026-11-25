@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/lily_of_the_valley"
+  },
+  "inventory": {
+   "model": "backportcore:modern/lily_of_the_valley"
+  }
+ }
+}

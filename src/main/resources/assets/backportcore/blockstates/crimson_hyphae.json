@@ -1,0 +1,16 @@
+{
+ "variants": {
+  "axis=x": {
+   "model": "backportcore:modern/crimson_hyphae",
+   "x": 90,
+   "y": 90
+  },
+  "axis=y": {
+   "model": "backportcore:modern/crimson_hyphae"
+  },
+  "axis=z": {
+   "model": "backportcore:modern/crimson_hyphae",
+   "x": 90
+  }
+ }
+}

@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/outer_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/polished_sulfur",
+  "side": "backportcore:blocks/modern/polished_sulfur",
+  "top": "backportcore:blocks/modern/polished_sulfur"
+ }
+}

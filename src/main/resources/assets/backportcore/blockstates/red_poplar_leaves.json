@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/red_poplar_leaves"
+  },
+  "inventory": {
+   "model": "backportcore:modern/red_poplar_leaves"
+  }
+ }
+}

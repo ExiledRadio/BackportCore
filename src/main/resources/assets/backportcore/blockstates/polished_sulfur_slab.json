@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "half=bottom,variant=default": {
+   "model": "backportcore:modern/polished_sulfur_slab"
+  },
+  "half=top,variant=default": {
+   "model": "backportcore:modern/polished_sulfur_slab_top"
+  }
+ }
+}

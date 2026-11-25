@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/outer_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/polished_blackstone",
+  "side": "backportcore:blocks/modern/polished_blackstone",
+  "top": "backportcore:blocks/modern/polished_blackstone"
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/button_pressed",
+ "textures": {
+  "texture": "backportcore:blocks/modern/pale_oak_planks"
+ }
+}

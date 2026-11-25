@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/cube_column",
+ "textures": {
+  "end": "backportcore:blocks/modern/muddy_mangrove_roots_top",
+  "side": "backportcore:blocks/modern/muddy_mangrove_roots_side"
+ }
+}

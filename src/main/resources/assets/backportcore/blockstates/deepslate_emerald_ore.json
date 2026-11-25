@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/deepslate_emerald_ore"
+  },
+  "inventory": {
+   "model": "backportcore:modern/deepslate_emerald_ore"
+  }
+ }
+}

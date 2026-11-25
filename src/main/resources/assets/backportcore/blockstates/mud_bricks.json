@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/mud_bricks_north_west_mirrored"
-    },
-    "inventory": {
-      "model": "backportcore:modern/mud_bricks_north_west_mirrored"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/mud_bricks_north_west_mirrored"
+  },
+  "inventory": {
+   "model": "backportcore:modern/mud_bricks_north_west_mirrored"
   }
+ }
 }

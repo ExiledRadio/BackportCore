@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/ancient_debris"
+  },
+  "inventory": {
+   "model": "backportcore:modern/ancient_debris"
+  }
+ }
+}

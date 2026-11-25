@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_trapdoor_bottom",
+ "textures": {
+  "texture": "backportcore:blocks/modern/oxidized_copper_trapdoor"
+ }
+}

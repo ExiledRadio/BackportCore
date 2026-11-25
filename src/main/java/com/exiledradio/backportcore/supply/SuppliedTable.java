@@ -46,8 +46,14 @@ public final class SuppliedTable {
         public final String owner;
         /** The block's name in its owner ({@code iron_chain} is Nether Update's {@code chain}). */
         public final String ownerName;
-        /** solid or cutout. */
+        /** solid, cutout or translucent. */
         public final String layer;
+        /** The owner's metadata layout where it is not vanilla's: {@code axis_ordinal} (Tricky Trials' chains). */
+        public final String layout;
+        /** Today's block color: {@code grass}, {@code mangrove}, or null for none. */
+        public final String tint;
+        /** Outline in sixteenths (x0 y0 z0 x1 y1 z1) for plants, carpets and lanterns; null for a full block. */
+        public final float[] box;
 
         Row(String[] f) {
             this.name = f[0];
@@ -66,6 +72,17 @@ public final class SuppliedTable {
             this.owner = "-".equals(f[13]) ? null : f[13];
             this.ownerName = f[14];
             this.layer = f[15];
+            this.layout = f.length > 16 ? f[16] : "vanilla";
+            this.tint = f.length > 17 && !"-".equals(f[17]) ? f[17] : null;
+            float[] b = null;
+            if (f.length > 18 && !"-".equals(f[18])) {
+                String[] n = f[18].split(",");
+                b = new float[6];
+                for (int i = 0; i < 6; i++) {
+                    b[i] = Float.parseFloat(n[i]);
+                }
+            }
+            this.box = b;
         }
 
         /** @return the double slab's path for a slab row ({@code polished_tuff_slab} to {@code polished_tuff_double_slab}) */

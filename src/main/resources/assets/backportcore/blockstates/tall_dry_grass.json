@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/tall_dry_grass"
+  },
+  "inventory": {
+   "model": "backportcore:modern/tall_dry_grass"
+  }
+ }
+}

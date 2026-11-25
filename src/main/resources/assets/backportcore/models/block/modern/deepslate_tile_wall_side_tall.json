@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_wall_side_tall",
+ "textures": {
+  "wall": "backportcore:blocks/modern/deepslate_tiles"
+ }
+}

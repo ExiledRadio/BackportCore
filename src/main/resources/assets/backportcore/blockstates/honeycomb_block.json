@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/honeycomb_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/honeycomb_block"
+  }
+ }
+}

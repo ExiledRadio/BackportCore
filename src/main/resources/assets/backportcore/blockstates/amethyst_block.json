@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/amethyst_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/amethyst_block"
+  }
+ }
+}

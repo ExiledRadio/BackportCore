@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/honey_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/honey_block"
+  }
+ }
+}

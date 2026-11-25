@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/cornflower"
+  },
+  "inventory": {
+   "model": "backportcore:modern/cornflower"
+  }
+ }
+}

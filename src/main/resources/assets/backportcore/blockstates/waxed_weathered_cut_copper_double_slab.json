@@ -1,0 +1,7 @@
+{
+ "variants": {
+  "variant=default": {
+   "model": "backportcore:modern/weathered_cut_copper"
+  }
+ }
+}

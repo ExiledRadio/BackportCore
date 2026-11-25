@@ -68,9 +68,12 @@ Core reads every mod jar's `data/` folder at load complete, after every backport
 
 ### Supplied blocks (Core 1.5.0)
 
-Core supplies decorative copies of modern blocks the structures use when no installed mod has them: deepslate,
-tuff and blackstone sets, waxed copper, mud bricks, pale oak and crimson planks, iron chains and others (30 so far,
-listed in `assets/backportcore/supplied/blocks.txt`). Only the blocks your files name are registered.
+Core supplies decorative copies of modern blocks the structures use when no installed mod has them: about 440
+blocks from 1.13 to 26.3, with today's models, textures and sounds (deepslate, tuff and blackstone sets, copper,
+mud bricks, new woods with their doors, fences and trapdoors, walls, lanterns, chains, leaves, flowers and roots;
+`assets/backportcore/supplied/blocks.txt`). Only the blocks your files name are registered. Blocks with a tile
+entity (chests, signs, decorated pots, suspicious sand), torches and multi-block plants are not supplied:
+`tools/supplied-blocks/skipped.txt` has the list.
 
 - They look and break like vanilla's and do nothing else. With the backport that owns a block installed, structures
   get its real block instead, with its behavior (Caves & Cliffs' copper oxidizes).

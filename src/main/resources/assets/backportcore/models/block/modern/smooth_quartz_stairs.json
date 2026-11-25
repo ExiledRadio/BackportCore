@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/quartz_block_bottom",
+  "side": "backportcore:blocks/modern/quartz_block_bottom",
+  "top": "backportcore:blocks/modern/quartz_block_bottom"
+ }
+}

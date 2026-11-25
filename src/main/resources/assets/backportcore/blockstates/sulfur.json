@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/sulfur"
+  },
+  "inventory": {
+   "model": "backportcore:modern/sulfur"
+  }
+ }
+}

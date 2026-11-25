@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/exposed_copper"
+  },
+  "inventory": {
+   "model": "backportcore:modern/exposed_copper"
+  }
+ }
+}

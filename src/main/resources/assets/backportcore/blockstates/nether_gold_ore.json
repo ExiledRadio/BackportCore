@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/nether_gold_ore"
+  },
+  "inventory": {
+   "model": "backportcore:modern/nether_gold_ore"
+  }
+ }
+}

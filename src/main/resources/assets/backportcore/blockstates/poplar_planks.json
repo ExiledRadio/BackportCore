@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/poplar_planks"
+  },
+  "inventory": {
+   "model": "backportcore:modern/poplar_planks"
+  }
+ }
+}

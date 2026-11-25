@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/hanging_roots"
+  },
+  "inventory": {
+   "model": "backportcore:modern/hanging_roots"
+  }
+ }
+}

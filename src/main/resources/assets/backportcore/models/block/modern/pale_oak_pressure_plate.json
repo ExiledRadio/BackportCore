@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/pressure_plate_up",
+ "textures": {
+  "texture": "backportcore:blocks/modern/pale_oak_planks"
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "variants": {
+  "variant=default": {
+   "model": "backportcore:modern/exposed_cut_copper"
+  }
+ }
+}

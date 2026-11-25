@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/cube_column",
+ "textures": {
+  "end": "backportcore:blocks/modern/stripped_jungle_log_top",
+  "side": "backportcore:blocks/modern/stripped_jungle_log"
+ }
+}

@@ -1,0 +1,185 @@
+# Blocks newer than 1.12.2 that Core does not supply, and why (generated).
+mangrove_propagule	class MangrovePropaguleBlock > SaplingBlock > VegetationBlock
+suspicious_sand	class BrushableBlock > BaseEntityBlock
+suspicious_gravel	class BrushableBlock > BaseEntityBlock
+mangrove_roots	class MangroveRootsBlock
+straw_bed	class StrawBedBlock > AbstractBedBlock > HorizontalDirectionalBlock
+seagrass	class SeagrassBlock > VegetationBlock
+chiseled_bookshelf	class ChiseledBookShelfBlock > BaseEntityBlock
+acacia_shelf	class ShelfBlock > BaseEntityBlock
+bamboo_shelf	class ShelfBlock > BaseEntityBlock
+birch_shelf	class ShelfBlock > BaseEntityBlock
+cherry_shelf	class ShelfBlock > BaseEntityBlock
+crimson_shelf	class ShelfBlock > BaseEntityBlock
+dark_oak_shelf	class ShelfBlock > BaseEntityBlock
+jungle_shelf	class ShelfBlock > BaseEntityBlock
+mangrove_shelf	class ShelfBlock > BaseEntityBlock
+oak_shelf	class ShelfBlock > BaseEntityBlock
+pale_oak_shelf	class ShelfBlock > BaseEntityBlock
+poplar_shelf	class ShelfBlock > BaseEntityBlock
+spruce_shelf	class ShelfBlock > BaseEntityBlock
+warped_shelf	class ShelfBlock > BaseEntityBlock
+creaking_heart	class CreakingHeartBlock > BaseEntityBlock
+redstone_dust	no blockstate file
+wheat_crop	no blockstate file
+spruce_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+birch_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+acacia_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+cherry_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+jungle_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+dark_oak_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+pale_oak_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+mangrove_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+poplar_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+bamboo_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+oak_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+spruce_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+birch_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+acacia_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+cherry_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+jungle_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+dark_oak_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+pale_oak_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+crimson_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+warped_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+mangrove_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+poplar_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+bamboo_hanging_sign	class CeilingHangingSignBlock > SignBlock > BaseEntityBlock
+soul_torch	class TorchBlock > BaseTorchBlock
+copper_torch	class TorchBlock > BaseTorchBlock
+pumpkin_crop	no blockstate file
+melon_crop	no blockstate file
+glow_lichen	class GlowLichenBlock > MultifaceSpreadeableBlock > MultifaceBlock
+resin_clump	class MultifaceBlock
+cocoa_crop	no blockstate file
+shelf_mushroom	class ShelfMushroomBlock > HorizontalDirectionalBlock
+carrot_crop	no blockstate file
+potato_crop	no blockstate file
+skeleton_skull	no block model
+wither_skeleton_skull	no block model
+zombie_head	no block model
+player_head	no block model
+creeper_head	no block model
+dragon_head	no block model
+piglin_head	no block model
+light	no block model
+torchflower_crop	class TorchflowerCropBlock > CropBlock > VegetationBlock
+pitcher_crop	class PitcherCropBlock > DoublePlantBlock > VegetationBlock
+pitcher_plant	class DoublePlantBlock > VegetationBlock
+beetroot_crop	no blockstate file
+shulker_box	no block model
+kelp	class KelpBlock > GrowingPlantHeadBlock > GrowingPlantBlock
+turtle_egg	class TurtleEggBlock
+sniffer_egg	class SnifferEggBlock
+dried_ghast	class DriedGhastBlock > HorizontalDirectionalBlock
+dead_tube_coral	class BaseCoralPlantBlock > BaseCoralPlantTypeBlock
+dead_brain_coral	class BaseCoralPlantBlock > BaseCoralPlantTypeBlock
+dead_bubble_coral	class BaseCoralPlantBlock > BaseCoralPlantTypeBlock
+dead_fire_coral	class BaseCoralPlantBlock > BaseCoralPlantTypeBlock
+dead_horn_coral	class BaseCoralPlantBlock > BaseCoralPlantTypeBlock
+tube_coral	class CoralPlantBlock > BaseCoralPlantTypeBlock
+brain_coral	class CoralPlantBlock > BaseCoralPlantTypeBlock
+bubble_coral	class CoralPlantBlock > BaseCoralPlantTypeBlock
+fire_coral	class CoralPlantBlock > BaseCoralPlantTypeBlock
+horn_coral	class CoralPlantBlock > BaseCoralPlantTypeBlock
+dead_tube_coral_fan	class BaseCoralFanBlock > BaseCoralPlantTypeBlock
+dead_brain_coral_fan	class BaseCoralFanBlock > BaseCoralPlantTypeBlock
+dead_bubble_coral_fan	class BaseCoralFanBlock > BaseCoralPlantTypeBlock
+dead_fire_coral_fan	class BaseCoralFanBlock > BaseCoralPlantTypeBlock
+dead_horn_coral_fan	class BaseCoralFanBlock > BaseCoralPlantTypeBlock
+tube_coral_fan	class CoralFanBlock > BaseCoralFanBlock > BaseCoralPlantTypeBlock
+brain_coral_fan	class CoralFanBlock > BaseCoralFanBlock > BaseCoralPlantTypeBlock
+bubble_coral_fan	class CoralFanBlock > BaseCoralFanBlock > BaseCoralPlantTypeBlock
+fire_coral_fan	class CoralFanBlock > BaseCoralFanBlock > BaseCoralPlantTypeBlock
+horn_coral_fan	class CoralFanBlock > BaseCoralFanBlock > BaseCoralPlantTypeBlock
+sea_pickle	class SeaPickleBlock > VegetationBlock
+conduit	no block model
+bamboo	class BambooStalkBlock
+scaffolding	class ScaffoldingBlock
+loom	cube with properties facing
+barrel	class BarrelBlock > BaseEntityBlock
+smoker	class SmokerBlock > AbstractFurnaceBlock > BaseEntityBlock
+blast_furnace	class BlastFurnaceBlock > AbstractFurnaceBlock > BaseEntityBlock
+grindstone	cube with properties face, facing
+lectern	class LecternBlock > BaseEntityBlock
+stonecutter	cube with properties facing
+bell	class BellBlock > BaseEntityBlock
+campfire	class CampfireBlock > BaseEntityBlock
+soul_campfire	class CampfireBlock > BaseEntityBlock
+sweet_berry_crop	no blockstate file
+weeping_vines	class WeepingVinesBlock > GrowingPlantHeadBlock > GrowingPlantBlock
+twisting_vines	class TwistingVinesBlock > GrowingPlantHeadBlock > GrowingPlantBlock
+crimson_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+warped_sign	class StandingSignBlock > SignBlock > BaseEntityBlock
+jigsaw	cube with properties orientation
+test_block	class TestBlock > BaseEntityBlock
+test_instance_block	class TestInstanceBlock > BaseEntityBlock
+composter	cube with properties level
+bee_nest	class BeehiveBlock > BaseEntityBlock
+beehive	class BeehiveBlock > BaseEntityBlock
+respawn_anchor	cube with properties charges
+candle	class CandleBlock > AbstractCandleBlock
+amethyst_cluster	class AmethystClusterBlock > AmethystBlock
+large_amethyst_bud	class AmethystClusterBlock > AmethystBlock
+medium_amethyst_bud	class AmethystClusterBlock > AmethystBlock
+small_amethyst_bud	class AmethystClusterBlock > AmethystBlock
+potent_sulfur	class PotentSulfurBlock > BaseEntityBlock
+powder_snow	class PowderSnowBlock
+sculk_sensor	class SculkSensorBlock > BaseEntityBlock
+calibrated_sculk_sensor	class CalibratedSculkSensorBlock > SculkSensorBlock > BaseEntityBlock
+sculk_vein	class SculkVeinBlock > MultifaceSpreadeableBlock > MultifaceBlock
+sculk_catalyst	class SculkCatalystBlock > BaseEntityBlock
+sculk_shrieker	class SculkShriekerBlock > BaseEntityBlock
+copper_bulb	class WeatheringCopperBulbBlock > CopperBulbBlock
+waxed_copper_bulb	class CopperBulbBlock
+exposed_copper_bulb	class WeatheringCopperBulbBlock > CopperBulbBlock
+waxed_exposed_copper_bulb	class CopperBulbBlock
+weathered_copper_bulb	class WeatheringCopperBulbBlock > CopperBulbBlock
+waxed_weathered_copper_bulb	class CopperBulbBlock
+oxidized_copper_bulb	class WeatheringCopperBulbBlock > CopperBulbBlock
+waxed_oxidized_copper_bulb	class CopperBulbBlock
+copper_chest	no block model
+waxed_copper_chest	no block model
+exposed_copper_chest	no block model
+waxed_exposed_copper_chest	no block model
+weathered_copper_chest	no block model
+waxed_weathered_copper_chest	no block model
+oxidized_copper_chest	no block model
+waxed_oxidized_copper_chest	no block model
+copper_golem_statue	no block model
+waxed_copper_golem_statue	no block model
+exposed_copper_golem_statue	no block model
+waxed_exposed_copper_golem_statue	no block model
+weathered_copper_golem_statue	no block model
+waxed_weathered_copper_golem_statue	no block model
+oxidized_copper_golem_statue	no block model
+waxed_oxidized_copper_golem_statue	no block model
+lightning_rod	class WeatheringLightningRodBlock > LightningRodBlock > RodBlock > DirectionalBlock
+waxed_lightning_rod	class LightningRodBlock > RodBlock > DirectionalBlock
+exposed_lightning_rod	class WeatheringLightningRodBlock > LightningRodBlock > RodBlock > DirectionalBlock
+waxed_exposed_lightning_rod	class LightningRodBlock > RodBlock > DirectionalBlock
+weathered_lightning_rod	class WeatheringLightningRodBlock > LightningRodBlock > RodBlock > DirectionalBlock
+waxed_weathered_lightning_rod	class LightningRodBlock > RodBlock > DirectionalBlock
+oxidized_lightning_rod	class WeatheringLightningRodBlock > LightningRodBlock > RodBlock > DirectionalBlock
+waxed_oxidized_lightning_rod	class LightningRodBlock > RodBlock > DirectionalBlock
+pointed_dripstone	class PointedDripstoneBlock > SpeleothemBlock
+sulfur_spike	class SulfurSpikeBlock > SpeleothemBlock
+glow_berry_crop	no blockstate file
+spore_blossom	class SporeBlossomBlock
+azalea	class AzaleaBlock > VegetationBlock
+flowering_azalea	class AzaleaBlock > VegetationBlock
+pink_petals	class FlowerBedBlock > VegetationBlock
+wildflowers	class FlowerBedBlock > VegetationBlock
+leaf_litter	class LeafLitterBlock > VegetationBlock
+big_dripleaf	cube with properties facing, tilt
+small_dripleaf	class SmallDripleafBlock > DoublePlantBlock > VegetationBlock
+infested_deepslate	cube with properties axis
+frogspawn	class FrogspawnBlock
+decorated_pot	no block model
+crafter	class CrafterBlock > BaseEntityBlock
+trial_spawner	class TrialSpawnerBlock > BaseEntityBlock
+vault	class VaultBlock > BaseEntityBlock
+pale_moss_carpet	class MossyCarpetBlock
+pale_hanging_moss	class HangingMossBlock
+open_eyeblossom	class EyeblossomBlock > FlowerBlock > VegetationBlock
+firefly_bush	class FireflyBushBlock > VegetationBlock

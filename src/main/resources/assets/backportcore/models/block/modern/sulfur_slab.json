@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/sulfur",
+  "side": "backportcore:blocks/modern/sulfur",
+  "top": "backportcore:blocks/modern/sulfur"
+ }
+}

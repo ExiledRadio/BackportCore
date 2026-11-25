@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/yellow_poplar_leaves"
+  },
+  "inventory": {
+   "model": "backportcore:modern/yellow_poplar_leaves"
+  }
+ }
+}

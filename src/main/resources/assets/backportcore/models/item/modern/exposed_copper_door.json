@@ -1,0 +1,6 @@
+{
+ "parent": "item/generated",
+ "textures": {
+  "layer0": "backportcore:items/modern/exposed_copper_door"
+ }
+}

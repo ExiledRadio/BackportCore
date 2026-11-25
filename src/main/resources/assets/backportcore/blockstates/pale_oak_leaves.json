@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/pale_oak_leaves"
+  },
+  "inventory": {
+   "model": "backportcore:modern/pale_oak_leaves"
+  }
+ }
+}

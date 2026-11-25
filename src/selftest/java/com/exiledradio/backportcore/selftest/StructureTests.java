@@ -164,7 +164,10 @@ final class StructureTests {
             checkState("glazed terracotta", "minecraft:purple_glazed_terracotta[facing=south]", 5023,
                     Blocks.PURPLE_GLAZED_TERRACOTTA, "facing", "south");
             checkState("chest", "minecraft:chest[facing=west,type=single,waterlogged=false]", 5023, Blocks.CHEST, "facing", "west");
-            checkState("fallback trapdoor", "minecraft:spruce_trapdoor[facing=north,half=top,open=true]", 5023, Blocks.TRAPDOOR,
+            // Core 1.5.0 supplies spruce trapdoors when a structure uses them; else the stand-in is oak's.
+            Block spruceTrapdoor = com.exiledradio.backportcore.supply.SuppliedBlocks.block("spruce_trapdoor");
+            checkState("fallback trapdoor", "minecraft:spruce_trapdoor[facing=north,half=top,open=true]", 5023,
+                    spruceTrapdoor != null ? spruceTrapdoor : Blocks.TRAPDOOR,
                     "half", "top", "open", "true");
             checkState("fallback stripped log", "minecraft:stripped_birch_log[axis=z]", 5023, Blocks.LOG, "variant", "birch", "axis", "z");
             checkState("registered fallback", "minecraft:polished_tuff_wall", 5023, Blocks.STONEBRICK);
@@ -188,7 +191,7 @@ final class StructureTests {
             check("palette kelp without its mod is water, and wet", is(kelp, Blocks.WATER) && kelp.water, show(kelp));
             ModernPalette.Resolved wet = ModernPalette.resolve("minecraft:oak_slab", props("type", "bottom", "waterlogged", "true"), 5023);
             check("palette waterlogged=true is wet", wet.water && is(wet, Blocks.WOODEN_SLAB, "half", "bottom"), show(wet));
-            ModernPalette.Resolved missing = ModernPalette.resolve("minecraft:gilded_blackstone", props(), 5023);
+            ModernPalette.Resolved missing = ModernPalette.resolve("minecraft:crafter", props(), 5023);
             check("palette a block nothing has is null", missing.state == null, show(missing));
             check("palette loot table", "backportcore_selftest:chests/test".equals(ModernPalette.lootTable("minecraft:chests/shipwreck_supply"))
                     && "minecraft:chests/simple_dungeon".equals(ModernPalette.lootTable("minecraft:chests/simple_dungeon")));
@@ -250,7 +253,7 @@ final class StructureTests {
             check("templates jigsaws read", bastion.jigsaws().size() > 5 && !bastion.jigsaws().get(0).pool.isEmpty()
                     && !bastion.jigsaws().get(0).finalState.isEmpty(), bastion.jigsaws().size() + " first pool " + bastion.jigsaws().get(0).pool
                     + " front " + bastion.jigsaws().get(0).front + " top " + bastion.jigsaws().get(0).top);
-            check("templates unresolved blocks are reported", bastion.unresolvedBlocks().contains("minecraft:cracked_polished_blackstone_bricks"),
+            check("templates blocks Core supplies are not reported missing", !bastion.unresolvedBlocks().contains("minecraft:cracked_polished_blackstone_bricks"),
                     bastion.unresolvedBlocks());
             ModernTemplate portal = ModernTemplate.load(id("v26/ruined_portal/portal_1"));
             BackportCore.LOGGER.info("SELFTEST INFO ruined portal_1 needs: {}", portal.unresolvedBlocks());

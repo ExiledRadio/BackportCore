@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/custom_fence_inventory",
+ "textures": {
+  "texture": "backportcore:blocks/modern/bamboo_fence"
+ }
+}

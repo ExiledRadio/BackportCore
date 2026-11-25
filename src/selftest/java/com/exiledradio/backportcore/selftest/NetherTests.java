@@ -453,7 +453,8 @@ final class NetherTests {
             for (ResourceLocation t : templates) {
                 after.addAll(ModernTemplate.load(JigsawPools.templateId(t)).unresolvedBlocks());
             }
-            check("blocks: with the 1.16 blocks provided, every block resolves", after.isEmpty() && !before.isEmpty(),
+            // Core 1.5.0 supplies the 1.16 blocks itself (supply/SuppliedBlocks): before may already be empty.
+            check("blocks: with the 1.16 blocks provided, every block resolves", after.isEmpty(),
                     before.size() + " provided, still unresolved " + after);
         });
 
@@ -685,7 +686,9 @@ final class NetherTests {
             int chests = 0;
             for (BlockPos pos : BlockPos.getAllInBox(new BlockPos(box.minX, box.minY, box.minZ), new BlockPos(box.maxX, box.maxY, box.maxZ))) {
                 IBlockState s = nether.getBlockState(pos);
-                if (s == STAND_IN) {
+                ResourceLocation id = s.getBlock().getRegistryName();
+                if (s == STAND_IN || id != null && "backportcore".equals(id.getNamespace())) {
+                    // A test stand-in, or (1.5.0) a block Core supplies.
                     standIns++;
                 } else if (s.getBlock() == Blocks.CHEST) {
                     chests++;

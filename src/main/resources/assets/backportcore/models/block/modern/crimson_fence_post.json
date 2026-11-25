@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/fence_post",
+ "textures": {
+  "texture": "backportcore:blocks/modern/crimson_planks"
+ }
+}

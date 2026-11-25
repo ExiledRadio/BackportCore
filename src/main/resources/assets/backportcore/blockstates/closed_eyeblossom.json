@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/closed_eyeblossom"
+  },
+  "inventory": {
+   "model": "backportcore:modern/closed_eyeblossom"
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_orientable_trapdoor_open",
+ "textures": {
+  "texture": "backportcore:blocks/modern/mangrove_trapdoor"
+ }
+}

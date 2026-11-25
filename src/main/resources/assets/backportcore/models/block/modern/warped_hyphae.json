@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/cube_column",
+ "textures": {
+  "end": "backportcore:blocks/modern/warped_stem",
+  "side": "backportcore:blocks/modern/warped_stem"
+ }
+}

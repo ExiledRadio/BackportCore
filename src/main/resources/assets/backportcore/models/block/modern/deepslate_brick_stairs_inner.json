@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/inner_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/deepslate_bricks",
+  "side": "backportcore:blocks/modern/deepslate_bricks",
+  "top": "backportcore:blocks/modern/deepslate_bricks"
+ }
+}

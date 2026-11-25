@@ -469,7 +469,17 @@ in the game has. In the palette they come after 1.12.2's own blocks and before s
   uses for it (`missing`, `stand-in ...`, `supplied`, `owner`, `family`, `1.12.2`, `mapping`).
 - **Table.** `assets/backportcore/supplied/blocks.txt` (`SuppliedTable`), written by
   `tools/supplied-blocks/generate.py` from today's jar: shape, hardness, resistance, sound, light, map color, tool and
-  level, drop, owner and the owner's name for it. Shapes: cube, grate, pillar, chain, stairs, slab (`SuppliedShapes`).
+  level, drop, owner and the owner's name for it, the owner's metadata layout, tint, outline. It holds every block
+  newer than 1.12.2 that one of Core's shapes can show: about 440 of today's 626 (`tools/supplied-blocks/skipped.txt`
+  lists the rest and why: tile entities, signs, shelves, coral, torches, candles, bulbs, multi-part plants).
+- **Shapes** (`SuppliedShapes`): cube, grate, glass, pillar, chain, stairs, slab, wall (`block.ModernWall`), fence,
+  fence gate, door, trapdoor, button, pressure plate, lantern, leaves, plant, carpet, bars. Each has the owner's
+  metadata: vanilla 1.12.2's for its class, a lantern's `hanging` at 1, leaves stored as not decaying (meta 4),
+  Tricky Trials' chains with the axis as its ordinal. A button's `face=floor|ceiling` is `facing=up|down`
+  (`SuppliedBlocks.props`).
+- **Sounds** (`SuppliedSounds`): today's sound types 1.12.2 lacks (deepslate, tuff, copper, nether wood, roots and
+  the rest, 55 of them) are Core's own events, `backportcore:block.<name>.<action>`, with today's files in
+  `sounds/modern/` and their volume and pitch; types 1.12.2 has stay 1.12.2's.
 - **Registration** (`Register<Block>` at LOWEST): a row is registered when a structure file names it or
   `config/backportcore/supplied_blocks.txt` lists it, and its owner has not registered the block. A row Core has
   never supplied is also skipped when another source already gives it. Every registered row is added to
@@ -480,10 +490,13 @@ in the game has. In the palette they come after 1.12.2's own blocks and before s
 
 ```java
 Block deepslate = SuppliedBlocks.block("deepslate");      // Core's copy in this game, or null
+Item door = SuppliedBlocks.itemOf(SuppliedBlocks.block("crimson_door"));   // a door's ItemDoor
 Map<String, ModernBlockScan.Use> used = ModernBlockScan.uses();
 ```
 
-Copies have no behavior: copper does not oxidize. Sounds are 1.12.2's closest (today's sound name is in the table).
+`-Dbackportcore.suppliedcheck=true` builds Core's copy of every row whose owner is installed and compares each stored
+state's metadata with the owner's (`SuppliedBlocks.checkLayouts`): an owner that changes a layout breaks the rename,
+so the owners' metadata is a contract. Copies have no behavior: copper does not oxidize.
 
 ### Pieces and scattered structures (`TemplatePiece`, `ScatteredPlacement`, `ScatteredStructure`)
 

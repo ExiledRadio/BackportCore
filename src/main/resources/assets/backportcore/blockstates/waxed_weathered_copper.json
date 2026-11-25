@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/weathered_copper"
-    },
-    "inventory": {
-      "model": "backportcore:modern/weathered_copper"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/weathered_copper"
+  },
+  "inventory": {
+   "model": "backportcore:modern/weathered_copper"
   }
+ }
 }

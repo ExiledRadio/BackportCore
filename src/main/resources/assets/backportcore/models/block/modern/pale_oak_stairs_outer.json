@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/outer_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/pale_oak_planks",
+  "side": "backportcore:blocks/modern/pale_oak_planks",
+  "top": "backportcore:blocks/modern/pale_oak_planks"
+ }
+}

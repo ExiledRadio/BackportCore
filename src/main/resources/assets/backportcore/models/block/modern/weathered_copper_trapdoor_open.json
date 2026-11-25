@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/template_trapdoor_open",
+ "textures": {
+  "texture": "backportcore:blocks/modern/weathered_copper_trapdoor"
+ }
+}

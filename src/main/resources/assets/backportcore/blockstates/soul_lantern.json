@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "hanging=false": {
+   "model": "backportcore:modern/soul_lantern"
+  },
+  "hanging=true": {
+   "model": "backportcore:modern/soul_lantern_hanging"
+  }
+ }
+}

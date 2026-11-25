@@ -21,6 +21,24 @@ In progress: see docs/PLAN_1_5_0.md.
     `cavesandcliffsbackport:deepslate` with its state, and removing it turns them back (blocks and items, slabs with
     their doubles). Dedicated server: placed, C&C added, C&C removed, 12 of 12 checks each time. Self-test group
     `supplied`; client test `ClientSuppliedTests` (`BACKPORTCORE_SUPPLIED=1`): every state and item has a model.
+*   Slice 3: every decorative block newer than 1.12.2 the generator can show, 436 of 26.3's 626 new blocks (184 are
+    left out and listed in `tools/supplied-blocks/skipped.txt`). New shapes: walls, fences, fence gates, doors,
+    trapdoors, buttons, pressure plates, lanterns, leaves, plants, carpets, bars and glass. The generator now takes
+    every new block rather than a list, finds each block's owner in the family's release jars (the earliest update
+    that ships it), and records an owner's metadata where it is not vanilla's (Tricky Trials' chains). A plant's
+    outline is today's; mangrove leaves and bushes are tinted as today.
+*   Today's block sounds: the 55 sound types 1.12.2 lacks are Core's own events with today's files, volume and pitch
+    (`supply/SuppliedSounds`, `sounds/modern/`); deepslate bricks sound like deepslate bricks.
+    `-Dbackportcore.suppliedcheck=true` compares every copy's metadata with its installed owner's: with the whole family
+    installed, 408 rows and 1,502 states, none different.
+*   Size and time: the jar grows from 3.8 MB to 9.9 MB, of which 4.9 MB is sounds and 0.6 MB the blocks' models,
+    blockstates and textures. Scanning the family's and three public packs' 9,875 structure files takes 2.3 to
+    2.9 s on the first start, nothing once cached; registering 390 copies takes about 100 ms. A dedicated server with the packs is ready in 7 s against 4 s without them
+    (the packs' own structures included); a dev client with all 488 copies reaches the title screen about 1 s later
+    than with 21.
+    Round trip on a dedicated server with Caves & Cliffs and Tricky Trials added and removed: 22 of 22 checks each
+    time (doors, walls, slabs, buttons, bars, copper chains). Self-tests: group `supplied` 919/0; client 9,758/0
+    (every state and item of 496 blocks has its model and texture).
 
 *   Settings pages for mods that build their own `Configuration` (`BackportSettings.register(modid, config, categories...)`):
     each named top-level category is a row with its subcategories after it; `BackportSettings.hint` stands in for the

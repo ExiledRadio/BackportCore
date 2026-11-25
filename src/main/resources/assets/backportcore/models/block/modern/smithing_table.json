@@ -1,0 +1,12 @@
+{
+ "parent": "backportcore:block/modern/cube",
+ "textures": {
+  "down": "backportcore:blocks/modern/smithing_table_bottom",
+  "east": "backportcore:blocks/modern/smithing_table_side",
+  "north": "backportcore:blocks/modern/smithing_table_front",
+  "particle": "backportcore:blocks/modern/smithing_table_front",
+  "south": "backportcore:blocks/modern/smithing_table_front",
+  "up": "backportcore:blocks/modern/smithing_table_top",
+  "west": "backportcore:blocks/modern/smithing_table_side"
+ }
+}

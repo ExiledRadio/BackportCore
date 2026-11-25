@@ -1,6 +1,6 @@
 {
-  "parent": "backportcore:block/modern/cube_north_west_mirrored_all",
-  "textures": {
-    "all": "backportcore:blocks/modern/mud_bricks"
-  }
+ "parent": "backportcore:block/modern/cube_north_west_mirrored_all",
+ "textures": {
+  "all": "backportcore:blocks/modern/mud_bricks"
+ }
 }

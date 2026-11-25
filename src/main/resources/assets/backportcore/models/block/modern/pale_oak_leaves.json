@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/leaves",
+ "textures": {
+  "all": "backportcore:blocks/modern/pale_oak_leaves"
+ }
+}

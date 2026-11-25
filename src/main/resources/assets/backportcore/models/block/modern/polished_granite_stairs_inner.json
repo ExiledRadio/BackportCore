@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/inner_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/polished_granite",
+  "side": "backportcore:blocks/modern/polished_granite",
+  "top": "backportcore:blocks/modern/polished_granite"
+ }
+}

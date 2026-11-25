@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/chiseled_tuff"
-    },
-    "inventory": {
-      "model": "backportcore:modern/chiseled_tuff"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/chiseled_tuff"
+  },
+  "inventory": {
+   "model": "backportcore:modern/chiseled_tuff"
   }
+ }
 }

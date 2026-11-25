@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/crimson_fungus"
+  },
+  "inventory": {
+   "model": "backportcore:modern/crimson_fungus"
+  }
+ }
+}

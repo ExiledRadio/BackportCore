@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/polished_blackstone"
-    },
-    "inventory": {
-      "model": "backportcore:modern/polished_blackstone"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/polished_blackstone"
+  },
+  "inventory": {
+   "model": "backportcore:modern/polished_blackstone"
   }
+ }
 }

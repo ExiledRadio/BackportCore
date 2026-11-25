@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "half=bottom,variant=default": {
+   "model": "backportcore:modern/bamboo_mosaic_slab"
+  },
+  "half=top,variant=default": {
+   "model": "backportcore:modern/bamboo_mosaic_slab_top"
+  }
+ }
+}

@@ -1,0 +1,36 @@
+{
+ "variants": {
+  "normal": [
+   {
+    "model": "backportcore:modern/sculk"
+   },
+   {
+    "model": "backportcore:modern/sculk_mirrored"
+   },
+   {
+    "model": "backportcore:modern/sculk",
+    "y": 180
+   },
+   {
+    "model": "backportcore:modern/sculk_mirrored",
+    "y": 180
+   }
+  ],
+  "inventory": [
+   {
+    "model": "backportcore:modern/sculk"
+   },
+   {
+    "model": "backportcore:modern/sculk_mirrored"
+   },
+   {
+    "model": "backportcore:modern/sculk",
+    "y": 180
+   },
+   {
+    "model": "backportcore:modern/sculk_mirrored",
+    "y": 180
+   }
+  ]
+ }
+}

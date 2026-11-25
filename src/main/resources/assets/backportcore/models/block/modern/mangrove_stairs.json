@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/mangrove_planks",
+  "side": "backportcore:blocks/modern/mangrove_planks",
+  "top": "backportcore:blocks/modern/mangrove_planks"
+ }
+}

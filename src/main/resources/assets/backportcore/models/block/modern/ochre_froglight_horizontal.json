@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/cube_column_horizontal",
+ "textures": {
+  "end": "backportcore:blocks/modern/ochre_froglight_top",
+  "side": "backportcore:blocks/modern/ochre_froglight_side"
+ }
+}

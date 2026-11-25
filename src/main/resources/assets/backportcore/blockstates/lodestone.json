@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/lodestone"
+  },
+  "inventory": {
+   "model": "backportcore:modern/lodestone"
+  }
+ }
+}

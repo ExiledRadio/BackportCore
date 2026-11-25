@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/template_bars_post",
+ "textures": {
+  "bars": "backportcore:blocks/modern/weathered_copper_bars",
+  "edge": "backportcore:blocks/modern/weathered_copper_bars"
+ }
+}

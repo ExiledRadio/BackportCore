@@ -1,0 +1,12 @@
+{
+ "parent": "backportcore:block/modern/cube",
+ "textures": {
+  "down": "backportcore:blocks/modern/dark_oak_planks",
+  "east": "backportcore:blocks/modern/cartography_table_side3",
+  "north": "backportcore:blocks/modern/cartography_table_side3",
+  "particle": "backportcore:blocks/modern/cartography_table_side3",
+  "south": "backportcore:blocks/modern/cartography_table_side1",
+  "up": "backportcore:blocks/modern/cartography_table_top",
+  "west": "backportcore:blocks/modern/cartography_table_side2"
+ }
+}

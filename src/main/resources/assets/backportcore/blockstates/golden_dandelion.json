@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/golden_dandelion"
+  },
+  "inventory": {
+   "model": "backportcore:modern/golden_dandelion"
+  }
+ }
+}

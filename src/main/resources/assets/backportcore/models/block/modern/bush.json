@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/tinted_cross",
+ "textures": {
+  "cross": "backportcore:blocks/modern/bush"
+ }
+}

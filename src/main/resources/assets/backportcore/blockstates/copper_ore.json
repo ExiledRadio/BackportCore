@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/copper_ore"
+  },
+  "inventory": {
+   "model": "backportcore:modern/copper_ore"
+  }
+ }
+}

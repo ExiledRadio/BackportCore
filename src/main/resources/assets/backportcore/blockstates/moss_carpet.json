@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/moss_carpet"
+  },
+  "inventory": {
+   "model": "backportcore:modern/moss_carpet"
+  }
+ }
+}

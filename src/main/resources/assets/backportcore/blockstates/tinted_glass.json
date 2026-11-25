@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/tinted_glass"
+  },
+  "inventory": {
+   "model": "backportcore:modern/tinted_glass"
+  }
+ }
+}

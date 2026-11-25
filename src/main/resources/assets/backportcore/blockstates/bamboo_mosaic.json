@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/bamboo_mosaic"
+  },
+  "inventory": {
+   "model": "backportcore:modern/bamboo_mosaic"
+  }
+ }
+}

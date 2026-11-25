@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/outer_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/andesite",
+  "side": "backportcore:blocks/modern/andesite",
+  "top": "backportcore:blocks/modern/andesite"
+ }
+}

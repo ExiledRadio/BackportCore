@@ -1,10 +1,10 @@
 {
-  "variants": {
-    "normal": {
-      "model": "backportcore:modern/pale_oak_planks"
-    },
-    "inventory": {
-      "model": "backportcore:modern/pale_oak_planks"
-    }
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/pale_oak_planks"
+  },
+  "inventory": {
+   "model": "backportcore:modern/pale_oak_planks"
   }
+ }
 }

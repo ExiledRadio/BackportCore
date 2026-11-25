@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/mangrove_planks"
+  },
+  "inventory": {
+   "model": "backportcore:modern/mangrove_planks"
+  }
+ }
+}

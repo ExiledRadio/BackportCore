@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/budding_amethyst"
+  },
+  "inventory": {
+   "model": "backportcore:modern/budding_amethyst"
+  }
+ }
+}

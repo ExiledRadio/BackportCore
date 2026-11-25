@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/pale_moss_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/pale_moss_block"
+  }
+ }
+}

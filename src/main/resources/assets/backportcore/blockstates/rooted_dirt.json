@@ -1,0 +1,38 @@
+{
+ "variants": {
+  "normal": [
+   {
+    "model": "backportcore:modern/rooted_dirt"
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 90
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 180
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 270
+   }
+  ],
+  "inventory": [
+   {
+    "model": "backportcore:modern/rooted_dirt"
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 90
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 180
+   },
+   {
+    "model": "backportcore:modern/rooted_dirt",
+    "y": 270
+   }
+  ]
+ }
+}

@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/cube_column",
+ "textures": {
+  "end": "backportcore:blocks/modern/target_top",
+  "side": "backportcore:blocks/modern/target_side"
+ }
+}

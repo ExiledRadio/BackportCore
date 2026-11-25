@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/oxidized_copper_grate"
+  },
+  "inventory": {
+   "model": "backportcore:modern/oxidized_copper_grate"
+  }
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/soul_soil"
+  },
+  "inventory": {
+   "model": "backportcore:modern/soul_soil"
+  }
+ }
+}

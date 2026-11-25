@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "hanging=false": {
+   "model": "backportcore:modern/copper_lantern"
+  },
+  "hanging=true": {
+   "model": "backportcore:modern/copper_lantern_hanging"
+  }
+ }
+}

@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/fence_inventory",
+ "textures": {
+  "texture": "backportcore:blocks/modern/pale_oak_planks"
+ }
+}

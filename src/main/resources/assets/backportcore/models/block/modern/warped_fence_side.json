@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/fence_side",
+ "textures": {
+  "texture": "backportcore:blocks/modern/warped_planks"
+ }
+}

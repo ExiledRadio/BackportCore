@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/dead_horn_coral_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/dead_horn_coral_block"
+  }
+ }
+}

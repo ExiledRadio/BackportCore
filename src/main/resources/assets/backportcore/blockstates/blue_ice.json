@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/blue_ice"
+  },
+  "inventory": {
+   "model": "backportcore:modern/blue_ice"
+  }
+ }
+}

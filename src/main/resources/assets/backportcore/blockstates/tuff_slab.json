@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "half=bottom,variant=default": {
+   "model": "backportcore:modern/tuff_slab"
+  },
+  "half=top,variant=default": {
+   "model": "backportcore:modern/tuff_slab_top"
+  }
+ }
+}

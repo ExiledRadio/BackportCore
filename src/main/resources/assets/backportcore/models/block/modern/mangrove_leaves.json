@@ -1,0 +1,6 @@
+{
+ "parent": "backportcore:block/modern/leaves",
+ "textures": {
+  "all": "backportcore:blocks/modern/mangrove_leaves"
+ }
+}

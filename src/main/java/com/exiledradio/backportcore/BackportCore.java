@@ -214,6 +214,9 @@ public final class BackportCore {
         com.exiledradio.backportcore.structure.DataStructures.load();
         // What this game makes of each of those names (config/backportcore/modern_blocks_report.txt).
         com.exiledradio.backportcore.structure.ModernBlockScan.report();
+        if (Boolean.getBoolean("backportcore.suppliedcheck")) {
+            com.exiledradio.backportcore.supply.SuppliedBlocks.checkLayouts();
+        }
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.presentation.client.PresentationClient.loadComplete();
             com.exiledradio.backportcore.creative.client.CreativeTabsClient.loadComplete();

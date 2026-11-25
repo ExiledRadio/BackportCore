@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/cube_bottom_top",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/reinforced_deepslate_bottom",
+  "side": "backportcore:blocks/modern/reinforced_deepslate_side",
+  "top": "backportcore:blocks/modern/reinforced_deepslate_top"
+ }
+}

@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/cracked_deepslate_tiles"
+  },
+  "inventory": {
+   "model": "backportcore:modern/cracked_deepslate_tiles"
+  }
+ }
+}

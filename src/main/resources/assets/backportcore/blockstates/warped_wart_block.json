@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/warped_wart_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/warped_wart_block"
+  }
+ }
+}

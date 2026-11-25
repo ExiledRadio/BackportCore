@@ -1,6 +1,6 @@
 # Plan: modern blocks supplied by Core
 
-Status: slices 1 and 2 built (2026-11-25, branch `core-1.5.0`); slices 3 and 4 to do. Target: Backport Core 1.5.0.
+Status: slices 1 to 3 built (2026-11-25, branch `core-1.5.0`); slice 4's CurseForge description to do. Target: Backport Core 1.5.0.
 
 ## Goal
 

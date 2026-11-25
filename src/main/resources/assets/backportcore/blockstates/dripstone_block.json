@@ -1,0 +1,10 @@
+{
+ "variants": {
+  "normal": {
+   "model": "backportcore:modern/dripstone_block"
+  },
+  "inventory": {
+   "model": "backportcore:modern/dripstone_block"
+  }
+ }
+}

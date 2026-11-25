@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/template_custom_fence_gate",
+ "textures": {
+  "particle": "backportcore:blocks/modern/bamboo_fence_gate_particle",
+  "texture": "backportcore:blocks/modern/bamboo_fence_gate"
+ }
+}

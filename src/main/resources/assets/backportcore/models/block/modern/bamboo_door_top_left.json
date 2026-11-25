@@ -1,0 +1,7 @@
+{
+ "parent": "backportcore:block/modern/door_top_left",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/bamboo_door_bottom",
+  "top": "backportcore:blocks/modern/bamboo_door_top"
+ }
+}

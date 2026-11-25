@@ -1,7 +1,7 @@
 {
-  "variants": {
-    "variant=default": {
-      "model": "backportcore:modern/polished_blackstone"
-    }
+ "variants": {
+  "variant=default": {
+   "model": "backportcore:modern/polished_blackstone"
   }
+ }
 }

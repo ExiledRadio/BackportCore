@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab_top",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/poplar_planks",
+  "side": "backportcore:blocks/modern/poplar_planks",
+  "top": "backportcore:blocks/modern/poplar_planks"
+ }
+}

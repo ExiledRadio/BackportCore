@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/mossy_cobblestone",
+  "side": "backportcore:blocks/modern/mossy_cobblestone",
+  "top": "backportcore:blocks/modern/mossy_cobblestone"
+ }
+}

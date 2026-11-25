@@ -59,7 +59,7 @@ final class SuppliedTests {
     }
 
     private static void blocks(WorldServer world) throws Exception {
-        check("supplied: the table has the first 30", SuppliedTable.rows().size() == 30, SuppliedTable.rows().size());
+        check("supplied: the table covers today's decorative blocks", SuppliedTable.rows().size() >= 400, SuppliedTable.rows().size());
         int ours = 0;
         int owners = 0;
         for (SuppliedTable.Row row : SuppliedTable.rows().values()) {
@@ -77,10 +77,11 @@ final class SuppliedTests {
                 ours++;
                 check("supplied: " + row.name + " is Core's", mine != null && r.state != null && r.state.getBlock() == mine
                         && "supplied".equals(r.via), r.via);
-                check("supplied: " + row.name + " has an item", "slab".equals(row.shape) || Item.getItemFromBlock(mine) != net.minecraft.init.Items.AIR);
+                check("supplied: " + row.name + " has an item", "slab".equals(row.shape) || SuppliedBlocks.itemOf(mine) != net.minecraft.init.Items.AIR);
             }
         }
         check("supplied: some rows are Core's or an owner's", ours + owners > 0, ours + "/" + owners);
+        shapes(world);
         // The report lists names the structure files use; the suite's own files may not use deepslate.
         String deepslateOutcome = ModernBlockScan.report().get("minecraft:deepslate");
         check("supplied: the report counts them", deepslateOutcome == null || "supplied".equals(deepslateOutcome)
@@ -133,6 +134,60 @@ final class SuppliedTests {
             world.setBlockState(at, ModernPalette.resolve("minecraft:deepslate[axis=z]").state, 2);
             check("supplied: placed in the world", world.getBlockState(at).getBlock() == deepslate, world.getBlockState(at));
             world.setBlockToAir(at);
+        }
+    }
+
+    /** Slice 3's shapes, where Core has them in this game (with -PselftestOnly=supplied, every row). */
+    private static void shapes(WorldServer world) {
+        Block button = SuppliedBlocks.block("polished_blackstone_button");
+        if (button != null) {
+            IBlockState floor = ModernPalette.resolve("minecraft:polished_blackstone_button[face=floor,facing=east,powered=false]").state;
+            IBlockState wall = ModernPalette.resolve("minecraft:polished_blackstone_button[face=wall,facing=east,powered=false]").state;
+            check("supplied: a floor button faces up", floor != null && floor.getBlock() == button && "up".equals(String.valueOf(floor.getProperties().get(net.minecraft.block.BlockDirectional.FACING))), floor);
+            check("supplied: a wall button keeps its facing", wall != null && "east".equals(String.valueOf(wall.getProperties().get(net.minecraft.block.BlockDirectional.FACING))), wall);
+        }
+        Block lantern = SuppliedBlocks.block("soul_lantern");
+        if (lantern != null) {
+            IBlockState hung = ModernPalette.resolve("minecraft:soul_lantern[hanging=true]").state;
+            check("supplied: a hanging lantern is meta 1", hung != null && hung.getBlock() == lantern && lantern.getMetaFromState(hung) == 1, hung);
+            check("supplied: a soul lantern gives light", lantern.getDefaultState().getLightValue() == 10, lantern.getDefaultState().getLightValue());
+        }
+        Block chain = SuppliedBlocks.block("copper_chain");
+        if (chain != null) {
+            IBlockState z = ModernPalette.resolve("minecraft:copper_chain[axis=z]").state;
+            check("supplied: copper chains keep Tricky Trials' layout (z is 2)", z != null && chain.getMetaFromState(z) == 2, z);
+        }
+        Block leaves = SuppliedBlocks.block("cherry_leaves");
+        if (leaves != null) {
+            check("supplied: leaves are stored as not decaying", leaves.getMetaFromState(leaves.getDefaultState()) == 4);
+        }
+        Block door = SuppliedBlocks.block("crimson_door");
+        if (door != null) {
+            IBlockState upper = ModernPalette.resolve("minecraft:crimson_door[facing=south,half=upper,hinge=right,open=true]").state;
+            check("supplied: a door's upper half", upper != null && upper.getBlock() == door
+                    && upper.getValue(net.minecraft.block.BlockDoor.HALF) == net.minecraft.block.BlockDoor.EnumDoorHalf.UPPER, upper);
+            check("supplied: a door has its door item", SuppliedBlocks.itemOf(door) instanceof net.minecraft.item.ItemDoor);
+            check("supplied: the top half drops nothing", door.getItemDropped(upper, new Random(1), 0) == net.minecraft.init.Items.AIR);
+        }
+        Block wall = SuppliedBlocks.block("polished_blackstone_wall");
+        if (wall != null) {
+            IBlockState tall = ModernPalette.resolve("minecraft:polished_blackstone_wall[north=tall,up=true,east=none,south=low,west=none]").state;
+            check("supplied: a wall keeps its sides", tall != null && tall.getBlock() == wall && tall.getValue(com.exiledradio.backportcore.block.ModernWall.NORTH) == com.exiledradio.backportcore.block.ModernWall.Side.TALL, tall);
+        }
+        Block flower = SuppliedBlocks.block("cornflower");
+        if (flower != null) {
+            check("supplied: a flower has no collision", flower.getDefaultState().getCollisionBoundingBox(world, BlockPos.ORIGIN) == null);
+            check("supplied: a flower's outline is today's", Math.abs(flower.getDefaultState().getBoundingBox(world, BlockPos.ORIGIN).maxY - 10 / 16.0) < 1e-6);
+        }
+        Block deepslate = SuppliedBlocks.block("deepslate_bricks");
+        if (deepslate != null) {
+            net.minecraft.block.SoundType sound = deepslate.getSoundType();
+            check("supplied: deepslate bricks sound like today's", sound.getBreakSound().getRegistryName().equals(new ResourceLocation("backportcore", "block.deepslate_bricks.break"))
+                    && ForgeRegistries.SOUND_EVENTS.containsKey(sound.getBreakSound().getRegistryName()), sound.getBreakSound().getRegistryName());
+        }
+        Block planks = SuppliedBlocks.block("pale_oak_planks");
+        if (planks != null) {
+            check("supplied: a type 1.12.2 has stays 1.12.2's", planks.getSoundType() == net.minecraft.block.SoundType.WOOD);
         }
     }
 

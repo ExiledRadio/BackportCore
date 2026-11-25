@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/slab_top",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/red_nether_bricks",
+  "side": "backportcore:blocks/modern/red_nether_bricks",
+  "top": "backportcore:blocks/modern/red_nether_bricks"
+ }
+}

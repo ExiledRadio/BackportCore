@@ -1,0 +1,8 @@
+{
+ "parent": "backportcore:block/modern/outer_stairs",
+ "textures": {
+  "bottom": "backportcore:blocks/modern/prismarine_bricks",
+  "side": "backportcore:blocks/modern/prismarine_bricks",
+  "top": "backportcore:blocks/modern/prismarine_bricks"
+ }
+}
