@@ -123,7 +123,9 @@ public final class DynamicTrees {
      * @param feature today's configured feature, with or without namespace and {@code _checked}/{@code _bees_*}:
      *                oak, fancy_oak, birch, super_birch, spruce, pine, mega_spruce, mega_pine, jungle_tree,
      *                mega_jungle_tree, acacia, dark_oak (1.12.2's {@code normal_tree}, {@code savanna_tree},
-     *                {@code spruce_tree}, {@code pine_tree} too)
+     *                {@code spruce_tree}, {@code pine_tree} too); or another mod's Dynamic Trees species by its
+     *                full name ({@code dtbackport:cherry}), grown wherever Dynamic Trees is active in the
+     *                dimension, so a backport's own decoration keeps its trees' places
      * @return true if a dynamic tree was grown
      */
     public static boolean grow(World world, BlockPos pos, Random random, String feature) {
@@ -131,7 +133,13 @@ public final class DynamicTrees {
             return false;
         }
         String species = species(feature);
-        if (species == null || !replacesTrees(world, pos)) {
+        if (species == null) {
+            return false;
+        }
+        // A backport's own tree (an add-on's species, "modid:name") grows wherever Dynamic Trees runs in the dimension:
+        // the backport's biome keeps its decoration, and only its trees become dynamic.
+        boolean addOn = species.indexOf(':') >= 0;
+        if (addOn ? !DynamicTreesLink.active(world) : !replacesTrees(world, pos)) {
             return false;
         }
         try {
@@ -158,6 +166,9 @@ public final class DynamicTrees {
     public static String species(String feature) {
         String f = feature.toLowerCase(java.util.Locale.ROOT);
         int colon = f.indexOf(':');
+        if (colon > 0 && !f.startsWith("minecraft:")) {
+            return f;
+        }
         if (colon >= 0) {
             f = f.substring(colon + 1);
         }
@@ -197,6 +208,9 @@ public final class DynamicTrees {
     /** Dynamic Trees sizes a tree by the radius of the circle it grows in (2 to 8): fancy and mega trees larger. */
     private static int radius(String feature, Random random) {
         String f = feature.toLowerCase(java.util.Locale.ROOT);
+        if (f.indexOf(':') > 0 && !f.startsWith("minecraft:") && !f.startsWith("dynamictrees:")) {
+            return 8; // an add-on's tree: the leaf map's full width, its own shape decides how much it uses
+        }
         if (f.contains("fancy") || f.contains("mega") || f.contains("dark_oak")) {
             return 6 + random.nextInt(3);
         }

@@ -36,6 +36,8 @@ final class DynamicTreesTests {
                     {"minecraft:jungle_tree", "jungle"}, {"minecraft:mega_jungle_tree_checked", "megajungle"},
                     {"savanna_tree", "acacia"}, {"minecraft:dark_oak_checked", "darkoak"},
                     {"minecraft:cherry_checked", null}, {"minecraft:pale_oak_checked", null}, {"minecraft:red_poplar", null},
+                    {"dtbackport:cherry", "dtbackport:cherry"},
+                    {"DTBackport:Pale_Oak", "dtbackport:pale_oak"},
             };
             for (String[] c : cases) {
                 String got = DynamicTrees.species(c[0]);
@@ -49,6 +51,7 @@ final class DynamicTreesTests {
             check("dt absent: replaces nothing", !DynamicTrees.replacesTrees(world, Biomes.FOREST));
             check("dt absent: no cactus answer", !DynamicTrees.replacesCactus(world, world.getSpawnPoint()));
             check("dt absent: grows nothing", !DynamicTrees.grow(world, world.getSpawnPoint().up(), new Random(1), "minecraft:oak_checked"));
+            check("dt absent: grows no add-on tree", !DynamicTrees.grow(world, world.getSpawnPoint().up(), new Random(1), "dtbackport:cherry"));
         });
     }
 }
