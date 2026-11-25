@@ -2,6 +2,10 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   Settings pages for mods that build their own `Configuration` (`BackportSettings.register(modid, config, categories...)`):
+    each named top-level category is a row with its subcategories after it; `BackportSettings.hint` stands in for the
+    `@Setting` annotations (`client`, `server`, `hidden`, `newChunks`, `vanilla=`, `list=`, `icon=`, `toggle=`). Done saves
+    the file and posts the config-changed events. Settings screenshots also cover each non-family page.
 *   1.14's light update packet (`light/LightUpdates`, channel `backportcore_light`, no patch): a listener on every
     server world collects the sections `notifyLightSet` reports; at the end of the world's tick each collected chunk
     its players already have gets those sections' sky and block light (`light/client/LightUpdatesClient` copies them

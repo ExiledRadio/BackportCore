@@ -5,6 +5,7 @@ import com.exiledradio.backportcore.BackportCore;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -26,6 +27,10 @@ import java.util.Set;
 public final class BackportSettings {
 
     private static final Map<String, Class<?>[]> REGISTERED = new LinkedHashMap<String, Class<?>[]>();
+    /** Mods that build their own {@link Configuration}: the file, and the categories in their order. */
+    private static final Map<String, Configuration> CONFIGURATIONS = new LinkedHashMap<String, Configuration>();
+    private static final Map<String, String[]> CATEGORIES = new LinkedHashMap<String, String[]>();
+    private static final Map<String, Map<String, String[]>> HINTS = new LinkedHashMap<String, Map<String, String[]>>();
     private static final Map<String, SettingsModel.Page> PAGES = new LinkedHashMap<String, SettingsModel.Page>();
     private static final Map<String, SettingsModel.Entry> BY_ID = new LinkedHashMap<String, SettingsModel.Entry>();
     private static boolean built;
@@ -47,6 +52,39 @@ public final class BackportSettings {
         REGISTERED.put(modid, configClasses);
     }
 
+    /**
+     * Puts a mod that builds its own {@link Configuration} (no {@code @Config}) on the screen. Call in pre-init or
+     * init, after the Configuration is made. Each category is a feature row; the file stays the mod's own, and
+     * Done saves it and posts the config-changed events the mod already listens for.
+     *
+     * @param categories its top-level categories in the order the screen lists them; none for all of them
+     */
+    public static synchronized void register(String modid, Configuration config, String... categories) {
+        if (built) {
+            BackportCore.LOGGER.warn("Settings: {} registered after loading finished; ignored", modid);
+            return;
+        }
+        CONFIGURATIONS.put(modid, config);
+        CATEGORIES.put(modid, categories);
+    }
+
+    /**
+     * What {@link Setting}'s annotations say, for a mod registered with a {@link Configuration}.
+     *
+     * @param path  a category ({@code items}) or one property ({@code items/KEEP_ARMOR})
+     * @param hints for a property {@code client}, {@code hidden} (not on the screen), {@code newChunks}, {@code vanilla=<value>} or
+     *              {@code list=block|item|entity|biome}; for a category {@code icon=<item id>} and
+     *              {@code toggle=<boolean property>}
+     */
+    public static synchronized void hint(String modid, String path, String... hints) {
+        Map<String, String[]> m = HINTS.get(modid);
+        if (m == null) {
+            m = new LinkedHashMap<String, String[]>();
+            HINTS.put(modid, m);
+        }
+        m.put(path, hints);
+    }
+
     /** At load complete, on both sides: builds every page and records the values the game started with. */
     public static synchronized void build() {
         if (built) {
@@ -65,9 +103,22 @@ public final class BackportSettings {
                 all.put(e.getKey(), e.getValue());
             }
         }
+        for (String modid : CONFIGURATIONS.keySet()) {
+            if (!all.containsKey(modid) && Loader.isModLoaded(modid)) {
+                all.put(modid, new Class<?>[0]);
+            }
+        }
         for (Map.Entry<String, Class<?>[]> e : all.entrySet()) {
-            Class<?>[] classes = e.getValue().length > 0 ? e.getValue() : ConfigManager.getModConfigClasses(e.getKey());
-            SettingsModel.Page page = SettingsModel.build(e.getKey(), classes);
+            SettingsModel.Page page;
+            Configuration cfg = CONFIGURATIONS.get(e.getKey());
+            if (cfg != null) {
+                Map<String, String[]> hints = HINTS.get(e.getKey());
+                page = SettingsModel.build(e.getKey(), cfg, CATEGORIES.get(e.getKey()),
+                        hints == null ? new LinkedHashMap<String, String[]>() : hints);
+            } else {
+                Class<?>[] classes = e.getValue().length > 0 ? e.getValue() : ConfigManager.getModConfigClasses(e.getKey());
+                page = SettingsModel.build(e.getKey(), classes);
+            }
             PAGES.put(e.getKey(), page);
             for (SettingsModel.Entry entry : page.entries) {
                 BY_ID.put(entry.id, entry);
@@ -118,7 +169,14 @@ public final class BackportSettings {
         for (Map.Entry<String, Boolean> m : mods.entrySet()) {
             String modid = m.getKey();
             try {
-                ConfigManager.sync(modid, Config.Type.INSTANCE);
+                Configuration cfg = CONFIGURATIONS.get(modid);
+                if (cfg != null) {
+                    if (cfg.hasChanged()) {
+                        cfg.save();
+                    }
+                } else {
+                    ConfigManager.sync(modid, Config.Type.INSTANCE);
+                }
             } catch (RuntimeException ex) {
                 BackportCore.LOGGER.error("Settings: saving {} failed", modid, ex);
             }

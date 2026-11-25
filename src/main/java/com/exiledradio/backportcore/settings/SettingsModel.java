@@ -106,9 +106,17 @@ public final class SettingsModel {
         /** The value when the game started, to tell which changes still wait for a restart. */
         private final String[] startup;
 
+        /** The lang key the screen reads: Forge's, or for a plain Configuration {@code modid.category.name}. */
+        private final String langKey;
+
         Entry(Group group, Property property, Field field) {
+            this(group, property, Hints.of(field), property.getLanguageKey());
+        }
+
+        Entry(Group group, Property property, Hints hints, String langKey) {
             this.group = group;
             this.property = property;
+            this.langKey = langKey;
             this.name = property.getName();
             this.id = group.page.modid + "/" + group.path + "/" + this.name;
             Type element = elementType(property.getType());
@@ -122,18 +130,15 @@ public final class SettingsModel {
                 this.type = element;
                 this.elementType = element;
             }
-            Setting.Look look = field == null ? null : field.getAnnotation(Setting.Look.class);
             this.lookSection = this.type == Type.BOOL || this.type == Type.ENUM
-                    ? (look != null ? look.value() : LookFeelPage.knownSection(group.page.modid, group.path, this.name)) : null;
+                    ? (hints.look != null ? hints.look : LookFeelPage.knownSection(group.page.modid, group.path, this.name)) : null;
             // A look is each player's own: a server operator never sets it for them.
-            this.side = this.lookSection != null || field != null && field.isAnnotationPresent(Setting.Client.class) ? Side.CLIENT : Side.SERVER;
+            this.side = this.lookSection != null || hints.client ? Side.CLIENT : Side.SERVER;
             this.restart = property.requiresMcRestart();
             this.worldRestart = property.requiresWorldRestart();
-            this.newChunks = field != null && field.isAnnotationPresent(Setting.NewChunks.class);
-            Setting.Vanilla v = field == null ? null : field.getAnnotation(Setting.Vanilla.class);
-            this.vanilla = v == null ? null : v.value();
-            Setting.ListOf l = field == null ? null : field.getAnnotation(Setting.ListOf.class);
-            this.listKind = l == null ? Setting.Kind.ANY : l.value();
+            this.newChunks = hints.newChunks;
+            this.vanilla = hints.vanilla;
+            this.listKind = hints.listKind;
             this.startup = get();
         }
 
@@ -170,7 +175,7 @@ public final class SettingsModel {
         }
 
         public String langKey() {
-            return this.property.getLanguageKey();
+            return this.langKey;
         }
 
         public String comment() {
@@ -256,6 +261,78 @@ public final class SettingsModel {
         }
     }
 
+    /** What a setting's {@link Setting} annotations say, or a plain Configuration's {@link BackportSettings#hint}s. */
+    static final class Hints {
+        static final Hints NONE = new Hints();
+
+        boolean client;
+        boolean newChunks;
+        String vanilla;
+        Setting.Kind listKind = Setting.Kind.ANY;
+        String icon = "";
+        String toggle = "";
+        /** {@link Setting.Look}'s section, or null. */
+        String look;
+
+        static Hints of(Field field) {
+            if (field == null) {
+                return NONE;
+            }
+            Hints h = new Hints();
+            h.client = field.isAnnotationPresent(Setting.Client.class);
+            h.newChunks = field.isAnnotationPresent(Setting.NewChunks.class);
+            Setting.Vanilla v = field.getAnnotation(Setting.Vanilla.class);
+            h.vanilla = v == null ? null : v.value();
+            Setting.ListOf l = field.getAnnotation(Setting.ListOf.class);
+            h.listKind = l == null ? Setting.Kind.ANY : l.value();
+            Setting.Look look = field.getAnnotation(Setting.Look.class);
+            h.look = look == null ? null : look.value();
+            return h;
+        }
+
+        /**
+         * @param words {@code client}, {@code server}, {@code hidden}, {@code newChunks}, {@code vanilla=2}, {@code list=block},
+         *              and for a category {@code icon=minecraft:book} and {@code toggle=propertyName}
+         */
+        static Hints of(String[] words) {
+            Hints h = new Hints();
+            for (String w : words) {
+                String k = w;
+                String v = "";
+                int eq = w.indexOf('=');
+                if (eq >= 0) {
+                    k = w.substring(0, eq);
+                    v = w.substring(eq + 1).trim();
+                }
+                k = k.trim().toLowerCase(Locale.ENGLISH);
+                if (k.equals("client")) {
+                    h.client = true;
+                } else if (k.equals("server")) {
+                    h.client = false;
+                } else if (k.equals("hidden")) {
+                    continue; // read by rawCategory
+                } else if (k.equals("newchunks")) {
+                    h.newChunks = true;
+                } else if (k.equals("vanilla")) {
+                    h.vanilla = v;
+                } else if (k.equals("icon")) {
+                    h.icon = v;
+                } else if (k.equals("toggle")) {
+                    h.toggle = v;
+                } else if (k.equals("list")) {
+                    try {
+                        h.listKind = Setting.Kind.valueOf(v.toUpperCase(Locale.ENGLISH));
+                    } catch (IllegalArgumentException e) {
+                        BackportCore.LOGGER.warn("Settings: unknown list kind {}", v);
+                    }
+                } else {
+                    BackportCore.LOGGER.warn("Settings: unknown hint {}", w);
+                }
+            }
+            return h;
+        }
+    }
+
     public static boolean same(String[] a, String[] b) {
         return Arrays.equals(a, b);
     }
@@ -303,7 +380,11 @@ public final class SettingsModel {
                     }
                     if (general == null) {
                         ConfigCategory cat = cfg.getCategory(root);
-                        general = new Group(page, root, cat.getLanguagekey(), cat.getComment(), null, "");
+                        String key = cat.getLanguagekey();
+                        if (key == null || key.isEmpty() || key.equals(root)) {
+                            key = modid + "." + root; // Forge's own key is the bare category name
+                        }
+                        general = new Group(page, root, key, cat.getComment(), null, "");
                         page.groups.add(general);
                     }
                     addEntry(general, cfg.getCategory(root), f);
@@ -325,6 +406,73 @@ public final class SettingsModel {
             page.entries.addAll(g.all());
         }
         return page;
+    }
+
+    /**
+     * The page of a mod that builds its own {@link Configuration} instead of using {@code @Config}. Each category is
+     * a feature row, in {@code categories}' order (every top-level category when none are named), with its
+     * subcategories after it. A boolean named {@code enabled} (or the category's {@code toggle} hint) is the row's
+     * switch. Properties keep the mod's order. A property or category without a lang key of its own reads
+     * {@code modid.category.name} and {@code modid.category}.
+     *
+     * @param hints {@code category} or {@code category/property} to {@link Hints#of(String[])} words
+     */
+    static Page build(String modid, Configuration cfg, String[] categories, Map<String, String[]> hints) {
+        Page page = new Page(modid);
+        List<String> top = new ArrayList<String>();
+        if (categories != null && categories.length > 0) {
+            top.addAll(Arrays.asList(categories));
+        } else {
+            for (String name : cfg.getCategoryNames()) {
+                if (name.indexOf('.') < 0) {
+                    top.add(name);
+                }
+            }
+        }
+        for (String name : top) {
+            if (cfg.hasCategory(name)) {
+                rawCategory(page, cfg.getCategory(name), null, hints);
+            }
+        }
+        for (Group g : page.groups) {
+            if (g.toggle == null && g.entries.size() == 1 && g.entries.get(0).type != Type.LIST) {
+                g.toggle = g.entries.remove(0);
+            }
+            page.entries.addAll(g.all());
+        }
+        return page;
+    }
+
+    private static void rawCategory(Page page, ConfigCategory cat, String parentLangKey, Map<String, String[]> hints) {
+        String path = cat.getQualifiedName();
+        String[] words = hints.get(path);
+        Hints h = words == null ? Hints.NONE : Hints.of(words);
+        String key = cat.getLanguagekey();
+        if (key == null || key.isEmpty() || key.equals(path)) {
+            key = page.modid + "." + path;
+        }
+        Group group = new Group(page, path, key, cat.getComment(), parentLangKey, h.icon);
+        page.groups.add(group);
+        String toggle = h.toggle.isEmpty() ? "enabled" : h.toggle;
+        for (Property p : cat.getOrderedValues()) {
+            String[] pw = hints.get(path + "/" + p.getName());
+            if (pw != null && Arrays.asList(pw).contains("hidden")) {
+                continue;
+            }
+            String pk = p.getLanguageKey();
+            if (pk == null || pk.isEmpty() || pk.equals(p.getName())) {
+                pk = key + "." + p.getName();
+            }
+            Entry e = new Entry(group, p, pw == null ? Hints.NONE : Hints.of(pw), pk);
+            if (e.type == Type.BOOL && p.getName().equalsIgnoreCase(toggle) && group.toggle == null) {
+                group.toggle = e;
+            } else {
+                group.entries.add(e);
+            }
+        }
+        for (ConfigCategory child : cat.getChildren()) {
+            rawCategory(page, child, key, hints);
+        }
     }
 
     private static void category(Page page, Configuration cfg, Field field, String path, Object instance, String parentLangKey) throws IllegalAccessException {

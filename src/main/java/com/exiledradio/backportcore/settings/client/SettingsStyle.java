@@ -249,9 +249,17 @@ final class SettingsStyle {
     }
 
     static void item(Minecraft mc, ItemStack stack, int x, int y) {
+        // A model of several parts (a backpack) needs depth testing, or its back faces draw over its front.
+        // Clearing depth afterwards keeps the icon from hiding panels drawn later at a lower z.
+        boolean depth = org.lwjgl.opengl.GL11.glIsEnabled(org.lwjgl.opengl.GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
         RenderHelper.enableGUIStandardItemLighting();
         mc.getRenderItem().renderItemAndEffectIntoGUI(stack, x, y);
         RenderHelper.disableStandardItemLighting();
+        GlStateManager.clear(org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT);
+        if (!depth) {
+            GlStateManager.disableDepth();
+        }
         GlStateManager.disableLighting();
     }
 
