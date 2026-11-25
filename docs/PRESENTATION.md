@@ -466,6 +466,7 @@ change one version made stays made when only a later backport is installed:
   survival and creative inventories, 120 wide or 32 (icon only, tooltip) as the room allows, and the inventory stays
   centered; from 1.21.11 each is as wide as its text, ambient ones on their own background. Sprites
   `container/inventory/effect_background*` when a backport supplies them, else `inventory.png`'s background.
+  JEI's and HEI's item list keeps clear of the column (`compat/InventoryEffectsJei`, 1.4.9).
 * **Recipe book** (`RecipeBookLook`, P58): "Search..." in the empty search box from 1.16, the box one up and 81 wide
   from 1.20.5, the magnifier left of it focuses it from 1.21.2; the crafting book's tabs, filter, pages and ghost recipe are 1.12.2's, which 26.3's match.
 * **System toasts** (`SystemToasts`): the family's one drawer, 26.3's `ToastManager` slots and `SystemToast` ids; one

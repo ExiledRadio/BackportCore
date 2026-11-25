@@ -87,9 +87,8 @@ public final class InventoryEffects {
         return gui.width - (gui.getGuiLeft() + gui.getXSize() + 2) >= 32;
     }
 
-    static void render(GuiContainer gui, Minecraft mc, int mouseX, int mouseY) {
-        int x = gui.getGuiLeft() + gui.getXSize() + 2;
-        int available = gui.width - x;
+    /** The effects drawn, in 26.3's order (Forge's {@code shouldRender} leaves some out). */
+    private static List<PotionEffect> shown(Minecraft mc) {
         Collection<PotionEffect> active = mc.player.getActivePotionEffects();
         List<PotionEffect> shown = new ArrayList<PotionEffect>();
         for (PotionEffect e : Ordering.natural().sortedCopy(active)) {
@@ -97,6 +96,70 @@ public final class InventoryEffects {
                 shown.add(e);
             }
         }
+        return shown;
+    }
+
+    /** 1.21.11: as wide as the text, at most the room less 7; 1.18: 120 when 120 fit; both 32 (compact) under 120. */
+    static int maxWidth(int available) {
+        return available >= 120 ? (VanillaRevisions.effectsFitText() ? available - 7 : 120) : 32;
+    }
+
+    /** One effect's background width within {@link #maxWidth}: 26.3's {@code extractBackground}. */
+    static int width(FontRenderer font, PotionEffect effect, int maxWidth) {
+        if (!VanillaRevisions.effectsFitText()) {
+            return maxWidth;
+        }
+        String name = name(effect);
+        String duration = Potion.getPotionDurationString(effect, 1.0F);
+        return Math.min(maxWidth, Math.max(32 + font.getStringWidth(name) + 7, 32 + font.getStringWidth(duration) + 7));
+    }
+
+    /**
+     * Where this screen draws its effects this frame: x, y, width and height (32) of each background, nothing when it
+     * draws none. JEI's and HEI's item list keeps clear of these ({@code compat/InventoryEffectsJei}), as modern JEI
+     * does of vanilla's.
+     */
+    public static int[] areas(InventoryEffectRenderer gui) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!VanillaRevisions.effectsBesideInventory() || mc.player == null || !drawsEffects(gui)) {
+            return new int[0];
+        }
+        int x = gui.getGuiLeft() + gui.getXSize() + 2;
+        int available = gui.width - x;
+        List<PotionEffect> shown = shown(mc);
+        if (shown.isEmpty() || available < 32) {
+            return new int[0];
+        }
+        int step = shown.size() > 5 ? 132 / (shown.size() - 1) : 33;
+        int maxWidth = maxWidth(available);
+        int[] areas = new int[shown.size() * 4];
+        for (int i = 0; i < shown.size(); i++) {
+            areas[i * 4] = x;
+            areas[i * 4 + 1] = gui.getGuiTop() + i * step;
+            areas[i * 4 + 2] = width(mc.fontRenderer, shown.get(i), maxWidth);
+            areas[i * 4 + 3] = 32;
+        }
+        return areas;
+    }
+
+    private static java.lang.reflect.Field hasEffects;
+
+    /** {@code InventoryEffectRenderer.hasActivePotionEffects}: drawScreen draws the effects only then (the survival inventory clears it while the recipe book is open). */
+    private static boolean drawsEffects(InventoryEffectRenderer gui) {
+        try {
+            if (hasEffects == null) {
+                hasEffects = ReflectionHelper.findField(InventoryEffectRenderer.class, "hasActivePotionEffects", "field_147045_u");
+            }
+            return hasEffects.getBoolean(gui);
+        } catch (Exception e) {
+            return true;
+        }
+    }
+
+    static void render(GuiContainer gui, Minecraft mc, int mouseX, int mouseY) {
+        int x = gui.getGuiLeft() + gui.getXSize() + 2;
+        int available = gui.width - x;
+        List<PotionEffect> shown = shown(mc);
         if (shown.isEmpty() || available < 32) {
             lastBackgrounds = new int[0];
             return;
@@ -106,8 +169,7 @@ public final class InventoryEffects {
             step = 132 / (shown.size() - 1);
         }
         boolean fit = VanillaRevisions.effectsFitText();
-        // 1.21.11: as wide as the text, at most the room less 7; 1.18: 120 when 120 fit, else 32.
-        int maxWidth = available >= 120 ? (fit ? available - 7 : 120) : 32;
+        int maxWidth = maxWidth(available);
         FontRenderer font = mc.fontRenderer;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
@@ -120,7 +182,7 @@ public final class InventoryEffects {
             Potion potion = effect.getPotion();
             String name = name(effect);
             String duration = Potion.getPotionDurationString(effect, 1.0F);
-            int width = fit ? Math.min(maxWidth, Math.max(32 + font.getStringWidth(name) + 7, 32 + font.getStringWidth(duration) + 7)) : maxWidth;
+            int width = width(font, effect, maxWidth);
             background(mc, x, y, width, effect.getIsAmbient() && fit);
             backgrounds[i * 3] = x;
             backgrounds[i * 3 + 1] = y;

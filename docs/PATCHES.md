@@ -1082,6 +1082,9 @@ or passes an existing constant through a hook of the same type.
     Before 1.18 the hook calls the private method; from 1.18 it draws Core's column, calling Forge's
     `Potion.renderInventoryEffect` for each effect as 1.12.2 does.
 *   **Fails safe**: not exactly one call: skipped; 1.12.2's effects.
+*   **JEI and HEI**: JEI 1.12 keeps its item list clear of 1.12.2's column only (`guiLeft - 124`). From Core 1.4.9
+    `compat/InventoryEffectsJei` hands it Core's backgrounds (`InventoryEffects.areas`) as extra GUI areas, as modern
+    JEI does with vanilla's, so the list leaves out the slots under them.
 *   **Tested**: transformer chain and SRG names; `ClientMenuShots` (four effects beside a centered survival inventory,
     each as wide as its text; compact in the creative inventory).
 
