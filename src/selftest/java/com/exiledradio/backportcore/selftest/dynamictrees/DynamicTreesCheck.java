@@ -210,7 +210,7 @@ public final class DynamicTreesCheck {
 
     private static boolean isDt(Block block) {
         ResourceLocation n = block.getRegistryName();
-        return n != null && n.getNamespace().startsWith("dynamictrees");
+        return n != null && (n.getNamespace().startsWith("dynamictrees") || n.getNamespace().equals("dtbackport"));
     }
 
     private static String name(Block block) {
