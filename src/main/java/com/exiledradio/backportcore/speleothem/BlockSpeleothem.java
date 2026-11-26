@@ -131,7 +131,7 @@ public abstract class BlockSpeleothem extends Block implements Waterloggable {
         return false;
     }
 
-    /** Runs before growth: return false to skip this random tick's growth roll. */
+    /** A random tick on the server: by default 26.4's growth roll. Icicles melt here first. */
     protected void onRandomTick(World world, BlockPos pos, IBlockState state, Random random) {
         if (random.nextFloat() < GROWTH_CHANCE && isStalactiteStart(state, world, pos)) {
             growIfPossible(state, world, pos, random);
@@ -214,6 +214,9 @@ public abstract class BlockSpeleothem extends Block implements Waterloggable {
                 break;
             default:
                 shape = BASE;
+        }
+        if (getOffsetType() == EnumOffsetType.NONE) {
+            return shape;
         }
         Vec3d off = getOffset(state, world, pos);
         return shape.offset(off.x, 0.0D, off.z);
