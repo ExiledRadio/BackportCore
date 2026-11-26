@@ -2,6 +2,18 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
+    *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder
+        snow and Game Drops' Freezing share it: 140 ticks, damage every 40 (five times for blazes, magma cubes and
+        striders), the slowness, the frost overlay and the shaking; nothing freezes while on fire, in leather, or
+        undead, polar bear or snow golem. Effects can hold the counter and set the damage (`registerEffect`). Settings
+        page Freezing; `freezeDamage` is also Game Drops'.
+    *   Speleothems (`speleothem/`): 26.4's `SpeleothemBlock`, shared by pointed dripstone and icicles: growth,
+        thickness, falling segments (`backportcore:falling_speleothem`), stalagmite and falling stalactite damage,
+        tridents breaking them.
+    *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
+    *   `/locate biome`: a biome source can leave the rest to the ones before it (`BiomeLocate.next`).
+    *   The frostbite's spawn egg in the modern egg layer.
 *   Modern blocks supplied by Core (`supply/`, docs/PLAN_MODERN_BLOCKS.md slices 1 and 2). `structure/ModernBlockScan`
     reads every block name the structure files would place (`.nbt` palettes and jigsaw final states in `data/` and
     `assets/`, processor outputs in `data/*/worldgen/`, in mod jars and drop-in packs), brought up to date and cached

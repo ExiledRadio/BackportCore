@@ -44,7 +44,7 @@ From GameDropsBackport `docs/PLAN_26_4.md`, decisions recorded 2026-11-24. These
   - the Javanese and Chavacano languages;
   - Adventuring Time's ice caves and Monster Hunter's frostbite (`advancement.AdventuringTime`).
 
-Starts only once 26.4 is out. First diff the release jar against Pre-Release 1 (decompile at `G:\MCDownloads\minecraft-26.4-pre-1`, if G: is mounted).
+**Built 2026-11-26 on Pre-Release 1** (the user chose not to wait), on branch `core-1.5.0-deepfreeze`: freeze ticks, speleothems, Monster Hunter, `BiomeLocate.next`. The look and feel pieces are not built yet. At release, diff the release jar against Pre-Release 1 (`E:\MCDownloads\minecraft-26.4-pre-1`, decompiled).
 
 ### 3. Leftover branch
 `claude/core-light-updates` (3ba3e29, 2026-11-23) uses 1.14's light packet for chunks players already have. It was never merged. Rebase it onto 1.5.0, run its tests, and merge.
