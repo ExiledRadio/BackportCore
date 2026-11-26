@@ -141,6 +141,7 @@ public final class BackportCore {
         com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.MonsterHunter.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
