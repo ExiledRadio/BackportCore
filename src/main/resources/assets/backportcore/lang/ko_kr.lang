@@ -1193,3 +1193,34 @@ death.attack.stalagmite=%1$s이(가) 석순에 찔렸습니다
 death.attack.stalagmite.player=%1$s이(가) %2$s과(와) 싸우다가 석순에 찔렸습니다
 death.attack.fallingStalactite=%1$s이(가) 떨어지는 종유석에 찔렸습니다
 death.attack.fallingStalactite.player=%1$s이(가) %2$s과(와) 싸우다가 떨어지는 종유석에 찔렸습니다
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=제작법/거래 반복
+key.otherPlayers=다른 플레이어
+options.improvedFog=개선된 안개
+options.improvedFog.tooltip=하늘 배경을 렌더 거리 기반 안개와 혼합하여 지형과 하늘 사이의 경계를 덜 선명하게 만듭니다. 끄면, 안개는 단색이 됩니다.
+개선된 투명도를 같이 켜면, 구름도 안개와 같이 혼합됩니다.
+menu.other_players=다른 플레이어
+menu.other_players.no_players=이 세계는 현재 다른 플레이어가 참여할 수 없습니다
+gui.recipebook.tooltip=제작법 책
+gui.recipebook.tab.all=모든 제작법
+recipe_book_category.minecraft.crafting_equipment=장비
+recipe_book_category.minecraft.crafting_building_blocks=건축 블록
+recipe_book_category.minecraft.crafting_redstone=레드스톤
+recipe_book_category.minecraft.crafting_misc=기타
+gui.player_interactions.title=다른 플레이어
+gui.player_interactions.title.full=다른 플레이어 - %s
+gui.player_interactions.tab_all=전체 (%s)
+gui.player_interactions.tab_muted=대화 메시지 숨김
+gui.player_interactions.search=검색...
+gui.player_interactions.search.no_results=해당 이름을 가진 플레이어를 찾지 못했습니다
+gui.player_interactions.empty=이 세계는 멀티플레이에 공개되어 있지만, 아직 아무도 없네요!
+gui.player_interactions.empty_muted=대화에서 대화 메시지가 숨겨진 플레이어가 없습니다
+gui.player_options.title=플레이어 설정
+gui.player_options.mute=대화 메시지 숨기기
+gui.player_options.unmute=대화 메시지 표시하기
+gui.player_options.mute.tooltip=이 플레이어가 보낸 대화 메시지를 숨깁니다.
+gui.player_options.unmute.tooltip=이 플레이어가 보낸 대화 메시지를 표시합니다.
+gui.player_options.mute.feedback=%s이(가) 보낸 대화 메시지를 숨깁니다
+gui.player_options.unmute.feedback=%s이(가) 보낸 대화 메시지를 표시합니다
+gui.player_options.status.muted=대화 메시지 숨겨짐 - %s

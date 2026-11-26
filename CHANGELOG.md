@@ -14,6 +14,9 @@ In progress: see docs/PLAN_1_5_0.md.
     *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
     *   `/locate biome`: a biome source can leave the rest to the ones before it (`BiomeLocate.next`).
     *   The frostbite's spawn egg in the modern egg layer.
+    *   26.4's look and feel (`versions.Look264`): Improved Fog (Video Settings; off in Fast, on in Fancy and
+        Fabulous), the Repeat Recipe/Trade key (R) in the recipe book, names on the recipe book's tabs, Other Players
+        (P, and the pause menu icon after Friends) with Player Options' Mute, which hides a player's chat this session.
 *   Modern blocks supplied by Core (`supply/`, docs/PLAN_MODERN_BLOCKS.md slices 1 and 2). `structure/ModernBlockScan`
     reads every block name the structure files would place (`.nbt` palettes and jigsaw final states in `data/` and
     `assets/`, processor outputs in `data/*/worldgen/`, in mod jars and drop-in packs), brought up to date and cached

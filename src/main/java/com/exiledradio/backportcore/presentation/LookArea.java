@@ -21,11 +21,11 @@ public enum LookArea {
     /** The splash text list. */
     SPLASHES("splashes"),
     /** Menu backgrounds, buttons, the pause and death screens, the world list, Create New World and the multiplayer warning. */
-    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.17", "1.19.1", "1.19.4", "1.20", "1.20.2", "1.20.5", "1.21", "1.21.2", "1.21.6", "1.21.9", "1.21.11"),
+    MENUS("menus", "1.13", "1.14", "1.15", "1.15.2", "1.16", "1.17", "1.19.1", "1.19.4", "1.20", "1.20.2", "1.20.5", "1.21", "1.21.2", "1.21.6", "1.21.9", "1.21.11", "26.4"),
     /** The newer options screens (Accessibility, Mouse, Controls, Key Binds) and the options on them. */
     OPTIONS("optionsScreens", "1.14", "1.16", "1.16.4", "1.18", "1.19.3", "1.19.4", "1.20.2", "1.20.5", "1.21.9"),
     /** Video Settings: its layout, its removed and added options. */
-    VIDEO("videoSettings", "1.13", "1.14", "1.21.6", "1.21.11", "26.3"),
+    VIDEO("videoSettings", "1.13", "1.14", "1.21.6", "1.21.11", "26.3", "26.4"),
     /** Chat: command suggestions, the chat options and look. */
     CHAT("chat", "1.13", "1.14", "1.16"),
     /** F3: the debug keys, the debug screen's lines, Debug Options and the charts. */
@@ -37,11 +37,11 @@ public enum LookArea {
      * creative.client.ModernOrder), slot highlights, the active effects beside the inventory (1.18, 1.21.11), the
      * recipe book's search box (1.16, 1.20.5) and the container textures.
      */
-    INVENTORY("inventory", "1.16", "1.18", "1.19.3", "1.20.5", "1.21.2", "1.21.11", "26.3"),
+    INVENTORY("inventory", "1.16", "1.18", "1.19.3", "1.20.5", "1.21.2", "1.21.11", "26.3", "26.4"),
     /** Sounds and music: the menu music, the in-game music, the music options. */
     MUSIC("music", "1.14", "1.21.6"),
     /** Sky, fog, clouds and light: each version's fog, sky color, clouds and sunrise steps, and 26.1's lightmap. */
-    SKY("sky", "1.21.2", "26.1"),
+    SKY("sky", "1.21.2", "26.1", "26.4"),
     /** Vanilla's text as each version words it. */
     WORDING("wording", "1.20.2"),
     /** Vanilla's textures as each version has them (Core's existing {@code textures.modernTextures}). */

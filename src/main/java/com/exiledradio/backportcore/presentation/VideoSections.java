@@ -32,7 +32,7 @@ public final class VideoSections {
     static final List<String> QUALITY_ENTRIES = Arrays.asList("~biome_blend_radius", "RENDER_DISTANCE", "~prioritize_chunk_updates",
             "~simulation_distance", "AMBIENT_OCCLUSION", "AO_LEVEL", "RENDER_CLOUDS", "PARTICLES", "MIPMAP_LEVELS", "ENTITY_SHADOWS",
             "~entity_distance_scaling", "~menu_background_blurriness", "~cloud_range", "~cutout_leaves", "~improved_transparency",
-            "~texture_filtering", "~max_anisotropy", "~weather_radius");
+            "~texture_filtering", "~max_anisotropy", "~improved_fog", "~weather_radius");
     /** Preferences, as {@code preferenceOptions}. */
     static final List<String> PREFERENCE_ENTRIES = Arrays.asList("~show_autosave_indicator", "~autosave_indicator", "~vignette",
             "ATTACK_INDICATOR", "~chunk_fade");

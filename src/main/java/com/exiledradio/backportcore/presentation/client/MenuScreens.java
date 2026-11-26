@@ -143,6 +143,8 @@ public final class MenuScreens {
     static final String FEEDBACK_SPRITE = "textures/gui/sprites/pause_menu/social_interactions.png";
     static final String FRIENDS_SPRITE = "textures/gui/sprites/friends/friends.png";
     static final String PLAYER_REPORTING_SPRITE = "textures/gui/sprites/pause_menu/player_reporting.png";
+    /** 26.4's Other Players icon (16 by 16), supplied by the backport that brings 26.4. */
+    static final String OTHER_PLAYERS_SPRITE = "textures/gui/sprites/pause_menu/other_players.png";
     /** The message of a pause-menu button whose online service 1.12.2 does not have. */
     public static final String UNAVAILABLE_KEY = "backportcore.pauseMenu.unavailable";
 
@@ -212,7 +214,34 @@ public final class MenuScreens {
             friends.enabled = available;
             ICONS.add(friends);
         }
-        if (com.exiledradio.backportcore.presentation.Presentation.asset(PLAYER_REPORTING_SPRITE) != null) {
+        if (VanillaRevisions.otherPlayersIcon() && com.exiledradio.backportcore.presentation.Presentation.asset(OTHER_PLAYERS_SPRITE) != null) {
+            // 26.4: Friends, Other Players, Report Bugs, Give Feedback; Other Players opens Core's screen of them, and is
+            // inactive (with 26.4's tooltip) in a world nobody else can join.
+            IconAction friends = null;
+            for (IconAction a : ICONS) {
+                if (FRIENDS_SPRITE.equals(a.sprite)) {
+                    friends = a;
+                }
+            }
+            List<IconAction> reordered = new java.util.ArrayList<IconAction>();
+            if (friends != null) {
+                reordered.add(friends);
+            }
+            IconAction others = new IconAction(I18n.format("menu.other_players"), OTHER_PLAYERS_SPRITE, () -> mc.displayGuiScreen(
+                    new com.exiledradio.backportcore.presentation.versions.look264.client.OtherPlayersScreen(gui)));
+            if (!com.exiledradio.backportcore.presentation.versions.look264.client.OtherPlayersScreen.available()) {
+                others.enabled = false;
+                others.tooltip = I18n.format("menu.other_players.no_players");
+            }
+            reordered.add(others);
+            for (IconAction a : ICONS) {
+                if (a != friends) {
+                    reordered.add(a);
+                }
+            }
+            ICONS.clear();
+            ICONS.addAll(reordered);
+        } else if (com.exiledradio.backportcore.presentation.Presentation.asset(PLAYER_REPORTING_SPRITE) != null) {
             IconAction reporting = new IconAction(I18n.format("menu.playerReporting"), PLAYER_REPORTING_SPRITE,
                     () -> unavailable(I18n.format("menu.playerReporting")));
             if (mc.isIntegratedServerRunning() && mc.player != null && !otherPlayers(mc)) {

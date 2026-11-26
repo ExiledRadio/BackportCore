@@ -1193,3 +1193,34 @@ death.attack.stalagmite=%1$s wurde von einem Stalagmiten aufgespießt
 death.attack.stalagmite.player=%1$s wurde im Kampf gegen %2$s von einem Stalagmiten aufgespießt
 death.attack.fallingStalactite=%1$s wurde von einem fallenden Stalaktiten aufgespießt
 death.attack.fallingStalactite.player=%1$s wurde im Kampf gegen %2$s von einem fallenden Stalaktiten aufgespießt
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Rezept/Handel wiederholen
+key.otherPlayers=Mitspieler
+options.improvedFog=Verbesserter Nebel
+options.improvedFog.tooltip=Mischt den Himmelshintergrund mit sichtweitebasiertem Nebel, um den Kontrast zwischen Landschaft und Himmel aufzuweichen. Ist diese Option deaktiviert, ist der Nebel einfarbig.
+Ist „Verbesserte Transparenz“ ebenfalls aktiviert, werden auch die Wolken mit dem Nebel gemischt.
+menu.other_players=Mitspieler
+menu.other_players.no_players=Diese Welt kann derzeit nicht von anderen Spielern betreten werden.
+gui.recipebook.tooltip=Rezeptbuch
+gui.recipebook.tab.all=Alle Rezepte
+recipe_book_category.minecraft.crafting_equipment=Ausrüstung
+recipe_book_category.minecraft.crafting_building_blocks=Baublöcke
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Verschiedenes
+gui.player_interactions.title=Mitspieler
+gui.player_interactions.title.full=Mitspieler – %s
+gui.player_interactions.tab_all=Alle (%s)
+gui.player_interactions.tab_muted=Stummgeschaltet
+gui.player_interactions.search=Suche …
+gui.player_interactions.search.no_results=Keinen Spieler mit diesem Namen gefunden
+gui.player_interactions.empty=Diese Welt ist für Mehrspieler geöffnet, aber bisher ist niemand hier!
+gui.player_interactions.empty_muted=Keine stummgeschalteten Spieler im Chat
+gui.player_options.title=Spielerverwaltung
+gui.player_options.mute=Stummschalten
+gui.player_options.unmute=Stummschaltung aufheben
+gui.player_options.mute.tooltip=Verbirgt Chatnachrichten dieses Spielers.
+gui.player_options.unmute.tooltip=Chatnachrichten dieses Spielers wieder anzeigen
+gui.player_options.mute.feedback=Chatnachrichten von %s werden nun ausgeblendet
+gui.player_options.unmute.feedback=Chatnachrichten von %s werden nun wieder angezeigt
+gui.player_options.status.muted=Stummgeschaltet – %s

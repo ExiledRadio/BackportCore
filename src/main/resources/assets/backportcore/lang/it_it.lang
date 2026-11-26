@@ -1193,3 +1193,34 @@ death.attack.stalagmite=Una stalagmite ha impalato %1$s
 death.attack.stalagmite.player=Una stalagmite ha impalato %1$s mentre lottava con %2$s
 death.attack.fallingStalactite=Una stalattite ha infilzato %1$s
 death.attack.fallingStalactite.player=Una stalattite ha infilzato %1$s mentre lottava con %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Ripeti ricetta o scambio
+key.otherPlayers=Elenco degli altri giocatori
+options.improvedFog=Nebbia migliorata
+options.improvedFog.tooltip=Sfuma lo sfondo del cielo con la nebbia in lontananza per un confine tra terreno e cielo meno evidente. Quando è disattivata, la nebbia ha un colore uniforme.
+Se la trasparenza migliorata è attiva, anche le nuvole verranno sfumate con la nebbia.
+menu.other_players=Elenco degli altri giocatori
+menu.other_players.no_players=Questo mondo non è al momento accessibile dagli altri giocatori
+gui.recipebook.tooltip=Ricettario
+gui.recipebook.tab.all=Tutte le ricette
+recipe_book_category.minecraft.crafting_equipment=Equipaggiamento
+recipe_book_category.minecraft.crafting_building_blocks=Blocchi da costruzione
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Varie
+gui.player_interactions.title=Elenco degli altri giocatori
+gui.player_interactions.title.full=Elenco degli altri giocatori — %s
+gui.player_interactions.tab_all=Tutti (%s)
+gui.player_interactions.tab_muted=Silenziati
+gui.player_interactions.search=Cerca...
+gui.player_interactions.search.no_results=Nessun giocatore trovato.
+gui.player_interactions.empty=Questo mondo è aperto al multigiocatore, ma non c'è ancora nessun altro qui!
+gui.player_interactions.empty_muted=Nessun giocatore silenziato in chat.
+gui.player_options.title=Opzioni del giocatore
+gui.player_options.mute=Silenzia i messaggi
+gui.player_options.unmute=Riattiva i messaggi
+gui.player_options.mute.tooltip=Nascondi i messaggi da questo giocatore.
+gui.player_options.unmute.tooltip=Mostra i messaggi da questo giocatore.
+gui.player_options.mute.feedback=I messaggi da %s sono ora nascosti
+gui.player_options.unmute.feedback=I messaggi da %s sono ora mostrati
+gui.player_options.status.muted=Silenziati — %s

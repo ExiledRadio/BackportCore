@@ -1193,3 +1193,34 @@ death.attack.stalagmite=Gracz %1$s nadział się na stalagmit
 death.attack.stalagmite.player=Gracz %1$s nadział się na stalagmit podczas walki z: %2$s
 death.attack.fallingStalactite=Spadający stalaktyt zrobił z gracza %1$s szaszłyk
 death.attack.fallingStalactite.player=Spadający stalaktyt zrobił z gracza %1$s szaszłyk podczas walki z %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Powtórz recepturę lub ofertę wymiany
+key.otherPlayers=Inni gracze
+options.improvedFog=Ulepszona mgła
+options.improvedFog.tooltip=Wtapia tło nieba w mgłę zależną od odległości renderowania, aby granica między terenem a niebem była mniej widoczna. Po wyłączeniu tej opcji mgła ma jednolity kolor.
+Jeśli włączona jest też opcja „Ulepszona przejrzystość”, chmury również będą wtapiane w mgłę.
+menu.other_players=Inni gracze
+menu.other_players.no_players=Do tego świata nie mogą obecnie dołączyć inni gracze
+gui.recipebook.tooltip=Książka receptur
+gui.recipebook.tab.all=Wszystkie receptury
+recipe_book_category.minecraft.crafting_equipment=Wyposażenie
+recipe_book_category.minecraft.crafting_building_blocks=Bloki budowlane
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Różne
+gui.player_interactions.title=Inni gracze
+gui.player_interactions.title.full=Inni gracze — %s
+gui.player_interactions.tab_all=Wszyscy (%s)
+gui.player_interactions.tab_muted=Wyciszeni
+gui.player_interactions.search=Szukaj…
+gui.player_interactions.search.no_results=Nie znaleziono graczy o tej nazwie
+gui.player_interactions.empty=Ten świat jest dostępny w trybie wieloosobowym, ale nie ma tu jeszcze nikogo innego!
+gui.player_interactions.empty_muted=Brak wyciszonych graczy na czacie
+gui.player_options.title=Opcje gracza
+gui.player_options.mute=Wycisz
+gui.player_options.unmute=Odcisz
+gui.player_options.mute.tooltip=Ukryj wiadomości na czacie od tego gracza.
+gui.player_options.unmute.tooltip=Pokaż wiadomości na czacie od tego gracza.
+gui.player_options.mute.feedback=Wiadomości pisane przez gracza %s będą ukrywane
+gui.player_options.unmute.feedback=Wiadomości pisane przez gracza %s będą pokazywane
+gui.player_options.status.muted=Wyciszony – %s

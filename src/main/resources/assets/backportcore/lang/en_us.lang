@@ -1195,3 +1195,34 @@ tile.backportcore.polished_deepslate_double_slab.name=Polished Deepslate Slab
 tile.backportcore.deepslate_tile_double_slab.name=Deepslate Tile Slab
 tile.backportcore.deepslate_brick_double_slab.name=Deepslate Brick Slab
 # ---- end of supplied blocks ----
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Repeat Recipe/Trade
+key.otherPlayers=Other Players
+options.improvedFog=Improved Fog
+options.improvedFog.tooltip=Blends the sky background with render distance-based fog to make the boundary between the terrain and the sky less visible. When disabled, the fog is a solid color.
+If Improved Transparency is also enabled, the clouds will be blended with the fog as well.
+menu.other_players=Other Players
+menu.other_players.no_players=This world is not currently joinable by other players
+gui.recipebook.tooltip=Recipe Book
+gui.recipebook.tab.all=All Recipes
+recipe_book_category.minecraft.crafting_equipment=Equipment
+recipe_book_category.minecraft.crafting_building_blocks=Building Blocks
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Miscellaneous
+gui.player_interactions.title=Other Players
+gui.player_interactions.title.full=Other Players - %s
+gui.player_interactions.tab_all=All (%s)
+gui.player_interactions.tab_muted=Muted
+gui.player_interactions.search=Search...
+gui.player_interactions.search.no_results=Couldn't find any players with that name
+gui.player_interactions.empty=This world is open to multiplayer, but no one else is here yet!
+gui.player_interactions.empty_muted=No muted players in chat
+gui.player_options.title=Player Options
+gui.player_options.mute=Mute
+gui.player_options.unmute=Unmute
+gui.player_options.mute.tooltip=Hide chat messages from this player.
+gui.player_options.unmute.tooltip=Show chat messages from this player.
+gui.player_options.mute.feedback=Chat messages from %s will be hidden
+gui.player_options.unmute.feedback=Chat messages from %s will be shown
+gui.player_options.status.muted=Muted - %s

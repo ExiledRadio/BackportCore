@@ -66,6 +66,11 @@ public final class VanillaRevisions {
      * row under Advancements and Statistics (sprites {@code pause_menu/bug}, {@code pause_menu/social_interactions},
      * {@code friends/friends} and {@code pause_menu/player_reporting}, supplied by a backport); 26.3's row is the same.
      */
+    /** 26.4: the pause menu's icon row starts with Friends and has Other Players where Player Reporting was. */
+    public static boolean otherPlayersIcon() {
+        return Presentation.isAtLeast(LookArea.MENUS, "26.4");
+    }
+
     public static boolean pauseIconRow() {
         return Presentation.isAtLeast(LookArea.MENUS, "26.2");
     }
