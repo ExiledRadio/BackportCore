@@ -6,3 +6,5 @@ tile.sign.name=참나무 표지판
 tile.trapdoor.name=참나무 다락문
 tile.pressurePlateWood.name=참나무 압력판
 options.chat.opacity=대화 문자 불투명도
+gui.recipebook.toggleRecipes.blastable=용광 가능한 아이템 표시 중
+gui.recipebook.toggleRecipes.smokable=훈연 가능한 아이템 표시 중

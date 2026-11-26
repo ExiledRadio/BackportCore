@@ -43,3 +43,6 @@ sign.edit=Редактирование таблички
 multiplayerWarning.header=Предупреждение: игра на сторонних серверах
 multiplayerWarning.message=Предупреждение. Сетевая игра, предложенная сторонними серверами, не является собственностью, не управляется и не модерируется Mojang Studios. Во время сетевой игры, вы можете столкнуться с немодерируемыми сообщениями в чате или иными видами пользовательского контента, который может подходить не всем игрокам.
 multiplayerWarning.check=Больше не показывать
+gui.recipebook.toggleRecipes.smeltable=Рецепты для печи
+gui.recipebook.toggleRecipes.blastable=Рецепты для плавильной печи
+gui.recipebook.toggleRecipes.smokable=Рецепты для коптильни

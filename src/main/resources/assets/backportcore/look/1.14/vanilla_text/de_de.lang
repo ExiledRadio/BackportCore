@@ -6,3 +6,5 @@ tile.sign.name=Eichenholzschild
 tile.trapdoor.name=Eichenholzfalltür
 tile.pressurePlateWood.name=Eichenholzdruckplatte
 options.chat.opacity=Chat-Textdeckkraft
+gui.recipebook.toggleRecipes.blastable=Schmelzbares wird angezeigt
+gui.recipebook.toggleRecipes.smokable=Räucherbares wird angezeigt

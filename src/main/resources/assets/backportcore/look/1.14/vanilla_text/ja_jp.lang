@@ -6,3 +6,5 @@ tile.sign.name=オークの看板
 tile.trapdoor.name=オークのトラップドア
 tile.pressurePlateWood.name=オークの感圧板
 options.chat.opacity=チャットの不透明度
+gui.recipebook.toggleRecipes.blastable=製錬可能なアイテムを表示中
+gui.recipebook.toggleRecipes.smokable=燻製可能なアイテムを表示中

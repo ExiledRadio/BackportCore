@@ -6,3 +6,5 @@ tile.sign.name=Cartello di quercia
 tile.trapdoor.name=Botola di quercia
 tile.pressurePlateWood.name=Pedana a pressione di quercia
 options.chat.opacity=Opacità testo chat
+gui.recipebook.toggleRecipes.blastable=Fusioni realizzabili
+gui.recipebook.toggleRecipes.smokable=Affumicature realizzabili

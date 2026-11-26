@@ -6,3 +6,5 @@ tile.sign.name=Cartel de roble
 tile.trapdoor.name=Trampilla de roble
 tile.pressurePlateWood.name=Placa de presión de roble
 options.chat.opacity=Opacidad de chat
+gui.recipebook.toggleRecipes.blastable=Mostrando altos fundibles
+gui.recipebook.toggleRecipes.smokable=Mostrando ahumables

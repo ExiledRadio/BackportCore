@@ -43,3 +43,6 @@ sign.edit=Editar mensagem da placa
 multiplayerWarning.header=Atenção: modo multijogador de terceiros
 multiplayerWarning.message=Atenção: o modo multijogador é oferecido por servidores de terceiros que não pertencem e não são operados ou supervisionados pela Mojang Studios ou pela Microsoft. No modo multijogador, você poderá encontrar mensagens de chat não moderadas ou outros tipos de conteúdo criado por usuários que podem não ser adequados para todos.
 multiplayerWarning.check=Não mostrar esse aviso novamente
+gui.recipebook.toggleRecipes.smeltable=Fundíveis
+gui.recipebook.toggleRecipes.blastable=Explosíveis
+gui.recipebook.toggleRecipes.smokable=Defumáveis

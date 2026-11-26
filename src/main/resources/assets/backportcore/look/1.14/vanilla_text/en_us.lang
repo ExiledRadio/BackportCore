@@ -6,3 +6,5 @@ tile.sign.name=Oak Sign
 tile.trapdoor.name=Oak Trapdoor
 tile.pressurePlateWood.name=Oak Pressure Plate
 options.chat.opacity=Chat Text Opacity
+gui.recipebook.toggleRecipes.blastable=Showing blastable
+gui.recipebook.toggleRecipes.smokable=Showing smokable

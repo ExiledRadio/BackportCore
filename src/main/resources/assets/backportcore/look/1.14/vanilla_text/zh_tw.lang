@@ -6,3 +6,5 @@ tile.sign.name=橡木告示牌
 tile.trapdoor.name=橡木地板門
 tile.pressurePlateWood.name=橡木壓力板
 options.chat.opacity=聊天欄文字不透明度
+gui.recipebook.toggleRecipes.blastable=已列出高爐可熔煉項目
+gui.recipebook.toggleRecipes.smokable=已列出可燻製項目

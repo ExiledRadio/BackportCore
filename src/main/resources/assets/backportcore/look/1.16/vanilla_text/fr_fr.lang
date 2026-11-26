@@ -43,3 +43,6 @@ sign.edit=Texte de la pancarte :
 multiplayerWarning.header=Attention : jeu en ligne tiers
 multiplayerWarning.message=Attention : le jeu en ligne est proposé par des serveurs tiers qui ne sont pas détenus, exploités ou supervisés par Mojang Studios ou Microsoft. Durant le jeu en ligne, vous pouvez être exposé(e) à des messages non modérés dans le tchat ou à d'autres types de contenu généré par les utilisateurs qui peuvent ne pas convenir à tout le monde.
 multiplayerWarning.check=Ne plus afficher ce message
+gui.recipebook.toggleRecipes.smeltable=Cuissons réalisables
+gui.recipebook.toggleRecipes.blastable=Fontes réalisables
+gui.recipebook.toggleRecipes.smokable=Fumages réalisables

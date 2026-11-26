@@ -43,3 +43,6 @@ sign.edit=Edytuj treść tabliczki
 multiplayerWarning.header=Ostrzeżenie: Zewnętrzna gra online
 multiplayerWarning.message=Uwaga: Gra online jest realizowana przez serwery osób trzecich, niebędące własnością, nieobsługiwane ani nienadzorowane przez firmę Mojang Studios czy Microsoft. Grając online, narażasz się na kontakt z nieautoryzowanymi wiadomościami lub innego rodzaju tworzonymi przez graczy treściami, które mogą być niestosowne dla niektórych odbiorców.
 multiplayerWarning.check=Nie pokazuj tego ponownie
+gui.recipebook.toggleRecipes.smeltable=Pokazuje przetwarzalne
+gui.recipebook.toggleRecipes.blastable=Pokazuje wytapialne
+gui.recipebook.toggleRecipes.smokable=Pokazuje wędzalne

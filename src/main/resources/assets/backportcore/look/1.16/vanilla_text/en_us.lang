@@ -43,3 +43,6 @@ sign.edit=Edit Sign Message
 multiplayerWarning.header=Caution: Third-Party Online Play
 multiplayerWarning.message=Caution: Online play is offered by third-party servers that are not owned, operated, or supervised by Mojang Studios or Microsoft. During online play, you may be exposed to unmoderated chat messages or other types of user-generated content that may not be suitable for everyone.
 multiplayerWarning.check=Do not show this screen again
+gui.recipebook.toggleRecipes.smeltable=Showing Smeltable
+gui.recipebook.toggleRecipes.blastable=Showing Blastable
+gui.recipebook.toggleRecipes.smokable=Showing Smokable

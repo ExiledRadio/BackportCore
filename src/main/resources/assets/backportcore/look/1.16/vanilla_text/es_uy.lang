@@ -43,3 +43,6 @@ sign.edit=Editar mensaje del cartel
 multiplayerWarning.header=Atención: Juego en linea de terceros
 multiplayerWarning.message=Atención: El juego en línea está provisto por servidores de terceros los cuales no son propiedad de Mojang Studios o Microsoft, ni están administrados ni supervisados por ellos. Mientras juegas en línea puedes estar expuesto a mensajes de texto sin moderación u otro tipo de contenido generado por la comunidad que puede no ser apropiado para todas las edades.
 multiplayerWarning.check=No mostrar este mensaje de nuevo
+gui.recipebook.toggleRecipes.smeltable=Mostrando recetas horneables
+gui.recipebook.toggleRecipes.blastable=Mostrando recetas fundibles
+gui.recipebook.toggleRecipes.smokable=Mostrando recetas ahumables

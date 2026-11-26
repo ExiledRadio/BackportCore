@@ -43,3 +43,6 @@ sign.edit=編輯告示牌文字
 multiplayerWarning.header=警告：第三方遊戲伺服器
 multiplayerWarning.message=警告：第三方伺服器所提供的遊戲不隸屬於 Mojang Studios 或 Microsoft， 不會受到我們的管理或監督。 線上遊玩時，您可能會遭遇到未受管理的聊天訊息、或是其他由使用者製造的內容，而這些內容可能不適合所有人。
 multiplayerWarning.check=不再顯示此畫面
+gui.recipebook.toggleRecipes.smeltable=已列出可熔煉項目
+gui.recipebook.toggleRecipes.blastable=已列出高爐可熔煉項目
+gui.recipebook.toggleRecipes.smokable=已列出可燻製項目

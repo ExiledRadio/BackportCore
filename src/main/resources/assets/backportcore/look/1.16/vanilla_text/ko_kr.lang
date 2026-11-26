@@ -43,3 +43,6 @@ sign.edit=표지판 문구 편집
 multiplayerWarning.header=주의: 제삼자 온라인 플레이
 multiplayerWarning.message=주의: 온라인 플레이는 Mojang Studios 및 Microsoft가 소유, 운영 또는 감독하지 않는 제삼자 서버를 통해 제공됩니다. 온라인 플레이 중에 모두에게 적합하지 않은, 관리되지 않는 대화 메시지나 다른 종류의 사용자 생성 콘텐츠에 노출될 수 있습니다.
 multiplayerWarning.check=이 화면을 다시 보지 않기
+gui.recipebook.toggleRecipes.smeltable=제련 가능한 아이템 표시 중
+gui.recipebook.toggleRecipes.blastable=용광 가능한 아이템 표시 중
+gui.recipebook.toggleRecipes.smokable=훈연 가능한 아이템 표시 중

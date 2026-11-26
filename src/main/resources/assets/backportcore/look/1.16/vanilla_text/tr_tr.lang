@@ -43,3 +43,6 @@ sign.edit=Tabela Mesajını Düzenle
 multiplayerWarning.header=Dikkat: Üçüncü Parti Çevrim içi Oyun
 multiplayerWarning.message=Dikkat: Çevrim içi oyun, Mojang Stüdyoları veya Microsoft tarafından sahip olunmayan, işletilmeyen veya denetlenmeyen üçüncü taraf sunucular tarafından sunulmaktadır. Çevrim içi oyun sırasında, denetlenmemiş sohbet mesajlarına veya başka kullanıcılar tarafından herkes için uygun olmayabilecek tip mesajlara maruz kalabilirsiniz.
 multiplayerWarning.check=Bu ekranı bir daha gösterme
+gui.recipebook.toggleRecipes.smeltable=Eritilebilenler Gösteriliyor
+gui.recipebook.toggleRecipes.blastable=Eritilebilen Madenler Gösteriliyor
+gui.recipebook.toggleRecipes.smokable=Pişirilebilen Etler Gösteriliyor

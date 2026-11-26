@@ -43,3 +43,6 @@ sign.edit=Messaggio del cartello:
 multiplayerWarning.header=Attenzione: gioco online di terze parti
 multiplayerWarning.message=Attenzione: il gioco online è offerto da server di terze parti che non sono di proprietà, gestiti o controllati da Mojang Studios o da Microsoft. Durante il gioco online, potresti trovare messaggi in chat non moderati o altri tipi di contenuti generati da utenti che potrebbero non essere adatti a tutti.
 multiplayerWarning.check=Non mostrare più questa schermata
+gui.recipebook.toggleRecipes.smeltable=Cotture realizzabili
+gui.recipebook.toggleRecipes.blastable=Fusioni realizzabili
+gui.recipebook.toggleRecipes.smokable=Affumicature realizzabili
