@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Gepolijste wrevelstenen pl
 tile.backportcore.deepslate_tile_double_slab.name=Wrevelstenen tegelplaat
 tile.backportcore.deepslate_brick_double_slab.name=Wrevelblokstenen plaat
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s bevroor
+death.attack.freeze.player=%2$s bevroor %1$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Een stalagmiet spietste %1$s
+death.attack.stalagmite.player=Een stalagmiet spietste %1$s tijdens een gevecht met %2$s
+death.attack.fallingStalactite=Een vallende stalactiet spietste %1$s
+death.attack.fallingStalactite.player=Een vallende stalactiet spietste %1$s tijdens een gevecht met %2$s

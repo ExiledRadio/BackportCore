@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=磨かれた深層岩の�
 tile.backportcore.deepslate_tile_double_slab.name=深層岩タイルのハーフブロック
 tile.backportcore.deepslate_brick_double_slab.name=深層岩レンガのハーフブロック
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$sは凍え死んだ
+death.attack.freeze.player=%1$sは%2$sによって凍え死んだ
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$sは鍾乳石に突き刺さった
+death.attack.stalagmite.player=%1$sは%2$sと戦いながら鍾乳石に突き刺さった
+death.attack.fallingStalactite=%1$sは落ちてきた鍾乳石に串刺しにされた
+death.attack.fallingStalactite.player=%1$sは%2$sと戦いながら落ちてきた鍾乳石に串刺しにされた

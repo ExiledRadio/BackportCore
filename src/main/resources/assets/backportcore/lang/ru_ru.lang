@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Плита из полир
 tile.backportcore.deepslate_tile_double_slab.name=Плита из глубинносланцевого плитняка
 tile.backportcore.deepslate_brick_double_slab.name=Плита из глубинносланцевого кирпича
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s замёрз насмерть
+death.attack.freeze.player=%1$s замёрз насмерть благодаря %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s был пронзён сталагмитом
+death.attack.stalagmite.player=%1$s был пронзён сталагмитом, пока боролся с %2$s
+death.attack.fallingStalactite=%1$s был пронзён обрушившимся сталактитом
+death.attack.fallingStalactite.player=%1$s был пронзён обрушившимся сталактитом, пока боролся с %2$s

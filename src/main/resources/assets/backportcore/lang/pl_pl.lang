@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Wypolerowana łupkowa pły
 tile.backportcore.deepslate_tile_double_slab.name=Łupkowa kafelkowa płyta
 tile.backportcore.deepslate_brick_double_slab.name=Łupkowa ceglana płyta
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=Gracz %1$s zamarzł na śmierć
+death.attack.freeze.player=Gracz %1$s zamarzł na śmierć przez: %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Gracz %1$s nadział się na stalagmit
+death.attack.stalagmite.player=Gracz %1$s nadział się na stalagmit podczas walki z: %2$s
+death.attack.fallingStalactite=Spadający stalaktyt zrobił z gracza %1$s szaszłyk
+death.attack.fallingStalactite.player=Spadający stalaktyt zrobił z gracza %1$s szaszłyk podczas walki z %2$s

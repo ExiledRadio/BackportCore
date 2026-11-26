@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Polierte Tiefenschieferstu
 tile.backportcore.deepslate_tile_double_slab.name=Tiefenschieferfliesenstufe
 tile.backportcore.deepslate_brick_double_slab.name=Tiefenschieferziegelstufe
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s erfror
+death.attack.freeze.player=%1$s erfror durch %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s wurde von einem Stalagmiten aufgespießt
+death.attack.stalagmite.player=%1$s wurde im Kampf gegen %2$s von einem Stalagmiten aufgespießt
+death.attack.fallingStalactite=%1$s wurde von einem fallenden Stalaktiten aufgespießt
+death.attack.fallingStalactite.player=%1$s wurde im Kampf gegen %2$s von einem fallenden Stalaktiten aufgespießt

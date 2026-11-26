@@ -95,6 +95,7 @@ public final class SelfTestRunner {
                     case "jigsaw": JigsawBlockTests.schedule(); break;
                     case "dynamictrees": DynamicTreesTests.schedule(); break;
                     case "supplied": SuppliedTests.schedule(); break;
+                    case "freeze": FreezeTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -132,6 +133,7 @@ public final class SelfTestRunner {
         BoatTests.schedule();
         DynamicTreesTests.schedule();
         SuppliedTests.schedule();
+        FreezeTests.schedule();
         LookFeelTests.schedule();
         CoreLook113To115Tests.schedule();
         Look116118Tests.schedule();

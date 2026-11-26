@@ -65,6 +65,7 @@ public final class SelfTestMod {
         event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.plant, TestBlocks.legacy,
                 TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
         RequestTests.blocks(event.getRegistry());
+        FreezeTests.blocks(event.getRegistry());
     }
 
     @SubscribeEvent

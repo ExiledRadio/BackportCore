@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Cilalı Kayrak Taşı Basa
 tile.backportcore.deepslate_tile_double_slab.name=Döşeme Kayrak Taşı Basamak
 tile.backportcore.deepslate_brick_double_slab.name=Kayrak Taşı Tuğlası Basamak
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s donarak öldü
+death.attack.freeze.player=%1$s, %2$s tarafından dondurularak öldürüldü
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s oyuncusuna bir dikit saplandı
+death.attack.stalagmite.player=%1$s, %2$s ile savaşırken bir dikit tarafından şişlendi
+death.attack.fallingStalactite=%1$s düşen bir sarkıt tarafından şişlendi
+death.attack.fallingStalactite.player=%1$s, %2$s ile savaşırken düşen bir sarkıt tarafından şişlendi

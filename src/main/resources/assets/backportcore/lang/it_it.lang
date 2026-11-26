@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Lastra di ardesia profonda
 tile.backportcore.deepslate_tile_double_slab.name=Lastra di piastrelle di ardesia profonda
 tile.backportcore.deepslate_brick_double_slab.name=Lastra di mattoni di ardesia profonda
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=Il gelo ha assiderato %1$s
+death.attack.freeze.player=Il gelo ha assiderato %1$s a causa di %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Una stalagmite ha impalato %1$s
+death.attack.stalagmite.player=Una stalagmite ha impalato %1$s mentre lottava con %2$s
+death.attack.fallingStalactite=Una stalattite ha infilzato %1$s
+death.attack.fallingStalactite.player=Una stalattite ha infilzato %1$s mentre lottava con %2$s

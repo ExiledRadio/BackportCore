@@ -105,6 +105,7 @@ public final class GameRuleTable {
     private static final String TT = "trailsandtalesbackport";
     private static final String TR = "trickytrialsbackport";
     private static final String VP = "villagerbackport";
+    private static final String GD = "gamedropsbackport";
 
     private static final Map<String, Rule> RULES = new LinkedHashMap<String, Rule>();
 
@@ -142,7 +143,7 @@ public final class GameRuleTable {
         bool("doImmediateRespawn", "immediate_respawn", Category.PLAYER, false, BB);
         bool("forgiveDeadPlayers", "forgive_dead_players", Category.MOBS, true, NU);
         bool("universalAnger", "universal_anger", Category.MOBS, false, NU);
-        bool("freezeDamage", "freeze_damage", Category.PLAYER, true, CC);
+        bool("freezeDamage", "freeze_damage", Category.PLAYER, true, CC, GD);
         bool("blockExplosionDropDecay", "block_explosion_drop_decay", Category.DROPS, true, WU);
         bool("mobExplosionDropDecay", "mob_explosion_drop_decay", Category.DROPS, true, WU);
         bool("tntExplosionDropDecay", "tnt_explosion_drop_decay", Category.DROPS, false, WU);

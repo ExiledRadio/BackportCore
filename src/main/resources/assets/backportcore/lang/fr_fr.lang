@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Dalle d'ardoise des abîme
 tile.backportcore.deepslate_tile_double_slab.name=Dalle d'ardoise des abîmes carrelée
 tile.backportcore.deepslate_brick_double_slab.name=Dalle d'ardoise des abîmes taillée
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s est mort(e) de froid
+death.attack.freeze.player=%1$s est mort(e) de froid à cause de/d'un(e) %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s s'est fait empaler sur une stalagmite
+death.attack.stalagmite.player=%1$s s'est fait empaler sur une stalagmite en combattant (un(e)) %2$s
+death.attack.fallingStalactite=%1$s s'est fait transpercer par une stalactite
+death.attack.fallingStalactite.player=%1$s s'est fait transpercer par une stalactite en combattant (un(e)) %2$s

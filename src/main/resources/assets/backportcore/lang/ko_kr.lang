@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=윤나는 심층암 반 �
 tile.backportcore.deepslate_tile_double_slab.name=심층암 타일 반 블록
 tile.backportcore.deepslate_brick_double_slab.name=심층암 벽돌 반 블록
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s이(가) 얼어 죽었습니다
+death.attack.freeze.player=%1$s이(가) %2$s 때문에 얼어 죽었습니다
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s이(가) 석순에 찔렸습니다
+death.attack.stalagmite.player=%1$s이(가) %2$s과(와) 싸우다가 석순에 찔렸습니다
+death.attack.fallingStalactite=%1$s이(가) 떨어지는 종유석에 찔렸습니다
+death.attack.fallingStalactite.player=%1$s이(가) %2$s과(와) 싸우다가 떨어지는 종유석에 찔렸습니다

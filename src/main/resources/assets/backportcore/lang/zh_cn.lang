@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=磨制深板岩台阶
 tile.backportcore.deepslate_tile_double_slab.name=深板岩瓦台阶
 tile.backportcore.deepslate_brick_double_slab.name=深板岩砖台阶
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s被冻死了
+death.attack.freeze.player=%1$s被%2$s冻死了
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s被石笋刺穿了
+death.attack.stalagmite.player=%1$s在与%2$s战斗时被石笋刺穿了
+death.attack.fallingStalactite=%1$s被下落的钟乳石刺穿了
+death.attack.fallingStalactite.player=%1$s在与%2$s战斗时被下落的钟乳石刺穿了

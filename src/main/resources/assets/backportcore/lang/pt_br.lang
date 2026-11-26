@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=Laje de Ardosiabissal Poli
 tile.backportcore.deepslate_tile_double_slab.name=Laje de Ladrilhos de Ardosiabissal
 tile.backportcore.deepslate_brick_double_slab.name=Laje de Tijolos de Ardosiabissal
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s congelou até à morte
+death.attack.freeze.player=%2$s congelou %1$s até à morte
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Uma estalagmite empalou %1$s
+death.attack.stalagmite.player=Uma estalagmite empalou %1$s enquanto lutava com %2$s
+death.attack.fallingStalactite=Uma estalactite atingiu %1$s
+death.attack.fallingStalactite.player=Uma estalactite atingiu %1$s enquanto lutava com %2$s

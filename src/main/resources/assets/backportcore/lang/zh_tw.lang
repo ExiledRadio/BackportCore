@@ -1181,3 +1181,15 @@ tile.backportcore.polished_deepslate_double_slab.name=拋光深板岩半磚
 tile.backportcore.deepslate_tile_double_slab.name=深板岩磚瓦半磚
 tile.backportcore.deepslate_brick_double_slab.name=深板岩磚半磚
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s 凍死了
+death.attack.freeze.player=%1$s 被 %2$s 凍死了
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s 在石筍上被刺穿
+death.attack.stalagmite.player=%1$s 在與 %2$s 戰鬥時在石筍上被刺穿
+death.attack.fallingStalactite=%1$s 被墜落的鐘乳石刺穿了
+death.attack.fallingStalactite.player=%1$s 在與 %2$s 戰鬥時被落下的鐘乳石刺穿
