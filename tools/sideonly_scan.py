@@ -4,11 +4,14 @@ A @SideOnly(Side.CLIENT) member is stripped from the dedicated server's classes,
 NoSuchMethodError / NoSuchFieldError there (Core 1.4.0-1.4.8 kicked every player who opened an elytra this way), while
 singleplayer, which has the client's classes, never shows it.
 
-Usage: python -I tools/sideonly_scan.py <forge srgBin jar> <mod jar>...
-The mod jars are release (SRG-named) jars. A class annotated client-only, or in a package with a "client" segment, is
+Usage: python -I tools/sideonly_scan.py [--srg <MCP mappings dir>] <forgeSrc jar> <mod jar>...
+Both MCP-named: ForgeGradle's forgeSrc jar is Minecraft after Forge's patches (the merged srgBin jar is before them,
+and marks members client-only that Forge gives the server back), and the mods' -dev jars; or release jars with
+--srg and the folder holding MCP's methods.csv and fields.csv. A class annotated client-only, or in a package with a "client" segment, is
 skipped; every other class that names a client-only member is listed with the members, to be checked by hand: a call
 behind a world.isRemote test, or in code only the client reaches, is fine.
 """
+import io
 import struct
 import sys
 import zipfile
@@ -225,14 +228,38 @@ CLIENT_CALLBACKS = {
     "func_176225_a",  # shouldSideBeRendered
     "func_190948_a",  # addInformation (block)
     "func_70103_a",  # handleStatusUpdate
+    "randomDisplayTick", "getSubBlocks", "getSubItems", "addInformation", "getRenderLayer", "getPackedLightmapCoords",
+    "shouldSideBeRendered", "handleStatusUpdate", "canPlaceBlockOnSide", "getBrightnessForRender", "getRenderBoundingBox",
 }
 
 
+def mcp_names(directory):
+    """SRG to MCP names from an MCP mappings folder (methods.csv, fields.csv)."""
+    names = {}
+    for f in ("methods.csv", "fields.csv"):
+        with io.open(directory + "/" + f, encoding="utf-8") as fh:
+            next(fh)
+            for line in fh:
+                parts = line.split(",")
+                names[parts[0]] = parts[1]
+    return names
+
+
 def main():
+    args = sys.argv[1:]
+    names = None
+    if args[0] == "--srg":
+        # Release (SRG-named) mod jars: their references are translated to MCP names.
+        names = mcp_names(args[1])
+        args = args[2:]
+    sys.argv[1:] = args
     mc = load(sys.argv[1])
     total = 0
     for jar in sys.argv[2:]:
         mods = load(jar)
+        if names:
+            for c in mods.values():
+                c.refs = [(k, o, names.get(n, n), d, (names.get(u[0], u[0]), u[1])) for k, o, n, d, u in c.refs]
         hits = []
         for c in sorted(mods.values(), key=lambda c: c.name):
             if c.client or "/client/" in c.name + "/" or c.name.endswith("/client"):
