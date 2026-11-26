@@ -1,5 +1,6 @@
 # 1.4.9
 
+*   **Fixed: on a server, opening an elytra kicked you** ("Internal server error"), so elytras and firework boosting didn't work in multiplayer. Singleplayer was not affected.
 *   **Fixed: with Dynamic Trees, static and dynamic trees generated side by side** along the edges of the backports' biomes (cherry groves, pale gardens, mangrove swamps, dappled forests, bamboo jungles) and other mods' biomes. Dynamic Trees decided per chunk by the wrong biome, so normal trees stayed next to its own on one side of the edge and the backport biome lost its trees on the other. Each chunk now gets one kind: the one its biome grows.
 *   **Fixed: with JEI or HEI, the potion effects beside the inventory covered the item list.** With the newer inventory look the effects sit right of the inventory, as in 1.18 and later, where JEI's list is; JEI only knew 1.12.2's place on the left. JEI and HEI now move their items out of the way, as JEI does in today's Minecraft.
 *   Villages and abandoned camps grow Dynamic Trees' trees where Dynamic Trees replaces the biome's trees.
