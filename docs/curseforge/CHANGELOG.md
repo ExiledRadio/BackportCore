@@ -3,6 +3,8 @@
 *   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.
 *   **Fixed: other mods' pause menu buttons drawn under the backports' buttons.** A mod's button in 1.12.2's empty row (a Cheats toggle, for one) sat behind the icon row or the Give Feedback row. Any other mod's button there moves below Save and Quit.
 *   **Fixed: fireworks sometimes didn't boost an elytra.** 1.12.2's rockets can't boost the game's first entity (id 0), and that was the first player to join a server where nothing else had loaded yet, as with Tricky Trials Backport's 1.21.9 spawn chunks. Rejoining fixed it. No entity gets id 0 now.
+*   **With a 26.4 backport, pausing while drawing a bow no longer fires the arrow** when you go back to the game. Eating, drinking and raising a shield are canceled the same way.
+*   With a 26.4 backport, an item on its cooldown (an ender pearl, chorus fruit) does nothing when used on a mob, as in 26.4.
 
 # 1.4.9
 

@@ -130,6 +130,8 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new PoseEvents());
         com.exiledradio.backportcore.advancement.AdventuringTime.register();
         com.exiledradio.backportcore.presentation.PingNetwork.init();
+        // 26.4: pausing cancels an item in use (a drawn bow no longer fires; mechanics/CancelUse).
+        com.exiledradio.backportcore.mechanics.CancelUse.init();
         // 1.20.3's /tick: the rate and the frozen state reach the client (command/tick/).
         com.exiledradio.backportcore.command.tick.TickNetwork.init();
         // Today's jigsaw block: its screen's two packets (block/).
