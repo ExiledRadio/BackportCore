@@ -6,3 +6,5 @@ tile.sign.name=Eikenhouten bord
 tile.trapdoor.name=Eikenhouten valluik
 tile.pressurePlateWood.name=Eikenhouten drukplaat
 options.chat.opacity=Chattekstdoorzichtigheid
+gui.recipebook.toggleRecipes.blastable=Smeltbaar in hoogoven tonen
+gui.recipebook.toggleRecipes.smokable=Rookbaar tonen

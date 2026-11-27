@@ -6,3 +6,5 @@ tile.sign.name=Placa de carvalho
 tile.trapdoor.name=Alçapão de carvalho
 tile.pressurePlateWood.name=Placa de pressão de carvalho
 options.chat.opacity=Opacidade do chat
+gui.recipebook.toggleRecipes.blastable=Explosíveis
+gui.recipebook.toggleRecipes.smokable=Defumáveis

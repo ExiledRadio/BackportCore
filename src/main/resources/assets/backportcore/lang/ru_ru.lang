@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Плита из полир
 tile.backportcore.deepslate_tile_double_slab.name=Плита из глубинносланцевого плитняка
 tile.backportcore.deepslate_brick_double_slab.name=Плита из глубинносланцевого кирпича
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s замёрз насмерть
+death.attack.freeze.player=%1$s замёрз насмерть благодаря %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s был пронзён сталагмитом
+death.attack.stalagmite.player=%1$s был пронзён сталагмитом, пока боролся с %2$s
+death.attack.fallingStalactite=%1$s был пронзён обрушившимся сталактитом
+death.attack.fallingStalactite.player=%1$s был пронзён обрушившимся сталактитом, пока боролся с %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Повторить рецепт/сделку
+key.otherPlayers=Другие игроки
+options.improvedFog=Улучшенный туман
+options.improvedFog.tooltip=Смешивает небо с туманом для уменьшения видимости границы между территорией и небом. Если выключено, туман имеет сплошной цвет.
+Если улучшенная прозрачность включена, облака также будут смешены с туманом.
+menu.other_players=Другие игроки
+menu.other_players.no_players=Другие игроки не могут присоединиться к этому миру
+gui.recipebook.tooltip=Книга рецептов
+gui.recipebook.tab.all=Все рецепты
+recipe_book_category.minecraft.crafting_equipment=Снаряжение
+recipe_book_category.minecraft.crafting_building_blocks=Строительные блоки
+recipe_book_category.minecraft.crafting_redstone=Редстоун
+recipe_book_category.minecraft.crafting_misc=Прочее
+gui.player_interactions.title=Другие игроки
+gui.player_interactions.title.full=Другие игроки — %s
+gui.player_interactions.tab_all=Все (%s)
+gui.player_interactions.tab_muted=Заглушённые
+gui.player_interactions.search=Поиск...
+gui.player_interactions.search.no_results=Не удалось найти игрока с этим именем
+gui.player_interactions.empty=Мир открыт для сети, но пока никого нет!
+gui.player_interactions.empty_muted=Нет заглушённых игроков в чате
+gui.player_options.title=Настройки игрока
+gui.player_options.mute=Заглушить
+gui.player_options.unmute=Разглушить
+gui.player_options.mute.tooltip=Скрывать в чате сообщения от этого игрока.
+gui.player_options.unmute.tooltip=Показывать в чате сообщения от этого игрока.
+gui.player_options.mute.feedback=Сообщения игрока %s будут скрыты
+gui.player_options.unmute.feedback=Сообщения игрока %s будут видны
+gui.player_options.status.muted=Заглушён — %s

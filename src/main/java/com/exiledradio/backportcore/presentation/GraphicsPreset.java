@@ -55,6 +55,7 @@ public final class GraphicsPreset {
             m.put("weather_radius", "5");
             m.put("max_anisotropy", "1");
             m.put("texture_filtering", "none");
+            m.put("improved_fog", "false");
         } else if (FANCY.equals(preset) || FABULOUS.equals(preset)) {
             boolean fab = FABULOUS.equals(preset);
             m.put("biome_blend_radius", "2");
@@ -74,6 +75,7 @@ public final class GraphicsPreset {
             m.put("weather_radius", "10");
             m.put("max_anisotropy", fab ? "2" : "1");
             m.put("texture_filtering", fab ? "anisotropic" : "none");
+            m.put("improved_fog", "true");
         }
         return Collections.unmodifiableMap(m);
     }

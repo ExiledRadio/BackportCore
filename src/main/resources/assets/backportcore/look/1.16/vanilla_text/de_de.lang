@@ -43,3 +43,6 @@ sign.edit=Schildbeschriftung bearbeiten
 multiplayerWarning.header=Vorsicht: Mehrspielermodus von Drittanbietern
 multiplayerWarning.message=Vorsicht: Der Mehrspielermodus wird über Drittanbieter‐Server angeboten, die Mojang Studios oder Microsoft weder gehören, noch von diesen betrieben oder überwacht werden. Bei der Verwendung des Mehrspielermodus könntest du unmoderierten Chatnachrichten oder sonstigen nutzergenerierten Inhalten ausgesetzt sein, die womöglich nicht für jeden angemessen sind.
 multiplayerWarning.check=Diesen Hinweis nicht mehr anzeigen
+gui.recipebook.toggleRecipes.smeltable=Erhitzbares wird angezeigt
+gui.recipebook.toggleRecipes.blastable=Schmelzbares wird angezeigt
+gui.recipebook.toggleRecipes.smokable=Räucherbares wird angezeigt

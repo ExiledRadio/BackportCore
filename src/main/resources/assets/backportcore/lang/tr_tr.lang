@@ -1181,3 +1181,45 @@ tile.backportcore.polished_deepslate_double_slab.name=Cilalı Kayrak Taşı Basa
 tile.backportcore.deepslate_tile_double_slab.name=Döşeme Kayrak Taşı Basamak
 tile.backportcore.deepslate_brick_double_slab.name=Kayrak Taşı Tuğlası Basamak
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s donarak öldü
+death.attack.freeze.player=%1$s, %2$s tarafından dondurularak öldürüldü
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s oyuncusuna bir dikit saplandı
+death.attack.stalagmite.player=%1$s, %2$s ile savaşırken bir dikit tarafından şişlendi
+death.attack.fallingStalactite=%1$s düşen bir sarkıt tarafından şişlendi
+death.attack.fallingStalactite.player=%1$s, %2$s ile savaşırken düşen bir sarkıt tarafından şişlendi
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Tarif/Takası tekrarla
+key.otherPlayers=Diğer Oyuncular
+options.improvedFog=Geliştirilmiş Sis
+options.improvedFog.tooltip=Gökyüzü arkaplanını görüş mesafesine göre sis ile harmanlayarak gökyüzü ve yer arasını daha belirsiz yapar. Kapalı iken sis düz bir renk olur. Geliştirilmiş Şeffaflık da açık ise bulutlar da sis ile harmanlanır.
+menu.other_players=Diğer Oyuncular
+menu.other_players.no_players=Bu dünya şu an diğer oyuncular tarafından katılınabilir değil
+gui.recipebook.tooltip=Tarif Kitabı
+gui.recipebook.tab.all=Tüm Tarifler
+recipe_book_category.minecraft.crafting_equipment=Ekipman
+recipe_book_category.minecraft.crafting_building_blocks=İnşaat Blokları
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Çeşitli
+gui.player_interactions.title=Diğer Oyuncular
+gui.player_interactions.title.full=Diğer Oyuncular - %s
+gui.player_interactions.tab_all=Hepsi (%s)
+gui.player_interactions.tab_muted=Susturulu
+gui.player_interactions.search=Ara...
+gui.player_interactions.search.no_results=Bu ada sahip hiçbir oyuncu bulunamadı
+gui.player_interactions.empty=Bu dünya çok oyunculuya açık, ama henüz başka kimse burada değil!
+gui.player_interactions.empty_muted=Sohbette susturulmuş oyuncu yok
+gui.player_options.title=Oyuncu Seçenekleri
+gui.player_options.mute=Sustur
+gui.player_options.unmute=Susturmayı Kaldır
+gui.player_options.mute.tooltip=Bu oyuncunun sohbet mesajlarını gizle.
+gui.player_options.unmute.tooltip=Bu oyuncunun sohbet mesajlarını göster.
+gui.player_options.mute.feedback=%s tarafından gönderilen sohbet mesajları gizlenecek
+gui.player_options.unmute.feedback=%s tarafından gönderilen sohbet mesajları gösterilecek
+gui.player_options.status.muted=Susturulu - %s

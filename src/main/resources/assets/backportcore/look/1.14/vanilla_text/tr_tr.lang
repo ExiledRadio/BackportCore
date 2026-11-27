@@ -6,3 +6,5 @@ tile.sign.name=Meşe Tabela
 tile.trapdoor.name=Meşe Tuzak Kapısı
 tile.pressurePlateWood.name=Meşe Basınç Plakası
 options.chat.opacity=Sohbet Metni Opaklığı
+gui.recipebook.toggleRecipes.blastable=Eritilebilenler gösteriliyor
+gui.recipebook.toggleRecipes.smokable=Pişirilebilenler gösteriliyor

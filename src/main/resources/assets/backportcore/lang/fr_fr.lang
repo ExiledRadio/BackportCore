@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Dalle d'ardoise des abîme
 tile.backportcore.deepslate_tile_double_slab.name=Dalle d'ardoise des abîmes carrelée
 tile.backportcore.deepslate_brick_double_slab.name=Dalle d'ardoise des abîmes taillée
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s est mort(e) de froid
+death.attack.freeze.player=%1$s est mort(e) de froid à cause de/d'un(e) %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s s'est fait empaler sur une stalagmite
+death.attack.stalagmite.player=%1$s s'est fait empaler sur une stalagmite en combattant (un(e)) %2$s
+death.attack.fallingStalactite=%1$s s'est fait transpercer par une stalactite
+death.attack.fallingStalactite.player=%1$s s'est fait transpercer par une stalactite en combattant (un(e)) %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Répéter la recette ou l'échange
+key.otherPlayers=Autres joueurs
+options.improvedFog=Brouillard amélioré
+options.improvedFog.tooltip=Fusionne l'arrière-plan du ciel avec le brouillard basé sur la distance d'affichage, afin de rendre la limite entre le terrain et le ciel moins visible. Si cette option est désactivée, le brouillard est d'une couleur unie.
+Si l'option "Transparence améliorée" est également activée, les nuages sont eux aussi fusionnés avec le brouillard.
+menu.other_players=Autres joueurs
+menu.other_players.no_players=Ce monde n'est actuellement pas accessible aux autres joueurs
+gui.recipebook.tooltip=Livre de recettes
+gui.recipebook.tab.all=Toutes les recettes
+recipe_book_category.minecraft.crafting_equipment=Équipement
+recipe_book_category.minecraft.crafting_building_blocks=Blocs de construction
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Divers
+gui.player_interactions.title=Autres joueurs
+gui.player_interactions.title.full=Autres joueurs - %s
+gui.player_interactions.tab_all=Tous (%s)
+gui.player_interactions.tab_muted=En sourdine
+gui.player_interactions.search=Rechercher...
+gui.player_interactions.search.no_results=Impossible de trouver un joueur avec ce nom.
+gui.player_interactions.empty=Ce monde est ouvert au multijoueur, mais il n'y a encore personne d'autre ici !
+gui.player_interactions.empty_muted=Aucun joueur en sourdine dans le tchat.
+gui.player_options.title=Options du joueur
+gui.player_options.mute=Mettre en sourdine
+gui.player_options.unmute=Enlever la sourdine
+gui.player_options.mute.tooltip=Masquer les messages de ce joueur dans le tchat.
+gui.player_options.unmute.tooltip=Afficher les messages de ce joueur dans le tchat.
+gui.player_options.mute.feedback=Les messages de %s seront masqués dans le tchat
+gui.player_options.unmute.feedback=Les messages de %s seront affichés dans le tchat
+gui.player_options.status.muted=En sourdine - %s

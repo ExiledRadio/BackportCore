@@ -21,5 +21,6 @@ public final class CoreLooksClient {
         Look119Client.init();
         Look120Client.init();
         Look121Client.init();
+        Look264Client.init();
     }
 }

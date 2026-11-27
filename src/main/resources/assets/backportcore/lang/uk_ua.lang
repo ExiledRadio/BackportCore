@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Плита з поліро
 tile.backportcore.deepslate_tile_double_slab.name=Плита з глибосланцевих кахлів
 tile.backportcore.deepslate_brick_double_slab.name=Плита з глибосланцевої цегли
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s замерз до смерти
+death.attack.freeze.player=%2$s заморозив %1$s до смерти
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s проткнуто сталагмітом
+death.attack.stalagmite.player=%1$s проткнуто сталагмітом під час битви з %2$s
+death.attack.fallingStalactite=%1$s проткнуто падучим сталактитом
+death.attack.fallingStalactite.player=%1$s проткнуто падучим сталактитом під час битви з %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Повторити рецепт / торг
+key.otherPlayers=Інші гравці
+options.improvedFog=Покращений туман
+options.improvedFog.tooltip=Змішує небо із залежним від дальности промальовування туманом, щоб зробити межу між землею та небом менш помітною. Коли вимкнено, туман матиме суцільний колір.
+Якщо також увімкнено «Поліпшену прозорість», хмари так само буде змішано із туманом.
+menu.other_players=Інші гравці
+menu.other_players.no_players=Цей світ поки що закритий для інших гравців
+gui.recipebook.tooltip=Книга рецептів
+gui.recipebook.tab.all=Усі рецепти
+recipe_book_category.minecraft.crafting_equipment=Обладнання
+recipe_book_category.minecraft.crafting_building_blocks=Будівельні блоки
+recipe_book_category.minecraft.crafting_redstone=Редстоун
+recipe_book_category.minecraft.crafting_misc=Інше
+gui.player_interactions.title=Інші гравці
+gui.player_interactions.title.full=Інші гравці — %s
+gui.player_interactions.tab_all=Всі (%s)
+gui.player_interactions.tab_muted=Заглушено
+gui.player_interactions.search=Пошук…
+gui.player_interactions.search.no_results=Не вдалося знайти жодних гравців із цим ім’ям
+gui.player_interactions.empty=Цей світ відкритий до гри в мережі, але тут поки що нікого немає!
+gui.player_interactions.empty_muted=У чаті немає заглушених гравців
+gui.player_options.title=Деталі гравця
+gui.player_options.mute=Заглушити
+gui.player_options.unmute=Розглушити
+gui.player_options.mute.tooltip=Приховати повідомлення від цього гравця.
+gui.player_options.unmute.tooltip=Показати повідомлення від цього гравця.
+gui.player_options.mute.feedback=Повідомлення в чаті від %s будуть приховані
+gui.player_options.unmute.feedback=Повідомлення в чаті від %s будуть показані
+gui.player_options.status.muted=Заглушені - %s

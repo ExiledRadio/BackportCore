@@ -6,3 +6,5 @@ tile.sign.name=Дубовая табличка
 tile.trapdoor.name=Дубовый люк
 tile.pressurePlateWood.name=Дубовая нажимная плита
 options.chat.opacity=Непрозрачный текст
+gui.recipebook.toggleRecipes.blastable=Рецепты для плавильной печи
+gui.recipebook.toggleRecipes.smokable=Рецепты для коптильни

@@ -43,3 +43,6 @@ sign.edit=Редагування тексту таблички
 multiplayerWarning.header=Попередження: гра на сторонніх серверах
 multiplayerWarning.message=Увага: Мережева гра, запропонована сторонніми серверами, не належить, не керується та не модерується Mojang Studios чи Microsoft. Під час мережевої гри, ви можете зіткнутися з немодерованими повідомленнями в чаті чи іншими типами користувацького контенту, який може підходити не усім гравцям.
 multiplayerWarning.check=Не показувати це вікно знову
+gui.recipebook.toggleRecipes.smeltable=Доступні для плавлення 
+gui.recipebook.toggleRecipes.blastable=Доступні для переплавки
+gui.recipebook.toggleRecipes.smokable=Доступні для закопчення

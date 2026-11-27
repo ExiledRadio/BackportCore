@@ -43,3 +43,6 @@ sign.edit=Editar mensaje del cartel
 multiplayerWarning.header=Atención: modo multijugador de terceros
 multiplayerWarning.message=Atención: El modo multijugador está ofrecido por servidores de terceros que no pertenecen, no están gestionados ni supervisados por Mojang Studios o Microsoft.\nDurante una partida en línea podés estar expuesto a mensajes de texto sin moderar u otro tipo de contenido creado por la comunidad, que puede no ser apropiado para todos los usuarios.
 multiplayerWarning.check=No mostrar este mensaje de nuevo
+gui.recipebook.toggleRecipes.smeltable=Mostrando horneables
+gui.recipebook.toggleRecipes.blastable=Mostrando fundibles
+gui.recipebook.toggleRecipes.smokable=Mostrando ahumables

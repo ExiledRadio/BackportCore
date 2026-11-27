@@ -268,6 +268,22 @@ public final class BiomeLocate {
         return new LayerSampler(world.getBiomeProvider());
     }
 
+    /**
+     * @return the sampler the sources registered before {@code self} give this world, else 1.12.2's layers: for a source
+     *     that answers a few places and leaves the rest to the others (two backports' underground biomes in one world)
+     * @since 1.5.0
+     */
+    public static synchronized Sampler next(SamplerFactory self, WorldServer world) {
+        int i = SOURCES.indexOf(self);
+        for (int j = i + 1; j < SOURCES.size(); j++) {
+            Sampler sampler = SOURCES.get(j).forWorld(world);
+            if (sampler != null) {
+                return sampler;
+            }
+        }
+        return layers(world);
+    }
+
     @Nullable
     private static synchronized Sampler samplerFor(WorldServer world) {
         for (SamplerFactory factory : SOURCES) {

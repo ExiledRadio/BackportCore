@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Laje de Ardosiabissal Poli
 tile.backportcore.deepslate_tile_double_slab.name=Laje de Ladrilhos de Ardosiabissal
 tile.backportcore.deepslate_brick_double_slab.name=Laje de Tijolos de Ardosiabissal
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s congelou até à morte
+death.attack.freeze.player=%2$s congelou %1$s até à morte
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Uma estalagmite empalou %1$s
+death.attack.stalagmite.player=Uma estalagmite empalou %1$s enquanto lutava com %2$s
+death.attack.fallingStalactite=Uma estalactite atingiu %1$s
+death.attack.fallingStalactite.player=Uma estalactite atingiu %1$s enquanto lutava com %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Repetir receita/troca
+key.otherPlayers=Outros jogadores
+options.improvedFog=Névoa aprimorada
+options.improvedFog.tooltip=Mistura o fundo do céu com a neblina, com base na distância de renderização, para reduzir a visibilidade do limite entre o terreno e o céu. Desative para a neblina adquirir uma cor sólida.
+Se a transparência melhorada estiver ativada, as nuvens misturam-se com a neblina.
+menu.other_players=Outros jogadores
+menu.other_players.no_players=Este mundo está inacessível para outros jogadores
+gui.recipebook.tooltip=Livro de receitas
+gui.recipebook.tab.all=Todas as receitas
+recipe_book_category.minecraft.crafting_equipment=Equipamento
+recipe_book_category.minecraft.crafting_building_blocks=Blocos de construção
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Diversos
+gui.player_interactions.title=Outros jogadores
+gui.player_interactions.title.full=Outros jogadores – %s
+gui.player_interactions.tab_all=Todos (%s)
+gui.player_interactions.tab_muted=Silenciados
+gui.player_interactions.search=Buscar...
+gui.player_interactions.search.no_results=Não foi possível encontrar um jogador com esse nome
+gui.player_interactions.empty=Esse mundo multijogador está aberto, mas não há ninguém aqui ainda!
+gui.player_interactions.empty_muted=Nenhum jogador silenciado no chat
+gui.player_options.title=Opções de jogador
+gui.player_options.mute=Ocultar mensagens
+gui.player_options.unmute=Mostrar mensagens
+gui.player_options.mute.tooltip=Oculta as mensagens desse jogador no chat.
+gui.player_options.unmute.tooltip=Mostra as mensagens desse jogador no chat.
+gui.player_options.mute.feedback=As mensagens de %s serão ocultas no chat
+gui.player_options.unmute.feedback=As mensagens de %s serão mostradas no chat
+gui.player_options.status.muted=Silenciados – %s

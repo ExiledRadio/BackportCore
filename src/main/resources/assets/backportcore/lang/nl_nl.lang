@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Gepolijste wrevelstenen pl
 tile.backportcore.deepslate_tile_double_slab.name=Wrevelstenen tegelplaat
 tile.backportcore.deepslate_brick_double_slab.name=Wrevelblokstenen plaat
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s bevroor
+death.attack.freeze.player=%2$s bevroor %1$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=Een stalagmiet spietste %1$s
+death.attack.stalagmite.player=Een stalagmiet spietste %1$s tijdens een gevecht met %2$s
+death.attack.fallingStalactite=Een vallende stalactiet spietste %1$s
+death.attack.fallingStalactite.player=Een vallende stalactiet spietste %1$s tijdens een gevecht met %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Recept of ruiloptie herhalen
+key.otherPlayers=Andere spelers
+options.improvedFog=Verbeterde mist
+options.improvedFog.tooltip=Deze instelling mengt de luchtachtergrond met op weergavebereik gebaseerde mist, waardoor de grens tussen terrein en lucht minder zichtbaar is. Mist heeft een vaste kleur indien uitgeschakeld.
+Wolken worden ook met mist vermengd als verbeterde transparantie is ingeschakeld.
+menu.other_players=Andere spelers
+menu.other_players.no_players=Deze wereld kan momenteel niet bezocht worden door andere spelers
+gui.recipebook.tooltip=Receptenboek
+gui.recipebook.tab.all=Alle recepten
+recipe_book_category.minecraft.crafting_equipment=Uitrusting
+recipe_book_category.minecraft.crafting_building_blocks=Bouwblokken
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Diversen
+gui.player_interactions.title=Andere spelers
+gui.player_interactions.title.full=Andere spelers - %s
+gui.player_interactions.tab_all=Alle (%s)
+gui.player_interactions.tab_muted=Gedempt
+gui.player_interactions.search=Zoeken...
+gui.player_interactions.search.no_results=Geen spelers met die naam gevonden
+gui.player_interactions.empty=Deze wereld is gepubliceerd, maar nog niemand speelt mee!
+gui.player_interactions.empty_muted=Geen gedempte spelers in de chat
+gui.player_options.title=Speleracties
+gui.player_options.mute=Dempen
+gui.player_options.unmute=Dempen opheffen
+gui.player_options.mute.tooltip=Chatberichten van deze speler verbergen.
+gui.player_options.unmute.tooltip=Chatberichten van deze speler tonen.
+gui.player_options.mute.feedback=Chatberichten van %s worden verborgen
+gui.player_options.unmute.feedback=Chatberichten van %s worden getoond
+gui.player_options.status.muted=Gedempt - %s

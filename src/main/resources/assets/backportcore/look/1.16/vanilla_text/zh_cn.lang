@@ -43,3 +43,6 @@ sign.edit=修改告示牌消息
 multiplayerWarning.header=警告：在线游戏由第三方提供
 multiplayerWarning.message=警告：在线游戏由非Mojang Studios或Microsoft拥有、运作和监督的第三方服务器提供。 在线游戏的过程中，你可能会收到不受规制的聊天消息或者其他不一定适合所有人的用户生成内容。
 multiplayerWarning.check=不再显示此屏幕
+gui.recipebook.toggleRecipes.smeltable=仅显示可烧炼
+gui.recipebook.toggleRecipes.blastable=仅显示可冶炼
+gui.recipebook.toggleRecipes.smokable=仅显示可熏制

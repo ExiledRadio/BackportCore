@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=磨かれた深層岩の�
 tile.backportcore.deepslate_tile_double_slab.name=深層岩タイルのハーフブロック
 tile.backportcore.deepslate_brick_double_slab.name=深層岩レンガのハーフブロック
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$sは凍え死んだ
+death.attack.freeze.player=%1$sは%2$sによって凍え死んだ
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$sは鍾乳石に突き刺さった
+death.attack.stalagmite.player=%1$sは%2$sと戦いながら鍾乳石に突き刺さった
+death.attack.fallingStalactite=%1$sは落ちてきた鍾乳石に串刺しにされた
+death.attack.fallingStalactite.player=%1$sは%2$sと戦いながら落ちてきた鍾乳石に串刺しにされた
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=レシピ/取引の繰り返し
+key.otherPlayers=他のプレイヤー
+options.improvedFog=霧の改良
+options.improvedFog.tooltip=地面と空の境目を見づらくするための描画距離に基づく霧が、空の背景色とブレンドされるようになります。無効にしている場合は、霧の色は常に一様となります。
+透明物の描画の改良を有効にしている場合、雲は霧とブレンドされて描画されます。
+menu.other_players=他のプレイヤー
+menu.other_players.no_players=現在このワールドには他のプレイヤーは参加できません
+gui.recipebook.tooltip=レシピ本
+gui.recipebook.tab.all=全てのレシピ
+recipe_book_category.minecraft.crafting_equipment=装備
+recipe_book_category.minecraft.crafting_building_blocks=建築ブロック
+recipe_book_category.minecraft.crafting_redstone=レッドストーン
+recipe_book_category.minecraft.crafting_misc=その他
+gui.player_interactions.title=他のプレイヤー
+gui.player_interactions.title.full=他のプレイヤー - %s
+gui.player_interactions.tab_all=全て（%s）
+gui.player_interactions.tab_muted=ミュート中
+gui.player_interactions.search=検索…
+gui.player_interactions.search.no_results=その名前のプレイヤーを見つけることができませんでした
+gui.player_interactions.empty=このワールドはマルチプレイに公開されていますが、まだ誰も参加していません！
+gui.player_interactions.empty_muted=チャット内にミュートされたプレイヤーはいません
+gui.player_options.title=プレイヤー設定
+gui.player_options.mute=ミュート
+gui.player_options.unmute=ミュート解除
+gui.player_options.mute.tooltip=このプレイヤーからのチャットメッセージを非表示にする。
+gui.player_options.unmute.tooltip=このプレイヤーからのチャットメッセージを表示する。
+gui.player_options.mute.feedback=%sからのチャットメッセージは非表示になります
+gui.player_options.unmute.feedback=%sからのチャットは表示されるようになります
+gui.player_options.status.muted=ミュート済み - %s

@@ -28,5 +28,6 @@ public final class CoreLooks {
         Look119.register();
         Look120.register();
         Look121.register();
+        Look264.register();
     }
 }

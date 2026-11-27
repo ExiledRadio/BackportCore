@@ -2,6 +2,21 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
+    *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder
+        snow and Game Drops' Freezing share it: 140 ticks, damage every 40 (five times for blazes, magma cubes and
+        striders), the slowness, the frost overlay and the shaking; nothing freezes while on fire, in leather, or
+        undead, polar bear or snow golem. Effects can hold the counter and set the damage (`registerEffect`). Settings
+        page Freezing; `freezeDamage` is also Game Drops'.
+    *   Speleothems (`speleothem/`): 26.4's `SpeleothemBlock`, shared by pointed dripstone and icicles: growth,
+        thickness, falling segments (`backportcore:falling_speleothem`), stalagmite and falling stalactite damage,
+        tridents breaking them.
+    *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
+    *   `/locate biome`: a biome source can leave the rest to the ones before it (`BiomeLocate.next`).
+    *   The frostbite's spawn egg in the modern egg layer.
+    *   26.4's look and feel (`versions.Look264`): Improved Fog (Video Settings; off in Fast, on in Fancy and
+        Fabulous), the Repeat Recipe/Trade key (R) in the recipe book, names on the recipe book's tabs, Other Players
+        (P, and the pause menu icon after Friends) with Player Options' Mute, which hides a player's chat this session.
 *   Modern blocks supplied by Core (`supply/`, docs/PLAN_MODERN_BLOCKS.md slices 1 and 2). `structure/ModernBlockScan`
     reads every block name the structure files would place (`.nbt` palettes and jigsaw final states in `data/` and
     `assets/`, processor outputs in `data/*/worldgen/`, in mod jars and drop-in packs), brought up to date and cached
@@ -63,7 +78,8 @@ In progress: see docs/PLAN_1_5_0.md.
 *   `DynamicTrees.replacesTrees` and `replacesCactus` (world, biome or pos) for a backport placing trees outside those events; `grow(world, pos, random, feature)` grows Dynamic Trees' species for one of today's vanilla tree features (oak, fancy oak, birch, super birch, spruce, pine, mega spruce/pine, jungle, mega jungle, acacia, dark oak; 1.14's `normal_tree` names too) where it replaces the biome's trees, for structures' trees; `biomeData(json)` adds a backport's Dynamic Trees worldgen JSON before the pack's `config/dynamictrees/worldgen.json`.
 *   Self-test group `dynamictrees` (`DynamicTreesTests`); `selftest/dynamictrees/DynamicTreesCheck` (`gradlew dynamicTreesCheckJar reobfDynamicTreesCheckJar -Pselftest`) checks a real server with Dynamic Trees, which needs Forge 2859 or later and never loads in the 2847 dev environment.
 *   JEI and HEI keep their item list clear of the active effects beside the inventory (P57, 1.18 and later): `compat/InventoryEffectsJei` (`@JEIPlugin`, loaded only by JEI or HEI) hands JEI Core's backgrounds as extra GUI areas (`IAdvancedGuiHandler.getGuiExtraAreas` for every `InventoryEffectRenderer`), as modern JEI does with vanilla's. JEI 1.12 knew only 1.12.2's column left of the inventory; its list sat right of the inventory, under Core's column, which drew over it. `InventoryEffects.areas(gui)` gives the backgrounds' places; the layout is 26.3's `EffectsInInventory` as before (none under 32 pixels of room, compact under 120, fitted to the text and clipped with a tooltip above). Client self-test `ClientEffectsTests` (also with `-PwithMods=<JEI or HEI jar>`).
-*   Update notices (`settings/Family.java`, `updates/*.json`) name this release: Core 1.4.9, Village & Pillage 2.7.6, Buzzy Bees 1.1.3, Caves & Cliffs 1.1.6, Game Drops 1.0.2.
+*   `DynamicTrees.grow` also takes another mod's Dynamic Trees species by its full name (`dtbackport:cherry`, `dynamictrees:spruce`): it grows wherever Dynamic Trees generates trees in the dimension, so a backport's own decoration keeps its trees' places and only the trees become dynamic. That is how the new add-on **Dynamic Trees - Backport** (cherry, mangrove, azalea, pale oak, poplar) gets its trees into the backports' biomes.
+*   Update notices (`settings/Family.java`, `updates/*.json`) name this release: Core 1.4.9, Village & Pillage 2.7.6, Buzzy Bees 1.1.3, Caves & Cliffs 1.1.6, Wild Update 1.1.4, Trails & Tales 1.0.5, Tricky Trials 1.0.3, Game Drops 1.0.2.
 
 # 1.4.8
 

@@ -43,3 +43,6 @@ sign.edit=Editar mensaje del letrero
 multiplayerWarning.header=Atención: Juego en línea de terceros
 multiplayerWarning.message=Precaución: El modo multijugador está compuesto de servidores de terceros que no son propiedad, ni están administrados o supervisados por Mojang Studios o Microsoft. Mientras juegues en línea, puedes estar expuesto a mensajes de chat inapropiados u otro tipo de contenido creado por la comunidad, por lo que podría no ser adecuado para todos los usuarios.
 multiplayerWarning.check=No mostrar este mensaje de nuevo
+gui.recipebook.toggleRecipes.smeltable=Mostrando horneables
+gui.recipebook.toggleRecipes.blastable=Mostrando fundibles
+gui.recipebook.toggleRecipes.smokable=Mostrando ahumables

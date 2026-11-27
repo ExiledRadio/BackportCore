@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=磨制深板岩台阶
 tile.backportcore.deepslate_tile_double_slab.name=深板岩瓦台阶
 tile.backportcore.deepslate_brick_double_slab.name=深板岩砖台阶
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s被冻死了
+death.attack.freeze.player=%1$s被%2$s冻死了
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s被石笋刺穿了
+death.attack.stalagmite.player=%1$s在与%2$s战斗时被石笋刺穿了
+death.attack.fallingStalactite=%1$s被下落的钟乳石刺穿了
+death.attack.fallingStalactite.player=%1$s在与%2$s战斗时被下落的钟乳石刺穿了
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=重复配方/交易
+key.otherPlayers=其他玩家
+options.improvedFog=改进迷雾显示
+options.improvedFog.tooltip=将天空背景与基于渲染距离的迷雾混合，使地形与天空之间的边界不那么明显。禁用时，迷雾显示为纯色。
+如果同时启用了改进透明显示，云也会与迷雾混合。
+menu.other_players=其他玩家
+menu.other_players.no_players=当前其他玩家无法加入此世界
+gui.recipebook.tooltip=配方书
+gui.recipebook.tab.all=所有配方
+recipe_book_category.minecraft.crafting_equipment=装备
+recipe_book_category.minecraft.crafting_building_blocks=建筑方块
+recipe_book_category.minecraft.crafting_redstone=红石
+recipe_book_category.minecraft.crafting_misc=杂项
+gui.player_interactions.title=其他玩家
+gui.player_interactions.title.full=其他玩家 - %s
+gui.player_interactions.tab_all=全部（%s）
+gui.player_interactions.tab_muted=已屏蔽消息
+gui.player_interactions.search=搜索…
+gui.player_interactions.search.no_results=未找到使用此名称的玩家
+gui.player_interactions.empty=此世界对多人游戏开放，但目前还没有其他玩家！
+gui.player_interactions.empty_muted=聊天中没有被屏蔽消息的玩家
+gui.player_options.title=玩家选项
+gui.player_options.mute=屏蔽消息
+gui.player_options.unmute=取消屏蔽消息
+gui.player_options.mute.tooltip=隐藏此玩家的聊天消息。
+gui.player_options.unmute.tooltip=显示此玩家的聊天消息。
+gui.player_options.mute.feedback=%s发送的聊天消息会被隐藏
+gui.player_options.unmute.feedback=%s的聊天消息将会被显示
+gui.player_options.status.muted=已屏蔽消息 - %s

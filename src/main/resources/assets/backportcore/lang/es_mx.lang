@@ -1181,3 +1181,46 @@ tile.backportcore.polished_deepslate_double_slab.name=Losa de pizarra profunda p
 tile.backportcore.deepslate_tile_double_slab.name=Losa de azulejo de pizarra profunda
 tile.backportcore.deepslate_brick_double_slab.name=Losa de ladrillos de pizarra profunda
 # ---- end of supplied blocks ----
+
+# 1.5.0: freeze ticks
+death.attack.freeze=%1$s murió congelado/a
+death.attack.freeze.player=%1$s fue congelado/a hasta la muerte por %2$s
+config.backportcore.freezing=Freezing
+config.backportcore.freezing.tooltip=Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.
+
+# 1.5.0: speleothems
+death.attack.stalagmite=%1$s cayó a una estalagmita
+death.attack.stalagmite.player=%1$s cayó a una estalagmita mientras peleaba con %2$s
+death.attack.fallingStalactite=%1$s fue atravesado/a por la caída de una estalactita
+death.attack.fallingStalactite.player=%1$s fue atravesado/a por una estalactita mientras peleaba con %2$s
+
+# 1.5.0: 26.4's look and feel (versions.Look264)
+key.repeatRecipeOrTrade=Repetir receta/intercambio
+key.otherPlayers=Otros jugadores
+options.improvedFog=Niebla mejorada
+options.improvedFog.tooltip=Mezcla el fondo del cielo con la niebla según la distancia de renderizado para que el límite entre el terreno y el cielo sea menos visible. Cuando está desactivada, la niebla es de un color uniforme.
+Si la opción de transparencia mejorada también está activada, las nubes se mezclarán con la niebla.
+menu.other_players=Otros jugadores
+menu.other_players.no_players=Actualmente, otros jugadores no pueden unirse a este mundo.
+gui.recipebook.tooltip=Libro de recetas
+gui.recipebook.tab.all=Todas las recetas
+recipe_book_category.minecraft.crafting_equipment=Equipamiento
+recipe_book_category.minecraft.crafting_building_blocks=Construcción
+recipe_book_category.minecraft.crafting_redstone=Redstone
+recipe_book_category.minecraft.crafting_misc=Varios
+gui.player_interactions.title=Otros jugadores
+gui.player_interactions.title.full=Otros jugadores - %s
+gui.player_interactions.tab_all=Todos (%s)
+gui.player_interactions.tab_muted=Silenciado
+gui.player_interactions.search=Buscar...
+gui.player_interactions.search.no_results=No se ha encontrado ningún jugador con ese nombre
+gui.player_interactions.empty=Este mundo está en modo multijugador, ¡pero no hay nadie aquí todavía!
+gui.player_interactions.empty_muted=No hay jugadores silenciados en el chat
+gui.player_options.title=Opciones del jugador
+gui.player_options.mute=Silenciar
+gui.player_options.unmute=Dejar de silenciar
+gui.player_options.mute.tooltip=Ocultar los mensajes de chat de este jugador.
+gui.player_options.unmute.tooltip=Mostrar mensajes del chat de este jugador.
+gui.player_options.mute.feedback=Los mensajes del chat de %s se ocultarán
+gui.player_options.unmute.feedback=Los mensajes del chat de %s se mostrarán
+gui.player_options.status.muted=Silenciado - %s

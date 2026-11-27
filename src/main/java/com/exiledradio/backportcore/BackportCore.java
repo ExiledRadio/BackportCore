@@ -105,6 +105,12 @@ public final class BackportCore {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new CoreConfig.EventHandler());
         PoseNetwork.init();
+        com.exiledradio.backportcore.freeze.FreezeNetwork.init();
+        com.exiledradio.backportcore.speleothem.Speleothems.preInit();
+        if (event.getSide().isClient()) {
+            com.exiledradio.backportcore.speleothem.client.SpeleothemClient.preInit();
+        }
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.freeze.FreezeEvents());
         com.exiledradio.backportcore.settings.SettingsNetwork.init();
         com.exiledradio.backportcore.presentation.CommandUsageNetwork.init();
         // The Game Rules screen's server side and Create World's chosen rules (gamerules/).
@@ -135,6 +141,7 @@ public final class BackportCore {
         com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.MonsterHunter.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
@@ -159,6 +166,7 @@ public final class BackportCore {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.boat.client.RenderWoodBoat.register();
             com.exiledradio.backportcore.pose.client.PoseClient.init();
+            com.exiledradio.backportcore.freeze.client.FreezeClient.init();
             // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).
             com.exiledradio.backportcore.map.client.MapIconRenderer.init();
             com.exiledradio.backportcore.presentation.client.PresentationClient.init();

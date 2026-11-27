@@ -54,6 +54,11 @@ public final class CoreConfig {
     @Config.Comment("Structures read from today's data files (data/<namespace>/worldgen), in mod jars and in config/backportcore/structures.")
     public static final StructureSettings structure = new StructureSettings();
 
+    @Setting.Feature(icon = "minecraft:snowball")
+    @Config.LangKey("config.backportcore.freezing")
+    @Config.Comment("Freeze ticks (1.17's frozen counter, with 26.4's rules), shared by the backports that freeze things.")
+    public static final Freezing freezing = new Freezing();
+
     private CoreConfig() {
     }
 
@@ -117,6 +122,25 @@ public final class CoreConfig {
         @Config.Comment("26.3's /swing: make entities swing an arm, with an animation and a duration (permission level 2).")
         @Setting.Server
         public boolean swing = true;
+    }
+
+    public static final class Freezing {
+
+        @Config.Comment({
+                "Mobs that never freeze, by id (modid:name), besides 26.4's: polar bears, snow golems and",
+                "every undead mob. Freeze ticks are shared by the family: Caves & Cliffs' powder snow and",
+                "Game Drops' Freezing effect both add to them."
+        })
+        @Setting.Server
+        public String[] freezeImmuneMobs = new String[0];
+
+        @Config.Comment("Mobs that take five times the freeze damage, besides blazes, magma cubes and striders.")
+        @Setting.Server
+        public String[] freezeHurtsExtraMobs = new String[0];
+
+        @Config.Comment("Armor items that keep their wearer from freezing, by id, besides every piece of leather armor.")
+        @Setting.Server
+        public String[] freezeImmuneWearables = new String[0];
     }
 
     public static final class Recipes {

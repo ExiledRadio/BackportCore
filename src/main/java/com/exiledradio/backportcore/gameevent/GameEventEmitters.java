@@ -222,7 +222,7 @@ public final class GameEventEmitters {
         } else if (walked < last[0]) {
             last[0] = walked;
         }
-        if (e.isElytraFlying() && e.getTicksElytraFlying() % 10 == 0) {
+        if (e.isElytraFlying() && ticksElytraFlying(e) % 10 == 0) {
             emit(world, GameEvent.ELYTRA_GLIDE, at(e), e, null);
         }
         if (e instanceof net.minecraft.entity.passive.EntityWolf && GameEvents.isAtLeast("1.20")) {
@@ -538,6 +538,21 @@ public final class GameEventEmitters {
             return;
         }
         emit(e.world, isWorn(to) ? GameEvent.EQUIP : GameEvent.UNEQUIP, at(e), e, null);
+    }
+
+    private static final java.lang.reflect.Field TICKS_ELYTRA_FLYING =
+            net.minecraftforge.fml.common.ObfuscationReflectionHelper.findField(EntityLivingBase.class, "field_184629_bo");
+
+    /**
+     * {@code ticksElytraFlying}, read from the field: its getter {@code getTicksElytraFlying} is client-only, and calling
+     * it on a dedicated server threw NoSuchMethodError and kicked every player who opened an elytra.
+     */
+    private static int ticksElytraFlying(EntityLivingBase e) {
+        try {
+            return TICKS_ELYTRA_FLYING.getInt(e);
+        } catch (IllegalAccessException ex) {
+            return 0;
+        }
     }
 
     /** 1.20's {@code Equipable.get(stack) != null}: armor, elytra, a carved pumpkin, heads, a shield. */

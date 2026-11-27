@@ -58,6 +58,11 @@ final class DynamicTreesLink {
         return db;
     }
 
+    /** Whether Dynamic Trees generates trees in this world's dimension at all. */
+    static boolean active(World world) {
+        return database(world) != null;
+    }
+
     static boolean vanillaCactus() {
         return ModConfigs.vanillaCactusWorldGen;
     }
@@ -114,7 +119,8 @@ final class DynamicTreesLink {
     }
 
     static boolean grow(World world, BlockPos pos, Random random, String name, int radius) {
-        Species species = TreeRegistry.findSpecies(new ResourceLocation(DynamicTrees.MOD_ID, name));
+        Species species = TreeRegistry.findSpecies(name.indexOf(':') >= 0 ? new ResourceLocation(name)
+                : new ResourceLocation(DynamicTrees.MOD_ID, name));
         if (species == null || !species.isValid()) {
             return false;
         }

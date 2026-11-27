@@ -6,3 +6,5 @@ tile.sign.name=Dębowa tabliczka
 tile.trapdoor.name=Dębowa klapa
 tile.pressurePlateWood.name=Dębowa płyta naciskowa
 options.chat.opacity=Przezr. tekstu czatu
+gui.recipebook.toggleRecipes.blastable=Pokazuje wytapialne
+gui.recipebook.toggleRecipes.smokable=Pokazuje możliwe do uwędzenia
