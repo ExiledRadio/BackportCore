@@ -1,6 +1,7 @@
 # 1.5.0
 
 *   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.
+*   **Fixed: other mods' pause menu buttons drawn under the backports' buttons.** A mod's button in 1.12.2's empty row (a Cheats toggle, for one) sat behind the icon row or the Give Feedback row. Any other mod's button there moves below Save and Quit.
 
 # 1.4.9
 

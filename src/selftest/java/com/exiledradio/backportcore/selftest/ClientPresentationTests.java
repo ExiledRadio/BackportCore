@@ -545,9 +545,26 @@ final class ClientPresentationTests {
         check("client: the in-game music choice was made", com.exiledradio.backportcore.presentation.client.GameMusic.lastChoice != null,
                 com.exiledradio.backportcore.presentation.client.GameMusic.lastChoice);
 
+        // Another mod's button in 1.12.2's free row (a "Cheats: ON" toggle) moves below Core's layout.
+        CheatsButtonMod cheatsMod = new CheatsButtonMod();
+        MinecraftForge.EVENT_BUS.register(cheatsMod);
         net.minecraft.client.gui.GuiIngameMenu pause = new net.minecraft.client.gui.GuiIngameMenu();
         mc.displayGuiScreen(pause);
+        MinecraftForge.EVENT_BUS.unregister(cheatsMod);
         List<GuiButton> pb = buttons(pause);
+        GuiButton cheats = find(pb, 9876);
+        boolean clear = cheats != null;
+        for (GuiButton b : pb) {
+            if (cheats != null && b != cheats && b.visible && b.x < cheats.x + cheats.width && cheats.x < b.x + b.width
+                    && b.y < cheats.y + cheats.height && cheats.y < b.y + b.height) {
+                clear = false;
+            }
+        }
+        GuiButton quitRow = find(pb, 1);
+        check("client: pause menu: another mod's button in 1.12.2's free row moves below Save and Quit, overlapping nothing",
+                clear && quitRow != null && cheats.y == quitRow.y + quitRow.height + 4
+                        && com.exiledradio.backportcore.presentation.client.MenuScreens.movedForeign == 1, describe(pb));
+        pb.remove(cheats);
         int top = pause.height / 4 - 16;
         GuiButton feedback = null;
         GuiButton bugs = null;
@@ -724,6 +741,16 @@ final class ClientPresentationTests {
     @SuppressWarnings("unchecked")
     private static List<GuiButton> buttons(GuiScreen screen) throws Exception {
         return (List<GuiButton>) ReflectionHelper.findField(GuiScreen.class, "buttonList", "field_146292_n").get(screen);
+    }
+
+    /** Another mod's pause-menu button, placed as 1.12.2's layout leaves room for it. */
+    public static final class CheatsButtonMod {
+        @net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+        public void onInit(net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post e) {
+            if (e.getGui() instanceof net.minecraft.client.gui.GuiIngameMenu) {
+                e.getButtonList().add(new GuiButton(9876, e.getGui().width / 2 - 100, e.getGui().height / 4 + 72 - 16, 200, 20, "Cheats: ON"));
+            }
+        }
     }
 
     private static boolean below(List<GuiButton> buttons, int y) {

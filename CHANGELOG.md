@@ -53,6 +53,9 @@ In progress: see docs/PLAN_1_5_0.md.
     that was whole chunks of sea floor brighter or darker than the rest at night, and see-through looking ice. Client
     test `ClientLightTests`; in a Showcase copy, flights over warm, frozen and plain oceans went from 9 and 5 such
     chunks to none.
+*   Pause menu: other mods' buttons that overlap Core's layout (1.12.2's free row, now the icon row or Give Feedback
+    row) move below it (`MenuScreens.onInitLast`, LOWEST priority, so buttons added after Core's layout are moved too;
+    `movedForeign` for the client self-test).
 
 # 1.4.9
 

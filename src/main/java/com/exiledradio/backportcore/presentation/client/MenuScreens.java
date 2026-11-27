@@ -48,9 +48,13 @@ public final class MenuScreens {
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
         GuiScreen gui = event.getGui();
         if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseIconRow() && iconSprites()) {
+            List<GuiButton> before = new java.util.ArrayList<GuiButton>(event.getButtonList());
             pause262(gui, event.getButtonList());
+            remember(gui, before, event.getButtonList());
         } else if (gui.getClass() == GuiIngameMenu.class && VanillaRevisions.pauseFeedback()) {
+            List<GuiButton> before = new java.util.ArrayList<GuiButton>(event.getButtonList());
             pause(gui, event.getButtonList());
+            remember(gui, before, event.getButtonList());
         } else if (gui instanceof net.minecraft.client.gui.GuiWorldSelection || gui instanceof net.minecraft.client.gui.GuiMultiplayer) {
             backForCancel(gui, event.getButtonList());
         } else if (gui instanceof GuiGameOver && VanillaRevisions.hardcoreTitleButton()) {
@@ -66,6 +70,73 @@ public final class MenuScreens {
 
     /** For the client self-test. */
     public static volatile int hardcoreExits;
+
+    /** The vanilla and Forge pause-menu buttons Core lays out (Back to Game, Advancements, Statistics, Options, LAN, Quit, Mods). */
+    private static final java.util.Set<Integer> LAID_OUT_IDS = new java.util.HashSet<Integer>(java.util.Arrays.asList(4, 5, 6, 0, 7, 1, MOD_OPTIONS));
+    /** The pause menu Core last laid out, and the buttons of it that are Core's layout. */
+    private static GuiScreen laidOut;
+    private static final java.util.Set<GuiButton> OURS = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<GuiButton, Boolean>());
+    /** For the client self-test: how many other mods' buttons the last pause menu moved below Core's layout. */
+    public static volatile int movedForeign;
+
+    private static void remember(GuiScreen gui, List<GuiButton> before, List<GuiButton> after) {
+        laidOut = gui;
+        OURS.clear();
+        java.util.Set<GuiButton> old = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<GuiButton, Boolean>());
+        old.addAll(before);
+        for (GuiButton b : after) {
+            if (!old.contains(b) || LAID_OUT_IDS.contains(b.id)) {
+                OURS.add(b);
+            }
+        }
+    }
+
+    /**
+     * Other mods' pause-menu buttons, placed for 1.12.2's layout. Its free row (a quarter down, between Statistics and
+     * Options) is where Core's icon row or Give Feedback row goes, so a button there (a "Cheats" toggle, say) was drawn
+     * under them. Any other button that overlaps Core's layout moves down below it, the moved ones keeping their places
+     * relative to each other. Lowest priority, so buttons added after Core's layout are moved too.
+     */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onInitLast(GuiScreenEvent.InitGuiEvent.Post event) {
+        if (event.getGui() != laidOut) {
+            return;
+        }
+        movedForeign = moveForeign(event.getButtonList(), OURS);
+    }
+
+    static int moveForeign(List<GuiButton> buttons, java.util.Set<GuiButton> ours) {
+        List<GuiButton> clash = new java.util.ArrayList<GuiButton>();
+        int bottom = Integer.MIN_VALUE;
+        for (GuiButton b : buttons) {
+            if (ours.contains(b) && b.visible) {
+                bottom = Math.max(bottom, b.y + b.height);
+            }
+        }
+        for (GuiButton b : buttons) {
+            if (ours.contains(b) || !b.visible) {
+                continue;
+            }
+            for (GuiButton o : ours) {
+                if (o.visible && b.x < o.x + o.width && o.x < b.x + b.width && b.y < o.y + o.height && o.y < b.y + b.height) {
+                    clash.add(b);
+                    break;
+                }
+            }
+        }
+        if (clash.isEmpty() || bottom == Integer.MIN_VALUE) {
+            return 0;
+        }
+        int top = Integer.MAX_VALUE;
+        for (GuiButton b : clash) {
+            top = Math.min(top, b.y);
+        }
+        int dy = bottom + 4 - top;
+        for (GuiButton b : clash) {
+            b.y += dy;
+        }
+        return clash.size();
+    }
 
     /** 1.12.2's id of Select World's and Play Multiplayer's Cancel. */
     static final int CANCEL_BUTTON = 0;
