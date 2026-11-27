@@ -583,7 +583,7 @@ public final class CreativeTabsClient {
             tab.displayAllRelevantItems(items);
             boolean ours = tab instanceof VanillaTab;
             w.println("== " + tab.getTabLabel() + " (index " + tab.getIndex()
-                    + (ours ? (modern ? ", in " + ModernOrder.VERSION + "'s order" : ", ordered by Core") : "")
+                    + (ours ? (modern ? ", in " + ModernOrder.version() + "'s order" : ", ordered by Core") : "")
                     + ", " + items.size() + " stacks)");
             String previous = "(start)";
             for (int i = 0; i < items.size(); i++) {
@@ -622,7 +622,7 @@ public final class CreativeTabsClient {
             w.println("  " + s);
         }
         if (modern) {
-            w.println("== Stacks " + ModernOrder.VERSION + "'s order does not list (after the rest of their tab):");
+            w.println("== Stacks " + ModernOrder.version() + "'s order does not list (after the rest of their tab):");
             for (String s : notModern) {
                 w.println("  " + s);
             }

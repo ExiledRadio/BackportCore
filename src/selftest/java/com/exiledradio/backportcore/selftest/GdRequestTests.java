@@ -84,6 +84,42 @@ final class GdRequestTests {
     }
 
     static void schedule() {
+        then(1, "GD 26.4: creative places for Deep Freeze's items", world -> {
+            // Every item 26.4's creative menu adds has a vanilla place, so CreativePlacement.place(...) finds a tab.
+            String[][] expected = {
+                    {"minecraft:packed_ice_bricks", "BUILDING_BLOCKS"}, {"minecraft:packed_ice_brick_stairs", "BUILDING_BLOCKS"},
+                    {"minecraft:packed_ice_brick_slab", "BUILDING_BLOCKS"}, {"minecraft:packed_ice_brick_wall", "DECORATIONS"},
+                    {"minecraft:chiseled_packed_ice", "BUILDING_BLOCKS"}, {"minecraft:snow_bricks", "BUILDING_BLOCKS"},
+                    {"minecraft:snow_brick_stairs", "BUILDING_BLOCKS"}, {"minecraft:snow_brick_slab", "BUILDING_BLOCKS"},
+                    {"minecraft:snow_brick_wall", "DECORATIONS"}, {"minecraft:calcite_pillar", "BUILDING_BLOCKS"},
+                    {"minecraft:calcite_stairs", "BUILDING_BLOCKS"}, {"minecraft:calcite_slab", "BUILDING_BLOCKS"},
+                    {"minecraft:calcite_wall", "DECORATIONS"}, {"minecraft:polished_calcite", "BUILDING_BLOCKS"},
+                    {"minecraft:polished_calcite_stairs", "BUILDING_BLOCKS"}, {"minecraft:polished_calcite_slab", "BUILDING_BLOCKS"},
+                    {"minecraft:polished_calcite_wall", "DECORATIONS"}, {"minecraft:polished_calcite_bricks", "BUILDING_BLOCKS"},
+                    {"minecraft:polished_calcite_brick_stairs", "BUILDING_BLOCKS"}, {"minecraft:polished_calcite_brick_slab", "BUILDING_BLOCKS"},
+                    {"minecraft:polished_calcite_brick_wall", "DECORATIONS"}, {"minecraft:brittle_ice", "BUILDING_BLOCKS"},
+                    {"minecraft:icicle", "DECORATIONS"}, {"minecraft:ice_crystal", "DECORATIONS"},
+                    {"minecraft:music_disc_flurry", "MISC"}, {"minecraft:ice_ball", "MISC"}, {"minecraft:frostbite_spawn_egg", "MISC"},
+            };
+            StringBuilder wrong = new StringBuilder();
+            for (String[] e : expected) {
+                net.minecraft.creativetab.CreativeTabs tab = com.exiledradio.backportcore.creative.VanillaOrder.tab(e[0]);
+                if (com.exiledradio.backportcore.creative.VanillaOrder.position(e[0]) < 0 || tab == null
+                        || !e[1].equals(com.exiledradio.backportcore.creative.VanillaOrder.nameOf(tab))) {
+                    wrong.append(e[0]).append(' ').append(tab == null ? "none" : tab.getTabLabel()).append("; ");
+                }
+            }
+            check("creative: vanilla's order has 26.4's 27 new items, each in its 1.19.2 tab", wrong.length() == 0, wrong);
+            check("creative: chiseled soulshale has no place, as 26.4 lists it in no tab",
+                    com.exiledradio.backportcore.creative.VanillaOrder.position("minecraft:chiseled_soulshale") < 0);
+            java.util.function.ToDoubleFunction<String> key = com.exiledradio.backportcore.creative.VanillaOrder::key;
+            check("creative: packed ice bricks follow the other bricks, the ice ball the snowball, the frostbite egg the frog's",
+                    key.applyAsDouble("minecraft:packed_ice_bricks") > key.applyAsDouble("minecraft:sulfur_bricks")
+                            && key.applyAsDouble("minecraft:ice_ball") > key.applyAsDouble("minecraft:snowball")
+                            && key.applyAsDouble("minecraft:ice_ball") < key.applyAsDouble("minecraft:slime_ball")
+                            && key.applyAsDouble("minecraft:frostbite_spawn_egg") > key.applyAsDouble("minecraft:frog_spawn_egg")
+                            && key.applyAsDouble("minecraft:frostbite_spawn_egg") < key.applyAsDouble("minecraft:ghast_spawn_egg"));
+        });
         then(1, "GD Su-1: jukebox comparator signal (P41)", world -> {
             check("P41 applied when BlockJukebox loaded", "applied".equals(Asm.state("P41")), Asm.state("P41"));
             if (disc == null) {

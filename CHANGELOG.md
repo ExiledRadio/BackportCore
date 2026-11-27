@@ -24,6 +24,13 @@ In progress: see docs/PLAN_1_5_0.md.
     *   26.4's look and feel (`versions.Look264`): Improved Fog (Video Settings; off in Fast, on in Fancy and
         Fabulous), the Repeat Recipe/Trade key (R) in the recipe book, names on the recipe book's tabs, Other Players
         (P, and the pause menu icon after Friends) with Player Options' Mute, which hides a player's chat this session.
+    *   Creative tabs in 26.4's order once the inventory part looks like 26.4 (`creative/order_26_4.txt`, from 26.4
+        Pre-Release 2's `CreativeModeTabs`; 26.3's before that). `vanilla_order.txt` has 26.4's 27 new items, so Game
+        Drops' frostbite egg, ice ball, icicle, ice crystal, brittle ice, Flurry disc, packed ice and snow brick sets
+        and calcite sets get a vanilla tab instead of "not a vanilla item". Chiseled soulshale stays out, as in 26.4.
+    *   Walls under a honey block (26.4 Pre-Release 2's `#wall_side_shape_override`): from 26.4 they read its outline
+        (tall sides, no post on a straight run); before 26.4 its collision, as vanilla (low sides, post kept). Before,
+        Core's walls went tall under honey at every version.
 *   Modern blocks supplied by Core (`supply/`, docs/PLAN_MODERN_BLOCKS.md slices 1 and 2). `structure/ModernBlockScan`
     reads every block name the structure files would place (`.nbt` palettes and jigsaw final states in `data/` and
     `assets/`, processor outputs in `data/*/worldgen/`, in mod jars and drop-in packs), brought up to date and cached

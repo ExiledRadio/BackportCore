@@ -31,6 +31,8 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 final class RequestTests {
 
     static ModernWall wall;
+    /** A honey block's shapes (Buzzy Bees': a full outline, collision a pixel in on each side but the bottom). */
+    static Block honey;
 
     private RequestTests() {
     }
@@ -39,6 +41,27 @@ final class RequestTests {
         wall = new ModernWall(Blocks.STONE.getDefaultState());
         wall.setRegistryName(SelfTestMod.MOD_ID, "test_modern_wall");
         r.register(wall);
+        honey = new Block(net.minecraft.block.material.Material.CLAY) {
+            @Override
+            @SuppressWarnings("deprecation")
+            public net.minecraft.util.math.AxisAlignedBB getCollisionBoundingBox(IBlockState state, net.minecraft.world.IBlockAccess world, BlockPos pos) {
+                return new net.minecraft.util.math.AxisAlignedBB(1 / 16.0, 0, 1 / 16.0, 15 / 16.0, 15 / 16.0, 15 / 16.0);
+            }
+
+            @Override
+            @SuppressWarnings("deprecation")
+            public boolean isFullCube(IBlockState state) {
+                return false;
+            }
+
+            @Override
+            @SuppressWarnings("deprecation")
+            public boolean isOpaqueCube(IBlockState state) {
+                return false;
+            }
+        };
+        honey.setRegistryName(SelfTestMod.MOD_ID, "honey_block");
+        r.register(honey);
     }
 
     static void schedule() {
@@ -135,6 +158,26 @@ final class RequestTests {
             world.setBlockState(p.east(), Blocks.COBBLESTONE_WALL.getDefaultState());
             check("wall: joins 1.12.2's walls", wall.getActualState(wall.getDefaultState(), world, p).getValue(ModernWall.EAST) != ModernWall.Side.NONE);
             check("wall: metadata is always 0", wall.getMetaFromState(tall) == 0);
+            // 26.4-pre-2's #wall_side_shape_override: under honey a wall reads its outline from 26.4, its collision before.
+            world.setBlockState(p.east(), Blocks.AIR.getDefaultState());
+            world.setBlockState(p.up(), honey.getDefaultState());
+            check("wall: honey is 26.4's side shape override; stone is not",
+                    ModernWall.sideShapeOverride(honey.getDefaultState()) && !ModernWall.sideShapeOverride(Blocks.STONE.getDefaultState()));
+            IBlockState old = wall.actualState(wall.getDefaultState(), world, p, false);
+            check("wall: before 26.4 a run under honey is low and keeps its post (honey's collision is a pixel in)",
+                    old.getValue(ModernWall.NORTH) == ModernWall.Side.LOW && old.getValue(ModernWall.SOUTH) == ModernWall.Side.LOW
+                            && old.getValue(ModernWall.UP), old);
+            IBlockState now = wall.actualState(wall.getDefaultState(), world, p, true);
+            check("wall: from 26.4 a run under honey is tall with no post (its outline)",
+                    now.getValue(ModernWall.NORTH) == ModernWall.Side.TALL && now.getValue(ModernWall.SOUTH) == ModernWall.Side.TALL
+                            && !now.getValue(ModernWall.UP), now);
+            world.setBlockState(p.north(), Blocks.AIR.getDefaultState());
+            IBlockState end = wall.actualState(wall.getDefaultState(), world, p, true);
+            check("wall: from 26.4 a wall end under honey is tall with its post",
+                    end.getValue(ModernWall.SOUTH) == ModernWall.Side.TALL && end.getValue(ModernWall.UP), end);
+            check("wall: the honey rule follows the installed version (26.4 or later)",
+                    ModernWall.sideShapeOutline() == com.exiledradio.backportcore.presentation.Presentation.installedNewest().isAtLeast("26.4")
+                            && wall.getActualState(wall.getDefaultState(), world, p).equals(wall.actualState(wall.getDefaultState(), world, p, ModernWall.sideShapeOutline())));
             clear(world, p);
         });
         then(1, "menu tracks", world -> {

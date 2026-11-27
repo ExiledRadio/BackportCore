@@ -644,6 +644,57 @@ final class ClientPresentationTests {
         modernCreativeOrder();
     }
 
+    /** 26.4's creative order (order_26_4.txt): its new items where 26.4 lists them, and when it replaces 26.3's. */
+    private static void modernCreativeOrder264() {
+        net.minecraft.creativetab.CreativeTabs building = net.minecraft.creativetab.CreativeTabs.BUILDING_BLOCKS;
+        net.minecraft.creativetab.CreativeTabs misc = net.minecraft.creativetab.CreativeTabs.MISC;
+        int packed = ModernOrder.rank("26.4", building, "minecraft:packed_ice");
+        int bricks = ModernOrder.rank("26.4", building, "minecraft:packed_ice_bricks");
+        int chiseled = ModernOrder.rank("26.4", building, "minecraft:chiseled_packed_ice");
+        int snow = ModernOrder.rank("26.4", building, "minecraft:snow_bricks");
+        int calcite = ModernOrder.rank("26.4", building, "minecraft:calcite");
+        int pillar = ModernOrder.rank("26.4", building, "minecraft:calcite_pillar");
+        int polishedBrickWall = ModernOrder.rank("26.4", building, "minecraft:polished_calcite_brick_wall");
+        check("client: 26.4 order: Building Blocks lists packed ice, its bricks, chiseled, snow bricks, then the calcite sets",
+                packed >= 0 && bricks == packed + 1 && chiseled == packed + 5 && snow > chiseled && calcite > snow
+                        && pillar == calcite + 1 && polishedBrickWall == calcite + 12,
+                packed + " " + bricks + " " + chiseled + " " + snow + " " + calcite + " " + pillar + " " + polishedBrickWall);
+        check("client: 26.4 order: 26.3's has none of them, and both list the oak log first",
+                ModernOrder.rank("26.3", building, "minecraft:packed_ice_bricks") == -1
+                        && ModernOrder.rank("26.3", building, "minecraft:packed_ice") >= 0
+                        && ModernOrder.rank("26.4", building, "minecraft:oak_log") == 0 && ModernOrder.rank("26.3", building, "minecraft:oak_log") == 0);
+        int snowball = ModernOrder.rank("26.4", misc, "minecraft:snowball");
+        int iceBall = ModernOrder.rank("26.4", misc, "minecraft:ice_ball");
+        int drowned = ModernOrder.rank("26.4", misc, "minecraft:drowned_spawn_egg");
+        int frostbite = ModernOrder.rank("26.4", misc, "minecraft:frostbite_spawn_egg");
+        int bounce = ModernOrder.rank("26.4", net.minecraft.creativetab.CreativeTabs.TOOLS, "minecraft:music_disc_bounce");
+        int flurry = ModernOrder.rank("26.4", net.minecraft.creativetab.CreativeTabs.TOOLS, "minecraft:music_disc_flurry");
+        check("client: 26.4 order: the ice ball after the snowball, the frostbite egg after the drowned's, Flurry after Bounce",
+                iceBall == snowball + 1 && snowball >= 0 && frostbite == drowned + 1 && drowned >= 0 && flurry == bounce + 1 && bounce >= 0,
+                snowball + " " + iceBall + " " + drowned + " " + frostbite + " " + bounce + " " + flurry);
+        // Game Drops 1.1.0's 26.4 items are placed by name (CreativePlacement.place): each in its 1.19.2 tab, which
+        // 26.4's order must list it in.
+        String[] items = {"packed_ice_bricks", "packed_ice_brick_stairs", "packed_ice_brick_slab", "packed_ice_brick_wall",
+                "chiseled_packed_ice", "snow_bricks", "snow_brick_stairs", "snow_brick_slab", "snow_brick_wall", "calcite_pillar",
+                "calcite_stairs", "calcite_slab", "calcite_wall", "polished_calcite", "polished_calcite_stairs", "polished_calcite_slab",
+                "polished_calcite_wall", "polished_calcite_bricks", "polished_calcite_brick_stairs", "polished_calcite_brick_slab",
+                "polished_calcite_brick_wall", "brittle_ice", "icicle", "ice_crystal", "music_disc_flurry", "ice_ball", "frostbite_spawn_egg"};
+        StringBuilder unlisted = new StringBuilder();
+        for (String path : items) {
+            String id = "minecraft:" + path;
+            net.minecraft.creativetab.CreativeTabs tab = com.exiledradio.backportcore.creative.VanillaOrder.tab(id);
+            if (tab == null || ModernOrder.rank("26.4", tab, id) < 0) {
+                unlisted.append(id).append("; ");
+            }
+        }
+        check("client: 26.4 order: every 26.4 item Game Drops places is listed in the tab it lands in", unlisted.length() == 0, unlisted);
+        boolean at264 = com.exiledradio.backportcore.presentation.Presentation.isAtLeast(
+                com.exiledradio.backportcore.presentation.LookArea.INVENTORY, "26.4");
+        check("client: 26.4 order: the tabs read 26.4's once the inventory part looks like 26.4, else 26.3's",
+                ModernOrder.version().equals(at264 ? "26.4" : "26.3")
+                        && ModernOrder.rank(building, "minecraft:packed_ice_bricks") == (at264 ? bricks : -1), ModernOrder.version());
+    }
+
     /** 26.3's creative order on 1.12.2's tabs (creative.client.ModernOrder), and that it only applies from 26.3. */
     private static void modernCreativeOrder() {
         net.minecraft.creativetab.CreativeTabs building = net.minecraft.creativetab.CreativeTabs.BUILDING_BLOCKS;
@@ -667,6 +718,7 @@ final class ClientPresentationTests {
         check("client: 26.3 order: renamed ids are found (chain is 26.3's iron chain), unknown ones are not",
                 ModernOrder.rank(building, "minecraft:chain") == ModernOrder.rank(building, "minecraft:iron_chain")
                         && ModernOrder.rank(building, "minecraft:chain") >= 0 && ModernOrder.rank(building, "minecraft:nonsense") == -1);
+        modernCreativeOrder264();
 
         net.minecraft.item.Item other = null;
         for (net.minecraft.item.Item it : net.minecraft.item.Item.REGISTRY) {

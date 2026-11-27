@@ -2,7 +2,8 @@
 
 Status (2026-11-27): streams 1 (slices 1-3), 2 and 3 are on `core-1.5.0`; stream 4's docs are done. Left: F3
 categories, keyboard navigation, Javanese and Chavacano; the diff against the 26.4 release; the release itself.
-Self-tests 2026-11-27 (Core alone): server 2,716/0; client 316/0. Debug Options' two checks (also failing on main)
+Self-tests 2026-11-27 (Core alone): server 2,716/0; client 316/0. With 26.4's creative order and the honey wall rule:
+server 2,723/1 (only "tick rate 8" under load; `commands` alone 116/0), client 321/0. Debug Options' two checks (also failing on main)
 were the test: since 1.4.4 each entry is listed from its version (1.21.9 on), and the test ran at the dummy 1.16; it
 now opens the screen at a dummy 26.1. The client tick test's NaN was the test: it read the title screen's first frame on the next client tick, which
 1.12.2 runs before that frame when the timer owes ticks (the inventory effects screenshot takes about a second); the
@@ -51,6 +52,12 @@ From GameDropsBackport `docs/PLAN_26_4.md`, decisions recorded 2026-11-24. These
   - Adventuring Time's ice caves and Monster Hunter's frostbite (`advancement.AdventuringTime`).
 
 **Built 2026-11-26 on Pre-Release 1** (the user chose not to wait), on branch `core-1.5.0-deepfreeze`: freeze ticks, speleothems, Monster Hunter, `BiomeLocate.next`, and 26.4's look and feel (`versions.Look264`: Improved Fog, the Repeat Recipe key, recipe book tab tooltips, Other Players and mute, the pause menu's Other Players icon; the renames and reworded text are Game Drops' vanilla text). Not built: F3 categories, keyboard navigation, Javanese and Chavacano. Adventuring Time's 26.2-26.4 biomes (sulfur caves, dappled forest, ice caves) added 2026-11-27 on `core-150-finish`; underground biomes count. At release, diff the release jar against Pre-Release 1 (`E:\MCDownloads\minecraft-26.4-pre-1`, decompiled).
+
+**Pre-Release 2, 2026-11-27** (branch `core-150-creative264`): 26.4's creative order (`order_26_4.txt` from
+`tools/creative/CreativeOrder264.java` and `build_order_263.py --version 26.4`; `ModernOrder.version()` picks 26.4's
+table once the inventory part looks like 26.4) and 26.4's 27 new items in `vanilla_order.txt`; walls under honey
+follow `#wall_side_shape_override` from 26.4 (`ModernWall.sideShapeOutline`). At release, rerun the oracle on the
+release server jar and diff `order_26_4.txt`.
 
 ### 3. Leftover branch
 `claude/core-light-updates` (3ba3e29, 2026-11-23) uses 1.14's light packet for chunks players already have. It was never merged. Rebase it onto 1.5.0, run its tests, and merge. **Done**: rebased as 83437df; its `light/` code matches the branch tip, so the branch holds nothing unmerged.
