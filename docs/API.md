@@ -948,7 +948,11 @@ BiomeLocate.id("minecraft:meadow");                     // a sampler's biome wit
 BiomeLocate.source(world -> isMine(world) ? (x, y, z) -> modernIdAt(x, y, z) : null);   // a generator's own biomes
 BiomeLocate.Sampler own = BiomeLocate.sampler(world);   // 1.4.5: the world's source, or null where 1.12.2's biomes answer
 BiomeLocate.Sampler base = BiomeLocate.layers(world);   // 1.4.5: 1.12.2's column biomes, for a source that answers a few places
+BiomeLocate.Sampler rest = BiomeLocate.next(this, world); // 1.5.0: inside a SamplerFactory, what the sources before it answer
 ```
+
+`next` lets two sources that each answer a few places share a world (Game Drops' sulfur caves and ice caves): each
+answers its own places and hands the rest to the sources registered before it, else to 1.12.2's layers.
 
 The search is 26.x's `BiomeSource.findClosestBiome3d(origin, 6400, 32, 64)`: `BlockPos.spiralAround` columns 32
 blocks apart (east first, then south), in each the heights `Mth.outFromOrigin(y, minY + 1, maxY + 1, 64)` gives, the
@@ -1009,8 +1013,8 @@ only, and lags behind the world by design.
 `minecraft:adventure/adventuring_time` follows vanilla's later lists as far as the installed backports bring their
 biomes; no backport calls anything. The list is vanilla's at the newest installed version, by today's ids
 (`AdventuringTime.listAt`: 1.13's four new oceans and the deep frozen and lukewarm ones, 1.14's bamboo jungle, 1.18's 50,
-1.19's deep dark and mangrove swamp, 1.20's cherry grove, 1.21.4's pale garden; Core's self-test holds 1.20.6's to the
-file in its jar).
+1.19's deep dark and mangrove swamp, 1.20's cherry grove, 1.21.4's pale garden, 26.2's sulfur caves, 26.3's dappled
+forest, 26.4's ice caves; Core's self-test holds 1.20.6's to the file in its jar and 26.4's count to Pre-Release 1's).
 
 *   1.12.2's terrain: 1.12.2's 36 criteria stay, and each later biome of that list that a backport registers (any
     biome `BiomeLocate.id` names by that id, not a `minecraft:` one) is added: Update Aquatic's oceans, Village &
@@ -1021,10 +1025,22 @@ file in its jar).
     says it makes (`ModernGeneration.generates(id)`, true unless the generator overrides it; a world made before a
     backport was added has none of its biomes).
 *   The added criteria are Core's trigger `backportcore:biome` (`{"biome": "minecraft:cherry_grove"}`, usable in any
-    advancement file), met every 20 ticks where the player stands: the generator's 3D biome in a modern world
-    (`AdventuringTime.biomeAt`), else the column's 1.12 biome by today's id.
+    advancement file), met every 20 ticks where the player stands (`AdventuringTime.standingIn`): an underground
+    biome a backport registered there (`UndergroundBiomes`, since 1.5.0), else the generator's 3D biome in a modern
+    world (`AdventuringTime.biomeAt`), else the column's 1.12 biome by today's id.
 *   Changed after each load of the advancements (the server's start, `/reload`), then the online players' progress is
     read again. `AdventuringTime.extend(server, ids...)` adds criteria by hand (the self-tests).
+
+### Monster Hunter (`advancement.MonsterHunter`, 1.5.0)
+
+Monster Hunter (`adventure/kill_a_mob`) and Monsters Hunted (`adventure/kill_all_mobs`) count a backport's hostile
+mobs. Each gets vanilla's criterion (`minecraft:player_killed_entity`, `entity.type` its id); in Monster Hunter it
+joins the one any-of requirement, in Monsters Hunted it is its own requirement. Changed after each load of the
+advancements, as Adventuring Time.
+
+```java
+MonsterHunter.add(new ResourceLocation("gamedropsbackport", "frostbite"));   // pre-init or init
+```
 
 ## Water colors (`water.WaterColors`, 1.4.0)
 
@@ -1358,6 +1374,54 @@ One boat and one boat with chest for the whole family (Wild Update's request 4, 
 Patch P41: a disc's comparator signal from its own `public int comparatorSignal()` (0 to 15) on the `ItemRecord`
 subclass, found by name; no Core type to implement. Other discs keep 1.12.2's answer.
 `JukeboxSignal.signal(world, pos)` and `signal(stack)` read it (-1: none).
+
+## Freeze ticks (`freeze.FreezeTicks`, 1.5.0)
+
+1.17's frozen counter with 26.4's rules, shared by every backport that freezes things (Caves & Cliffs' powder snow,
+Game Drops' Freezing). Core does the counting, thawing, damage, slowness, frost overlay and shaking; a source only
+adds ticks.
+
+```java
+FreezeTicks.markInFreezingBlock(entity);          // a freezing block holds it this tick: +1, no thawing (powder snow)
+FreezeTicks.freezeFor(entity, 1);                 // add ticks, up to 140 (an effect's own tick)
+FreezeTicks.registerEffect(freezing, 1.5F);       // while active: no thawing, full freezing hurts 1.5 instead of 1
+FreezeTicks.clear(entity);                        // fire, lava
+int t = FreezeTicks.ticks(entity);                // also percent, fullyFrozen, canFreeze, immune, hurtsExtra, warm
+```
+
+*   Not held and under no registered effect, an entity loses 2 a tick. Fully frozen (140), it takes `FreezeTicks.FREEZE`
+    damage every 40 ticks, five times that for blazes, magma cubes and striders. Players take none while the
+    `freezeDamage` game rule is off.
+*   Nothing freezes while on fire, as a spectator, wearing any leather armor, or as a polar bear, snow golem or undead
+    mob. Settings page Freezing adds mobs that never freeze, mobs that take five times the damage, and warm armor.
+*   The counter is kept in the entity's Forge data (`BCFreeze`) only while it matters. `FreezeNetwork` tells watchers
+    when freezing starts and stops; the client counts the same way for the overlay.
+
+## Speleothems (`speleothem.BlockSpeleothem`, 1.5.0)
+
+26.4's `SpeleothemBlock`, what pointed dripstone and icicles share: one block per segment, `THICKNESS` (tip, frustum,
+middle, base, tip_merge) and `VERTICAL_DIRECTION` in metadata (`thickness | (down ? 8 : 0)`), water by `Waterloggable`.
+A segment needs a sturdy face or a segment of its own block behind it; an unsupported stalactite falls as
+`backportcore:falling_speleothem` (`EntityFallingSpeleothem`, hurting `max(length, 6)` per block fallen, 40 at
+most), an unsupported stalagmite breaks. Landing on a tip is a fall 2.5 blocks longer that hurts twice as much
+(`SpeleothemEvents.STALAGMITE`); a thrown trident faster than 0.6 breaks a segment, any mod's trident by entity name.
+Random ticks grow the tip or the stalagmite below.
+
+```java
+public class BlockIcicle extends BlockSpeleothem {
+    public BlockIcicle() { super(Material.PACKED_ICE, MapColor.ICE, Blocks.PACKED_ICE.getDefaultState()); }  // grows under packed ice
+    @Override protected SoundEvent landingSound() { return MySounds.ICICLE_LAND; }
+    @Override protected int maxGrowthLength() { return 4; }                         // 7 by default
+    @Override protected List<EnumFacing> naturalGrowthDirections() { return Collections.singletonList(EnumFacing.DOWN); }
+    @Override protected boolean shouldMergeTips() { return false; }
+    @Override protected boolean canGrow(World world, BlockPos pos) { return super.canGrow(world, pos) && cold(world, pos); }
+    @Override protected void onRandomTick(World world, BlockPos pos, IBlockState state, Random random) { /* melt, then */ super.onRandomTick(world, pos, state, random); }
+}
+```
+
+Static helpers read any speleothem: `isSpeleothem`, `isStalactite`, `isStalagmite`, `isTip`, `findTip`,
+`isStalactiteStart`, `spawnFallingStalactite`; `placementState(world, pos, direction, mergeTips)` gives the state a
+placer or feature should set, with its thickness worked out.
 
 ## Helpers
 

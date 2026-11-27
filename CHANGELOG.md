@@ -12,6 +12,10 @@ In progress: see docs/PLAN_1_5_0.md.
         thickness, falling segments (`backportcore:falling_speleothem`), stalagmite and falling stalactite damage,
         tridents breaking them.
     *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
+    *   Adventuring Time follows 26.2 to 26.4's lists: the sulfur caves (26.2), the dappled forest (26.3) and the ice
+        caves (26.4, Pre-Release 1's 57 biomes), each counted when Game Drops is installed at that version. The
+        criteria read an underground biome first (`AdventuringTime.standingIn`), so the sulfur and ice caves under
+        1.12.2's columns count. `ice_caves` is one of today's biome ids (`BiomeLocate.TODAY`).
     *   `/locate biome`: a biome source can leave the rest to the ones before it (`BiomeLocate.next`).
     *   The frostbite's spawn egg in the modern egg layer.
     *   26.4's look and feel (`versions.Look264`): Improved Fog (Video Settings; off in Fast, on in Fancy and

@@ -55,13 +55,13 @@ public final class BiomeLocate {
     public static final int HORIZONTAL = 32;
     public static final int VERTICAL = 64;
 
-    /** Today's vanilla biomes (26.3's {@code worldgen/biome}). */
+    /** Today's vanilla biomes (26.3's {@code worldgen/biome}, and 26.4's ice caves). */
     public static final List<String> TODAY = Collections.unmodifiableList(Arrays.asList(
             "badlands", "bamboo_jungle", "basalt_deltas", "beach", "birch_forest", "cherry_grove", "cold_ocean",
             "crimson_forest", "dappled_forest", "dark_forest", "deep_cold_ocean", "deep_dark", "deep_frozen_ocean",
             "deep_lukewarm_ocean", "deep_ocean", "desert", "dripstone_caves", "end_barrens", "end_highlands", "end_midlands",
             "eroded_badlands", "flower_forest", "forest", "frozen_ocean", "frozen_peaks", "frozen_river", "grove",
-            "ice_spikes", "jagged_peaks", "jungle", "lukewarm_ocean", "lush_caves", "mangrove_swamp", "meadow",
+            "ice_caves", "ice_spikes", "jagged_peaks", "jungle", "lukewarm_ocean", "lush_caves", "mangrove_swamp", "meadow",
             "mushroom_fields", "nether_wastes", "ocean", "old_growth_birch_forest", "old_growth_pine_taiga",
             "old_growth_spruce_taiga", "pale_garden", "plains", "river", "savanna", "savanna_plateau", "small_end_islands",
             "snowy_beach", "snowy_plains", "snowy_slopes", "snowy_taiga", "soul_sand_valley", "sparse_jungle", "stony_peaks",

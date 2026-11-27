@@ -144,6 +144,11 @@ final class GdWorldgenTests {
             int[] want = WaterColors.of(swamp);
             check("WaterColors.at reads the underground biome", colors != null && want != null && colors[0] == want[0],
                     colors == null ? "null" : Integer.toHexString(colors[0]));
+            check("Adventuring Time reads the underground biome",
+                    com.exiledradio.backportcore.advancement.AdventuringTime.standingIn(world, new BlockPos(x, 105, z)).equals("minecraft:swamp")
+                    && com.exiledradio.backportcore.advancement.AdventuringTime.standingIn(world, new BlockPos(x, 60, z))
+                    .equals(com.exiledradio.backportcore.advancement.AdventuringTime.biomeAt(world, new BlockPos(x, 60, z))),
+                    com.exiledradio.backportcore.advancement.AdventuringTime.standingIn(world, new BlockPos(x, 105, z)));
 
             // Saved with the chunk: write, forget, read back.
             Chunk chunk = world.getChunk(cx, cz);

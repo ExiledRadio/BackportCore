@@ -81,6 +81,16 @@ entity (chests, signs, decorated pots, suspicious sand), torches and multi-block
   not remove them from worlds.
 - Installing the owning backport later turns Core's copies in a world into its blocks; removing it turns them back.
 
+Blocks that need their behavior are never supplied. Two of them share Core 1.5.0 code with their backports:
+
+- **Pointed dripstone and icicles** are speleothems (`speleothem.BlockSpeleothem`, docs/API.md): Caves & Cliffs'
+  dripstone (once Caves & Cliffs moves to it) and Game Drops' icicles. An unsupported stalactite falls when a
+  neighbor updates, so hang it from a solid block or another segment.
+- **Powder snow** (Caves & Cliffs) freezes through Core's freeze ticks (`freeze.FreezeTicks`) once Caves & Cliffs
+  hands its freezing to Core; Game Drops' Freezing effect already uses them.
+
+Without the owning backport these names are stand-ins or left out (the block report says which).
+
 Seeds match: starts land where 26.3 puts them for the same seed, salt and spacing, so a modern seed map's numbers for
 the set can be compared directly.
 
