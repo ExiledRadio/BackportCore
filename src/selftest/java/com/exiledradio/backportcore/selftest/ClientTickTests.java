@@ -219,6 +219,14 @@ final class ClientTickTests {
         }
     }
 
+    /**
+     * Whether a frame with no world has been drawn. The world is left in a client tick; 1.12.2 runs every tick the
+     * timer owes before it draws, so after a slow frame (a screenshot) the next client tick can come before any frame.
+     */
+    static boolean leavingFrameSeen() {
+        return !Float.isNaN(leavingFrameTimer);
+    }
+
     /** On the title screen after leaving the world. */
     static void afterLeaving() {
         Minecraft.getMinecraft().gameSettings.pauseOnLostFocus = pauseOnLostFocus;

@@ -1,6 +1,11 @@
 # Plan: Backport Core 1.5.0
 
-Status: plan (2026-11-25). Nothing started.
+Status (2026-11-27): streams 1 (slices 1-3), 2 and 3 are on `core-1.5.0`; stream 4's docs are done. Left: F3
+categories, keyboard navigation, Javanese and Chavacano; the diff against the 26.4 release; the release itself.
+Self-tests 2026-11-27 (Core alone): server 2,716/0; client 314/2 (the 2 are Debug Options' list, which fails on main
+too). The client tick test's NaN was the test: it read the title screen's first frame on the next client tick, which
+1.12.2 runs before that frame when the timer owes ticks (the inventory effects screenshot takes about a second); the
+runner now waits for the frame.
 
 ## Where 1.4.x ends
 
@@ -44,14 +49,18 @@ From GameDropsBackport `docs/PLAN_26_4.md`, decisions recorded 2026-11-24. These
   - the Javanese and Chavacano languages;
   - Adventuring Time's ice caves and Monster Hunter's frostbite (`advancement.AdventuringTime`).
 
-**Built 2026-11-26 on Pre-Release 1** (the user chose not to wait), on branch `core-1.5.0-deepfreeze`: freeze ticks, speleothems, Monster Hunter, `BiomeLocate.next`, and 26.4's look and feel (`versions.Look264`: Improved Fog, the Repeat Recipe key, recipe book tab tooltips, Other Players and mute, the pause menu's Other Players icon; the renames and reworded text are Game Drops' vanilla text). Not built: F3 categories, keyboard navigation, Javanese and Chavacano. At release, diff the release jar against Pre-Release 1 (`E:\MCDownloads\minecraft-26.4-pre-1`, decompiled).
+**Built 2026-11-26 on Pre-Release 1** (the user chose not to wait), on branch `core-1.5.0-deepfreeze`: freeze ticks, speleothems, Monster Hunter, `BiomeLocate.next`, and 26.4's look and feel (`versions.Look264`: Improved Fog, the Repeat Recipe key, recipe book tab tooltips, Other Players and mute, the pause menu's Other Players icon; the renames and reworded text are Game Drops' vanilla text). Not built: F3 categories, keyboard navigation, Javanese and Chavacano. Adventuring Time's 26.2-26.4 biomes (sulfur caves, dappled forest, ice caves) added 2026-11-27 on `core-150-finish`; underground biomes count. At release, diff the release jar against Pre-Release 1 (`E:\MCDownloads\minecraft-26.4-pre-1`, decompiled).
 
 ### 3. Leftover branch
-`claude/core-light-updates` (3ba3e29, 2026-11-23) uses 1.14's light packet for chunks players already have. It was never merged. Rebase it onto 1.5.0, run its tests, and merge.
+`claude/core-light-updates` (3ba3e29, 2026-11-23) uses 1.14's light packet for chunks players already have. It was never merged. Rebase it onto 1.5.0, run its tests, and merge. **Done**: rebased as 83437df; its `light/` code matches the branch tip, so the branch holds nothing unmerged.
 
 ### 4. Housekeeping
 - Stale branches: `settings-configuration` and `wip/settings-shots-optfl` (2026-11-09/16, settings screenshot work). Check whether anything in them is still wanted, then delete them.
+  2026-11-27: neither exists any more (local or remote); nothing left to check. `settings-screen` (840eb44) is merged
+  into main and 1.5.0.
 - `docs/API.md` and `docs/PORTING_STRUCTURES.md`: add the supplied blocks and the freeze and speleothem APIs.
+  **Done** 2026-11-27: API.md has Supplied blocks, Freeze ticks, Speleothems, Monster Hunter, `BiomeLocate.next` and
+  the 26.x Adventuring Time lists; PORTING_STRUCTURES.md has Supplied blocks and which blocks keep their behavior.
 
 ## Order
 

@@ -5,6 +5,7 @@ import com.exiledradio.backportcore.locate.BiomeLocate;
 import com.exiledradio.backportcore.presentation.GameVersion;
 import com.exiledradio.backportcore.presentation.Presentation;
 import com.exiledradio.backportcore.terrain.ModernGeneration;
+import com.exiledradio.backportcore.worldgen.UndergroundBiomes;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
@@ -52,7 +53,8 @@ import java.util.TreeSet;
  * <h2>Which biomes</h2>
  * Vanilla's lists by today's ids ({@link #listAt}): 1.13 added the warm, lukewarm and cold oceans and the deep frozen
  * ocean, 1.14 the bamboo jungle, 1.18 replaced the whole list with its 50 overworld biomes, 1.19 added the deep dark and
- * the mangrove swamp, 1.20 the cherry grove and 1.21.4 the pale garden (the files in each version's jar). The list is
+ * the mangrove swamp, 1.20 the cherry grove, 1.21.4 the pale garden, 26.2 the sulfur caves, 26.3 the dappled forest and
+ * 26.4 the ice caves (the files in each version's jar; 26.4 from Pre-Release 1). The list is
  * the one at the newest installed version ({@link Presentation#newest()}).
  * <ul>
  *   <li>In a world whose overworld runs a newer version's generation ({@link ModernGeneration}, Caves &amp; Cliffs
@@ -61,11 +63,13 @@ import java.util.TreeSet;
  *   <li>In 1.12.2's terrain, 1.12.2's own 36 criteria stay, and each later biome of the list that a backport registers
  *       (any 1.12 biome {@link BiomeLocate#id} names by that id that is not one of vanilla's) is added: Update Aquatic
  *       Backport's oceans, Village &amp; Pillage's bamboo jungle, Wild Update's deep dark and mangrove swamp, the cherry
- *       grove, the pale garden. Other mods' biomes never count, as in vanilla.</li>
+ *       grove, the pale garden, Game Drops' sulfur caves, dappled forest and ice caves. Other mods' biomes never count,
+ *       as in vanilla.</li>
  * </ul>
  * The added criteria are Core's trigger {@code backportcore:biome} ({@code {"biome": "minecraft:cherry_grove"}}), met
- * where the player stands, checked every 20 ticks as vanilla's {@code location}: by the generator's 3D biome in a modern
- * world (a lush cave under a forest is a lush cave), else by the column's 1.12 biome.
+ * where the player stands, checked every 20 ticks as vanilla's {@code location}: by an underground biome a backport
+ * registered there ({@link UndergroundBiomes}: the sulfur and ice caves under 1.12.2's columns), else by the generator's
+ * 3D biome in a modern world (a lush cave under a forest is a lush cave), else by the column's 1.12 biome.
  */
 public final class AdventuringTime {
 
@@ -89,6 +93,9 @@ public final class AdventuringTime {
             {"1.19", "deep_dark", "mangrove_swamp"},
             {"1.20", "cherry_grove"},
             {"1.21.4", "pale_garden"},
+            {"26.2", "sulfur_caves"},
+            {"26.3", "dappled_forest"},
+            {"26.4", "ice_caves"},
     };
 
     /** The trigger of the added criteria. */
@@ -277,6 +284,12 @@ public final class AdventuringTime {
         return modern != null ? modern : BiomeLocate.id(world.getBiome(pos));
     }
 
+    /** @return today's id of the biome the criteria read at a block: an underground biome a backport registered, else {@link #biomeAt} */
+    public static String standingIn(World world, BlockPos pos) {
+        Biome under = UndergroundBiomes.at(world, pos);
+        return under != null ? BiomeLocate.id(under) : biomeAt(world, pos);
+    }
+
     /** The criterion: a biome by today's id. */
     public static final class Instance extends AbstractCriterionInstance {
         public final String biome;
@@ -371,7 +384,7 @@ public final class AdventuringTime {
             }
             EntityPlayerMP player = (EntityPlayerMP) event.player;
             if (TRIGGER.listening(player)) {
-                TRIGGER.trigger(player, biomeAt(player.world, new BlockPos(player)));
+                TRIGGER.trigger(player, standingIn(player.world, new BlockPos(player)));
             }
         }
     }

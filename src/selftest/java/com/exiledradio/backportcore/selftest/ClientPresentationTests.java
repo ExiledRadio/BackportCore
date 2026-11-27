@@ -92,6 +92,7 @@ final class ClientPresentationTests {
     }
 
     private int soundTicks;
+    private int leftTicks;
 
     private static boolean soundLoaded(Minecraft mc) {
         try {
@@ -181,6 +182,11 @@ final class ClientPresentationTests {
                     }
                     break;
                 case 4:
+                    // The title screen's first frame, which the tick tests read: after a slow frame 1.12.2 runs the
+                    // ticks it owes first, so this tick can come before it.
+                    if (!ClientTickTests.leavingFrameSeen() && ++this.leftTicks < 100) {
+                        break;
+                    }
                     this.stage = 5;
                     ClientTickTests.afterLeaving();
                     backups(mc);

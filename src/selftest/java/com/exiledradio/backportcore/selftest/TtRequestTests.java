@@ -90,6 +90,14 @@ final class TtRequestTests {
             check("lists: 1.20.6's, exactly", AdventuringTime.listAt(v("1.20.6")).equals(VANILLA_1206), AdventuringTime.listAt(v("1.20.6")));
             check("lists: 1.21.4's 54, with the pale garden", AdventuringTime.listAt(v("1.21.4")).size() == 54
                     && AdventuringTime.listAt(v("1.21.4")).contains("pale_garden") && !AdventuringTime.listAt(v("1.21.3")).contains("pale_garden"));
+            check("lists: 26.2's sulfur caves, 26.3's dappled forest", AdventuringTime.listAt(v("26.2")).contains("sulfur_caves")
+                    && !AdventuringTime.listAt(v("26.1")).contains("sulfur_caves") && AdventuringTime.listAt(v("26.3")).size() == 56
+                    && AdventuringTime.listAt(v("26.3")).contains("dappled_forest") && !AdventuringTime.listAt(v("26.2")).contains("dappled_forest"));
+            check("lists: 26.4's 57, with the ice caves", AdventuringTime.listAt(v("26.4")).size() == 57
+                    && AdventuringTime.listAt(v("26.4")).contains("ice_caves") && !AdventuringTime.listAt(v("26.3")).contains("ice_caves"),
+                    AdventuringTime.listAt(v("26.4")).size());
+            check("ice caves: Game Drops' biome is today's id", com.exiledradio.backportcore.locate.BiomeLocate.TODAY.contains("ice_caves")
+                    && "26.4".equals(AdventuringTime.since("ice_caves")));
             check("since: per biome", "1.20".equals(AdventuringTime.since("cherry_grove")) && "1.13".equals(AdventuringTime.since("warm_ocean"))
                     && "1.18".equals(AdventuringTime.since("meadow")) && AdventuringTime.since("plains") != null
                     && AdventuringTime.since("crimson_forest") == null);
@@ -102,6 +110,10 @@ final class TtRequestTests {
                     AdventuringTime.additions(v("1.20.5"), registered, base));
             check("1.12 terrain: the pale garden only from 1.21.4", AdventuringTime.additions(v("1.21.4"), registered, base).contains("minecraft:pale_garden")
                     && !AdventuringTime.additions(v("1.21.3"), registered, base).contains("minecraft:pale_garden"));
+            Set<String> withIce = new HashSet<String>(registered);
+            withIce.add("minecraft:ice_caves");
+            check("1.12 terrain: the ice caves only from 26.4", AdventuringTime.additions(v("26.4"), withIce, base).contains("minecraft:ice_caves")
+                    && !AdventuringTime.additions(v("26.3"), withIce, base).contains("minecraft:ice_caves"));
             check("1.12 terrain: below 1.13 nothing", AdventuringTime.additions(v("1.12.2"), registered, base).isEmpty());
 
             ModernGeneration noDeepDark = new ModernGeneration() {
