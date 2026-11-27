@@ -1283,3 +1283,19 @@ or passes an existing constant through a hook of the same type.
     `CustomName`.
 *   **Fails safe**: method missing or no return: left as 1.12.2's, one log line. Left to Trails & Tales while an older
     jar of it (with `trailsandtalesbackport.asm.PickBlockTransformer`) is on the class path.
+
+## P77. Silent mobs stay silent (26.4)
+
+*   **Classes**: `net.minecraft.entity.ai.EntityAIBreakDoor` `updateTask()V`, `net.minecraft.entity.boss.EntityWither`
+    `updateAITasks()V`, `net.minecraft.item.ItemChorusFruit` `onItemUseFinish`, `net.minecraft.client.network.NetHandlerPlayClient`
+    `handleCollectItem`, `handleEntityStatus`. **Transformer**: `asm/SilentSoundsTransformer`. **Hooks**:
+    `mechanics/SilentSounds`, `mechanics/client/SilentSoundsClient`. **Since**: 1.5.0.
+*   **Vanilla change**: 26.4 Pre-Release 1 fixed silent mobs (`Silent:1b`) that still made sounds: a zombie breaking a
+    door (`BreakDoorGoal`, the break sound; 2014 keeps the particles), the wither breaking blocks, chorus fruit's
+    teleport, item pickup when the item or the collector is silent, and a mob's totem.
+*   **Why a patch**: each sound is a direct `World.playEvent` or `playSound` call, which skips `Entity.playSound`'s
+    silent check; no event sees them.
+*   **What changes**: each method stores its mob (or packet) at its head, and its sound calls become static calls of a
+    hook with the same arguments. With a 26.4 backport installed and the mob silent, the hook drops the sound (a broken
+    door still sends its block particles); otherwise it calls the world as vanilla does.
+*   **Fails safe**: a method missing or a different number of sound calls: that class is left as 1.12.2's, one log line.
