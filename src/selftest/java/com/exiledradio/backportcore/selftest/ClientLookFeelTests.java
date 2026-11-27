@@ -170,6 +170,29 @@ final class ClientLookFeelTests {
                         "Chunk: 1 2 3 in 0 0 0", "", "Debug: Pie [shift]: hidden FPS [alt]: hidden", "Mod line")), shown);
         check("client: and nothing with F3 hidden", DebugEntries.filter(left, ids, false, false).isEmpty());
 
+        // Each entry is listed from the version that added it (1.21.9, 1.21.11, 26.1); the dummy versions stop at
+        // 1.16, so a dummy 26.1 stands in for the screen, removed after.
+        boolean added = !com.exiledradio.backportcore.presentation.Presentation.isAtLeast(
+                com.exiledradio.backportcore.presentation.LookArea.DEBUG, "26.1");
+        if (added) {
+            com.exiledradio.backportcore.presentation.Presentation.version("26.1");
+        }
+        try {
+            debugOptionsScreen(mc);
+        } finally {
+            if (added) {
+                Field f = com.exiledradio.backportcore.presentation.Presentation.class.getDeclaredField("VERSIONS");
+                f.setAccessible(true);
+                ((java.util.Map<?, ?>) f.get(null)).remove(com.exiledradio.backportcore.presentation.GameVersion.parse("26.1"));
+            }
+        }
+        // Opened and drawn again at the dummy versions' look, so the checks after it see no newer menu background.
+        DebugOptionsScreen screen = new DebugOptionsScreen();
+        mc.displayGuiScreen(screen);
+        screen.drawScreen(0, 0, 0.0F);
+    }
+
+    private static void debugOptionsScreen(Minecraft mc) throws Exception {
         DebugOptionsScreen screen = new DebugOptionsScreen();
         mc.displayGuiScreen(screen);
         check("client: Debug Options lists every entry", screen.listed == DebugEntries.ENTRIES.size(), screen.listed);
@@ -178,7 +201,6 @@ final class ClientLookFeelTests {
             typed.invoke(screen, c, 0);
         }
         check("client: its search finds the three chunk entries", screen.listed == 3, screen.listed);
-        screen.drawScreen(0, 0, 0.0F);
     }
 
     private static List<GuiButton> buttons(GuiScreen screen) {

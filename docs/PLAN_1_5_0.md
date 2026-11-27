@@ -2,8 +2,9 @@
 
 Status (2026-11-27): streams 1 (slices 1-3), 2 and 3 are on `core-1.5.0`; stream 4's docs are done. Left: F3
 categories, keyboard navigation, Javanese and Chavacano; the diff against the 26.4 release; the release itself.
-Self-tests 2026-11-27 (Core alone): server 2,716/0; client 314/2 (the 2 are Debug Options' list, which fails on main
-too). The client tick test's NaN was the test: it read the title screen's first frame on the next client tick, which
+Self-tests 2026-11-27 (Core alone): server 2,716/0; client 316/0. Debug Options' two checks (also failing on main)
+were the test: since 1.4.4 each entry is listed from its version (1.21.9 on), and the test ran at the dummy 1.16; it
+now opens the screen at a dummy 26.1. The client tick test's NaN was the test: it read the title screen's first frame on the next client tick, which
 1.12.2 runs before that frame when the timer owes ticks (the inventory effects screenshot takes about a second); the
 runner now waits for the frame.
 
