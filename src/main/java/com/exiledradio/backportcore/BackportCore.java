@@ -236,6 +236,8 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         SpawnProgress.start();
+        // No entity gets id 0, which 1.12.2's firework rocket cannot boost (mechanics/FirstEntityId).
+        com.exiledradio.backportcore.mechanics.FirstEntityId.skipZero();
         // 1.18's Simulation Distance: the client's option, or server.properties on a dedicated server (simulation/).
         com.exiledradio.backportcore.simulation.SimulationDistance.serverAboutToStart(event.getServer());
         // A client applies them at its title screen; a dedicated server has none, so here.
