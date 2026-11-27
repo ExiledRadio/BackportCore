@@ -2,6 +2,7 @@ package com.exiledradio.backportcore.presentation.client;
 
 import com.exiledradio.backportcore.BackportCore;
 import com.exiledradio.backportcore.asm.Asm;
+import com.exiledradio.backportcore.presentation.Darkness;
 import com.exiledradio.backportcore.presentation.LightmapColors;
 import com.exiledradio.backportcore.presentation.VanillaRevisions;
 
@@ -43,7 +44,7 @@ import java.lang.reflect.Method;
  * <h2>Forge and other mods</h2>
  * {@code WorldProvider.getLightmapColors} is still called for each cell, where 1.12.2 calls it: after the boss
  * darkening, before the clamp. Wild Update's Darkness computes 1.12.2's lightmap itself before each frame
- * ({@code warden.client.DarknessClient}); while its factor is above 0 this class fills the lightmap first (a render tick
+ * ({@code warden.client.DarknessClient}) and registers itself with {@link Darkness}; while its factor is above 0 this class fills the lightmap first (a render tick
  * listener at the highest priority), taking 26.3's two Darkness steps from it: the brightness lowered by the factor and
  * the pulse taken off before the clamp, both times Darkness Pulsing. Wild Update then finds nothing to do.
  *
@@ -243,8 +244,21 @@ public final class ModernLightmap {
 
     // ---- Wild Update's Darkness ----
 
-    /** @return Wild Update's Darkness factor for the frame (its {@code DarknessClient.factor}), 0 without it */
+    /**
+     * @return the Darkness factor for the frame: from the registered {@link Darkness} source, or, for a Wild Update
+     *         that predates the hook, its {@code DarknessClient.factor} by reflection; 0 without either
+     */
     static float darkness(float partialTicks) {
+        Darkness.Source source = Darkness.source();
+        if (source != null) {
+            try {
+                return MathHelper.clamp(source.factor(partialTicks), 0.0F, 1.0F);
+            } catch (Throwable t) {
+                Darkness.register(null);
+                BackportCore.LOGGER.warn("26.1's lightmap: the Darkness source failed ({}); the light ignores it.", t.toString());
+                return 0.0F;
+            }
+        }
         if (wildDarkness == null) {
             try {
                 darknessFactor = Class.forName("com.exiledradio.wildupdatebackport.warden.client.DarknessClient")
@@ -268,6 +282,14 @@ public final class ModernLightmap {
     }
 
     private static float darknessScale() {
+        Darkness.Source source = Darkness.source();
+        if (source != null) {
+            try {
+                return MathHelper.clamp(source.scale(), 0.0F, 1.0F);
+            } catch (Throwable t) {
+                return 1.0F;
+            }
+        }
         try {
             return MathHelper.clamp((Float) darknessScale.invoke(null), 0.0F, 1.0F);
         } catch (Throwable t) {

@@ -14,6 +14,9 @@ In progress: see docs/PLAN_1_5_0.md.
     *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
     *   `/locate biome`: a biome source can leave the rest to the ones before it (`BiomeLocate.next`).
     *   The frostbite's spawn egg in the modern egg layer.
+    *   Darkness hook (`presentation.Darkness`): the mod that owns Darkness (Wild Update 1.2.0) registers its factor and
+        Darkness Pulsing, and the 26.1 lightmap reads them from it instead of reaching into Wild Update's classes. An older
+        Wild Update without the hook is still read the old way.
     *   26.4's look and feel (`versions.Look264`): Improved Fog (Video Settings; off in Fast, on in Fancy and
         Fabulous), the Repeat Recipe/Trade key (R) in the recipe book, names on the recipe book's tabs, Other Players
         (P, and the pause menu icon after Friends) with Player Options' Mute, which hides a player's chat this session.
