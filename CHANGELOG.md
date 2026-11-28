@@ -17,6 +17,17 @@ In progress: see docs/PLAN_1_5_0.md.
     (block_change). With a 1.20 backport, 1.20.2's: witches drinking, sheep eating, rabbits eating carrots, totems,
     bone meal, evoker fangs and vexes, water potions putting out fire, and vehicles breaking. Bone meal and discs no
     longer post block_place.
+*   Pistons can push and pull a mod's block that has a tile entity, if the block registers
+    (`mechanics.PistonRules.allowTileEntity`, patch P84): Village & Pillage's composter moves with its level, as in
+    1.14. A block a piston destroys posts block_destroy and, with a backport of 1.21.5, shows its breaking particles
+    and sound (P85).
+*   Leashed boats (`boat.BoatLeash`), 1.21.6's rules for vanilla's and the family's boats: a lead ties a boat to you,
+    using it again unties it, shears cut it, sneak-using a boat ties the boats you hold to it, and a fence or knot
+    takes them. The boat follows on 1.21.6's elastic rope (slack to 6 blocks, snapping past 12) and keeps its lead
+    when saved. On with a backport of 1.21, or behind a backport's switch (`BoatLeash.require`).
+*   The playersSleepingPercentage game rule (1.17, with a backport of 1.17; patches P86, P87): the share of players
+    who must sleep to skip the night, with "n/needed players sleeping" above the hotbar. The Game Rules screen also
+    lists Village & Pillage's doPatrolSpawning (1.15.2).
 
 *   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
     *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder

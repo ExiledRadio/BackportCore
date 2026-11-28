@@ -84,7 +84,9 @@ public final class SelfTestRunner {
                     case "textures": TextureLayerTests.schedule(); break;
                     case "flat": FlatTests.scheduleFlat(); break;
                     case "suggest": SuggestionTests.schedule(); SmeltingBookTests.schedule(); break;
-                    case "gameevents": GameEventTests.schedule(); GameEventSourceTests.schedule(); break;
+                    case "gameevents": GameEventTests.schedule(); GameEventSourceTests.schedule(); PistonTests.schedule(); break;
+                    case "sleep": SleepTests.schedule(); break;
+                    case "boatleash": BoatLeashTests.schedule(); break;
                     case "snow": SnowTests.schedule(); break;
                     case "commands": CommandTests.schedule(); break;
                     case "gamerules": GameRulesTests.schedule(); break;
@@ -123,6 +125,9 @@ public final class SelfTestRunner {
         RecipeTests.schedule();
         GameEventTests.schedule();
         GameEventSourceTests.schedule();
+        PistonTests.schedule();
+        SleepTests.schedule();
+        BoatLeashTests.schedule();
         CommandTests.schedule();
         GameRulesTests.schedule();
         SimulationTests.schedule();

@@ -80,6 +80,8 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             SilentSoundsTransformer.class.getName(),
             ElytraLookUpTransformer.class.getName(),
             GameEventSourcesTransformer.class.getName(),
+            PistonTransformer.class.getName(),
+            SleepTransformer.class.getName(),
     };
 
     @Override

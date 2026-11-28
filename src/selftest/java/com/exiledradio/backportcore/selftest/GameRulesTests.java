@@ -99,7 +99,7 @@ final class GameRulesTests {
                 family++;
             }
         }
-        check("game rules: the family's 33 rules, each with its owner", family == 33, family);
+        check("game rules: the family's 35 rules, each with its owner", family == 35, family);
         GameRuleTable.Rule other = GameRuleTable.unknown("someModRule", false, "true");
         check("game rules: another mod's rule goes under Miscellaneous by its own id", other.category == GameRuleTable.Category.MISC
                 && "gamerule.someModRule".equals(other.nameKey) && !other.inverted);

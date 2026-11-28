@@ -29,6 +29,62 @@ public final class BoatNetwork {
     public static void init() {
         channel = NetworkRegistry.INSTANCE.newSimpleChannel(CHANNEL);
         channel.registerMessage(OpenHandler.class, OpenVehicleInventory.class, 0, Side.SERVER);
+        channel.registerMessage(LeashHandler.class, LeashSync.class, 1, Side.CLIENT);
+    }
+
+    /** Server: tells every player tracking the boat what holds it now (-1: nothing; {@link BoatLeash}). */
+    static void leashChanged(Entity boat, int holderId) {
+        if (channel != null && !boat.world.isRemote) {
+            channel.sendToAllTracking(new LeashSync(boat.getEntityId(), holderId), boat);
+        }
+    }
+
+    /** Server: tells one player, who has just started tracking the boat. */
+    static void leashTo(EntityPlayerMP player, Entity boat, int holderId) {
+        if (channel != null) {
+            channel.sendTo(new LeashSync(boat.getEntityId(), holderId), player);
+        }
+    }
+
+    /** A boat's holder by entity id, or -1. */
+    public static final class LeashSync implements IMessage {
+        int boat;
+        int holder;
+
+        public LeashSync() {
+        }
+
+        LeashSync(int boat, int holder) {
+            this.boat = boat;
+            this.holder = holder;
+        }
+
+        @Override
+        public void fromBytes(ByteBuf buf) {
+            this.boat = buf.readInt();
+            this.holder = buf.readInt();
+        }
+
+        @Override
+        public void toBytes(ByteBuf buf) {
+            buf.writeInt(this.boat);
+            buf.writeInt(this.holder);
+        }
+    }
+
+    /** Client: files the holder in {@link BoatLeash#CLIENT_HOLDERS}, on the game thread (no client classes here). */
+    public static final class LeashHandler implements IMessageHandler<LeashSync, IMessage> {
+        @Override
+        public IMessage onMessage(final LeashSync message, MessageContext ctx) {
+            net.minecraftforge.fml.common.FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
+                if (message.holder < 0) {
+                    BoatLeash.CLIENT_HOLDERS.remove(message.boat);
+                } else {
+                    BoatLeash.CLIENT_HOLDERS.put(message.boat, message.holder);
+                }
+            });
+            return null;
+        }
     }
 
     /** Client: asks the server to open the inventory of the vehicle the player rides. */

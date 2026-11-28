@@ -172,6 +172,8 @@ public final class BackportCore {
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.boat.client.RenderWoodBoat.register();
             com.exiledradio.backportcore.boat.client.ChestBoatKey.init();
+            // Leashed boats' ropes (boat/BoatLeash).
+            com.exiledradio.backportcore.boat.client.BoatLeashRender.init();
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.freeze.client.FreezeClient.init();
             // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).

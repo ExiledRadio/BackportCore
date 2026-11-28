@@ -33,6 +33,10 @@ final class TestBlocks {
     static Stairs dryStairs;
     static Stairs waterStairs;
 
+    /** P84: a block with a tile entity whose contents live in its state (Village & Pillage's composter), and one that is not allowed. */
+    static Bin bin;
+    static Bin lockedBin;
+
     /** Every onWaterChanged call: "optional@x,y,z=true". */
     static final List<String> CHANGES = new ArrayList<String>();
 
@@ -221,5 +225,44 @@ final class TestBlocks {
         public IBlockState getStateFromMeta(int meta) {
             return getDefaultState().withProperty(WATERLOGGED, (meta & 1) != 0);
         }
+    }
+
+    /** A composter-like block: a level in its state, a tile entity only as an adapter. */
+    static final class Bin extends net.minecraft.block.Block {
+        static final net.minecraft.block.properties.PropertyInteger LEVEL = net.minecraft.block.properties.PropertyInteger.create("level", 0, 3);
+
+        Bin(String name) {
+            super(net.minecraft.block.material.Material.WOOD);
+            setRegistryName(SelfTestMod.MOD_ID, name);
+            setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, 0));
+        }
+
+        @Override
+        protected net.minecraft.block.state.BlockStateContainer createBlockState() {
+            return new net.minecraft.block.state.BlockStateContainer(this, LEVEL);
+        }
+
+        @Override
+        public net.minecraft.block.state.IBlockState getStateFromMeta(int meta) {
+            return getDefaultState().withProperty(LEVEL, meta & 3);
+        }
+
+        @Override
+        public int getMetaFromState(net.minecraft.block.state.IBlockState state) {
+            return state.getValue(LEVEL);
+        }
+
+        @Override
+        public boolean hasTileEntity(net.minecraft.block.state.IBlockState state) {
+            return true;
+        }
+
+        @Override
+        public net.minecraft.tileentity.TileEntity createTileEntity(net.minecraft.world.World world, net.minecraft.block.state.IBlockState state) {
+            return new BinTile();
+        }
+    }
+
+    public static final class BinTile extends net.minecraft.tileentity.TileEntity {
     }
 }

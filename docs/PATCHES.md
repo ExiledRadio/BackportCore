@@ -19,8 +19,8 @@ tasks name it with `-Dfml.coreMods.load`.
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
     `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`, `creative/client/CreativeScreenHooks`,
-    and from P50 `presentation/client/NotificationTime`, `QuitShortcuts` and `SoundDevices`, and from P80
-    `gameevent/GameEventHooks`).
+    and from P50 `presentation/client/NotificationTime`, `QuitShortcuts` and `SoundDevices`, from P80
+    `gameevent/GameEventHooks`, and from P84 `mechanics/PistonRules` and `mechanics/SleepRules`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
     with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
@@ -1369,3 +1369,43 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: `PatchTests` (both chains, one call each); self-tests `vibrations: ...` (group `gameevents`): a dropped
     item and falling sand landing, on stone and on wool; rain filling a cauldron; `destroyBlock` on wheat and on air;
     a bow released, a shield lowered, a mob stopping its bow, and nothing when no item was in use.
+
+## P84-P85. Pistons: tile-entity blocks that may move, and the blocks they destroy
+
+*   **Class**: `net.minecraft.block.BlockPistonBase`. **Transformer**: `asm/PistonTransformer`. **Hooks**:
+    `mechanics/PistonRules`. **Since**: 1.5.0.
+*   **P84** `canPush` (`func_185646_a`): its one `block.hasTileEntity(state)` (Forge's; vanilla's bytes have
+    `block.hasTileEntity()`) becomes the static `PistonRules.tileEntityStopsPiston(block, state)`, which answers the same
+    except for blocks registered with `PistonRules.allowTileEntity`. Village & Pillage's composter is 1.14's (movable,
+    no block entity in vanilla) but keeps a tile entity as a hopper adapter, its level in the state. A registered
+    block's state moves; its tile entity is removed with the block and made anew where it lands (1.12.2's moving
+    piston carries only a state), so only blocks that keep nothing in the tile entity should register.
+*   **P85** `doMove` (`func_176319_a`): its one drop of a destroyed block (`dropBlockAsItemWithChance`, Forge's;
+    vanilla's `dropBlockAsItem`) becomes `PistonRules.destroyedByPiston`, which drops it as before, then on the server
+    posts 1.19's `block_destroy` (while game events are on) and on the client, with a backport of 1.21.5 or later,
+    1.21.5's breaking effects (`playEvent(2001)`, sound and particles), fire excepted.
+*   **Why a patch**: Forge 2847 has no piston event; the refusal and the drop are inside the two methods.
+*   **Fails safe**: a method missing, or not exactly one matching call: that patch is skipped, one log line.
+*   **Tested**: `PatchTests` (both chains); self-tests `pistons: ...` (group `gameevents`): `canPush` for a registered
+    block, an unregistered one and a chest; a sticky piston pushing and pulling the registered block, its level kept
+    and a new tile entity where it lands; the unregistered one stopping the piston; tall grass a piston destroys
+    posting `block_destroy`.
+
+## P86-P87. 1.17's playersSleepingPercentage
+
+*   **Class**: `net.minecraft.world.WorldServer`. **Transformer**: `asm/SleepTransformer`. **Hooks**:
+    `mechanics/SleepRules`. **Since**: 1.5.0.
+*   **P86** `areAllPlayersAsleep` (`func_73056_e`) starts with `if (SleepRules.decides(this)) return
+    SleepRules.enoughDeepSleeping(this);` (one branch, an `F_SAME` frame at the head). `decides` is true in a world
+    with the rule; the answer is 1.17's `SleepStatus`: `max(1, ceil(players * percentage / 100))` of the players that
+    are not spectators lie in bed and have slept long enough (100: everyone, 1.12.2's rule; over 100: never).
+*   **P87** `updateAllPlayersSleepingFlag` (`func_72854_c`), which 1.12.2 calls as a player lies down, gets up, joins or
+    leaves: first line `SleepRules.sleepersChanged(this)`, 1.17's `announceSleepStatus` when the counts changed and
+    someone sleeps or slept: "n/needed players sleeping" or "Sleeping through this night" above each player's hotbar,
+    in the Overworld, except in an unpublished singleplayer world.
+*   **Who it reaches**: worlds with the rule, which Core adds at load while a backport of 1.17 or later is installed
+    (default 100). Others sleep as 1.12.2.
+*   **Fails safe**: a method missing: that patch is skipped, one log line.
+*   **Tested**: `PatchTests` (both chains); self-test `sleep: playersSleepingPercentage (P86, P87)` (group `sleep`):
+    the sleepers needed, 100, 50 and 101 with two players and a spectator, lying down against asleep long enough, and
+    the messages.

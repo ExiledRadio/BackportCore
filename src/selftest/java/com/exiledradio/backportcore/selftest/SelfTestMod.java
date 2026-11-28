@@ -62,8 +62,13 @@ public final class SelfTestMod {
         TestBlocks.doubleSlab = new TestBlocks.Slab.Double();
         TestBlocks.dryStairs = new TestBlocks.Stairs("test_dry_stairs");
         TestBlocks.waterStairs = new TestBlocks.WaterStairs();
+        TestBlocks.bin = new TestBlocks.Bin("test_bin");
+        TestBlocks.lockedBin = new TestBlocks.Bin("test_locked_bin");
         event.getRegistry().registerAll(TestBlocks.optional, TestBlocks.required, TestBlocks.dry, TestBlocks.plant, TestBlocks.legacy,
-                TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs);
+                TestBlocks.slab, TestBlocks.doubleSlab, TestBlocks.dryStairs, TestBlocks.waterStairs, TestBlocks.bin, TestBlocks.lockedBin);
+        net.minecraftforge.fml.common.registry.GameRegistry.registerTileEntity(TestBlocks.BinTile.class,
+                new net.minecraft.util.ResourceLocation(MOD_ID, "test_bin"));
+        com.exiledradio.backportcore.mechanics.PistonRules.allowTileEntity(TestBlocks.bin);
         RequestTests.blocks(event.getRegistry());
         FreezeTests.blocks(event.getRegistry());
     }

@@ -123,6 +123,9 @@ final class PatchTests {
             {"net.minecraft.block.BlockCauldron", "P81", new String[] {"rainFill"}},
             {"net.minecraft.world.World", "P82", new String[] {"blockDestroyed"}},
             {"net.minecraft.entity.EntityLivingBase", "P83", new String[] {"stoppedUsing"}},
+            {"net.minecraft.block.BlockPistonBase", "P84", new String[] {"tileEntityStopsPiston"}},
+            {"net.minecraft.block.BlockPistonBase", "P85", new String[] {"destroyedByPiston"}},
+            {"net.minecraft.world.WorldServer", "P86", new String[] {"decides", "enoughDeepSleeping", "sleepersChanged"}},
     };
 
     private PatchTests() {
@@ -401,6 +404,8 @@ final class PatchTests {
             case "P78": cls = "InventoryPreviewTransformer"; break;
             case "P79": cls = "ElytraLookUpTransformer"; break;
             case "P80": case "P81": case "P82": case "P83": cls = "GameEventSourcesTransformer"; break;
+            case "P84": case "P85": cls = "PistonTransformer"; break;
+            case "P86": case "P87": cls = "SleepTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

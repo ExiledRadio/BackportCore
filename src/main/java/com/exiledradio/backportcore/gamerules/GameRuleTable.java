@@ -171,6 +171,10 @@ public final class GameRuleTable {
         bool("spawnerBlocksEnabled", "spawner_blocks_work", Category.MISC, true, TR);
         add(new Rule("disableRaids", "raids", Category.MOBS, false, "false", true, "gamerule.minecraft.raids", 0, 0, new String[] {VP}));
         bool("doTraderSpawning", "spawn_wandering_traders", Category.SPAWNING, true, VP);
+        // 1.15.2's (Village & Pillage adds it and reads it).
+        bool("doPatrolSpawning", "spawn_patrols", Category.SPAWNING, true, VP);
+        // 1.17's (Core adds it with a backport of 1.17: mechanics/SleepRules).
+        number("playersSleepingPercentage", "players_sleeping_percentage", Category.PLAYER, 100, 0, Integer.MAX_VALUE, CC);
     }
 
     private GameRuleTable() {
