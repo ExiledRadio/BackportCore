@@ -168,9 +168,12 @@ final class ClientPresentationTests {
                         if (ClientGameRulesTests.inWorldDone) {
                             ClientEffectsTests.tick(mc);
                         }
+                        if (ClientEffectsTests.done) {
+                            ClientPreviewTests.tick(mc);
+                        }
                     }
                     if (mc.world != null && mc.player != null && ++this.worldTicks >= 60 && ClientLocateTests.done() && ClientCameraTests.done && ClientCrouchTests.done && ClientTickTests.done
-                            && ClientSwingTests.done && ClientLightTests.done && ClientGameRulesTests.inWorldDone && ClientEffectsTests.done && this.bookChecked(mc)) {
+                            && ClientSwingTests.done && ClientLightTests.done && ClientGameRulesTests.inWorldDone && ClientEffectsTests.done && ClientPreviewTests.done && this.bookChecked(mc)) {
                         mc.gameSettings.showDebugInfo = false;
                         inWorld(mc);
                         finishWorld(mc);
