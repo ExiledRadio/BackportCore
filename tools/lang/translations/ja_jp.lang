@@ -189,3 +189,5 @@ backportcore.general.structure.blacklist=構造物のブラックリスト
 config.backportcore.structure.tooltip=現在のゲームのデータファイル（data/<namespace>/worldgen）から読み込む構造物。Mod の JAR と config/backportcore/structures にあるもの。
 backportcore.general.structure.datastructures.tooltip=現在のデータファイルが記述するジグソー構造物を生成します: Mod の JAR、または config/backportcore/structures 内の構造物パック（データパックと同じ構成のフォルダー、.zip、.jar）にある data/<namespace>/worldgen/structure_set の各構造物セット。オフ: どれも生成されません。\n\n変更後に生成されるチャンクだけが変わります。次回のゲーム起動時に反映されます。
 backportcore.general.structure.blacklist.tooltip=生成しない構造物または構造物セットの ID。例: 'examplemod:tower' や 'examplemod:towers'。'examplemod:*' でその名前空間のすべてを除外します。\n\n次回のゲーム起動時に反映されます。
+backportcore.general.presentation.lookversion=見た目のバージョン
+backportcore.general.presentation.lookversion.tooltip=Modパック向け：そのバージョンのバックポートが入っていなくても、ゲームの見た目をそのバージョンにします（例：1.16、26.4）。そのバージョンまでの Backport Core 自身の各バージョンの要素（パノラマ、メニュー、設定画面、スプラッシュ、チャット、F3）を使います。コンテンツはこれまで通り、導入済みのバックポートからのみ追加されます。より新しいバックポートが導入されていればそちらの見た目になり、「最新の見た目」と「見た目と操作感」のスイッチも引き続き有効です。空欄：なし。\n\nクライアントのみ。サーバーでは無視されます。次回のゲーム起動時に反映されます。

@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=显示此玩家的聊天消息。
 gui.player_options.mute.feedback=%s发送的聊天消息会被隐藏
 gui.player_options.unmute.feedback=%s的聊天消息将会被显示
 gui.player_options.status.muted=已屏蔽消息 - %s
+backportcore.general.presentation.lookversion=外观版本
+backportcore.general.presentation.lookversion.tooltip=供整合包使用：即使未安装该版本的移植模组，游戏也呈现该版本的外观，例如 1.16 或 26.4：使用 Backport Core 自带的、直到该版本为止各版本的部分（全景图、菜单、选项界面、闪烁标语、聊天、F3）。内容仍只来自已安装的移植模组。已安装更新的移植模组时仍以其外观为准，“最新外观”和“外观与体验”开关仍然生效。留空：无。\n\n仅客户端；服务器会忽略此项。下次启动游戏时生效。

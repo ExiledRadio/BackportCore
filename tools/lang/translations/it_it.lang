@@ -191,3 +191,5 @@ backportcore.general.structure.datastructures.tooltip=Genera le strutture a puzz
 backportcore.general.structure.blacklist.tooltip=ID di strutture o insiemi di strutture che non vengono generati, come 'examplemod:tower' o 'examplemod:towers'; 'examplemod:*' esclude tutti quelli di quel namespace.\n\nHa effetto al prossimo avvio del gioco.
 # 26.3's Italian labels both priorities in the first label and leaves this one blank (a zero-width space).
 jigsaw_block.placement_priority=​
+backportcore.general.presentation.lookversion=Versione dell'aspetto
+backportcore.general.presentation.lookversion.tooltip=Per i modpack: una versione di cui il gioco assume l'aspetto anche senza un suo backport installato, come 1.16 o 26.4: i pezzi propri di Backport Core di ogni versione fino a essa (panorama, menu, schermate delle opzioni, frasi, chat, F3). I contenuti vengono sempre solo dai backport installati. Un backport installato più recente determina comunque l'aspetto, e «Aspetto fino a» e gli interruttori di Aspetto restano validi. Vuoto: nessuna.\n\nSolo client; un server lo ignora. Ha effetto al prossimo avvio del gioco.

@@ -189,3 +189,5 @@ backportcore.general.structure.blacklist=구조물 차단 목록
 config.backportcore.structure.tooltip=현재 게임의 데이터 파일(data/<namespace>/worldgen)에서 읽는 구조물로, 모드 JAR와 config/backportcore/structures에 있는 것입니다.
 backportcore.general.structure.datastructures.tooltip=현재 데이터 파일이 설명하는 직소 구조물을 생성합니다: 모드 JAR 또는 config/backportcore/structures 안의 구조물 팩(데이터 팩처럼 구성된 폴더, .zip, .jar)에 있는 data/<namespace>/worldgen/structure_set의 모든 구조물 세트. 끄면 어느 것도 생성되지 않습니다.\n\n변경 후 생성되는 청크만 바뀝니다. 다음에 게임을 시작할 때 적용됩니다.
 backportcore.general.structure.blacklist.tooltip=생성하지 않을 구조물 또는 구조물 세트 ID입니다. 예: 'examplemod:tower' 또는 'examplemod:towers'. 'examplemod:*'는 그 네임스페이스의 전부를 제외합니다.\n\n다음에 게임을 시작할 때 적용됩니다.
+backportcore.general.presentation.lookversion=외관 버전
+backportcore.general.presentation.lookversion.tooltip=모드팩용: 해당 버전의 백포트가 설치되어 있지 않아도 게임이 그 버전처럼 보이게 합니다(예: 1.16, 26.4). 그 버전까지 각 버전의 Backport Core 자체 요소(파노라마, 메뉴, 설정 화면, 스플래시, 채팅, F3)를 사용합니다. 콘텐츠는 여전히 설치된 백포트에서만 추가됩니다. 더 새로운 백포트가 설치되어 있으면 그 외관을 따르며, '최신 외관'과 '외관과 느낌' 스위치도 계속 적용됩니다. 비어 있음: 없음.\n\n클라이언트 전용이며 서버는 무시합니다. 다음에 게임을 시작할 때 적용됩니다.

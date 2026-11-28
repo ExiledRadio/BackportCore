@@ -38,6 +38,37 @@ final class LookSwitchTests {
             check("look: a value that is not a version reads as Latest", Presentation.resolveLook(v("1.20"), true, "nonsense").equals(v("1.20"))
                     && Presentation.lookCap("latest") == null && Presentation.lookCap(" ") == null);
 
+            // An author's look (1.5.0): requests and the Look Version setting, the newest wins; a server keeps the installed.
+            String lookVersion = CoreConfig.presentation.lookVersion;
+            try {
+                Presentation.clearRequestedLooksForTests();
+                CoreConfig.presentation.lookVersion = "";
+                check("author look: none asked", Presentation.requestedLook() == null);
+                Presentation.requestLook("1.16");
+                Presentation.requestLook("1.20");
+                check("author look: the newest request", v("1.20").equals(Presentation.requestedLook()));
+                CoreConfig.presentation.lookVersion = "26.4";
+                check("author look: a newer Look Version setting wins", v("26.4").equals(Presentation.requestedLook()));
+                CoreConfig.presentation.lookVersion = "1.14";
+                check("author look: an older setting leaves the newest request", v("1.20").equals(Presentation.requestedLook()));
+                CoreConfig.presentation.lookVersion = "1.12.2";
+                Presentation.clearRequestedLooksForTests();
+                check("author look: 1.12.2 or a non-version asks nothing", Presentation.requestedLook() == null);
+                boolean refused = false;
+                try {
+                    Presentation.requestLook("1.12");
+                } catch (IllegalArgumentException e) {
+                    refused = true;
+                }
+                check("author look: a request before 1.13 is refused", refused);
+                Presentation.requestLook("26.4");
+                check("author look: a dedicated server keeps the newest installed",
+                        Presentation.lookTop().equals(Presentation.installedNewest()) && Presentation.newest().equals(Presentation.installedNewest()));
+            } finally {
+                Presentation.clearRequestedLooksForTests();
+                CoreConfig.presentation.lookVersion = lookVersion;
+            }
+
             check("look: assets by path", LookArea.ofAsset("textures/gui/title/minecraft.png") == LookArea.TITLE
                     && LookArea.ofAsset("textures/gui/title/mojangstudios.png") == LookArea.STARTUP
                     && LookArea.ofAsset("textures/gui/sprites/toast/now_playing.png") == LookArea.TOASTS

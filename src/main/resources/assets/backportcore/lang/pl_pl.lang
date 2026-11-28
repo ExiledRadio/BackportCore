@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=Pokaż wiadomości na czacie od tego gracza.
 gui.player_options.mute.feedback=Wiadomości pisane przez gracza %s będą ukrywane
 gui.player_options.unmute.feedback=Wiadomości pisane przez gracza %s będą pokazywane
 gui.player_options.status.muted=Wyciszony – %s
+backportcore.general.presentation.lookversion=Wersja wyglądu
+backportcore.general.presentation.lookversion.tooltip=Dla modpacków: wersja, na którą gra wygląda nawet bez zainstalowanego backportu tej wersji, np. 1.16 lub 26.4: własne elementy Backport Core z każdej wersji aż do niej (panorama, menu, ekrany opcji, napisy powitalne, czat, F3). Zawartość nadal pochodzi tylko z zainstalowanych backportów. Nowszy zainstalowany backport nadal ustala wygląd, a Najnowszy wygląd i przełączniki Wyglądu i stylu nadal obowiązują. Puste: brak.\n\nTylko klient; serwer to ignoruje. Działa od następnego uruchomienia gry.

@@ -1223,3 +1223,5 @@ gui.player_options.unmute.tooltip=Bu oyuncunun sohbet mesajlarını göster.
 gui.player_options.mute.feedback=%s tarafından gönderilen sohbet mesajları gizlenecek
 gui.player_options.unmute.feedback=%s tarafından gönderilen sohbet mesajları gösterilecek
 gui.player_options.status.muted=Susturulu - %s
+backportcore.general.presentation.lookversion=Görünüm sürümü
+backportcore.general.presentation.lookversion.tooltip=Mod paketleri için: o sürümün backport'u kurulu olmasa bile oyunun benzeyeceği sürüm, örneğin 1.16 veya 26.4: o sürüme kadar her sürümün Backport Core'a ait parçaları (panorama, menüler, seçenek ekranları, açılış yazıları, sohbet, F3). İçerik yine yalnızca kurulu backport'lardan gelir. Daha yeni kurulu bir backport görünümü yine belirler; En yeni görünüm ile Görünüm ve His anahtarları geçerli olmaya devam eder. Boş: yok.\n\nYalnızca istemci; sunucu bunu yok sayar. Oyunun bir sonraki açılışında etkili olur.

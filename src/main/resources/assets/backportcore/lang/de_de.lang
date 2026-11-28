@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=Chatnachrichten dieses Spielers wieder anzeige
 gui.player_options.mute.feedback=Chatnachrichten von %s werden nun ausgeblendet
 gui.player_options.unmute.feedback=Chatnachrichten von %s werden nun wieder angezeigt
 gui.player_options.status.muted=Stummgeschaltet – %s
+backportcore.general.presentation.lookversion=Erscheinungsbild-Version
+backportcore.general.presentation.lookversion.tooltip=Für Modpacks: eine Version, wie die das Spiel aussieht, auch ohne installierten Backport dieser Version, etwa 1.16 oder 26.4: die eigenen Teile von Backport Core jeder Version bis dahin (Panorama, Menüs, Optionsbildschirme, Sprüche, Chat, F3). Inhalte kommen weiterhin nur von installierten Backports. Ein neuerer installierter Backport bestimmt weiterhin das Aussehen, und „Erscheinungsbild bis“ sowie die Schalter von Erscheinungsbild gelten weiter. Leer: keine.\n\nNur Client; ein Server ignoriert es. Wirkt beim nächsten Spielstart.

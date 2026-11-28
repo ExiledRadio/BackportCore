@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=이 플레이어가 보낸 대화 메시지를
 gui.player_options.mute.feedback=%s이(가) 보낸 대화 메시지를 숨깁니다
 gui.player_options.unmute.feedback=%s이(가) 보낸 대화 메시지를 표시합니다
 gui.player_options.status.muted=대화 메시지 숨겨짐 - %s
+backportcore.general.presentation.lookversion=외관 버전
+backportcore.general.presentation.lookversion.tooltip=모드팩용: 해당 버전의 백포트가 설치되어 있지 않아도 게임이 그 버전처럼 보이게 합니다(예: 1.16, 26.4). 그 버전까지 각 버전의 Backport Core 자체 요소(파노라마, 메뉴, 설정 화면, 스플래시, 채팅, F3)를 사용합니다. 콘텐츠는 여전히 설치된 백포트에서만 추가됩니다. 더 새로운 백포트가 설치되어 있으면 그 외관을 따르며, '최신 외관'과 '외관과 느낌' 스위치도 계속 적용됩니다. 비어 있음: 없음.\n\n클라이언트 전용이며 서버는 무시합니다. 다음에 게임을 시작할 때 적용됩니다.

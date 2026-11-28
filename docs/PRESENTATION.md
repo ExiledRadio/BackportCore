@@ -35,6 +35,21 @@ and Feel** (`lookAndFeel.newerLook`) or that part's own switch is off. `Presenta
 are the whole look's (the master switch and Newest Look); `installedNewest()` is the newest installed version whatever
 the switches, for content. A dedicated server ignores the switches: each player chooses their own look.
 
+**An author's look (Core 1.5.0).** A mod or modpack can make the game look like a version with no backport of it
+installed: `Presentation.requestLook("1.20")` from pre-init or init, or Core's **Look Version** setting
+(`presentation.lookVersion`, for modpacks). The look then reaches that version from Core's own pieces of each version
+(`core(version)`: panorama, menus, options screens, splashes, chat, F3 and the rest), as if a backport of it were
+installed; content still comes only from installed backports (`installedNewest()` is unchanged). The newest request or
+setting wins, a newer installed backport still sets the look, and Newest Look and the switches still apply on top
+(`lookTop()` is the version the look can reach, `requestedLook()` what authors asked for). A dedicated server ignores it.
+
+```java
+@Mod.EventHandler
+public void preInit(FMLPreInitializationEvent event) {
+    com.exiledradio.backportcore.presentation.Presentation.requestLook("1.16"); // the game looks like 1.16
+}
+```
+
 | `LookArea` | Switch | What resolves by it |
 |---|---|---|
 | `LOADING` | `loadingScreens` | `loadingRevision()`: the world-loading screen, the backports' drawers too |

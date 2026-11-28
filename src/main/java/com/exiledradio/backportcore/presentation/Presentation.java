@@ -573,6 +573,60 @@ public final class Presentation {
         return VERSIONS.isEmpty() ? GameVersion.BASE : VERSIONS.lastKey();
     }
 
+    private static final java.util.TreeSet<GameVersion> REQUESTED_LOOKS = new java.util.TreeSet<GameVersion>();
+
+    /**
+     * For mod and modpack authors: the game looks like {@code version} even when no backport of it is installed, from
+     * Backport Core's own pieces of each version up to it ({@link #core(String)}: the panorama, menus, options screens,
+     * splashes, chat, F3 and the rest of each version's look). Content still comes only from the installed backports
+     * ({@link #installedNewest()} is unchanged). The newest of every request and Core's Look Version setting wins;
+     * an installed backport newer than that still sets the look, and a player's Newest Look and Look &amp; Feel switches
+     * still apply. Call it from pre-init or init; a dedicated server ignores it. Since Core 1.5.0.
+     *
+     * @param version a release from 1.13 on ("1.16", "1.20.5", "26.4")
+     */
+    public static synchronized void requestLook(String version) {
+        GameVersion v = GameVersion.parse(version);
+        if (!v.isAtLeast("1.13")) {
+            throw new IllegalArgumentException("a look from 1.13 on, not " + version);
+        }
+        REQUESTED_LOOKS.add(v);
+        ModContainer mod = Loader.instance().activeModContainer();
+        LOG.info("Presentation: {}'s look requested by {}", v, mod == null ? "unknown" : mod.getModId());
+    }
+
+    /**
+     * @return the look authors asked for ({@link #requestLook(String)} and Core's Look Version setting), or null when
+     *         none did
+     */
+    @Nullable
+    public static synchronized GameVersion requestedLook() {
+        GameVersion top = REQUESTED_LOOKS.isEmpty() ? null : REQUESTED_LOOKS.last();
+        GameVersion set = lookCap(com.exiledradio.backportcore.CoreConfig.presentation.lookVersion);
+        if (set != null && set.isAtLeast("1.13") && (top == null || set.compareTo(top) > 0)) {
+            top = set;
+        }
+        return top;
+    }
+
+    /**
+     * @return the newest version the look can reach: the newest installed backport's, or an author's requested look
+     *         when that is newer ({@link #requestLook(String)}); on a dedicated server, the newest installed
+     */
+    public static GameVersion lookTop() {
+        GameVersion installed = installedNewest();
+        if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isServer()) {
+            return installed;
+        }
+        GameVersion asked = requestedLook();
+        return asked != null && asked.compareTo(installed) > 0 ? asked : installed;
+    }
+
+    /** For the self-tests: forgets every {@link #requestLook(String)} call. */
+    public static synchronized void clearRequestedLooksForTests() {
+        REQUESTED_LOOKS.clear();
+    }
+
     /**
      * @return the version the game looks like: the newest installed version, stopped at Core's "Newest look" setting,
      *         or 1.12.2 while "Use the newer look and feel" is off (a dedicated server ignores both). Asked for a look;
@@ -603,7 +657,7 @@ public final class Presentation {
      *         same version
      */
     public static synchronized List<Contribution> installed() {
-        GameVersion top = installedNewest();
+        GameVersion top = lookTop();
         java.util.TreeSet<GameVersion> all = new java.util.TreeSet<GameVersion>(VERSIONS.keySet());
         all.addAll(CORE.keySet());
         List<Contribution> out = new ArrayList<Contribution>();
@@ -636,7 +690,7 @@ public final class Presentation {
     }
 
     private static GameVersion look(@Nullable LookArea area) {
-        GameVersion installed = installedNewest();
+        GameVersion installed = lookTop();
         if (net.minecraftforge.fml.common.FMLCommonHandler.instance().getSide().isServer()) {
             return installed;
         }

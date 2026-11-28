@@ -216,6 +216,29 @@ final class ClientLookSwitchTests {
         check("client look: back on, 1.16's look again", CoreConfig.lookAndFeel.newerLook && Presentation.newest().equals(GameVersion.parse("1.16"))
                 && Presentation.loadingRevision() == LoadingRevision.DATA_1_16 && PanoramaRenderer.modern() && VanillaRevisions.whiteButtonText()
                 && !Presentation.optionsOn(OptionScreen.CHAT).isEmpty() && !com.exiledradio.backportcore.presentation.client.DebugText.steps().steps().isEmpty());
+        authorLook();
+    }
+
+    /** An author's look (1.5.0): past the newest installed (1.16) from Core's own pieces; Newest Look still stops it. */
+    private static void authorLook() {
+        String cap = CoreConfig.lookAndFeel.newestLook;
+        try {
+            Presentation.clearRequestedLooksForTests();
+            Presentation.requestLook("1.20");
+            boolean core119 = false;
+            for (com.exiledradio.backportcore.presentation.Contribution c : Presentation.installed()) {
+                core119 |= c.version().equals(GameVersion.parse("1.19.3"));
+            }
+            check("client look: an author's 1.20 look reaches past the installed 1.16", Presentation.newest().equals(GameVersion.parse("1.20"))
+                    && Presentation.lookTop().equals(GameVersion.parse("1.20")) && Presentation.installedNewest().equals(GameVersion.parse("1.16")));
+            check("client look: an author's look uses Core's own pieces up to it (1.19.3's)", core119);
+            CoreConfig.lookAndFeel.newestLook = "1.14";
+            check("client look: Newest Look still stops an author's look", Presentation.newest().equals(GameVersion.parse("1.14")));
+        } finally {
+            CoreConfig.lookAndFeel.newestLook = cap;
+            Presentation.clearRequestedLooksForTests();
+        }
+        check("client look: without the request, 1.16's again", Presentation.newest().equals(GameVersion.parse("1.16")));
     }
 
     private static void loadingOff(Minecraft mc) {

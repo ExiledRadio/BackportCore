@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=Chatberichten van deze speler tonen.
 gui.player_options.mute.feedback=Chatberichten van %s worden verborgen
 gui.player_options.unmute.feedback=Chatberichten van %s worden getoond
 gui.player_options.status.muted=Gedempt - %s
+backportcore.general.presentation.lookversion=Uiterlijkversie
+backportcore.general.presentation.lookversion.tooltip=Voor modpacks: een versie waarop het spel lijkt, ook zonder geïnstalleerde backport van die versie, zoals 1.16 of 26.4: de eigen onderdelen van Backport Core van elke versie tot en met die versie (panorama, menu's, optieschermen, splashteksten, chat, F3). Inhoud komt nog steeds alleen van geïnstalleerde backports. Een nieuwere geïnstalleerde backport bepaalt nog steeds het uiterlijk, en Nieuwste uiterlijk en de schakelaars van Uiterlijk en gevoel blijven gelden. Leeg: geen.\n\nAlleen client; een server negeert het. Werkt bij de volgende keer dat het spel start.

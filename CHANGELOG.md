@@ -2,6 +2,9 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   An author's look: `Presentation.requestLook(version)` and the Look Version setting (`presentation.lookVersion`) make
+    the game look like a version with no backport of it installed, from Core's own pieces of each version up to it
+    (docs/PRESENTATION.md). Content still comes only from installed backports.
 *   Faster idle servers: spawn rules a backport registers are checked before the natural spawner builds the mob, as
     current Java does (`worldgen.SpawnPrechecks`, patch P90). Fish and glow squid were built and thrown away for most
     spawn attempts in water. With Update Aquatic and Caves & Cliffs Backport registering their fish and glow squid, the

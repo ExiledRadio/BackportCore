@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=Mostra i messaggi da questo giocatore.
 gui.player_options.mute.feedback=I messaggi da %s sono ora nascosti
 gui.player_options.unmute.feedback=I messaggi da %s sono ora mostrati
 gui.player_options.status.muted=Silenziati — %s
+backportcore.general.presentation.lookversion=Versione dell'aspetto
+backportcore.general.presentation.lookversion.tooltip=Per i modpack: una versione di cui il gioco assume l'aspetto anche senza un suo backport installato, come 1.16 o 26.4: i pezzi propri di Backport Core di ogni versione fino a essa (panorama, menu, schermate delle opzioni, frasi, chat, F3). I contenuti vengono sempre solo dai backport installati. Un backport installato più recente determina comunque l'aspetto, e «Aspetto fino a» e gli interruttori di Aspetto restano validi. Vuoto: nessuna.\n\nSolo client; un server lo ignora. Ha effetto al prossimo avvio del gioco.

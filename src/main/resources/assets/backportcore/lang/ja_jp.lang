@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=このプレイヤーからのチャットメ�
 gui.player_options.mute.feedback=%sからのチャットメッセージは非表示になります
 gui.player_options.unmute.feedback=%sからのチャットは表示されるようになります
 gui.player_options.status.muted=ミュート済み - %s
+backportcore.general.presentation.lookversion=見た目のバージョン
+backportcore.general.presentation.lookversion.tooltip=Modパック向け：そのバージョンのバックポートが入っていなくても、ゲームの見た目をそのバージョンにします（例：1.16、26.4）。そのバージョンまでの Backport Core 自身の各バージョンの要素（パノラマ、メニュー、設定画面、スプラッシュ、チャット、F3）を使います。コンテンツはこれまで通り、導入済みのバックポートからのみ追加されます。より新しいバックポートが導入されていればそちらの見た目になり、「最新の見た目」と「見た目と操作感」のスイッチも引き続き有効です。空欄：なし。\n\nクライアントのみ。サーバーでは無視されます。次回のゲーム起動時に反映されます。

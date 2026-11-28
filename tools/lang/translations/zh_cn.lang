@@ -189,3 +189,5 @@ backportcore.general.structure.blacklist=结构黑名单
 config.backportcore.structure.tooltip=从当今游戏的数据文件（data/<namespace>/worldgen）读取的结构，位于模组 JAR 和 config/backportcore/structures 中。
 backportcore.general.structure.datastructures.tooltip=生成当今数据文件所描述的拼图结构：模组 JAR 中，或 config/backportcore/structures 内结构包（按数据包结构排列的文件夹、.zip 或 .jar）中 data/<namespace>/worldgen/structure_set 的每个结构集。关闭：它们都不会生成。\n\n只影响更改后生成的区块。下次启动游戏时生效。
 backportcore.general.structure.blacklist.tooltip=不生成的结构或结构集 ID，例如 'examplemod:tower' 或 'examplemod:towers'；'examplemod:*' 排除该命名空间的全部结构。\n\n下次启动游戏时生效。
+backportcore.general.presentation.lookversion=外观版本
+backportcore.general.presentation.lookversion.tooltip=供整合包使用：即使未安装该版本的移植模组，游戏也呈现该版本的外观，例如 1.16 或 26.4：使用 Backport Core 自带的、直到该版本为止各版本的部分（全景图、菜单、选项界面、闪烁标语、聊天、F3）。内容仍只来自已安装的移植模组。已安装更新的移植模组时仍以其外观为准，“最新外观”和“外观与体验”开关仍然生效。留空：无。\n\n仅客户端；服务器会忽略此项。下次启动游戏时生效。

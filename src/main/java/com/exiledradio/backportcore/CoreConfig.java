@@ -218,6 +218,18 @@ public final class CoreConfig {
         })
         @Setting.Client
         public String giveFeedbackLink = "https://discord.gg/kxQvMDJBTN";
+
+        @Config.Comment({
+                "For modpacks: a version the game looks like even without a backport of it installed, such as 1.16",
+                "or 26.4: Backport Core's own pieces of each version up to it (panorama, menus, options screens,",
+                "splashes, chat, F3). Content still comes only from installed backports. A newer installed backport",
+                "still sets the look, and Newest Look and the Look & Feel switches still apply. Empty: none.",
+                "",
+                "Client only; a server ignores it. Takes effect the next time the game starts."
+        })
+        @Setting.Client
+        @Config.RequiresMcRestart
+        public String lookVersion = "";
     }
 
     /**

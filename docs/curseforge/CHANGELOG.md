@@ -1,5 +1,6 @@
 # 1.5.0
 
+*   **For modpack and mod authors: pick a version look.** The Look Version setting (or `Presentation.requestLook` in code) makes the game look like that version, such as 1.16 or 26.4, even with no backport of it installed: its panorama, menus, options screens, splashes, chat and F3. Players can still turn the look down in Look & Feel.
 *   **The inventory key opens a chest boat's chest** while you ride it, as in 1.19.
 *   **How Did We Get Here?** asks for the newer effects the installed backports add (Darkness, Conduit Power, Dolphin's Grace, Slow Falling and the rest), as today's game does, and only for those: the advancement stays possible whichever backports you have.
 *   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.

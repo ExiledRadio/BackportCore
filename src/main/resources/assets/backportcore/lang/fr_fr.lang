@@ -1224,3 +1224,5 @@ gui.player_options.unmute.tooltip=Afficher les messages de ce joueur dans le tch
 gui.player_options.mute.feedback=Les messages de %s seront masqués dans le tchat
 gui.player_options.unmute.feedback=Les messages de %s seront affichés dans le tchat
 gui.player_options.status.muted=En sourdine - %s
+backportcore.general.presentation.lookversion=Version de l'apparence
+backportcore.general.presentation.lookversion.tooltip=Pour les modpacks : une version dont le jeu prend l'apparence même sans backport de cette version installé, comme 1.16 ou 26.4 : les éléments propres à Backport Core de chaque version jusqu'à elle (panorama, menus, écrans d'options, phrases d'accueil, chat, F3). Le contenu vient toujours uniquement des backports installés. Un backport installé plus récent fixe toujours l'apparence, et « Apparence jusqu'à » et les interrupteurs d'Apparence s'appliquent toujours. Vide : aucune.\n\nClient uniquement ; un serveur l'ignore. Prend effet au prochain démarrage du jeu.
