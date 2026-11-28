@@ -46,6 +46,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             QuarkCandlesTransformer.class.getName(),
             MenuFramerateTransformer.class.getName(),
             SlotHighlightTransformer.class.getName(),
+            InventoryPreviewTransformer.class.getName(),
             SunriseTransformer.class.getName(),
             CloudTimeTransformer.class.getName(),
             CloudDistanceTransformer.class.getName(),

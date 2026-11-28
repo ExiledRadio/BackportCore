@@ -1299,3 +1299,22 @@ or passes an existing constant through a hook of the same type.
     hook with the same arguments. With a 26.4 backport installed and the mob silent, the hook drops the sound (a broken
     door still sends its block particles); otherwise it calls the world as vanilla does.
 *   **Fails safe**: a method missing or a different number of sound calls: that class is left as 1.12.2's, one log line.
+
+## P78. The inventory's player preview clipped to its box (1.20.2)
+
+*   **Classes**: `net.minecraft.client.gui.inventory.GuiInventory` and `GuiContainerCreative`
+    `drawGuiContainerBackgroundLayer(FII)V`. **Transformer**: `asm/InventoryPreviewTransformer`. **Hooks**:
+    `PresentationHooks.inventoryPreview`, `creativePreview` (`presentation/client/InventoryPreview`). **Since**: 1.5.0.
+*   **Vanilla change**: 1.20.2 (23w31a, `InventoryScreen.renderEntityInInventoryFollowsMouse`) draws the player in a box
+    and scissors it to the box: 26..75 by 8..78 at scale 30 in the survival inventory, 73..105 by 6..49 at scale 20 in
+    the creative Inventory tab (26.3's numbers). The model is centered on the box, its feet half its bounding box plus
+    0.0625 below the center, and looks toward the cursor from the center. 1.12.2 drew it from its feet at `j + 75`
+    (`j + 45` in creative) with nothing clipped, so an elytra-flying or riding player covered the armor slots and the hotbar.
+*   **Why a patch**: the call sits inside `drawGuiContainerBackgroundLayer` with the background texture; no event comes
+    between the two, and the placement needs the call's own arguments.
+*   **What changes**: the one `GuiInventory.drawEntityOnScreen` call of each method becomes a static call of the hook with
+    the same arguments. From 1.20.2 on (the Inventory look area), the hook works the screen's left, top and mouse back out
+    of them, sets the scissor to the box at the GUI scale (intersected with a scissor already on), and calls vanilla's
+    `drawEntityOnScreen` translated to the box's center; otherwise it calls vanilla's unchanged. Other mods' calls of
+    `drawEntityOnScreen` are left alone.
+*   **Fails safe**: a method missing or not exactly one call: that screen is left as 1.12.2's, one log line.

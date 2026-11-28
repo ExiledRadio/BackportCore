@@ -457,6 +457,18 @@ public final class PresentationHooks {
         InventoryEffects.draw(gui);
     }
 
+    // ---- Since Core 1.5.0: P78 ----
+
+    /** P78: {@code GuiInventory.drawGuiContainerBackgroundLayer}'s {@code drawEntityOnScreen}, the same arguments. */
+    public static void inventoryPreview(int posX, int posY, int scale, float mouseX, float mouseY, net.minecraft.entity.EntityLivingBase entity) {
+        InventoryPreview.survival(posX, posY, scale, mouseX, mouseY, entity);
+    }
+
+    /** P78: {@code GuiContainerCreative.drawGuiContainerBackgroundLayer}'s {@code drawEntityOnScreen}, the same arguments. */
+    public static void creativePreview(int posX, int posY, int scale, float mouseX, float mouseY, net.minecraft.entity.EntityLivingBase entity) {
+        InventoryPreview.creative(posX, posY, scale, mouseX, mouseY, entity);
+    }
+
     /** P58: {@code GuiRecipeBook.render}'s {@code searchBar.drawTextBox()}, with 1.16's hint and 1.20.5's position. */
     public static void recipeSearchBox(net.minecraft.client.gui.GuiTextField box) {
         RecipeBookLook.drawSearchBox(box);

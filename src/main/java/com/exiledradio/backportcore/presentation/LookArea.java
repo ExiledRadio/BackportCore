@@ -35,9 +35,9 @@ public enum LookArea {
     /**
      * Inventory and creative tabs: 1.19.3's creative tabs (creative.client.ModernTabs), the creative order (26.3's,
      * creative.client.ModernOrder), slot highlights, the active effects beside the inventory (1.18, 1.21.11), the
-     * recipe book's search box (1.16, 1.20.5) and the container textures.
+     * recipe book's search box (1.16, 1.20.5), the player preview clipped to its box (1.20.2) and the container textures.
      */
-    INVENTORY("inventory", "1.16", "1.18", "1.19.3", "1.20.5", "1.21.2", "1.21.11", "26.3", "26.4"),
+    INVENTORY("inventory", "1.16", "1.18", "1.19.3", "1.20.2", "1.20.5", "1.21.2", "1.21.11", "26.3", "26.4"),
     /** Sounds and music: the menu music, the in-game music, the music options. */
     MUSIC("music", "1.14", "1.21.6"),
     /** Sky, fog, clouds and light: each version's fog, sky color, clouds and sunrise steps, and 26.1's lightmap. */

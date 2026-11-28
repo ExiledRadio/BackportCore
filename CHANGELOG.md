@@ -82,6 +82,10 @@ In progress: see docs/PLAN_1_5_0.md.
     that was whole chunks of sea floor brighter or darker than the rest at night, and see-through looking ice. Client
     test `ClientLightTests`; in a Showcase copy, flights over warm, frozen and plain oceans went from 9 and 5 such
     chunks to none.
+*   1.20.2's player preview in the inventory (P78, `presentation/client/InventoryPreview`, Inventory look area): the
+    player in the survival inventory and the creative Inventory tab is centered on its black box and clipped to it, so
+    an elytra-flying or riding player no longer covers the armor slots and the hotbar. Off with the Inventory switch
+    (or before 1.20.2): 1.12.2's preview.
 *   Pause menu: other mods' buttons that overlap Core's layout (1.12.2's free row, now the icon row or Give Feedback
     row) move below it (`MenuScreens.onInitLast`, LOWEST priority, so buttons added after Core's layout are moved too;
     `movedForeign` for the client self-test).

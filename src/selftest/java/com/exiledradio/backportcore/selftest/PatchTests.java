@@ -115,6 +115,8 @@ final class PatchTests {
             {"net.minecraft.client.renderer.RenderItem", "P74", new String[] {"glintTime*2", "glintColor*2"}},
             {"net.minecraft.client.renderer.entity.layers.LayerArmorBase", "P75", new String[] {"glintTicks", "glintComponent*3"}},
             {"net.minecraft.client.Minecraft", "P76", new String[] {"pickedBlock*2"}},
+            {"net.minecraft.client.gui.inventory.GuiInventory", "P78", new String[] {"inventoryPreview"}},
+            {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P78", new String[] {"creativePreview"}},
     };
 
     private PatchTests() {
@@ -251,7 +253,7 @@ final class PatchTests {
                     }
                     byte[] raw = readAll(zip.getInputStream(entry));
                     byte[] out = transformer((String) c[1]).transform(name, name, raw);
-                    if (name.endsWith(".GuiContainerCreative")) {
+                    if ("P47".equals(c[1]) && name.endsWith(".GuiContainerCreative")) {
                         // Forge pages the creative tabs (Arrays.copyOfRange, the tab count); the SRG jar is vanilla's,
                         // which has neither. The patch must leave it alone there; the dev chain above checks the patch.
                         check("SRG P47 on unpaged GuiContainerCreative: left alone (Forge's paging missing)", out == raw, Asm.state("P47"));
@@ -390,6 +392,7 @@ final class PatchTests {
             case "P57": case "P58": case "P59": case "P60": cls = "ScreenPatchesTransformer"; break;
             case "P65": cls = "LightmapTransformer"; break;
             case "P73": case "P74": case "P75": case "P76": cls = "LookVersionsTransformer"; break;
+            case "P78": cls = "InventoryPreviewTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

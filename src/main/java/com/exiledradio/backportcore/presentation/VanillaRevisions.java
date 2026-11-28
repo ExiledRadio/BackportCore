@@ -576,6 +576,16 @@ public final class VanillaRevisions {
         return Presentation.isAtLeast(LookArea.INVENTORY, "1.21.11");
     }
 
+    /**
+     * 1.20.2 (23w31a, {@code InventoryScreen.renderEntityInInventoryFollowsMouse}): the player in the survival and
+     * creative inventories is drawn in a box (26..75 by 8..78, 73..105 by 6..49 in the creative Inventory tab) and
+     * clipped to it, centered on the box by half its bounding box (plus 0.0625), so an elytra, swimming or riding pose
+     * stays inside the black frame. 1.12.2 drew it from its feet with nothing clipped.
+     */
+    public static boolean inventoryPreviewClipped() {
+        return Presentation.isAtLeast(LookArea.INVENTORY, "1.20.2");
+    }
+
     /** 1.16 ({@code RecipeBookComponent.SEARCH_HINT}): the recipe book's empty, unfocused search box shows "Search..." in gray italics. */
     public static boolean recipeSearchHint() {
         return Presentation.isAtLeast(LookArea.INVENTORY, "1.16");
