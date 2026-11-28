@@ -117,7 +117,7 @@ public final class InventoryPreview {
             GlStateManager.pushMatrix();
             GlStateManager.translate(centerX, feetY, 0.0F);
             // The look follows the cursor from the box's center (1.12.2: from the eyes of a standing player).
-            GuiInventory.drawEntityOnScreen(0, 0, scale, centerX - mouseX, centerY - mouseY, entity);
+            drawFacing(scale, centerX - mouseX, centerY - mouseY, entity);
             GlStateManager.popMatrix();
         } finally {
             if (outer) {
@@ -127,5 +127,31 @@ public final class InventoryPreview {
             }
         }
         drawn++;
+    }
+
+    /**
+     * {@code drawEntityOnScreen} at the origin. A gliding player's roll is the angle between its look and its motion
+     * ({@code RenderPlayer.applyRotations}); the preview turns the look to face the screen but not the motion, so the
+     * roll followed the way the player faced in the world. The horizontal motion is turned by the same angle for the
+     * drawing, so the preview banks as the player does.
+     */
+    static void drawFacing(int scale, float mouseX, float mouseY, EntityLivingBase entity) {
+        double motionX = entity.motionX;
+        double motionZ = entity.motionZ;
+        if (entity.isElytraFlying()) {
+            // drawEntityOnScreen's own yaw for the entity.
+            float previewYaw = (float) Math.atan(mouseX / 40.0F) * 40.0F;
+            double turn = Math.toRadians(previewYaw - entity.rotationYaw);
+            double cos = Math.cos(turn);
+            double sin = Math.sin(turn);
+            entity.motionX = motionX * cos - motionZ * sin;
+            entity.motionZ = motionX * sin + motionZ * cos;
+        }
+        try {
+            GuiInventory.drawEntityOnScreen(0, 0, scale, mouseX, mouseY, entity);
+        } finally {
+            entity.motionX = motionX;
+            entity.motionZ = motionZ;
+        }
     }
 }

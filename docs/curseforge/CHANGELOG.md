@@ -13,7 +13,7 @@
 *   **Click-to-copy chat text**, as in 1.15, for /tellraw and other text.
 *   **Monster Hunter and Monsters Hunted** count the backports' hostile mobs, and **Adventuring Time** counts the sulfur caves, dappled forest and ice caves.
 *   **26.4's look**: Improved Fog in Video Settings, the Repeat Recipe key, names on the recipe book's tabs, Other Players with Mute, and 26.4's creative tab order.
-*   **The player preview in the inventory stays in its box**, as in 1.20.2, so a flying or riding player no longer covers the armor slots.
+*   **The player preview in the inventory stays in its box**, as in 1.20.2, so a flying or riding player no longer covers the armor slots. A gliding player in the preview banks as they really do, whichever way they face.
 *   **Mod settings pages**: mods with their own config files can have a page on the settings screen too.
 *   **Fixed: gliding straight up with an elytra kicked you** ("Invalid move player packet received") with OptiFine's Fast Math on.
 *   A mod that replaces one of vanilla's block entities by its id (the cause of "is missing a mapping! This is a bug!" with spawners) is now named in the log.
