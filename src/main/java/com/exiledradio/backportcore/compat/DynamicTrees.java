@@ -142,12 +142,25 @@ public final class DynamicTrees {
         if (addOn ? !DynamicTreesLink.active(world) : !replacesTrees(world, pos)) {
             return false;
         }
+        GROWING.set(GROWING.get() + 1);
         try {
             return DynamicTreesLink.grow(world, pos, random, species, radius(feature, random));
         } catch (LinkageError | RuntimeException e) {
             BackportCore.LOGGER.warn("Dynamic Trees could not grow {} at {}; the static tree is placed.", species, pos, e);
             return false;
+        } finally {
+            GROWING.set(GROWING.get() - 1);
         }
+    }
+
+    private static final ThreadLocal<Integer> GROWING = ThreadLocal.withInitial(() -> 0);
+
+    /**
+     * Whether this thread is inside {@link #grow}: a tree being grown now was asked for by a backport's own decoration
+     * (which decorates it itself), not placed by Dynamic Trees' biome worldgen. Since 1.5.0.
+     */
+    public static boolean growing() {
+        return GROWING.get() > 0;
     }
 
     /**

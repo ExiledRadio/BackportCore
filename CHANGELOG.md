@@ -121,6 +121,8 @@ In progress: see docs/PLAN_1_5_0.md.
 *   Gliding while looking straight up no longer kicks the player with "Invalid move player packet received" (P79,
     1.16's guard). Vanilla 1.12.2 divides by the horizontal look length while gliding; with OptiFine's Fast Math a
     look of exactly 90 degrees makes it zero, the position NaN, and the server or LAN host kicks the player.
+*   `DynamicTrees.growing()`: true while a backport's `DynamicTrees.grow` call is growing its tree, so an add-on can
+    tell a tree a backport asked for (and decorates itself) from one Dynamic Trees' biome worldgen placed.
 *   Pause menu: other mods' buttons that overlap Core's layout (1.12.2's free row, now the icon row or Give Feedback
     row) move below it (`MenuScreens.onInitLast`, LOWEST priority, so buttons added after Core's layout are moved too;
     `movedForeign` for the client self-test).
