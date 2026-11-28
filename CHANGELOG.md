@@ -13,6 +13,12 @@ In progress: see docs/PLAN_1_5_0.md.
     `backportcore_boat`; `boat.client.ChestBoatKey`).
 *   How Did We Get Here? with the backports' effects (`advancement.AllEffects.register`): vanilla's list at the newest
     installed version (34 at 1.21.11, 35 at 26.4), asking only for the effects in this game.
+*   Stone Age with today's `#stone_tool_materials` (`advancement.StoneAge`): blackstone from 1.16 (20w20a), cobbled
+    deepslate from 1.17, by the newest installed backport. Every registered copy counts: Nether Update's blackstone,
+    Caves & Cliffs' or Wild Update's cobbled deepslate, and Core's supplied `backportcore:blackstone` and
+    `backportcore:cobbled_deepslate`. Each is an `inventory_changed` alternative to `get_stone`, named by the item's
+    registry name, so Nether Update's own `netherupdatebackport:blackstone` criterion is the same one and never added
+    twice. Re-applied after `/reload`.
 *   More vibration sources (`gameevent.GameEventEmitters`, patches P80-P83), each with vanilla's event and frequency.
     From 1.19: dropped items and falling blocks landing (hit_ground, damped by wool); stripping, tilling, paths and the
     daylight detector (block_change, no longer block_place); bows, crossbows and tridents released and shields

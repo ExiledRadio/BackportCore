@@ -1,6 +1,21 @@
 package com.exiledradio.backportcore.selftest;
 
 import com.exiledradio.backportcore.advancement.AllEffects;
+import com.exiledradio.backportcore.advancement.StoneAge;
+import com.exiledradio.backportcore.presentation.Presentation;
+import com.exiledradio.backportcore.supply.SuppliedBlocks;
+
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.ICriterionInstance;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+
+import java.util.List;
 import com.exiledradio.backportcore.boat.BoatNetwork;
 import com.exiledradio.backportcore.boat.BoatWood;
 import com.exiledradio.backportcore.boat.EntityWoodBoat;
@@ -24,7 +39,7 @@ import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 
 /**
  * The xisumavoid audit's two Core rows: 1.19's inventory key on a chest boat (the server side of {@link BoatNetwork}),
- * and How Did We Get Here? with the backports' effects ({@link AllEffects}).
+ * and How Did We Get Here? with the backports' effects ({@link AllEffects}); Stone Age's later stones ({@link StoneAge}).
  */
 final class RideEffectsTests {
 
@@ -58,6 +73,60 @@ final class RideEffectsTests {
             world.removeEntity(player);
         });
 
+        then(1, "Stone Age: #stone_tool_materials by version, as alternatives to get_stone", world -> {
+            check("1.12.2: cobblestone alone", StoneAge.pathsAt(GameVersion.BASE).isEmpty(), StoneAge.pathsAt(GameVersion.BASE));
+            check("1.16 adds blackstone (20w20a)", StoneAge.pathsAt(GameVersion.parse("1.16")).equals(Arrays.asList("blackstone")),
+                    StoneAge.pathsAt(GameVersion.parse("1.16")));
+            check("1.17 adds cobbled deepslate", StoneAge.pathsAt(GameVersion.parse("1.17")).equals(Arrays.asList("blackstone",
+                    "cobbled_deepslate")) && StoneAge.pathsAt(GameVersion.parse("26.4")).size() == 2, StoneAge.pathsAt(GameVersion.parse("1.17")));
+            check("since: blackstone 1.16, cobbled deepslate 1.17", "1.16".equals(StoneAge.since("blackstone"))
+                    && "1.17".equals(StoneAge.since("cobbled_deepslate")) && StoneAge.since("cobblestone") == null, "");
+            check("no items at 1.12.2", StoneAge.items(GameVersion.BASE).isEmpty(), StoneAge.items(GameVersion.BASE));
+            Map<String, Item> all = StoneAge.items(GameVersion.parse("26.4"));
+            boolean known = true;
+            for (Map.Entry<String, Item> e : all.entrySet()) {
+                ResourceLocation id = new ResourceLocation(e.getKey());
+                known &= Arrays.asList("netherupdatebackport", "cavesandcliffsbackport", "wildupdatebackport", "backportcore")
+                        .contains(id.getNamespace()) && ForgeRegistries.ITEMS.getValue(id) == e.getValue();
+            }
+            check("every item found is a family mod's registered one", known, all.keySet());
+            check("Core's supplied copies count when Core registered them", SuppliedBlocks.block("cobbled_deepslate") == null
+                    || all.containsKey("backportcore:cobbled_deepslate"), all.keySet());
+
+            Advancement loaded = world.getMinecraftServer().getAdvancementManager().getAdvancement(StoneAge.ID);
+            check("vanilla's Stone Age is loaded", loaded != null, "");
+            if (loaded == null) {
+                return;
+            }
+            Map<String, Item> now = StoneAge.items(Presentation.installedNewest());
+            check("the loaded one counts what this game's version and mods give", loaded.getCriteria().keySet().containsAll(now.keySet())
+                    && loaded.getCriteria().containsKey(StoneAge.GET_STONE), loaded.getCriteria().keySet() + " " + now.keySet());
+            // On a copy: two vanilla items stand in for a backport's blackstone and cobbled deepslate.
+            Advancement copy = new Advancement(new ResourceLocation("backportcore", "selftest/stone_age"), null, null,
+                    AdvancementRewards.EMPTY, new java.util.LinkedHashMap<String, Criterion>(loaded.getCriteria()), loaded.getRequirements().clone());
+            int groups = copy.getRequirements().length;
+            check("the alternatives are added", StoneAge.change(copy, Arrays.asList("minecraft:netherrack", "minecraft:end_stone"))
+                    && copy.getCriteria().containsKey("minecraft:netherrack") && copy.getCriteria().containsKey("minecraft:end_stone"),
+                    copy.getCriteria().keySet());
+            boolean inGroup = false;
+            for (String[] group : copy.getRequirements()) {
+                List<String> g = Arrays.asList(group);
+                inGroup |= g.contains(StoneAge.GET_STONE) && g.contains("minecraft:netherrack") && g.contains("minecraft:end_stone");
+            }
+            check("as alternatives to get_stone: no new requirement", inGroup && copy.getRequirements().length == groups,
+                    Arrays.deepToString(copy.getRequirements()));
+            check("again (a /reload's second pass, or Nether Update's own blackstone first): nothing twice",
+                    !StoneAge.change(copy, Arrays.asList("minecraft:netherrack")) && copy.getCriteria().size() == loaded.getCriteria().size() + 2,
+                    copy.getCriteria().keySet());
+            EntityPlayerMP player = PoseTests.player(world, "stoneage");
+            ICriterionInstance netherrack = copy.getCriteria().get("minecraft:netherrack").getCriterionInstance();
+            check("the criterion is vanilla's inventory_changed", netherrack instanceof InventoryChangeTrigger.Instance, netherrack);
+            if (netherrack instanceof InventoryChangeTrigger.Instance) {
+                check("without the item: not met", !((InventoryChangeTrigger.Instance) netherrack).test(player.inventory), "");
+                player.inventory.addItemStackToInventory(new ItemStack(Blocks.NETHERRACK));
+                check("holding it: met", ((InventoryChangeTrigger.Instance) netherrack).test(player.inventory), "");
+            }
+        });
         then(1, "How Did We Get Here?: vanilla's lists and the backports' effects", world -> {
             check("1.12.2 asks for 20", AllEffects.listAt(GameVersion.BASE).size() == 20, AllEffects.listAt(GameVersion.BASE).size());
             check("1.21.11 asks for 34 (the wiki's list)", AllEffects.listAt(GameVersion.parse("1.21.11")).size() == 34,

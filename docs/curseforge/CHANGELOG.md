@@ -18,6 +18,7 @@
 *   **Fixed: gliding straight up with an elytra kicked you** ("Invalid move player packet received") with OptiFine's Fast Math on.
 *   A mod that replaces one of vanilla's block entities by its id (the cause of "is missing a mapping! This is a bug!" with spawners) is now named in the log.
 *   **The inventory key opens a chest boat's chest** while you ride it, as in 1.19.
+*   **Stone Age** counts blackstone (1.16) and cobbled deepslate (1.17), from whichever mod adds them.
 *   **How Did We Get Here?** asks for the newer effects the installed backports add (Darkness, Conduit Power, Dolphin's Grace, Slow Falling and the rest), as today's game does, and only for those: the advancement stays possible whichever backports you have.
 *   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.
 *   **Fixed: other mods' pause menu buttons drawn under the backports' buttons.** A mod's button in 1.12.2's empty row (a Cheats toggle, for one) sat behind the icon row or the Give Feedback row. Any other mod's button there moves below Save and Quit.

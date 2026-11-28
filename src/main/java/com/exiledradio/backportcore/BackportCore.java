@@ -146,6 +146,8 @@ public final class BackportCore {
         // How Did We Get Here? with the effects the installed backports register (advancement/AllEffects).
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AllEffects.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.MonsterHunter.Events());
+        // Stone Age with 1.16's blackstone and 1.17's cobbled deepslate, whichever mod registered each (advancement/StoneAge).
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.StoneAge.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
