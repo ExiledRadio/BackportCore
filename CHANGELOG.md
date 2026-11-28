@@ -39,10 +39,13 @@ In progress: see docs/PLAN_1_5_0.md.
         snow and Game Drops' Freezing share it: 140 ticks, damage every 40 (five times for blazes, magma cubes and
         striders), the slowness, the frost overlay and the shaking; nothing freezes while on fire, in leather, or
         undead, polar bear or snow golem. Effects can hold the counter and set the damage (`registerEffect`). Settings
-        page Freezing; `freezeDamage` is also Game Drops'.
+        page Freezing; `freezeDamage` is also Game Drops'. Below 26.4 (the newest installed backport older), 1.17 to
+        26.3's two rules instead: the immune are strays, polar bears, snow golems and the wither, and the slowness
+        needs ground that is not air.
     *   Speleothems (`speleothem/`): 26.4's `SpeleothemBlock`, shared by pointed dripstone and icicles: growth,
         thickness, falling segments (`backportcore:falling_speleothem`), stalagmite and falling stalactite damage,
-        tridents breaking them.
+        tridents breaking them. A fall onto a stalagmite counts 2.5 blocks longer from 1.21.5, 2 before it (by the newest
+        installed backport).
     *   Monster Hunter and Monsters Hunted count the backports' hostile mobs (`advancement.MonsterHunter`).
     *   Adventuring Time follows 26.2 to 26.4's lists: the sulfur caves (26.2), the dappled forest (26.3) and the ice
         caves (26.4, Pre-Release 1's 57 biomes), each counted when Game Drops is installed at that version. The
