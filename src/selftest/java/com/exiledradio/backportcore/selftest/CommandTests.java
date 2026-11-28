@@ -257,7 +257,9 @@ final class CommandTests {
             check("tick rate 8: 125 ms a tick", Ticks.server().nanosecondsPerTick() == 125_000_000L, Ticks.server().nanosecondsPerTick());
         });
         // Any backlog the loop still had at 20 per second runs off first (26.3 catches up the same way).
-        then(24, "tick: 8 per second, settled", world -> wall = System.nanoTime());
+        // 1.12.2 caps a backlog only when its "Can't keep up" warning is due (every 15 s), so a slow stretch earlier in
+        // the suite can leave several seconds: 64 ticks at 8 per second drain 8 s of it.
+        then(64, "tick: 8 per second, settled", world -> wall = System.nanoTime());
         then(8, "tick: 8 ticks at 8 per second", world -> {
             long ms = (System.nanoTime() - wall) / 1_000_000L;
             // 20 per second would take 400 ms.

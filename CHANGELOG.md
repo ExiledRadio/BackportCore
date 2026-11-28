@@ -6,6 +6,17 @@ In progress: see docs/PLAN_1_5_0.md.
     `backportcore_boat`; `boat.client.ChestBoatKey`).
 *   How Did We Get Here? with the backports' effects (`advancement.AllEffects.register`): vanilla's list at the newest
     installed version (34 at 1.21.11, 35 at 26.4), asking only for the effects in this game.
+*   More vibration sources (`gameevent.GameEventEmitters`, patches P80-P83), each with vanilla's event and frequency.
+    From 1.19: dropped items and falling blocks landing (hit_ground, damped by wool); stripping, tilling, paths and the
+    daylight detector (block_change, no longer block_place); bows, crossbows and tridents released and shields
+    lowered (item_interact_finish); spawners, chicken eggs and items placing an entity such as Game Drops' cushion
+    (entity_place); snow golems' snow and villagers' crops (block_place); sheep eating tall grass, villagers
+    harvesting and other `destroyBlock` calls (block_destroy); cauldrons filling with rain (block_change); chorus
+    fruit (teleport); eyes of ender (projectile_shoot); broken paintings, item frames, armor stands and cushions
+    (entity_die); hit boats, minecarts and armor stands (entity_damage); item frames filled, turned or emptied
+    (block_change). With a 1.20 backport, 1.20.2's: witches drinking, sheep eating, rabbits eating carrots, totems,
+    bone meal, evoker fangs and vexes, water potions putting out fire, and vehicles breaking. Bone meal and discs no
+    longer post block_place.
 
 *   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
     *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder

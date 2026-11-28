@@ -19,7 +19,8 @@ tasks name it with `-Dfml.coreMods.load`.
     Fluidlogged API changes; each patch was checked with Fluidlogged API's transformers in the chain.
 *   A patch only adds calls into the library's hook classes (`pose/MovementHooks`, `pose/client/ClientHooks`,
     `presentation/client/PresentationHooks`, `worldgen/WorldgenHooks`, `render/client/ChunkRebuildHooks`, `creative/client/CreativeScreenHooks`,
-    and from P50 `presentation/client/NotificationTime`, `QuitShortcuts` and `SoundDevices`).
+    and from P50 `presentation/client/NotificationTime`, `QuitShortcuts` and `SoundDevices`, and from P80
+    `gameevent/GameEventHooks`).
     Each hook does exactly what vanilla 1.12.2 does (returns vanilla's value, or nothing) until a backport
     has registered rules with `pose.Poses` and they are on, or (P6, P7) registered a presentation version
     with `presentation.Presentation`, or (P8, P9) a backport of 1.13 or later is installed, or (P10, P11) one of 1.16. With no backport
@@ -1339,3 +1340,32 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: self-test `elytra looking straight up (P79)` (group `poses`): a gliding mob whose look is exactly
     straight up, with horizontal speed, keeps a finite position and motion through `travel`; without the patch
     the same step gives NaN. A second check runs a level look and compares the motion with 1.12.2's formula.
+
+## P80-P83. Vibration sources 1.12.2 fires no event for
+
+*   **Transformer**: `asm/GameEventSourcesTransformer`. **Hooks**: `gameevent/GameEventHooks`. **Since**: 1.5.0.
+*   **Classes and changes** (each one straight-line call, no new locals or branches):
+    *   P80 `net.minecraft.entity.Entity` `updateFallState(DZLIBlockState;LBlockPos;)V` (`func_184231_a`): first line
+        `GameEventHooks.landed(this, onGround, state)`. 1.19's `Entity.checkFallDamage` posts `hit_ground` for any entity
+        landing with `fallDistance > 0`, the block landed on as the context. The hook skips living entities
+        (`LivingFallEvent` covers them); boats override the method, as in vanilla.
+    *   P81 `net.minecraft.block.BlockCauldron` `fillWithRain` (`func_176224_k`): its one `World.setBlockState(pos,
+        state, flags)` becomes the static `GameEventHooks.rainFill(world, pos, state, flags)`, which makes the same call,
+        returns its result and posts `block_change` when it set the block (1.19's `LayeredCauldronBlock`).
+    *   P82 `net.minecraft.world.World` `destroyBlock(LBlockPos;Z)Z` (`func_175655_b`): first line
+        `GameEventHooks.blockDestroyed(this, pos)`, `block_destroy` for a block that is not air (1.19's
+        `Level.destroyBlock`): sheep on tall grass, villagers harvesting, the wither, a trampled last turtle egg.
+    *   P83 `net.minecraft.entity.EntityLivingBase` `resetActiveHand()V` (`func_184602_cy`): first line
+        `GameEventHooks.stoppedUsing(this)`, `item_interact_finish` when the entity was using an item (1.19's
+        `LivingEntity.stopUsingItem`, since 22w19a): finishing food, releasing a bow, crossbow or trident, lowering a
+        shield, a skeleton shooting. Without P83 the emitters post it only for finished uses, as before.
+*   **Why patches**: none of these has a Forge event. A dropped item's landing, a cauldron's rain and
+    `destroyBlock` happen inside entity and block updates no event wraps; `LivingEntityUseItemEvent.Stop` fires only
+    for a player releasing, not for mobs or interrupted uses.
+*   **Who it reaches**: every hook only emits, on a server while some backport requires game events; with none
+    installed the patched methods run as 1.12.2's.
+*   **Fails safe**: a method missing, the hook already there, or not exactly one `setBlockState` in `fillWithRain`:
+    that patch is skipped, one log line.
+*   **Tested**: `PatchTests` (both chains, one call each); self-tests `vibrations: ...` (group `gameevents`): a dropped
+    item and falling sand landing, on stone and on wool; rain filling a cauldron; `destroyBlock` on wheat and on air;
+    a bow released, a shield lowered, a mob stopping its bow, and nothing when no item was in use.
