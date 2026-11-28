@@ -60,13 +60,13 @@ public final class Family {
 
     public static final List<Member> MEMBERS = Collections.unmodifiableList(Arrays.asList(
             new Member("backportcore", "", "backport-core", 0xB9A8FF, 1788299, "1.5.0"),
-            new Member("updateaquaticbackport", "1.13", "update-aquatic-backport", 0x4FC9B8, 1788248, "1.2.4"),
+            new Member("updateaquaticbackport", "1.13", "update-aquatic-backport", 0x4FC9B8, 1788248, "1.2.5"),
             new Member("villagerbackport", "1.14", "village-and-pillage-backport", 0xE8B04A, 1671232, "2.7.8"),
-            new Member("buzzybeesbackport", "1.15", "buzzy-bees-backport", 0xF2C94C, 1788311, "1.1.4"),
+            new Member("buzzybeesbackport", "1.15", "buzzy-bees-backport", 0xF2C94C, 1788311, "1.1.5"),
             new Member("netherupdatebackport", "1.16", "nether-update-backport", 0xE8703A, 1790727, "1.1.4"),
             new Member("cavesandcliffsbackport", "1.17", "caves-and-cliffs-backport", 0xA678F0, 1788326, "1.2.0"),
             new Member("wildupdatebackport", "1.19", "wild-update-backport", 0x7CC85A, 1788320, "1.2.0"),
-            new Member("trailsandtalesbackport", "1.20", "trails-and-tales-backport", 0xF29AC0, 1788323, "1.0.5"),
+            new Member("trailsandtalesbackport", "1.20", "trails-and-tales-backport", 0xF29AC0, 1788323, "1.0.6"),
             new Member("trickytrialsbackport", "1.21", "tricky-trials-backport", 0xE08A4A, 1790743, "1.0.4"),
             new Member("gamedropsbackport", "26.1", "game-drops-backport", 0xE6E08A, 1813758, "1.1.0")));
 
