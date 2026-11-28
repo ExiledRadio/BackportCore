@@ -143,6 +143,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.command.swing.Swings.init();
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.command.tick.TickEvents());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AdventuringTime.Events());
+        // How Did We Get Here? with the effects the installed backports register (advancement/AllEffects).
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.AllEffects.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.MonsterHunter.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
@@ -163,10 +165,13 @@ public final class BackportCore {
         // The family's boats and chest boats (boat/): the backports' old boats renamed as they load, and using one
         // places an entity (entity_place).
         com.exiledradio.backportcore.boat.Boats.registerFixes();
+        // 1.19's inventory key on a chest boat: the client asks for the boat's chest (boat/BoatNetwork).
+        com.exiledradio.backportcore.boat.BoatNetwork.init();
         com.exiledradio.backportcore.gameevent.GameEventEmitters.addEntityPlacer(
                 stack -> stack.getItem() instanceof com.exiledradio.backportcore.boat.ItemWoodBoat);
         if (event.getSide().isClient()) {
             com.exiledradio.backportcore.boat.client.RenderWoodBoat.register();
+            com.exiledradio.backportcore.boat.client.ChestBoatKey.init();
             com.exiledradio.backportcore.pose.client.PoseClient.init();
             com.exiledradio.backportcore.freeze.client.FreezeClient.init();
             // Map decorations newer than 1.12.2, drawn from their own sprites (map/, patch P34).
