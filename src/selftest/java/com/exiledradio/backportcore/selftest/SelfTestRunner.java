@@ -89,6 +89,7 @@ public final class SelfTestRunner {
                     case "commands": CommandTests.schedule(); break;
                     case "gamerules": GameRulesTests.schedule(); break;
                     case "boats": BoatTests.schedule(); break;
+                    case "teids": TileEntityIdTests.schedule(); break;
                     case "poi": PoiLocateTests.schedule(); break;
                     case "simulation": SimulationTests.schedule(); break;
                     case "datastructures": DataStructureTests.schedule(); break;
@@ -131,6 +132,7 @@ public final class SelfTestRunner {
         GdRequestTests.schedule();
         GdWorldgenTests.schedule();
         BoatTests.schedule();
+        TileEntityIdTests.schedule();
         DynamicTreesTests.schedule();
         SuppliedTests.schedule();
         FreezeTests.schedule();

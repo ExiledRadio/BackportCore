@@ -220,6 +220,8 @@ public final class BackportCore {
         // Every backport's settings on Core's settings screen. Each backport keeps its own row in the mod list, so
         // Forge's mod-list search finds it; its Config button opens this screen on its own page.
         com.exiledradio.backportcore.settings.BackportSettings.build();
+        // A mod that registered its own tile entity under a vanilla id (util/VanillaTileEntityIds) is named in the log.
+        com.exiledradio.backportcore.util.VanillaTileEntityIds.check("at load complete");
         // Structures from today's data files, after every backport registered the structures it generates itself.
         com.exiledradio.backportcore.structure.DataStructures.load();
         // What this game makes of each of those names (config/backportcore/modern_blocks_report.txt).
@@ -238,6 +240,8 @@ public final class BackportCore {
     @Mod.EventHandler
     public void serverAboutToStart(FMLServerAboutToStartEvent event) {
         SpawnProgress.start();
+        // Again, for a mod that registers tile entities late.
+        com.exiledradio.backportcore.util.VanillaTileEntityIds.check("as the server starts");
         // No entity gets id 0, which 1.12.2's firework rocket cannot boost (mechanics/FirstEntityId).
         com.exiledradio.backportcore.mechanics.FirstEntityId.skipZero();
         // 1.18's Simulation Distance: the client's option, or server.properties on a dedicated server (simulation/).

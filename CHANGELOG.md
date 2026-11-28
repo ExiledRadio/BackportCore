@@ -85,6 +85,11 @@ In progress: see docs/PLAN_1_5_0.md.
 *   Pause menu: other mods' buttons that overlap Core's layout (1.12.2's free row, now the icon row or Give Feedback
     row) move below it (`MenuScreens.onInitLast`, LOWEST priority, so buttons added after Core's layout are moved too;
     `movedForeign` for the client self-test).
+*   A mod that registers its own tile entity under one of 1.12.2's ids (`registerTileEntity(X.class, "mob_spawner")`;
+    an id without a namespace is `minecraft:`) is named in the log, with its jar, at load complete and when a server
+    starts (`util/VanillaTileEntityIds`). That silently replaces vanilla's entry, and every vanilla block of that kind
+    then fails to save ("is missing a mapping! This is a bug!") and loses its contents on reload. Report only: putting
+    vanilla back would break the other mod's own tile entities. Self-test group `teids`.
 
 # 1.4.9
 
