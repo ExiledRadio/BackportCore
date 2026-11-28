@@ -91,14 +91,34 @@ final class FreezeTests {
             pig.setPosition(at.getX() + 0.5, at.getY(), at.getZ() + 0.5);
             check("freeze: a pig can freeze", FreezeTicks.canFreeze(pig));
             EntityZombie zombie = new EntityZombie(world);
-            check("freeze: undead are immune (26.4 #immune_to_freezing)", !FreezeTicks.canFreeze(zombie) && FreezeTicks.immune(zombie));
+            com.exiledradio.backportcore.presentation.GameVersion v117 = com.exiledradio.backportcore.presentation.GameVersion.parse("1.17");
+            com.exiledradio.backportcore.presentation.GameVersion v263 = com.exiledradio.backportcore.presentation.GameVersion.parse("26.3");
+            com.exiledradio.backportcore.presentation.GameVersion v264 = com.exiledradio.backportcore.presentation.GameVersion.parse("26.4");
+            net.minecraft.entity.monster.EntityStray stray = new net.minecraft.entity.monster.EntityStray(world);
+            net.minecraft.entity.boss.EntityWither wither = new net.minecraft.entity.boss.EntityWither(world);
+            check("freeze: 26.4's #immune_to_freezing: the undead (zombie, stray, wither), polar bear, snow golem",
+                    FreezeTicks.immune(zombie, v264) && FreezeTicks.immune(stray, v264) && FreezeTicks.immune(wither, v264)
+                            && FreezeTicks.immune(new EntityPolarBear(world), v264)
+                            && FreezeTicks.immune(new net.minecraft.entity.monster.EntitySnowman(world), v264));
+            check("freeze: 1.17-26.3's #freeze_immune_entity_types: stray, polar bear, snow golem, wither; a zombie freezes",
+                    !FreezeTicks.immune(zombie, v117) && !FreezeTicks.immune(zombie, v263) && FreezeTicks.immune(stray, v117)
+                            && FreezeTicks.immune(wither, v263) && FreezeTicks.immune(new EntityPolarBear(world), v117)
+                            && FreezeTicks.immune(new net.minecraft.entity.monster.EntitySnowman(world), v117)
+                            && !FreezeTicks.immune(new net.minecraft.entity.monster.EntityHusk(world), v117));
+            check("freeze: the installed version picks the list", FreezeTicks.immune(zombie) == FreezeTicks.rules().isAtLeast("26.4")
+                    && FreezeTicks.immune(stray), FreezeTicks.rules());
             check("freeze: polar bear immune", FreezeTicks.immune(new EntityPolarBear(world)));
+            check("stalagmite: 2 blocks more before 1.21.5, 2.5 from it", BlockSpeleothem.stalagmiteFallOffset(v117) == 2.0F
+                    && BlockSpeleothem.stalagmiteFallOffset(com.exiledradio.backportcore.presentation.GameVersion.parse("1.21.4")) == 2.0F
+                    && BlockSpeleothem.stalagmiteFallOffset(com.exiledradio.backportcore.presentation.GameVersion.parse("1.21.5")) == 2.5F
+                    && BlockSpeleothem.stalagmiteFallOffset(v264) == 2.5F);
             check("freeze: blaze hurts extra", FreezeTicks.hurtsExtra(new EntityBlaze(world)));
             FreezeTicks.freezeFor(pig, 200);
             check("freeze: capped at 140", FreezeTicks.ticks(pig) == 140, FreezeTicks.ticks(pig));
             check("freeze: fully frozen", FreezeTicks.fullyFrozen(pig));
-            FreezeTicks.freezeFor(zombie, 10);
-            check("freeze: immune mob gains none", FreezeTicks.ticks(zombie) == 0, FreezeTicks.ticks(zombie));
+            EntityPolarBear bear = new EntityPolarBear(world);
+            FreezeTicks.freezeFor(bear, 10);
+            check("freeze: immune mob gains none", FreezeTicks.ticks(bear) == 0, FreezeTicks.ticks(bear));
             pig.setItemStackToSlot(EntityEquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
             check("freeze: leather boots stop it", !FreezeTicks.canFreeze(pig));
             pig.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStack.EMPTY);
@@ -119,6 +139,21 @@ final class FreezeTests {
             check("freeze: thaws by 2 a tick", FreezeTicks.ticks(pig) == 98, FreezeTicks.ticks(pig));
             double slow = pig.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(FreezeTicks.SLOW).getAmount();
             check("freeze: slowed by -0.05 x percent", Math.abs(slow - (-0.05F * (98 / 140.0F))) < 1e-6, slow);
+            com.exiledradio.backportcore.presentation.GameVersion old = com.exiledradio.backportcore.presentation.GameVersion.parse("26.3");
+            com.exiledradio.backportcore.presentation.GameVersion now = com.exiledradio.backportcore.presentation.GameVersion.parse("26.4");
+            check("freeze: on stone, slowed at both rules", FreezeTicks.slowedHere(pig, old) && FreezeTicks.slowedHere(pig, now));
+            EntityPig flier = new EntityPig(world);
+            flier.setNoAI(true);
+            flier.setNoGravity(true);
+            flier.setPosition(at.getX() + 0.5, at.getY() + 5.0, at.getZ() + 0.5);
+            world.spawnEntity(flier);
+            check("freeze: over air, slowed only from 26.4 (1.17-26.3's tryAddFrost needs ground)",
+                    !FreezeTicks.slowedHere(flier, old) && FreezeTicks.slowedHere(flier, now));
+            FreezeTicks.setTicks(flier, 100);
+            flier.onUpdate();
+            boolean slowedInAir = flier.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getModifier(FreezeTicks.SLOW) != null;
+            check("freeze: over air the installed rules decide", slowedInAir == FreezeTicks.rules().isAtLeast("26.4"), slowedInAir);
+            flier.setDead();
             FreezeTicks.markInFreezingBlock(pig);
             int before = FreezeTicks.ticks(pig);
             pig.onUpdate();

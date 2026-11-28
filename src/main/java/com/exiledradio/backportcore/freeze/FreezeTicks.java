@@ -48,12 +48,15 @@ import java.util.UUID;
  *   <li>Fully frozen, it takes freeze damage every {@value #HURT_EVERY} ticks: 1, or the effect's damage (26.4's
  *       Freezing: 1.5) while one is active; five times that for blazes, magma cubes and striders
  *       ({@code #freeze_hurts_extra_types}). Players take none when the {@code freezeDamage} game rule is off.</li>
- *   <li>It is slowed by {@code -0.05 x percent frozen} while it has any ticks.</li>
+ *   <li>It is slowed by {@code -0.05 x percent frozen} while it has any ticks; before 26.4 only while the block it
+ *       stands on is not air ({@code tryAddFrost}'s {@code getBlockStateOnLegacy}).</li>
  *   <li>Nothing freezes ({@code canFreeze}) while on fire, as a spectator, wearing any leather armor
- *       ({@code #freeze_immune_wearables}), or if it is a polar bear, a snow golem or undead
- *       ({@code #immune_to_freezing}: 26.4 added {@code #undead}, which also covers strays and the wither).
- *       Fire and lava also clear the counter ({@code CLEAR_FREEZE}).</li>
+ *       ({@code #freeze_immune_wearables}), or if it is immune: from 26.4 a polar bear, a snow golem or undead
+ *       ({@code #immune_to_freezing}), before it ({@code #freeze_immune_entity_types}, 1.17 to 26.3) a stray, a polar
+ *       bear, a snow golem or the wither. Fire and lava also clear the counter ({@code CLEAR_FREEZE}).</li>
  * </ul>
+ * The rules are the newest installed backport's ({@link #rules()}): 26.4's with Game Drops at 26.4, otherwise 1.17 to
+ * 26.3's (the two differences above).
  *
  * <h2>Where it lives</h2>
  * In the compound {@value #TAG} of the entity's Forge data, only while it matters: {@code Ticks}, {@code Held} (the
@@ -154,15 +157,53 @@ public final class FreezeTicks {
         return true;
     }
 
-    /** {@code #immune_to_freezing}: polar bears, snow golems, the undead, and the config's list. */
+    /** @return the version whose freezing rules apply: the newest installed backport's */
+    public static com.exiledradio.backportcore.presentation.GameVersion rules() {
+        return com.exiledradio.backportcore.presentation.Presentation.installedNewest();
+    }
+
+    /** {@link #immune(Entity, com.exiledradio.backportcore.presentation.GameVersion)} at the installed rules. */
     public static boolean immune(Entity entity) {
+        return immune(entity, rules());
+    }
+
+    /**
+     * 26.4's {@code #immune_to_freezing} (polar bears, snow golems, the undead) or, before 26.4, 1.17's
+     * {@code #freeze_immune_entity_types} (strays, polar bears, snow golems, the wither); with the config's list.
+     */
+    public static boolean immune(Entity entity, com.exiledradio.backportcore.presentation.GameVersion rules) {
         if (entity instanceof EntityPolarBear || entity instanceof EntitySnowman) {
             return true;
         }
-        if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getCreatureAttribute() == EnumCreatureAttribute.UNDEAD) {
+        if (rules.isAtLeast("26.4")) {
+            if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).getCreatureAttribute() == EnumCreatureAttribute.UNDEAD) {
+                return true;
+            }
+        } else if (entity instanceof net.minecraft.entity.monster.EntityStray || entity instanceof net.minecraft.entity.boss.EntityWither) {
             return true;
         }
         return IMMUNE.has(CoreConfig.freezing.freezeImmuneMobs, EntityList.getKey(entity));
+    }
+
+    /**
+     * Whether the freezing slowdown applies where the entity stands: always from 26.4
+     * ({@code updateFrozenEffectMovementSpeedPenalty}); before, only on a block that is not air (1.17 to 26.3's
+     * {@code tryAddFrost}: {@code getBlockStateOnLegacy}, the block 0.2 under the feet, or the fence, wall or gate below it).
+     */
+    public static boolean slowedHere(EntityLivingBase e, com.exiledradio.backportcore.presentation.GameVersion rules) {
+        if (rules.isAtLeast("26.4")) {
+            return true;
+        }
+        net.minecraft.util.math.BlockPos on = new net.minecraft.util.math.BlockPos(e.posX, e.posY - 0.2D, e.posZ);
+        net.minecraft.block.state.IBlockState state = e.world.getBlockState(on);
+        if (state.getMaterial() == net.minecraft.block.material.Material.AIR) {
+            net.minecraft.block.state.IBlockState below = e.world.getBlockState(on.down());
+            net.minecraft.block.Block b = below.getBlock();
+            if (b instanceof net.minecraft.block.BlockFence || b instanceof net.minecraft.block.BlockWall || b instanceof net.minecraft.block.BlockFenceGate) {
+                state = below;
+            }
+        }
+        return state.getMaterial() != net.minecraft.block.material.Material.AIR;
     }
 
     /** {@code #freeze_hurts_extra_types}: blazes, magma cubes, striders, and the config's list. */
@@ -288,7 +329,7 @@ public final class FreezeTicks {
         if (speed == null) {
             return;
         }
-        double want = t > 0 ? -0.05F * (Math.min(t, REQUIRED) / (float) REQUIRED) : 0.0D;
+        double want = t > 0 && slowedHere(e, rules()) ? -0.05F * (Math.min(t, REQUIRED) / (float) REQUIRED) : 0.0D;
         AttributeModifier has = speed.getModifier(SLOW);
         if (has != null) {
             if (want != 0.0D && has.getAmount() == want) {

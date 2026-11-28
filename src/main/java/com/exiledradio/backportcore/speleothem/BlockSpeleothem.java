@@ -51,7 +51,8 @@ import java.util.Random;
  *       {@link EntityFallingSpeleothem}: the tip hurts {@code max(length, 6)} per block fallen, 40 at most.</li>
  *   <li>Every segment works its thickness out from the segment ahead and behind (base, middle..., frustum, tip),
  *       and two opposed tips merge unless the placer sneaked or {@link #shouldMergeTips()} says no.</li>
- *   <li>Landing on a stalagmite's tip is a fall 2.5 blocks longer that hurts twice as much ({@code stalagmite}).</li>
+ *   <li>Landing on a stalagmite's tip is a fall 2.5 blocks longer that hurts twice as much ({@code stalagmite}); 2 longer
+ *       before 1.21.5 (1.17 to 1.21.4), as the newest installed backport has it ({@link #stalagmiteFallOffset}).</li>
  *   <li>A random tick reaches a stalactite's topmost segment: with chance {@value #GROWTH_CHANCE} and
  *       {@link #canGrow}, its free tip grows down by one, or the stalagmite under it grows up, up to
  *       {@link #maxGrowthLength()} segments ({@link #naturalGrowthDirections()} picks which).</li>
@@ -67,7 +68,10 @@ public abstract class BlockSpeleothem extends Block implements Waterloggable {
     /** {@code GROWTH_PROBABILITY_PER_RANDOM_TICK}. */
     public static final float GROWTH_CHANCE = 0.011377778F;
     public static final int MAX_STALAGMITE_SEARCH = 10;
+    /** 1.21.5's and later's extra fall onto a stalagmite's tip ({@code STALAGMITE_FALL_DISTANCE_OFFSET}). */
     public static final float STALAGMITE_FALL_OFFSET = 2.5F;
+    /** 1.17 to 1.21.4's. */
+    public static final float STALAGMITE_FALL_OFFSET_1_17 = 2.0F;
     public static final float STALAGMITE_DAMAGE_MULTIPLIER = 2.0F;
     public static final int STALACTITE_MAX_DAMAGE = 40;
     public static final int STALACTITE_MIN_SIZE = 6;
@@ -409,12 +413,18 @@ public abstract class BlockSpeleothem extends Block implements Waterloggable {
         }
     }
 
+    /** @return how much longer a fall onto a stalagmite's tip counts at these rules: 2.5 from 1.21.5, else 2 */
+    public static float stalagmiteFallOffset(com.exiledradio.backportcore.presentation.GameVersion rules) {
+        return rules.isAtLeast("1.21.5") ? STALAGMITE_FALL_OFFSET : STALAGMITE_FALL_OFFSET_1_17;
+    }
+
     /** {@code fallOnDamage}: a stalagmite's free tip impales. */
     @Override
     public void onFallenUpon(World world, BlockPos pos, Entity entity, float fallDistance) {
         IBlockState state = world.getBlockState(pos);
         if (isSpeleothem(state) && state.getValue(VERTICAL_DIRECTION) == EnumFacing.UP && state.getValue(THICKNESS) == Thickness.TIP) {
-            SpeleothemEvents.impale(entity, fallDistance + STALAGMITE_FALL_OFFSET, STALAGMITE_DAMAGE_MULTIPLIER);
+            SpeleothemEvents.impale(entity, fallDistance + stalagmiteFallOffset(
+                    com.exiledradio.backportcore.presentation.Presentation.installedNewest()), STALAGMITE_DAMAGE_MULTIPLIER);
         } else {
             super.onFallenUpon(world, pos, entity, fallDistance);
         }
