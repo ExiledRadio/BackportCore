@@ -126,6 +126,7 @@ final class PatchTests {
             {"net.minecraft.block.BlockPistonBase", "P84", new String[] {"tileEntityStopsPiston"}},
             {"net.minecraft.block.BlockPistonBase", "P85", new String[] {"destroyedByPiston"}},
             {"net.minecraft.world.WorldServer", "P86", new String[] {"decides", "enoughDeepSleeping", "sleepersChanged"}},
+            {"net.minecraft.world.WorldEntitySpawner", "P90", new String[] {"allowed"}},
     };
 
     private PatchTests() {
@@ -188,6 +189,22 @@ final class PatchTests {
             for (BlockPos p : new BlockPos[] {floor, feet, head}) {
                 world.setBlockState(p, Blocks.AIR.getDefaultState(), 2);
             }
+        });
+        then(1, "P90: spawn rules checked before the mob is built", world -> {
+            check("P90 applied when WorldEntitySpawner loaded", "applied".equals(Asm.state("P90")), Asm.state("P90"));
+            Biome.SpawnListEntry giant = new Biome.SpawnListEntry(net.minecraft.entity.monster.EntityGiantZombie.class, 1, 1, 1);
+            Biome.SpawnListEntry pig = new Biome.SpawnListEntry(net.minecraft.entity.passive.EntityPig.class, 1, 1, 1);
+            BlockPos low = new BlockPos(4400, 40, 4400);
+            BlockPos high = new BlockPos(4400, 90, 4400);
+            com.exiledradio.backportcore.worldgen.SpawnPrechecks.register(net.minecraft.entity.monster.EntityGiantZombie.class,
+                    (w, pos) -> pos.getY() < 64);
+            check("a registered check refuses its positions",
+                    !com.exiledradio.backportcore.worldgen.SpawnPrechecks.allowed(true, world, giant, low), "");
+            check("and allows the others", com.exiledradio.backportcore.worldgen.SpawnPrechecks.allowed(true, world, giant, high), "");
+            check("the world's refusal stays a refusal",
+                    !com.exiledradio.backportcore.worldgen.SpawnPrechecks.allowed(false, world, giant, high), "");
+            check("a mob with no check keeps the world's answer",
+                    com.exiledradio.backportcore.worldgen.SpawnPrechecks.allowed(true, world, pig, low), "");
         });
         then(1, "P37: chunk generation's animals stay out of a kelp bed", world -> {
             // 16 x 16 columns at y 200: stone, two plant blocks (a kelp column's shape), then water or air.
@@ -296,10 +313,11 @@ final class PatchTests {
                                 srg == 1, srg);
                         continue;
                     }
-                    if (name.endsWith(".WorldEntitySpawner")) {
+                    if (name.endsWith(".WorldEntitySpawner") && "P37".equals(c[1])) {
                         // Forge moves the spawn spot check into canCreatureTypeSpawnBody; the SRG jar is vanilla's,
                         // where it is still in canCreatureTypeSpawnAtLocation. P37 must leave it alone there, and
-                        // the SRG name it looks for must be the one vanilla's check calls (twice).
+                        // the SRG name it looks for must be the one vanilla's check calls (twice). (P90's entry, the
+                        // same class, is checked as a patch below.)
                         check("SRG P37 on unpatched WorldEntitySpawner: left alone (Forge's canCreatureTypeSpawnBody missing)",
                                 out == raw, Asm.state("P37"));
                         int srgCalls = 0;
@@ -406,6 +424,7 @@ final class PatchTests {
             case "P80": case "P81": case "P82": case "P83": cls = "GameEventSourcesTransformer"; break;
             case "P84": case "P85": cls = "PistonTransformer"; break;
             case "P86": case "P87": cls = "SleepTransformer"; break;
+            case "P90": cls = "SpawnPrecheckTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();
