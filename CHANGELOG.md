@@ -28,6 +28,11 @@ In progress: see docs/PLAN_1_5_0.md.
 *   The playersSleepingPercentage game rule (1.17, with a backport of 1.17; patches P86, P87): the share of players
     who must sleep to skip the night, with "n/needed players sleeping" above the hotbar. The Game Rules screen also
     lists Village & Pillage's doPatrolSpawning (1.15.2).
+*   `GameEventEmitters.alreadyEmitted(world, pos)`: a mod that posts its own game event for a block a click changed
+    (Buzzy Bees bottling a full hive: fluid_pickup) keeps Core from adding a block change, for state changes and block
+    swaps alike.
+*   1.15's copy_to_clipboard click action (`presentation.CopyToClipboard`): tellraw and other text components keep
+    it, and clicking it in chat copies its value.
 
 *   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
     *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder

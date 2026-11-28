@@ -88,7 +88,7 @@ public final class SelfTestRunner {
                     case "sleep": SleepTests.schedule(); break;
                     case "boatleash": BoatLeashTests.schedule(); break;
                     case "snow": SnowTests.schedule(); break;
-                    case "commands": CommandTests.schedule(); break;
+                    case "commands": CommandTests.schedule(); ClickActionTests.schedule(); break;
                     case "gamerules": GameRulesTests.schedule(); break;
                     case "boats": BoatTests.schedule(); break;
                     case "teids": TileEntityIdTests.schedule(); break;
@@ -128,6 +128,7 @@ public final class SelfTestRunner {
         PistonTests.schedule();
         SleepTests.schedule();
         BoatLeashTests.schedule();
+        ClickActionTests.schedule();
         CommandTests.schedule();
         GameRulesTests.schedule();
         SimulationTests.schedule();

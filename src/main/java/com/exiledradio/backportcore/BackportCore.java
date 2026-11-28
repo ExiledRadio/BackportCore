@@ -167,6 +167,8 @@ public final class BackportCore {
         com.exiledradio.backportcore.boat.Boats.registerFixes();
         // 1.19's inventory key on a chest boat: the client asks for the boat's chest (boat/BoatNetwork).
         com.exiledradio.backportcore.boat.BoatNetwork.init();
+        // 1.15's copy_to_clipboard click action, so tellraw keeps it (presentation/CopyToClipboard).
+        com.exiledradio.backportcore.presentation.CopyToClipboard.init();
         com.exiledradio.backportcore.gameevent.GameEventEmitters.addEntityPlacer(
                 stack -> stack.getItem() instanceof com.exiledradio.backportcore.boat.ItemWoodBoat);
         if (event.getSide().isClient()) {

@@ -487,6 +487,16 @@ public final class GameEventEmitters {
         return replaced != Material.AIR && !replaced.isLiquid() && !replaced.isReplaceable();
     }
 
+    /**
+     * Tells the emitters that a mod has posted its own game event for a block a player's right-click changed this
+     * tick, so the end-of-tick comparison posts nothing there (no block change, open, close or swap). For a change
+     * vanilla names otherwise: bottling a full beehive is {@code fluid_pickup}, not a block change. Server; only
+     * this tick's click at that block is affected.
+     */
+    public static void alreadyEmitted(World world, BlockPos pos) {
+        handled(world, pos);
+    }
+
     private static void handled(World world, BlockPos pos) {
         if (world.isRemote) {
             return;
@@ -595,8 +605,8 @@ public final class GameEventEmitters {
                     continue;
                 }
             }
-            if (now == c.before || !done.add(c.pos)) {
-                continue;
+            if (now == c.before || wasHandled(c.world, c.pos) || !done.add(c.pos)) {
+                continue; // unchanged, or a place or break event (or the mod itself) already posted it
             }
             if (now.getBlock() != c.before.getBlock()) {
                 // Placed or broken: Forge's own events covered it. Otherwise one block became another in place,
@@ -617,8 +627,7 @@ public final class GameEventEmitters {
     private static boolean swapped(Click c, IBlockState now) {
         Material before = c.before.getMaterial();
         Material after = now.getMaterial();
-        return before != Material.AIR && after != Material.AIR && !before.isLiquid() && !after.isLiquid()
-                && !wasHandled(c.world, c.pos);
+        return before != Material.AIR && after != Material.AIR && !before.isLiquid() && !after.isLiquid();
     }
 
     static boolean isBoneMeal(ItemStack stack) {

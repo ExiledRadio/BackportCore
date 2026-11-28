@@ -295,6 +295,26 @@ final class GameEventSourceTests {
             world.setBlockToAir(AT.add(1, 0, 0));
         });
 
+        // A mod that posts its own event for a block a click changed (Buzzy Bees bottling a hive: fluid_pickup).
+        then(1, "vibrations: a mod's own event for a click (alreadyEmitted)", world -> {
+            world.setBlockState(AT.add(-2, 0, -2), Blocks.LEVER.getDefaultState().withProperty(net.minecraft.block.BlockLever.FACING,
+                    net.minecraft.block.BlockLever.EnumOrientation.UP_X));
+            world.setBlockState(AT.add(-1, 0, -2), Blocks.DAYLIGHT_DETECTOR.getDefaultState());
+            rec.clear();
+            rightClick(world, ItemStack.EMPTY, AT.add(-2, 0, -2), EnumFacing.UP);
+            rightClick(world, ItemStack.EMPTY, AT.add(-1, 0, -2), EnumFacing.UP);
+            com.exiledradio.backportcore.gameevent.GameEventEmitters.alreadyEmitted(world, AT.add(-2, 0, -2));
+            com.exiledradio.backportcore.gameevent.GameEventEmitters.alreadyEmitted(world, AT.add(-1, 0, -2));
+        });
+        then(2, "vibrations: alreadyEmitted heard", world -> {
+            check("the lever turned and the detector swapped", world.getBlockState(AT.add(-2, 0, -2)).getValue(net.minecraft.block.BlockLever.POWERED)
+                    && world.getBlockState(AT.add(-1, 0, -2)).getBlock() == Blocks.DAYLIGHT_DETECTOR_INVERTED);
+            check("a state change and a swap marked alreadyEmitted post nothing more", !rec.heard.contains(GameEvent.BLOCK_ACTIVATE)
+                    && !rec.heard.contains(GameEvent.BLOCK_CHANGE), rec.heard);
+            world.setBlockToAir(AT.add(-2, 0, -2));
+            world.setBlockToAir(AT.add(-1, 0, -2));
+        });
+
         then(1, "vibrations: stopping an item's use (P83)", world -> {
             rec.clear();
             player.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(Items.BOW));
