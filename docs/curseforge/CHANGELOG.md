@@ -1,6 +1,22 @@
 # 1.5.0
 
 *   **For modpack and mod authors: pick a version look.** The Look Version setting (or `Presentation.requestLook` in code) makes the game look like that version, such as 1.16 or 26.4, even with no backport of it installed: its panorama, menus, options screens, splashes, chat and F3. Players can still turn the look down in Look & Feel.
+*   **Less server lag**: spawn rules are checked before a mob is built, as in today's game. Fish and glow squid were built and thrown away for most spawn attempts in water. With the whole family, an idle server went from 8.3 to 7.0 ms a tick.
+*   **Freezing is shared**: powder snow (Caves & Cliffs) and Game Drops' Freezing use one frozen counter with 26.4's rules, its damage, slowness, frost overlay and shaking. Nothing freezes while on fire or in leather. With a 26.4 backport, undead don't freeze either. The settings are on the new Freezing page.
+*   **Pointed dripstone and icicles are one kind of block**, as in 26.4: growth, thickness, falling stalactites, stalagmite damage, and tridents breaking them.
+*   **Modern blocks in structures**: when a structure file (from a backport or a data pack such as Dungeons and Taverns) names a block 1.12.2 doesn't have and no installed backport adds it, Core supplies a decorative copy with today's look and sound: deepslate, blackstone, tuff and copper sets, mud bricks, pale oak and more, 436 in all. Install the backport that owns one later and the copies turn into its blocks, and back if it is removed.
+*   **Today's block sounds** for the blocks Core and the backports add: the 55 sound types 1.12.2 lacks, with today's sounds.
+*   **More vibrations for sculk sensors and wardens**, as in 1.19: items and falling blocks landing, stripping and tilling, bows and tridents released, spawners spawning, chickens laying eggs, sheep eating, chorus fruit, eyes of ender, broken paintings and item frames, and more. With a 1.20 backport, 1.20.2's too.
+*   **Pistons move blocks that hold items** when the block allows it, such as Village & Pillage's composter, as in 1.14.
+*   **Leashed boats**, as in 1.21.6: a lead ties a boat to you or to a fence, and it follows on a springy rope that snaps past 12 blocks.
+*   **The playersSleepingPercentage game rule**, as in 1.17 (with a 1.17 or later backport): how many players must sleep to skip the night, shown above the hotbar.
+*   **Click-to-copy chat text**, as in 1.15, for /tellraw and other text.
+*   **Monster Hunter and Monsters Hunted** count the backports' hostile mobs, and **Adventuring Time** counts the sulfur caves, dappled forest and ice caves.
+*   **26.4's look**: Improved Fog in Video Settings, the Repeat Recipe key, names on the recipe book's tabs, Other Players with Mute, and 26.4's creative tab order.
+*   **The player preview in the inventory stays in its box**, as in 1.20.2, so a flying or riding player no longer covers the armor slots.
+*   **Mod settings pages**: mods with their own config files can have a page on the settings screen too.
+*   **Fixed: gliding straight up with an elytra kicked you** ("Invalid move player packet received") with OptiFine's Fast Math on.
+*   A mod that replaces one of vanilla's block entities by its id (the cause of "is missing a mapping! This is a bug!" with spawners) is now named in the log.
 *   **The inventory key opens a chest boat's chest** while you ride it, as in 1.19.
 *   **How Did We Get Here?** asks for the newer effects the installed backports add (Darkness, Conduit Power, Dolphin's Grace, Slow Falling and the rest), as today's game does, and only for those: the advancement stays possible whichever backports you have.
 *   **Fixed: chunk-sized patches of wrong light**, most visible at night under water (a square of sea floor lit as if there were no water, ice that looked see-through) and fixed by placing a block there. The server now sends light it changes in chunks you already have, as 1.14 does.
