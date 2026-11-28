@@ -327,6 +327,7 @@ minecraft:sign minecraft:oak_sign
 minecraft:grass_path minecraft:dirt_path
 minecraft:totem minecraft:totem_of_undying
 minecraft:chorus_fruit_popped minecraft:popped_chorus_fruit
+minecraft:mob_spawner minecraft:spawner
 egg minecraft:zombie_pigman minecraft:zombified_piglin
 egg minecraft:evocation_illager minecraft:evoker
 egg minecraft:vindication_illager minecraft:vindicator

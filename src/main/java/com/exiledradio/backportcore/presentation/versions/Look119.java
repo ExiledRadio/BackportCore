@@ -16,7 +16,8 @@ import net.minecraft.util.ResourceLocation;
  *       added, one removed); vanilla's own text as 1.19.4 words it; F3 + F (cycle render distance) removed (22w11a); the F3
  *       screen's "Allocation rate" line (client);</li>
  *   <li>1.19.1's splash and 1.19.3's six; 1.19.3's creative tab sprites ({@code tabs.png}, seven 26-pixel tabs a row,
- *       drawn by Core's {@code creative.client.ModernTabs}, patch P47);</li>
+ *       drawn by Core's {@code creative.client.ModernTabs}, patch P47); 1.19.3's "Monster Spawner" (22w44a), with the
+ *       spawner in Spawn Eggs and pick block on it ({@code creative.client.SpawnerPick});</li>
  *   <li>1.19.4: Auto-Jump off by default (23w03a, once per instance); Damage Tilt (23w06a) and Glint Speed and Glint
  *       Strength (23w05a, also on Video Settings), through patches P73 to P75 ({@code docs/PATCHES.md}).</li>
  * </ul>
@@ -85,8 +86,10 @@ public final class Look119 {
                 .removeDebugKey(KEY_F);
         Presentation.core("1.19.1").addSplashes(rl("look/1.19.1/texts/splashes_added.txt"));
         // 1.19.3: Core lays the creative tabs out 26 wide (P47), so these sprites always fit.
+        // 1.19.3 (22w44a): "Spawner" is "Monster Spawner" again (1.13's 17w47a had renamed it; look/1.13/vanilla_text).
         Presentation.core("1.19.3").addSplashes(rl("look/1.19.3/texts/splashes_added.txt"))
-                .replaceAsset(CREATIVE_TABS, rl("look/1.19.3/" + CREATIVE_TABS));
+                .replaceAsset(CREATIVE_TABS, rl("look/1.19.3/" + CREATIVE_TABS))
+                .vanillaText(rl("look/1.19.3/vanilla_text"));
 
         // 1.19.4's Accessibility Settings: ... Darkness Pulsing, Damage Tilt, Glint Speed, Glint Strength ... Darkness
         // Pulsing is Wild Update's; without it the three go to the end of the list, in this order. Video Settings ends

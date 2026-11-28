@@ -51,7 +51,8 @@ import java.util.Set;
  * <p>Each tab lists what 1.19.3's lists ({@code creative/tabs_1_19_3.txt}, from 1.19.3's {@code CreativeModeTabs};
  * items added later are in their 26.3 tab, by 26.3's order), and from 26.3 on what 26.3's lists
  * ({@code creative/order_26_3.txt}). The stacks are 1.12.2's own: every stack the nine 1.12.2 tabs list (with the
- * backports' placed items), each in every 1.19.3 tab that lists the item it is today, in that tab's order. A stack no
+ * backports' placed items) and the spawner, which none lists ({@link #unlisted}), each in every 1.19.3 tab that lists
+ * the item it is today, in that tab's order. A stack no
  * table lists (another mod's item in a vanilla tab) goes after the rest, in the tab 1.12.2's tab leads to (Decorations:
  * Functional Blocks; Transportation and Tools: Tools &amp; Utilities; Miscellaneous: Ingredients, or Spawn Eggs for a
  * spawn egg; Brewing and Foodstuffs: Food &amp; Drinks). Enchanted books are 1.19.3's: every enchantment's book at its
@@ -288,6 +289,13 @@ public final class ModernTabs {
                 }
             }
         }
+        // What 1.19.3's tabs list and no 1.12.2 tab does: the spawner, in Spawn Eggs (22w43a).
+        for (ItemStack s : unlisted()) {
+            if (seen.add(identity(s))) {
+                stacks.add(s);
+                from.add(CreativeTabs.MISC);
+            }
+        }
         // 1.19.3's books: every enchantment at its top level (generateEnchantmentBookTypesOnlyMaxLevel), in Ingredients.
         List<ItemStack> books = new ArrayList<ItemStack>();
         for (Enchantment e : Enchantment.REGISTRY) {
@@ -356,6 +364,19 @@ public final class ModernTabs {
         }
         out.put(Def.OP_BLOCKS, operatorItems());
         firstTab = first;
+        return out;
+    }
+
+    /**
+     * @return the 1.12.2 items 1.19.3's category tabs list that no 1.12.2 tab does: the spawner (1.19.3, 22w43a: "now
+     * available in the Creative inventory", in Spawn Eggs). Each is ranked by its table like any other stack.
+     */
+    static List<ItemStack> unlisted() {
+        List<ItemStack> out = new ArrayList<ItemStack>();
+        Item spawner = Item.getItemFromBlock(Blocks.MOB_SPAWNER);
+        if (spawner != Items.AIR) {
+            out.add(new ItemStack(spawner));
+        }
         return out;
     }
 

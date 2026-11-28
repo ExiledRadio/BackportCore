@@ -28,3 +28,4 @@ selectWorld.versionJoinButton=Все одно завантажити
 selectWorld.versionWarning=Цей світ збережено на версії %s та спроба завантажити його в цій версії може його пошкодити!
 gui.recipebook.toggleRecipes.smeltable=Доступні для переплавки
 options.autoSuggestCommands=Підказки до команд
+tile.mobSpawner.name=Спавнер

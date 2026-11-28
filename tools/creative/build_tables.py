@@ -46,6 +46,8 @@ RENAMES = {
     'minecraft:totem': 'minecraft:totem_of_undying',
     'minecraft:chorus_fruit_popped': 'minecraft:popped_chorus_fruit',
     'minecraft:fish.2': 'minecraft:tropical_fish',
+    # In no 1.12.2 tab, but 1.19.3's Spawn Eggs tab lists it (ModernTabs adds the stack).
+    'minecraft:mob_spawner': 'minecraft:spawner',
 }
 
 # Spawn eggs are one item with an entity in 1.12.2; today each is its own item. Entities renamed since.

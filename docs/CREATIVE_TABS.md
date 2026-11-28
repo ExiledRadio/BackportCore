@@ -101,7 +101,8 @@ block and void, the barrier, and Core's jigsaw block. Tabs are 1.19.3's size (26
 **Contents.** Each tab lists what 1.19.3's lists, in its order (`creative/tabs_1_19_3.txt`); from 26.3 on, what 26.3's
 lists (`order_26_3.txt`'s own tabs). The stacks are those the nine 1.12.2 tabs list, the backports' placed items
 included, each found as the item it is today (as for 26.3's order above), and each in every tab that lists that item
-(a log in Building Blocks and Natural Blocks). Enchanted books are 1.19.3's: every enchantment's book at its top level,
+(a log in Building Blocks and Natural Blocks). The spawner, in no 1.12.2 tab, is added too, so it leads Spawn Eggs as
+in 1.19.3 (22w43a; `ModernTabs.unlisted`); pick block on it gives one from 1.19.3 (`SpawnerPick`). Enchanted books are 1.19.3's: every enchantment's book at its top level,
 at the end of Ingredients. A stack neither table lists (another mod's item in a vanilla tab) goes after the rest of
 the tab its 1.12.2 tab leads to:
 

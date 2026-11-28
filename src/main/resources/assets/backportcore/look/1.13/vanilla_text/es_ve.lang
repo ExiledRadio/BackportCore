@@ -28,3 +28,4 @@ selectWorld.versionJoinButton=Cargar igualmente
 selectWorld.versionWarning=¡Este mundo fue guardado en la versión %s y puede dañarse si lo abres en la que estás usando!
 gui.recipebook.toggleRecipes.smeltable=Mostrando fundibles
 options.autoSuggestCommands=Sugerir comandos
+tile.mobSpawner.name=Generador

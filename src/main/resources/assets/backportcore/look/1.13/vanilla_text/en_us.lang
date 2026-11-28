@@ -28,3 +28,4 @@ selectWorld.versionJoinButton=Load Anyway
 selectWorld.versionWarning=This world was last played in version %s and loading it in this version could cause corruption!
 gui.recipebook.toggleRecipes.smeltable=Showing smeltable
 options.autoSuggestCommands=Command Suggestions
+tile.mobSpawner.name=Spawner

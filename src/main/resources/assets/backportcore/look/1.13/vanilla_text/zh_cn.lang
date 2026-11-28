@@ -28,3 +28,4 @@ selectWorld.versionJoinButton=仍然载入
 selectWorld.versionWarning=此世界上次是在%s版本中游玩的，在此版本中加载可能会导致数据损坏！
 gui.recipebook.toggleRecipes.smeltable=仅显示可烧炼
 options.autoSuggestCommands=命令提示
+tile.mobSpawner.name=刷怪箱

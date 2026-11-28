@@ -47,7 +47,7 @@ final class Look119120Tests {
 
     static void schedule() {
         then(1, "look 1.19/1.20: Core's contributions and their files", world -> {
-            for (String v : new String[] {"1.19", "1.19.1", "1.19.3", "1.19.4", "1.20", "1.20.5"}) {
+            for (String v : new String[] {"1.19", "1.19.1", "1.19.3", "1.19.4", "1.20", "1.20.3", "1.20.5"}) {
                 Contribution c = Presentation.coreContribution(v);
                 check("look: Core has its own " + v, c != null && c.isCore() && !c.owners().contains("wildupdatebackport")
                         && !c.owners().contains("trailsandtalesbackport"), c);
@@ -175,6 +175,54 @@ final class Look119120Tests {
             check("look: 1.19's vanilla text has the multiplayer warning", "Caution: Third-Party Online Play".equals(
                     lang("look/1.19/vanilla_text/en_us.lang").get("multiplayerWarning.header")), "");
             check("look: 1.20's vanilla text says Game Over!", "Game Over!".equals(lang("look/1.20/vanilla_text/en_us.lang").get("deathScreen.title.hardcore")), "");
+        });
+        then(1, "look: the spawner's names (1.13, 1.19.3) and inner faces (1.20.3)", world -> {
+            String[] codes = {"de_de", "en_us", "es_ar", "es_es", "es_mx", "es_uy", "es_ve", "fr_fr", "it_it", "ja_jp", "ko_kr", "nl_nl",
+                    "pl_pl", "pt_br", "ru_ru", "tr_tr", "uk_ua", "zh_cn", "zh_tw"};
+            String key = "tile.mobSpawner.name";
+            check("look: 1.13 calls it Spawner (17w47a)", "Spawner".equals(lang("look/1.13/vanilla_text/en_us.lang").get(key)),
+                    lang("look/1.13/vanilla_text/en_us.lang").get(key));
+            check("look: 1.19.3 calls it Monster Spawner again (22w44a)",
+                    "Monster Spawner".equals(lang("look/1.19.3/vanilla_text/en_us.lang").get(key)), "");
+            List<String> missing = new ArrayList<String>();
+            for (String code : codes) {
+                for (String v : new String[] {"1.13", "1.19.3"}) {
+                    String name = lang("look/" + v + "/vanilla_text/" + code + ".lang").get(key);
+                    if (name == null || name.isEmpty()) {
+                        missing.add(v + " " + code);
+                    }
+                }
+            }
+            check("look: both names in all 19 languages", missing.isEmpty(), missing);
+            check("creative: 1.12.2's mob_spawner is today's minecraft:spawner (1.19.3's Spawn Eggs lists it)", "minecraft:spawner".equals(
+                    com.exiledradio.backportcore.creative.VanillaOrder.modernId(new ItemStack(Blocks.MOB_SPAWNER))),
+                    com.exiledradio.backportcore.creative.VanillaOrder.modernId(new ItemStack(Blocks.MOB_SPAWNER)));
+            check("look: the 1.19.3 layer is only the name", lang("look/1.19.3/vanilla_text/en_us.lang").size() == 1, "");
+            try {
+                java.lang.reflect.Field texts = Contribution.class.getDeclaredField("texts");
+                texts.setAccessible(true);
+                check("look: Core's 1.19.3 composes its vanilla text",
+                        ((List<?>) texts.get(Presentation.coreContribution("1.19.3"))).contains(new ResourceLocation("backportcore",
+                                "look/1.19.3/vanilla_text")), texts.get(Presentation.coreContribution("1.19.3")));
+            } catch (ReflectiveOperationException e) {
+                check("look: Core's 1.19.3 composes its vanilla text", false, e);
+            }
+            Contribution v1203 = Presentation.coreContribution("1.20.3");
+            ResourceLocation model = v1203 == null ? null : v1203.replacedAssets().get(Look120.SPAWNER_MODEL);
+            check("look: Core's 1.20.3 replaces the spawner's model", model != null, v1203);
+            byte[] json = model == null ? null : bytes("/assets/" + model.getNamespace() + "/" + model.getPath());
+            com.google.gson.JsonObject o = null;
+            try {
+                o = json == null ? null : new com.google.gson.JsonParser().parse(new String(json, StandardCharsets.UTF_8)).getAsJsonObject();
+            } catch (RuntimeException e) {
+                o = null;
+            }
+            com.google.gson.JsonArray elements = o == null || !o.has("elements") ? null : o.getAsJsonArray("elements");
+            check("look: 1.20.3's model has the outer and the inverted inner cube", elements != null && elements.size() == 2
+                    && elements.get(1).getAsJsonObject().getAsJsonArray("from").get(0).getAsDouble()
+                    > elements.get(1).getAsJsonObject().getAsJsonArray("to").get(0).getAsDouble(), o);
+            check("look: on 1.12.2's spawner texture", o != null && "blocks/mob_spawner".equals(
+                    o.getAsJsonObject("textures").get("all").getAsString()), o);
         });
     }
 

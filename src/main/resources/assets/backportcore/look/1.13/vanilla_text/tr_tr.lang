@@ -28,3 +28,4 @@ selectWorld.versionJoinButton=Yine De Yükle
 selectWorld.versionWarning=Bu dünya en son %s sürümünde oynanmış ve bu sürümde yüklenmesi bozulmasına sebep olabilir!
 gui.recipebook.toggleRecipes.smeltable=Eritilebilenler gösteriliyor
 options.autoSuggestCommands=Komut Önerileri
+tile.mobSpawner.name=Çağırıcı

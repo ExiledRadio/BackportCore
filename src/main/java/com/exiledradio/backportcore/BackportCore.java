@@ -194,6 +194,8 @@ public final class BackportCore {
             com.exiledradio.backportcore.client.SpawnEggModels.init();
             com.exiledradio.backportcore.command.tick.client.ClientTicks.init();
             com.exiledradio.backportcore.command.swing.client.ClientSwings.init();
+            // 1.19.3's pick block on a spawner (creative/client/SpawnerPick).
+            com.exiledradio.backportcore.creative.client.SpawnerPick.init();
         }
     }
 

@@ -892,7 +892,18 @@ final class ClientMenuShots {
         });
         tab(mc, "creative-eggs", ModernTabs.Def.SPAWN_EGGS, null);
         add(null, () -> {
-            List<ItemStack> items = items(creative(mc));
+            List<ItemStack> all = items(creative(mc));
+            // 1.19.3 (22w43a): the spawner first, then the eggs (26.3 lists the trial spawner and creaking heart after it).
+            check("pick block on a spawner gives one from 1.19.3 (22w44a)", com.exiledradio.backportcore.creative.client.SpawnerPick.active()
+                    && com.exiledradio.backportcore.creative.client.SpawnerPick.stack().getItem() == Item.getItemFromBlock(Blocks.MOB_SPAWNER), "");
+            check("Spawn Eggs starts with the spawner (1.19.3)", !all.isEmpty() && all.get(0).getItem() == Item.getItemFromBlock(Blocks.MOB_SPAWNER),
+                    all.isEmpty() ? "" : key(all.get(0)));
+            List<ItemStack> items = new ArrayList<ItemStack>();
+            for (ItemStack s : all) {
+                if (s.getItem() instanceof net.minecraft.item.ItemMonsterPlacer || !items.isEmpty()) {
+                    items.add(s);
+                }
+            }
             boolean eggs = !items.isEmpty();
             for (ItemStack s : items) {
                 eggs &= s.getItem() instanceof net.minecraft.item.ItemMonsterPlacer;
@@ -910,7 +921,7 @@ final class ClientMenuShots {
                     com.exiledradio.backportcore.presentation.LookArea.INVENTORY, "1.21.5") ? "creeper" : "pig";
             check("Spawn Eggs' tab icon is the " + icon + " spawn egg (the creeper's from 1.21.5)", icon.equals(ModernTabs.spawnEggsIcon()),
                     ModernTabs.spawnEggsIcon());
-            check("Spawn Eggs lists spawn eggs only, in the installed version's order (" + first + " first)", eggs
+            check("then spawn eggs only, in the installed version's order (" + first + " first)", eggs
                     && String.valueOf(net.minecraft.item.ItemMonsterPlacer.getNamedIdFrom(items.get(0))).endsWith(":" + first), names);
             // Every stack the nine 1.12.2 tabs list is in some 1.19.3 tab.
             Set<String> listed = new HashSet<String>();

@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
  *       Ctrl + scroll changing GUI Scale on Video Settings (client);</li>
  *   <li>1.20.2: F3 + 1 and F3 + 2 show the profiler and the FPS charts, and F3 alone (with Shift or Alt) no longer does
  *       (client);</li>
+ *   <li>1.20.3: the spawner's inner faces (23w45a, its model);</li>
  *   <li>1.20.5: Menu Background Blur (Accessibility and Video Settings, which Core's menu backgrounds read), the world
  *       loading screen over the blurred, darkened panorama (Core's {@code PANORAMA_1_20_5} revision), the dimension
  *       change screens (24w03a), the shield arm following the look ({@code poseBlockingArm}) and Ctrl + pick block
@@ -53,6 +54,9 @@ public final class Look120 {
         return new ResourceLocation("backportcore", path);
     }
 
+    /** 1.12.2's spawner model, which 1.20.3's (inner faces) replaces. */
+    public static final String SPAWNER_MODEL = "models/block/mob_spawner.json";
+
     /** From Backport Core's construction, both sides, before any backport registers. */
     static void register() {
         Presentation.core("1.20")
@@ -65,6 +69,10 @@ public final class Look120 {
                 .replaceAsset("textures/gui/title/edition.png", rl(DIR + "textures/gui/title/edition.png"))
                 .replaceAsset("textures/gui/title/edition.png.mcmeta", SMOOTH)
                 .vanillaText(rl(DIR + "vanilla_text"));
+
+        // 1.20.3 (23w45a): the spawner renders its inner faces (cube_all_inner_faces, written out for 1.12.2's
+        // mob_spawner; 1.12.2's spawner is already on the cutout layer, the item model inherits it).
+        Presentation.core("1.20.3").replaceAsset(SPAWNER_MODEL, rl("look/1.20.3/" + SPAWNER_MODEL));
 
         // 1.20.5 (24w09a): on Accessibility Settings after Auto-Jump, and last on Video Settings.
         MENU_BLUR.zeroKey("options.off");

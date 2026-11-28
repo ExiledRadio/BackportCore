@@ -19,6 +19,13 @@ In progress: see docs/PLAN_1_5_0.md.
     `backportcore:cobbled_deepslate`. Each is an `inventory_changed` alternative to `get_stone`, named by the item's
     registry name, so Nether Update's own `netherupdatebackport:blackstone` criterion is the same one and never added
     twice. Re-applied after `/reload`.
+*   The spawner, as in 1.19.3 and 1.20.3: in 1.19.3's Spawn Eggs tab, first (`ModernTabs.unlisted`, and
+    `minecraft:mob_spawner` to `minecraft:spawner` in `creative/legacy_items.txt`); pick block on it gives one from
+    1.19.3 (`creative.client.SpawnerPick`, Forge's input events, no patch; Ctrl keeps its data through P76); named
+    "Spawner" from 1.13 and "Monster Spawner" again from 1.19.3 (`look/1.13/vanilla_text`, `look/1.19.3/vanilla_text`,
+    Mojang's 1.13.2 and 1.19.3 names in all 19 languages); and 1.20.3's model with its inner faces (Core's 1.20.3
+    piece replaces `models/block/mob_spawner.json`). The tab and pick block follow the inventory part of the look
+    (`LookArea.INVENTORY`), the name and model the look version.
 *   More vibration sources (`gameevent.GameEventEmitters`, patches P80-P83), each with vanilla's event and frequency.
     From 1.19: dropped items and falling blocks landing (hit_ground, damped by wool); stripping, tilling, paths and the
     daylight detector (block_change, no longer block_place); bows, crossbows and tridents released and shields
