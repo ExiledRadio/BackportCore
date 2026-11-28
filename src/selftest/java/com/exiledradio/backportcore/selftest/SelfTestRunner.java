@@ -97,6 +97,7 @@ public final class SelfTestRunner {
                     case "dynamictrees": DynamicTreesTests.schedule(); break;
                     case "supplied": SuppliedTests.schedule(); break;
                     case "freeze": FreezeTests.schedule(); break;
+                    case "rideeffects": RideEffectsTests.schedule(); break;
                     default: fail("unknown self-test group", group); break;
                 }
             }
@@ -133,6 +134,7 @@ public final class SelfTestRunner {
         GdWorldgenTests.schedule();
         BoatTests.schedule();
         TileEntityIdTests.schedule();
+        RideEffectsTests.schedule();
         DynamicTreesTests.schedule();
         SuppliedTests.schedule();
         FreezeTests.schedule();

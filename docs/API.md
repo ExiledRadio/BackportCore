@@ -1031,6 +1031,19 @@ forest, 26.4's ice caves; Core's self-test holds 1.20.6's to the file in its jar
 *   Changed after each load of the advancements (the server's start, `/reload`), then the online players' progress is
     read again. `AdventuringTime.extend(server, ids...)` adds criteria by hand (the self-tests).
 
+### How Did We Get Here? (`advancement.AllEffects`, 1.5.0)
+
+`minecraft:nether/all_effects` asks for vanilla's later effects as far as the installed backports bring them. A backport
+names each of its effects in pre-init: `AllEffects.register("minecraft:darkness", () -> DARKNESS)` (or
+`AllEffects.register(potion)`, by the effect's own name). The list is vanilla's at the newest installed version
+(`AllEffects.listAt`): 1.12.2's 20; 1.13's Slow Falling, Conduit Power, Dolphin's Grace; 1.14's Blindness, Bad Omen, Hero
+of the Village (Saturation, added in 1.14, was dropped again in 1.14.3); 1.19's Darkness; 1.21's Infested, Oozing, Raid
+Omen, Trial Omen, Weaving, Wind Charged; 1.21.11's Breath of the Nautilus; 26.4's Freezing (34 at 1.21.11, 35 at 26.4,
+the wiki's count). Of that list it asks only for the effects in this game: vanilla's own (Blindness) and the registered
+ones, so the advancement stays possible with any set of backports. A name that is not one of those later effects is
+ignored. The one criterion `all_effects` is replaced after each load of the advancements and the online players'
+progress is read again; `AllEffects.change(server, advancement, effects)` does it by hand (the self-tests).
+
 ### Monster Hunter (`advancement.MonsterHunter`, 1.5.0)
 
 Monster Hunter (`adventure/kill_a_mob`) and Monsters Hunted (`adventure/kill_all_mobs`) count a backport's hostile
@@ -1363,6 +1376,9 @@ One boat and one boat with chest for the whole family (Wild Update's request 4, 
   back). A raft's rider sits at 0.25. A crash drops the wood's planks. The chest boat is 1.19's: 27 slots, one seat
   0.15 forward, opened sneaking or when the seat is taken, contents dropped whenever it is removed for good (not on
   a dimension change), and an `IInventory` for hoppers.
+- Riding a chest boat, the inventory key opens its chest (1.19's `HasCustomInventoryScreen`): `client.ChestBoatKey`
+  takes the key at the start of the client tick when no screen is open and sends `BoatNetwork`'s request
+  (`backportcore_boat`); the server opens the chest of the chest boat the player rides (`BoatNetwork.open`).
 - Old saves: `Boats.renamed(oldEntityName, chest)` in pre-init. Core's data fixer (data version 1) renames the entity
   as it is read, wherever it was saved: chunks, passengers, spawners, a player's `RootVehicle`; the tags (wood, chest,
   riders) are the same. Core also remaps the name in `MissingMappings` (no missing-entries prompt, and an alias for

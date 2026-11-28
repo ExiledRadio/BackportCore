@@ -2,6 +2,11 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   Riding a chest boat, the inventory key opens the boat's chest, as in 1.19 (`boat.BoatNetwork`, channel
+    `backportcore_boat`; `boat.client.ChestBoatKey`).
+*   How Did We Get Here? with the backports' effects (`advancement.AllEffects.register`): vanilla's list at the newest
+    installed version (34 at 1.21.11, 35 at 26.4), asking only for the effects in this game.
+
 *   26.4 Deep Freeze systems (docs/PLAN_1_5_0.md stream 2; built on 26.4 Pre-Release 1, to diff at release):
     *   Freeze ticks (`freeze/`), 1.17's frozen counter with 26.4's rules, moved here from Caves & Cliffs so its powder
         snow and Game Drops' Freezing share it: 140 ticks, damage every 40 (five times for blazes, magma cubes and
