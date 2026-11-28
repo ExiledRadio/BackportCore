@@ -5,6 +5,8 @@ import com.exiledradio.backportcore.map.MapIcons;
 import com.exiledradio.backportcore.mechanics.BlockRules;
 
 import net.minecraft.block.BlockPane;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemMap;
@@ -12,13 +14,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import net.minecraft.world.storage.MapDecoration;
 
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.check;
 import static com.exiledradio.backportcore.selftest.SelfTestRunner.then;
 
-/** Map icons newer than 1.12.2 (map/, P34) and torches on panes (mechanics/, P35). */
+/** Map icons newer than 1.12.2 (map/, P34), torches on panes (mechanics/, P35) and gliding straight up (P78). */
 final class MechanicsTests {
 
     static boolean panesOn;
@@ -86,5 +91,89 @@ final class MechanicsTests {
             world.setBlockState(at.up(), Blocks.AIR.getDefaultState(), 2);
             world.setBlockState(at, Blocks.AIR.getDefaultState(), 2);
         });
+
+        then(1, "elytra looking straight up (P78)", world -> {
+            check("P78 applied", "applied".equals(Asm.state("P78")), Asm.state("P78"));
+            BlockPos spawn = world.getSpawnPoint();
+            // OptiFine's Fast Math gives this look at pitch -90: no horizontal part at all.
+            Glider up = new Glider(world, new Vec3d(0.0D, 1.0D, 0.0D));
+            up.setLocationAndAngles(spawn.getX() + 0.5D, 250.0D, spawn.getZ() + 0.5D, 0.0F, -90.0F);
+            up.motionX = 0.8D;
+            up.motionY = 0.1D;
+            up.motionZ = -1.3D;
+            up.travel(0.0F, 0.0F, 0.0F);
+            check("gliding straight up with speed: motion stays finite", finite(up.motionX) && finite(up.motionY) && finite(up.motionZ),
+                    up.motionX + " " + up.motionY + " " + up.motionZ);
+            check("gliding straight up with speed: position stays finite", finite(up.posX) && finite(up.posY) && finite(up.posZ),
+                    up.posX + " " + up.posY + " " + up.posZ);
+
+            // Any other look: exactly 1.12.2's motion.
+            Glider level = new Glider(world, null);
+            level.setLocationAndAngles(spawn.getX() + 0.5D, 250.0D, spawn.getZ() + 0.5D, 37.0F, -30.0F);
+            level.motionX = 0.8D;
+            level.motionY = -0.2D;
+            level.motionZ = -1.3D;
+            double[] want = vanillaGlide(level);
+            level.travel(0.0F, 0.0F, 0.0F);
+            check("gliding at pitch -30: 1.12.2's motion", level.motionX == want[0] && level.motionY == want[1] && level.motionZ == want[2],
+                    level.motionX + " " + level.motionY + " " + level.motionZ + " vs " + want[0] + " " + want[1] + " " + want[2]);
+        });
+    }
+
+    private static boolean finite(double d) {
+        return !Double.isNaN(d) && !Double.isInfinite(d);
+    }
+
+    /** 1.12.2's elytra motion for one tick of {@code EntityLivingBase.travel} in open air, before the move. */
+    private static double[] vanillaGlide(EntityLivingBase e) {
+        Vec3d look = e.getLookVec();
+        float f = e.rotationPitch * 0.017453292F;
+        double mx = e.motionX;
+        double my = e.motionY;
+        double mz = e.motionZ;
+        double d6 = Math.sqrt(look.x * look.x + look.z * look.z);
+        double d8 = Math.sqrt(mx * mx + mz * mz);
+        double d1 = look.length();
+        float f4 = MathHelper.cos(f);
+        f4 = (float) ((double) f4 * (double) f4 * Math.min(1.0D, d1 / 0.4D));
+        my += -0.08D + (double) f4 * 0.06D;
+        if (my < 0.0D && d6 > 0.0D) {
+            double d2 = my * -0.1D * (double) f4;
+            my += d2;
+            mx += look.x * d2 / d6;
+            mz += look.z * d2 / d6;
+        }
+        if (f < 0.0F) {
+            double d10 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
+            my += d10 * 3.2D;
+            mx -= look.x * d10 / d6;
+            mz -= look.z * d10 / d6;
+        }
+        if (d6 > 0.0D) {
+            mx += (look.x / d6 * d8 - mx) * 0.1D;
+            mz += (look.z / d6 * d8 - mz) * 0.1D;
+        }
+        return new double[] {mx * 0.9900000095367432D, my * 0.9800000190734863D, mz * 0.9900000095367432D};
+    }
+
+    /** A gliding mob, not in the world, whose look can be set exactly. */
+    private static final class Glider extends EntityZombie {
+
+        private final Vec3d look;
+
+        Glider(World world, Vec3d look) {
+            super(world);
+            this.look = look;
+        }
+
+        @Override
+        public boolean isElytraFlying() {
+            return true;
+        }
+
+        @Override
+        public Vec3d getLookVec() {
+            return this.look != null ? this.look : super.getLookVec();
+        }
     }
 }
