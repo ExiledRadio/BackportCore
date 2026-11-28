@@ -1,5 +1,6 @@
 # 1.5.0
 
+*   **Less lag from simulation distance**: water, lava and falling-block ticks waiting outside the simulation distance are kept with their chunk instead of being checked again every tick, and come back gradually when you get near, so a big backlog (such as a frozen ocean's) no longer slows every tick or changes a whole area at once.
 *   **For modpack and mod authors: pick a version look.** The Look Version setting (or `Presentation.requestLook` in code) makes the game look like that version, such as 1.16 or 26.4, even with no backport of it installed: its panorama, menus, options screens, splashes, chat and F3. Players can still turn the look down in Look & Feel.
 *   **Less server lag**: spawn rules are checked before a mob is built, as in today's game. Fish and glow squid were built and thrown away for most spawn attempts in water. With the whole family, an idle server went from 8.3 to 7.0 ms a tick.
 *   **Freezing is shared**: powder snow (Caves & Cliffs) and Game Drops' Freezing use one frozen counter with 26.4's rules, its damage, slowness, frost overlay and shaking. Nothing freezes while on fire or in leather. With a 26.4 backport, undead don't freeze either. The settings are on the new Freezing page.
@@ -64,7 +65,6 @@
 *   **Update notices**: the settings screen shows when a newer version of Backport Core or any installed backport is out, on the Family page and the mod's own page, with a link to CurseForge. It uses Forge's update check, or the versions this Core knows when that check is off or offline.
 *   **Look & Feel is now part of the Family page**, after Core's own settings, instead of its own tab.
 *   **Simulation Distance** (1.18, Video Settings): mobs, machines, crops and redstone run only this many chunks from a player, however far you can see. Your own worlds follow the setting; a server uses `simulation-distance` in server.properties, as 1.18 does. Spawn chunks and chunks a mod keeps loaded run as before.
-*   **Less lag from simulation distance**: water, lava and falling-block ticks waiting outside the simulation distance are kept with their chunk instead of being checked again every tick, and come back gradually when you get near, so a big backlog (such as a frozen ocean's) no longer slows every tick or changes a whole area at once.
 *   **Chunk Builder** (1.18.2, Video Settings): Threaded, Semi Blocking or Fully Blocking, the same setting as Core's config option for it.
 *   **Improved Transparency** (Video Settings, the Fabulous! preset): rain and snow in front of water and glass are drawn over them instead of behind them.
 *   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own.)
