@@ -64,6 +64,7 @@
 *   **Update notices**: the settings screen shows when a newer version of Backport Core or any installed backport is out, on the Family page and the mod's own page, with a link to CurseForge. It uses Forge's update check, or the versions this Core knows when that check is off or offline.
 *   **Look & Feel is now part of the Family page**, after Core's own settings, instead of its own tab.
 *   **Simulation Distance** (1.18, Video Settings): mobs, machines, crops and redstone run only this many chunks from a player, however far you can see. Your own worlds follow the setting; a server uses `simulation-distance` in server.properties, as 1.18 does. Spawn chunks and chunks a mod keeps loaded run as before.
+*   **Less lag from simulation distance**: water, lava and falling-block ticks waiting outside the simulation distance are kept with their chunk instead of being checked again every tick, and come back gradually when you get near, so a big backlog (such as a frozen ocean's) no longer slows every tick or changes a whole area at once.
 *   **Chunk Builder** (1.18.2, Video Settings): Threaded, Semi Blocking or Fully Blocking, the same setting as Core's config option for it.
 *   **Improved Transparency** (Video Settings, the Fabulous! preset): rain and snow in front of water and glass are drawn over them instead of behind them.
 *   **Exclusive Fullscreen Mode** (Fullscreen Resolution before 26.3): choose the resolution and refresh rate exclusive fullscreen uses, or Current. (Not with OptiFine, which has its own.)

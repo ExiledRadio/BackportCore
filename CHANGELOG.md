@@ -2,6 +2,10 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   Simulation distance waiting ticks kept by chunk (`simulation.HeldTicks`, patch P91): a scheduled tick outside the
+    distance waits with its chunk instead of going back on the world's queue every tick, and goes back (at most 4,096 a
+    tick) once its chunk is in range; chunk saves still have it. The distance is checked before `isAreaLoaded` (that
+    check was 27% of a user's 108 ms frozen-ocean tick with 76,620 waiting ticks).
 *   An author's look: `Presentation.requestLook(version)` and the Look Version setting (`presentation.lookVersion`) make
     the game look like a version with no backport of it installed, from Core's own pieces of each version up to it
     (docs/PRESENTATION.md). Content still comes only from installed backports.

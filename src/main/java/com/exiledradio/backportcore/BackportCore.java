@@ -150,6 +150,7 @@ public final class BackportCore {
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.advancement.StoneAge.Events());
         MinecraftForge.EVENT_BUS.register(new SpawnProgress.Events());
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.SimulationDistance.Events());
+        MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.simulation.HeldTicks.Events());
         // Vanilla's recipe unlocking for the backports' recipes (recipe/).
         MinecraftForge.EVENT_BUS.register(new com.exiledradio.backportcore.recipe.RecipeUnlocks.Events());
         // Rule 1: another backport's copies become their owner's when the owner is added to a world (ownership/).

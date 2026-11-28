@@ -255,14 +255,14 @@ public final class SimulationDistance {
      * {@code LevelTicks} keeps it until its chunk ticks.
      */
     public static boolean scheduledTickLoaded(World world, BlockPos from, BlockPos to) {
-        if (!world.isAreaLoaded(from, to)) {
+        // The distance first: a few comparisons per player, where isAreaLoaded walks the chunk map. Both refusals
+        // wait the same way, and outside the distance is most of what waits (thousands of water and lava ticks a tick
+        // over new terrain or a melting frozen ocean: isAreaLoaded was 27% of a 108 ms client tick, Spark 2026-11-28).
+        if (!entityTicking(world, from)) {
+            deferredTicks++;
             return false;
         }
-        if (entityTicking(world, from)) {
-            return true;
-        }
-        deferredTicks++;
-        return false;
+        return world.isAreaLoaded(from, to);
     }
 
     /**
