@@ -2,6 +2,10 @@
 
 In progress: see docs/PLAN_1_5_0.md.
 
+*   Faster idle servers: spawn rules a backport registers are checked before the natural spawner builds the mob, as
+    current Java does (`worldgen.SpawnPrechecks`, patch P90). Fish and glow squid were built and thrown away for most
+    spawn attempts in water. With Update Aquatic and Caves & Cliffs Backport registering their fish and glow squid, the
+    whole family's idle server went from 8.3 to 7.0 ms a tick (Spark, median of the last minute).
 *   Riding a chest boat, the inventory key opens the boat's chest, as in 1.19 (`boat.BoatNetwork`, channel
     `backportcore_boat`; `boat.client.ChestBoatKey`).
 *   How Did We Get Here? with the backports' effects (`advancement.AllEffects.register`): vanilla's list at the newest

@@ -620,6 +620,17 @@ if (FeatureSource.places(world, "1.14")) return;   // an IWorldGenerator for a 1
 Caves & Cliffs Backport's 1.18 generator places every 1.18.2 feature, with the backports' blocks where they are
 installed (Village & Pillage's sweet berry bushes, bamboo and flowers): their own generators for those step aside.
 
+### Spawn rules before the mob is built (`worldgen.SpawnPrechecks`, 1.5.0)
+
+1.12.2's natural spawner builds a mob before it asks the mob's `getCanSpawnHere` or Forge's `CheckSpawn`; current
+Java checks the position first. A mob whose rules refuse most spots (water mobs with a height band or a distance
+rule) registers a check of the position alone, which the spawner asks before it builds the mob (patch P90). Register
+only what the mob's own rules refuse anyway: the spawns that happen stay the same, the thrown-away mobs are not built.
+
+```java
+SpawnPrechecks.register(EntityGlowSquid.class, (world, pos) -> pos.getY() > world.getSeaLevel() - 33);
+```
+
 ### Superflat worlds (`worldgen.FlatWorlds`, 1.3.0)
 
 A superflat world generates only what its preset lists. 1.12.2's options: `decoration` (the biome's decorator:

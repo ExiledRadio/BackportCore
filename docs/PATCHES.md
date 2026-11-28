@@ -1409,3 +1409,25 @@ or passes an existing constant through a hook of the same type.
 *   **Tested**: `PatchTests` (both chains); self-test `sleep: playersSleepingPercentage (P86, P87)` (group `sleep`):
     the sleepers needed, 100, 50 and 101 with two players and a spectator, lying down against asleep long enough, and
     the messages.
+
+## P90. Spawn rules checked before the mob is built
+
+*   **Class**: `net.minecraft.world.WorldEntitySpawner`, method `findChunksForSpawning` (`func_77192_a`).
+    **Transformer**: `asm/SpawnPrecheckTransformer`. **Hooks**: `worldgen/SpawnPrechecks.allowed`. **Since**: 1.5.0.
+*   **Vanilla change**: current Java's `NaturalSpawner` checks a mob type's spawn rules and despawn distance at the
+    position before it creates the mob. 1.12.2 builds the mob first and only then asks `getCanSpawnHere` and Forge's
+    `CheckSpawn`. Fish (refused beyond 64 blocks of every player) and glow squid (refused above y 30) were built and
+    thrown away for almost every attempt the spawner made in water: with the whole family installed, about a sixth
+    of an idle server's tick time (Spark, 2026-11-28).
+*   **Why a patch**: the mob is built between the two checks 1.12.2 offers (`PotentialSpawns`, which also picks the
+    entry, and `CheckSpawn`, which needs the mob).
+*   **What changes**: the result of the one `WorldServer.canCreatureTypeSpawnHere(type, entry, pos)` call passes
+    through `SpawnPrechecks.allowed(result, world, entry, pos)`, loaded from the locals the call's arguments came
+    from: false when a check a backport registered for the entry's class refuses the position. The attempt then fails
+    as a refused spawn did, without a mob built (and without its `world.rand` draw for the facing). The call stays in
+    place; the stack is the same afterwards, so the frames stay valid.
+*   **Who it reaches**: natural spawning of the mobs a backport registers (`SpawnPrechecks.register`), with checks
+    of the position alone that their own rules would refuse anyway. Spawn eggs, spawners, commands and chunk
+    generation spawning are unchanged.
+*   **Fails safe**: method not found, not exactly one call, or its arguments not four plain local loads: skipped.
+*   **Tested**: `PatchTests` (both chains); self-test `P90: spawn rules checked before the mob is built`.
