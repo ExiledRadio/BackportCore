@@ -139,7 +139,39 @@ public final class SimulationDistance {
         if (world.provider.getDimensionType().shouldLoadSpawn() && world.isSpawnChunk(cx, cz)) {
             return true;
         }
-        return !world.getPersistentChunks().isEmpty() && world.getPersistentChunks().containsKey(new ChunkPos(cx, cz));
+        com.google.common.collect.ImmutableSetMultimap<ChunkPos, ?> forced = persistentChunks(world);
+        return !forced.isEmpty() && forced.containsKey(new ChunkPos(cx, cz));
+    }
+
+    /** One world's force-loaded chunks as read at one world time. */
+    private static final class Forced {
+        final java.lang.ref.WeakReference<World> world;
+        final long time;
+        final com.google.common.collect.ImmutableSetMultimap<ChunkPos, ?> chunks;
+
+        Forced(World world, long time, com.google.common.collect.ImmutableSetMultimap<ChunkPos, ?> chunks) {
+            this.world = new java.lang.ref.WeakReference<World>(world);
+            this.time = time;
+            this.chunks = chunks;
+        }
+    }
+
+    private static volatile Forced forced;
+
+    /**
+     * Forge's force-loaded chunks for the world, read once per world tick. {@code World.getPersistentChunks} goes through
+     * a synchronized map each call, and {@link #near} is asked for every scheduled tick outside the distance (thousands a
+     * tick while new terrain's water and lava wait): 69 of 127 seconds of a flying server's tick (Spark, 2026-11-28).
+     * The answer is an immutable snapshot, so one per tick is the same answer.
+     */
+    private static com.google.common.collect.ImmutableSetMultimap<ChunkPos, ?> persistentChunks(World world) {
+        long time = world.getTotalWorldTime();
+        Forced f = forced;
+        if (f == null || f.time != time || f.world.get() != world) {
+            f = new Forced(world, time, world.getPersistentChunks());
+            forced = f;
+        }
+        return f.chunks;
     }
 
     /** @return true while the distance applies to this world (a server world, a distance set) */
