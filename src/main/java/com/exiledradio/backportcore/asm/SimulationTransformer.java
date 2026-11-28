@@ -93,10 +93,57 @@ public final class SimulationTransformer implements IClassTransformer {
                 "(Lnet/minecraft/world/World;" + POS + POS + ")Z", false));
         blocks.instructions.set(persistent.get(0), new MethodInsnNode(Opcodes.INVOKESTATIC, HOOKS, "randomTickChunks",
                 "(Lnet/minecraft/world/World;Ljava/util/Iterator;)Ljava/util/Iterator;", false));
+        if (failure == null) {
+            heldTicks(node, ticks);
+        }
         worldServerDone = true;
         done();
         return Asm.write(node);
     }
+
+    /**
+     * Waiting ticks kept by chunk ({@code simulation/HeldTicks}): {@code tickUpdates}' one {@code scheduleUpdate(pos,
+     * block, 0)} (the put-back of a tick that could not run) becomes {@code HeldTicks.requeue(this, pos, block, 0)}, and
+     * each answer of {@code getPendingBlockUpdates(StructureBoundingBox, boolean)} passes through {@code
+     * HeldTicks.withHeld}, so a chunk's save still has them. Both or neither: anything unexpected leaves 1.12.2's put-back.
+     */
+    private static void heldTicks(ClassNode node, MethodNode ticks) {
+        String box = "Lnet/minecraft/world/gen/structure/StructureBoundingBox;";
+        MethodNode pending = Asm.method(node, "getPendingBlockUpdates", "func_175712_a", "(" + box + "Z)Ljava/util/List;");
+        List<MethodInsnNode> requeue = Asm.calls(ticks, Opcodes.INVOKEVIRTUAL, null, "scheduleUpdate", "func_175684_a",
+                "(" + POS + "Lnet/minecraft/block/Block;I)V");
+        if (pending == null || requeue.size() != 1) {
+            Asm.skipped(HELD, HELD_WHAT, requeue.size() + " put-backs in tickUpdates, getPendingBlockUpdates " + (pending == null ? "not found" : "found"));
+            return;
+        }
+        List<org.objectweb.asm.tree.AbstractInsnNode> returns = new java.util.ArrayList<org.objectweb.asm.tree.AbstractInsnNode>();
+        for (org.objectweb.asm.tree.AbstractInsnNode insn : pending.instructions.toArray()) {
+            if (insn.getOpcode() == Opcodes.ARETURN) {
+                returns.add(insn);
+            }
+        }
+        if (returns.isEmpty()) {
+            Asm.skipped(HELD, HELD_WHAT, "no return in getPendingBlockUpdates");
+            return;
+        }
+        String held = "com/exiledradio/backportcore/simulation/HeldTicks";
+        ticks.instructions.set(requeue.get(0), new MethodInsnNode(Opcodes.INVOKESTATIC, held, "requeue",
+                "(Lnet/minecraft/world/WorldServer;" + POS + "Lnet/minecraft/block/Block;I)V", false));
+        for (org.objectweb.asm.tree.AbstractInsnNode ret : returns) {
+            org.objectweb.asm.tree.InsnList wrap = new org.objectweb.asm.tree.InsnList();
+            // [list] -> withHeld(list, this, box, remove)
+            wrap.add(new org.objectweb.asm.tree.VarInsnNode(Opcodes.ALOAD, 0));
+            wrap.add(new org.objectweb.asm.tree.VarInsnNode(Opcodes.ALOAD, 1));
+            wrap.add(new org.objectweb.asm.tree.VarInsnNode(Opcodes.ILOAD, 2));
+            wrap.add(new MethodInsnNode(Opcodes.INVOKESTATIC, held, "withHeld",
+                    "(Ljava/util/List;Lnet/minecraft/world/WorldServer;" + box + "Z)Ljava/util/List;", false));
+            pending.instructions.insertBefore(ret, wrap);
+        }
+        Asm.applied(HELD, HELD_WHAT);
+    }
+
+    static final String HELD = "P91";
+    private static final String HELD_WHAT = "waiting ticks kept by chunk (WorldServer.tickUpdates, getPendingBlockUpdates)";
 
     /** Applied once both classes are; a class that cannot be patched leaves the whole patch skipped. */
     private static void done() {

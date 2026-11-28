@@ -138,6 +138,7 @@ final class PatchTests {
             check("coremod is registered with FML", isTransformerRegistered(), "");
             // Before the SRG run below, which reports P46 skipped on vanilla's (Forge-less) World.
             check("P46 applied when World and WorldServer loaded", "applied".equals(Asm.state("P46")), Asm.state("P46"));
+            check("P91 applied with P46 (waiting ticks kept by chunk)", "applied".equals(Asm.state("P91")), Asm.state("P91"));
         });
         then(1, "P36: a creature type added after the spawn list switch ran", world -> {
             check("P36 applied when Biome loaded", "applied".equals(Asm.state("P36")), Asm.state("P36"));
@@ -311,6 +312,22 @@ final class PatchTests {
                         }
                         check("SRG P46: " + (isWorld ? "updateEntityWithOptionalForce calls func_175663_a" : "tickUpdates calls func_175707_a") + " once",
                                 srg == 1, srg);
+                        if (!isWorld) {
+                            int put = 0;
+                            boolean pending = false;
+                            for (MethodNode m : n.methods) {
+                                pending |= m.name.equals("func_175712_a") && m.desc.equals("(Lnet/minecraft/world/gen/structure/StructureBoundingBox;Z)Ljava/util/List;");
+                                if (m.name.equals("func_72955_a")) {
+                                    for (AbstractInsnNode insn : m.instructions.toArray()) {
+                                        if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).name.equals("func_175684_a")) {
+                                            put++;
+                                        }
+                                    }
+                                }
+                            }
+                            check("SRG P91: tickUpdates puts back with func_175684_a once, getPendingBlockUpdates is func_175712_a",
+                                    put == 1 && pending, put + " " + pending);
+                        }
                         continue;
                     }
                     if (name.endsWith(".WorldEntitySpawner") && "P37".equals(c[1])) {

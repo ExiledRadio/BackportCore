@@ -38,6 +38,14 @@ final class SimulationTests {
     private static BlockPos farFurnace;
     private static BlockPos nearButton;
     private static BlockPos farButton;
+    private static final int CROWD = 100_000;
+    private static BlockPos nearWater;
+    private static BlockPos farWater;
+    private static BlockPos crowdButton;
+    private static BlockPos waitButton;
+    private static int crowdStart;
+    private static FakePlayer simPlayer;
+    private static long heldReleased;
 
     private SimulationTests() {
     }
@@ -94,6 +102,83 @@ final class SimulationTests {
             check("simulation off: the far button pops out", !pressed(world, farButton), "");
             farPig.setDead();
             nearPig.setDead();
+        });
+        then(1, "simulation distance: water, saves and a crowd of waiting ticks (set up)", world -> {
+            BlockPos spawn = world.getTopSolidOrLiquidBlock(world.getSpawnPoint()).up(14);
+            BlockPos far = new BlockPos(spawn.getX() + FAR, spawn.getY(), spawn.getZ());
+            nearWater = spawn;
+            farWater = far;
+            for (BlockPos w : new BlockPos[] {nearWater, farWater}) {
+                for (int dx = -2; dx <= 2; dx++) {
+                    for (int dz = -2; dz <= 2; dz++) {
+                        world.setBlockState(w.add(dx, -1, dz), Blocks.STONE.getDefaultState(), 2);
+                        world.setBlockToAir(w.add(dx, 0, dz));
+                    }
+                }
+            }
+            SimulationDistance.set(3);
+            for (BlockPos w : new BlockPos[] {nearWater, farWater}) {
+                world.setBlockState(w, Blocks.FLOWING_WATER.getDefaultState(), 3);
+            }
+            // A crowd: 100,000 ticks waiting out of range (more than the 65,536 1.12.2 takes in one tick), over air.
+            crowdStart = SimulationDistance.deferredTicks;
+            int n = 0;
+            for (int x = 0; x < 64 && n < CROWD; x++) {
+                for (int z = 0; z < 64 && n < CROWD; z++) {
+                    for (int y = 100; y < 125 && n < CROWD; y++, n++) {
+                        world.scheduleUpdate(new BlockPos(far.getX() - 32 + x, y + 60, far.getZ() - 32 + z), Blocks.STONE_BUTTON, 1);
+                    }
+                }
+            }
+            crowdButton = spawn.up(4);
+            world.setBlockState(crowdButton.down(), Blocks.STONE.getDefaultState(), 2);
+            press(world, crowdButton);
+            waitButton = far.add(6, 4, 0);
+            world.setBlockState(waitButton.down(), Blocks.STONE.getDefaultState(), 2);
+            press(world, waitButton);
+        });
+        then(30, "simulation distance 3: water and the crowd", world -> {
+            check("water: at the spawn it flows", world.getBlockState(nearWater.east()).getMaterial() == net.minecraft.block.material.Material.WATER, "");
+            check("water: far away it waits", world.getBlockState(farWater.east()).getMaterial() != net.minecraft.block.material.Material.WATER, "");
+            check("crowd: 100,000 waiting far ticks don't hold back the spawn's (its button pops)", !pressed(world, crowdButton),
+                    SimulationDistance.deferredTicks - crowdStart);
+            check("crowd: the far button still waits", pressed(world, waitButton), "");
+            check("P91: the waiting ticks wait in their chunks, off the world's queue", com.exiledradio.backportcore.simulation.HeldTicks.held >= CROWD / 2,
+                    com.exiledradio.backportcore.simulation.HeldTicks.held);
+            heldReleased = com.exiledradio.backportcore.simulation.HeldTicks.released;
+            java.util.List<net.minecraft.world.NextTickListEntry> saved = world.getPendingBlockUpdates(world.getChunk(waitButton), false);
+            boolean found = false;
+            if (saved != null) {
+                for (net.minecraft.world.NextTickListEntry e : saved) {
+                    found |= e.position.equals(waitButton) && e.getBlock() == Blocks.STONE_BUTTON;
+                }
+            }
+            check("saves: a waiting tick is in what its chunk saves", found, saved == null ? "none" : saved.size());
+            simPlayer = new FakePlayer(world, new com.mojang.authlib.GameProfile(UUID.randomUUID(), "[SelfTestSimNear]"));
+            simPlayer.setPosition(farWater.getX() + 0.5, farWater.getY() + 20, farWater.getZ() + 0.5);
+            simPlayer.chunkCoordX = farWater.getX() >> 4;
+            simPlayer.chunkCoordZ = farWater.getZ() >> 4;
+            world.playerEntities.add(simPlayer);
+        });
+        then(60, "simulation distance 3: a player comes near", world -> {
+            try {
+                check("near again: the far water flows", world.getBlockState(farWater.east()).getMaterial() == net.minecraft.block.material.Material.WATER, "");
+                check("near again: the far button pops out (its waiting tick ran)", !pressed(world, waitButton), "");
+                check("P91: the near chunk's waiting ticks went back on the queue", com.exiledradio.backportcore.simulation.HeldTicks.released > heldReleased,
+                        com.exiledradio.backportcore.simulation.HeldTicks.released - heldReleased);
+            } finally {
+                world.playerEntities.remove(simPlayer);
+                SimulationDistance.set(0);
+                for (BlockPos w : new BlockPos[] {nearWater, farWater}) {
+                    for (int dx = -8; dx <= 8; dx++) {
+                        for (int dz = -8; dz <= 8; dz++) {
+                            for (int dy = -1; dy <= 1; dy++) {
+                                world.setBlockToAir(w.add(dx, dy, dz));
+                            }
+                        }
+                    }
+                }
+            }
         });
         then(1, "simulation distance: the square edges (26.3's chunk levels)", world -> {
             FakePlayer p = new FakePlayer(world, new com.mojang.authlib.GameProfile(UUID.randomUUID(), "[SelfTestSim]"));

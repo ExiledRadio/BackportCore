@@ -1431,3 +1431,29 @@ or passes an existing constant through a hook of the same type.
     generation spawning are unchanged.
 *   **Fails safe**: method not found, not exactly one call, or its arguments not four plain local loads: skipped.
 *   **Tested**: `PatchTests` (both chains); self-test `P90: spawn rules checked before the mob is built`.
+
+## P91. Waiting ticks kept by chunk
+
+*   **Class**: `net.minecraft.world.WorldServer`, methods `tickUpdates` (`func_72955_a`) and
+    `getPendingBlockUpdates(StructureBoundingBox, boolean)` (`func_175712_a`). **Transformer**: `asm/SimulationTransformer`,
+    with P46. **Hooks**: `simulation/HeldTicks.requeue`, `withHeld`. **Since**: 1.5.0.
+*   **Vanilla change**: 26.3's `LevelTicks` keeps each chunk's scheduled block and fluid ticks with the chunk; a chunk
+    outside the simulation distance just isn't ticked. 1.12.2 has one queue for the world and puts a tick it cannot run
+    back on it for the next tick, so under P46 every tick outside the distance came off and went back on the queue every
+    tick: thousands of water and lava ticks over new terrain or a melting frozen ocean.
+*   **Why a patch**: the put-back is a plain `scheduleUpdate(pos, block, 0)` inside `tickUpdates`; nothing can keep the
+    tick out of the queue, and the chunk's save reads the queue.
+*   **What changes**: that one put-back becomes `HeldTicks.requeue`: outside the distance the tick waits in its chunk's
+    set (once per position and block, as the queue's hash set allows); otherwise (an unloaded area) it goes back on the
+    queue as before. At the start of each world tick, chunks back in range (or every chunk, with the distance off)
+    put their ticks back on the queue with delay 0, as the put-back did, at most 4,096 a tick (a large
+    backlog, such as a frozen ocean's 70,000 ocean-floor gravel ticks, goes back over several ticks; the rest wait and
+    are saved). Each answer of `getPendingBlockUpdates(box,
+    remove)` passes through `HeldTicks.withHeld`, which adds the waiting ticks in the box (taking them out with
+    `remove`), so a chunk's save writes them as before. An unloading chunk's set goes after its save (`ChunkDataEvent.Save`
+    of an unloaded chunk), as the put-back dropped ticks of an unloaded chunk.
+*   **Fails safe**: both changes or neither; not exactly one put-back, no `getPendingBlockUpdates`, or P46 skipped leave
+    1.12.2's put-back.
+*   **Tested**: `PatchTests` (applied; SRG names); `SimulationTests`: 100,000 waiting ticks held off the queue while the
+    spawn's button still pops, a waiting tick in its chunk's save list, a player coming near puts the chunk's ticks back
+    and the far water flows and the far button pops.

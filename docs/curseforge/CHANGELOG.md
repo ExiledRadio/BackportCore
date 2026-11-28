@@ -1,5 +1,6 @@
 # 1.5.0
 
+*   **Less lag from simulation distance**: water, lava and falling-block ticks waiting outside the simulation distance are kept with their chunk instead of being checked again every tick, and come back gradually when you get near, so a big backlog (such as a frozen ocean's) no longer slows every tick or changes a whole area at once.
 *   **For modpack and mod authors: pick a version look.** The Look Version setting (or `Presentation.requestLook` in code) makes the game look like that version, such as 1.16 or 26.4, even with no backport of it installed: its panorama, menus, options screens, splashes, chat and F3. Players can still turn the look down in Look & Feel.
 *   **Less server lag**: spawn rules are checked before a mob is built, as in today's game. Fish and glow squid were built and thrown away for most spawn attempts in water. With the whole family, an idle server went from 8.3 to 7.0 ms a tick.
 *   **Freezing is shared**: powder snow (Caves & Cliffs) and Game Drops' Freezing use one frozen counter with 26.4's rules, its damage, slowness, frost overlay and shaking. Nothing freezes while on fire or in leather. With a 26.4 backport, undead don't freeze either. The settings are on the new Freezing page.
