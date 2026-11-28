@@ -1318,3 +1318,24 @@ or passes an existing constant through a hook of the same type.
     `drawEntityOnScreen` translated to the box's center; otherwise it calls vanilla's unchanged. Other mods' calls of
     `drawEntityOnScreen` are left alone.
 *   **Fails safe**: a method missing or not exactly one call: that screen is left as 1.12.2's, one log line.
+## P79. Gliding straight up does not kick the player (1.16)
+
+*   **Class**: `net.minecraft.entity.EntityLivingBase` `travel(FFF)V` (`func_191986_a`). **Transformer**:
+    `asm/ElytraLookUpTransformer`. **Hooks**: none. **Since**: 1.5.0.
+*   **Vanilla change**: 1.16.5's `LivingEntity.travel` (and every version since) tests the look's horizontal length
+    before the elytra branch's climb, `if (f < 0.0F && d1 > 0.0D)`; 1.12.2 tests only `f < 0.0F` and divides by it.
+*   **Why a patch**: with OptiFine's Fast Math on, its rounded sine table gives a cosine of exactly 0 at pitch -90, so
+    looking straight up while gliding with any horizontal speed makes the motion `0 / 0`. The client's position becomes
+    NaN and the server kicks the player ("Invalid move player packet received"). Vanilla's own table never gives an
+    exact 0 there, so plain 1.12.2 does not show it. Reproduced on Cleanroom 0.5.17 with OptiFine HD U G5 (Fast Math
+    on) and the family, rockets then pitch -90; not on Forge 2860 with Fast Math off. The division is inside the
+    method; no event comes between the look and the move.
+*   **What changes**: after the branch's `fload f; fconst_0; fcmpg; ifge END`, `dload d6; dconst_0; dcmpl; ifle END`
+    jumps to the same label. No new locals, no hook call. The climb is skipped only where `d6` is 0 or NaN, where
+    1.12.2's answer is NaN; every other flight is vanilla's to the bit. On for every game, with or without a backport.
+*   **Fails safe**: `travel` missing, not exactly one `getLookVec` call, or the pitch, the horizontal length or the
+    `f < 0` test not found where expected: the method is left as 1.12.2's, one log line. Already tested there (another
+    mod's fix): left alone.
+*   **Tested**: self-test `elytra looking straight up (P79)` (group `poses`): a gliding mob whose look is exactly
+    straight up, with horizontal speed, keeps a finite position and motion through `travel`; without the patch
+    the same step gives NaN. A second check runs a level look and compares the motion with 1.12.2's formula.

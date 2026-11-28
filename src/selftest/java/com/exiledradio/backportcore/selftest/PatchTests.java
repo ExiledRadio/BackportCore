@@ -117,6 +117,8 @@ final class PatchTests {
             {"net.minecraft.client.Minecraft", "P76", new String[] {"pickedBlock*2"}},
             {"net.minecraft.client.gui.inventory.GuiInventory", "P78", new String[] {"inventoryPreview"}},
             {"net.minecraft.client.gui.inventory.GuiContainerCreative", "P78", new String[] {"creativePreview"}},
+            // P79 adds a test, no hook call: the class must change and verify.
+            {"net.minecraft.entity.EntityLivingBase", "P79", new String[] {}},
     };
 
     private PatchTests() {
@@ -393,6 +395,7 @@ final class PatchTests {
             case "P65": cls = "LightmapTransformer"; break;
             case "P73": case "P74": case "P75": case "P76": cls = "LookVersionsTransformer"; break;
             case "P78": cls = "InventoryPreviewTransformer"; break;
+            case "P79": cls = "ElytraLookUpTransformer"; break;
             default: cls = "CameraHeightTransformer"; break;
         }
         return (IClassTransformer) Class.forName("com.exiledradio.backportcore.asm." + cls).newInstance();

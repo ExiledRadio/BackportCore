@@ -78,6 +78,7 @@ public final class BackportCorePlugin implements IFMLLoadingPlugin {
             DistortionTransformer.class.getName(),
             LookVersionsTransformer.class.getName(),
             SilentSoundsTransformer.class.getName(),
+            ElytraLookUpTransformer.class.getName(),
     };
 
     @Override

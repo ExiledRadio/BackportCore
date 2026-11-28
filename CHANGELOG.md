@@ -86,6 +86,9 @@ In progress: see docs/PLAN_1_5_0.md.
     player in the survival inventory and the creative Inventory tab is centered on its black box and clipped to it, so
     an elytra-flying or riding player no longer covers the armor slots and the hotbar. Off with the Inventory switch
     (or before 1.20.2): 1.12.2's preview.
+*   Gliding while looking straight up no longer kicks the player with "Invalid move player packet received" (P79,
+    1.16's guard). Vanilla 1.12.2 divides by the horizontal look length while gliding; with OptiFine's Fast Math a
+    look of exactly 90 degrees makes it zero, the position NaN, and the server or LAN host kicks the player.
 *   Pause menu: other mods' buttons that overlap Core's layout (1.12.2's free row, now the icon row or Give Feedback
     row) move below it (`MenuScreens.onInitLast`, LOWEST priority, so buttons added after Core's layout are moved too;
     `movedForeign` for the client self-test).
